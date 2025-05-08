@@ -10,9 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Force initial scroll to top to ensure we start at the first screen
     window.scrollTo({top: 0, behavior: 'instant'});
     document.body.style.overflow = 'hidden';
+    
+    // Implement a more aggressive scroll lock on init
+    const htmlElement = document.documentElement;
+    htmlElement.style.scrollBehavior = 'auto';
+    htmlElement.style.overflow = 'hidden';
+    
+    // Reset styles after a delay to unblock scrolling
     setTimeout(() => {
         document.body.style.overflow = '';
-    }, 100);
+        htmlElement.style.overflow = '';
+        htmlElement.style.scrollBehavior = 'smooth';
+    }, 200);
     
     // Track the current screen index explicitly
     let currentScreenIndex = 0;
@@ -20,6 +29,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get screen IDs for debugging
     const screenIds = Array.from(screens).map(screen => screen.id);
     console.log('Screen order:', screenIds);
+    
+    // Flag to track if first scroll has happened
+    let hasScrolledOnce = false;
+    
+    // CRITICAL: Override all scroll events initially
+    function handleFirstScroll(e) {
+        console.log("First scroll detected - forcing navigation to Features section");
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Navigate directly to the features section
+        const featuresSection = document.getElementById('features');
+        if (featuresSection) {
+            navigateToScreenById('features');
+            hasScrolledOnce = true;
+            
+            // Remove this event listener after first use
+            window.removeEventListener('wheel', handleFirstScroll, { capture: true });
+            window.removeEventListener('touchmove', handleFirstScroll, { capture: true });
+            console.log("First scroll handlers removed, normal scrolling enabled");
+        }
+        return false;
+    }
+    
+    // Add high-priority capture phase listeners for the first scroll
+    window.addEventListener('wheel', handleFirstScroll, { capture: true, passive: false });
+    window.addEventListener('touchmove', handleFirstScroll, { capture: true, passive: false });
     
     // Disable intersection observer temporarily
     const observerOptions = {
@@ -105,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll to next section when scroll indicator is clicked
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', () => {
-            navigateToScreen(1, true); // Force go to second screen
+            navigateToScreenById('features');
         });
     }
     
@@ -116,10 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctaButtons.forEach(button => {
         if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
             button.addEventListener('click', () => {
-                const index = Array.from(screens).indexOf(ctaSection);
-                if (index !== -1) {
-                    navigateToScreen(index, true);
-                }
+                navigateToScreenById('cta');
             });
         }
     });
@@ -153,10 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Scroll to signup section
             setTimeout(() => {
-                const index = Array.from(screens).indexOf(ctaSection);
-                if (index !== -1) {
-                    navigateToScreen(index, true);
-                }
+                navigateToScreenById('cta');
             }, 500);
         });
     });
@@ -168,10 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (missionLink && missionSection) {
         missionLink.addEventListener('click', (e) => {
             e.preventDefault();
-            const index = Array.from(screens).indexOf(missionSection);
-            if (index !== -1) {
-                navigateToScreen(index, true);
-            }
+            navigateToScreenById('mission');
         });
     }
     
@@ -282,10 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // If no persona was selected, show message
             if (!selectedPersona) {
                 alert('Please select a companion first');
-                const index = Array.from(screens).indexOf(document.getElementById('personas'));
-                if (index !== -1) {
-                    navigateToScreen(index, true);
-                }
+                navigateToScreenById('personas');
                 return;
             }
             
@@ -319,6 +343,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastWheelTime = 0;
     let firstScrollOccurred = false;
 
+    // Lookup function to convert section ID to index
+    function getSectionIndexById(id) {
+        for (let i = 0; i < screens.length; i++) {
+            if (screens[i].id === id) {
+                return i;
+            }
+        }
+        console.error(`Section with ID "${id}" not found`);
+        return -1;
+    }
+    
+    // Navigate directly to a section by ID
+    function navigateToScreenById(id, forceScroll = true) {
+        const index = getSectionIndexById(id);
+        if (index !== -1) {
+            navigateToScreen(index, forceScroll);
+        }
+    }
+
     // Direct navigation to screens without skipping
     function navigateToScreen(targetIndex, forceScroll = false) {
         if (isScrolling && !forceScroll) return;
@@ -327,11 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetIndex < 0) targetIndex = 0;
         if (targetIndex >= screens.length) targetIndex = screens.length - 1;
         
-        // Check if this is the first scroll from the hero section
-        if (currentScreenIndex === 0 && targetIndex > 1 && !forceScroll) {
-            // Force going to section 1 on first scroll down from hero
-            targetIndex = 1;
-            console.log("First scroll detected, forcing navigation to section 1");
+        // ESSENTIAL FIX: Special handling for scroll from hero
+        if (currentScreenIndex === 0 && !hasScrolledOnce && !forceScroll) {
+            console.log("First scroll from hero detected - forcing navigation to Features only");
+            // Force navigation to features section on first scroll from hero
+            targetIndex = getSectionIndexById('features');
+            hasScrolledOnce = true;
         } else if (!forceScroll) {
             // For normal scrolling, only allow going one section at a time
             if (Math.abs(targetIndex - currentScreenIndex) > 1) {
@@ -562,10 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetSection = document.getElementById(targetId);
         if (targetSection) {
             setTimeout(() => {
-                const index = Array.from(screens).indexOf(targetSection);
-                if (index !== -1) {
-                    navigateToScreen(index, true);
-                }
+                navigateToScreenById(targetId);
             }, 500);
         }
     }
