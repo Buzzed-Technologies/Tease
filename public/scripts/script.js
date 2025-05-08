@@ -17,35 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Track the current screen index explicitly
     let currentScreenIndex = 0;
     
-    // Direct access to each section for more reliable navigation
-    const introSection = document.getElementById('intro');
-    const featuresSection = document.getElementById('features');
-    const experienceSection = document.getElementById('experience');
-    const missionSection = document.getElementById('mission');
-    const personasSection = document.getElementById('personas');
-    const ctaSection = document.getElementById('cta');
-    const footerSection = document.getElementById('footer-section');
-
-    // Array of sections in order for easier navigation
-    const orderedSections = [
-        introSection,
-        featuresSection,
-        experienceSection,
-        missionSection, 
-        personasSection,
-        ctaSection,
-        footerSection
-    ];
+    // Get screen IDs for debugging
+    const screenIds = Array.from(screens).map(screen => screen.id);
+    console.log('Screen order:', screenIds);
     
-    // Intersection Observer for each section with more precise detection
+    // Disable intersection observer temporarily
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: [0.2, 0.5, 0.8] // Multiple thresholds for better detection
+        threshold: 0.5
     };
     
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
+            // Only update active class, don't change currentScreenIndex here
             if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 const prevActive = document.querySelector('.screen.active');
                 if (prevActive) {
@@ -58,12 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const id = entry.target.getAttribute('id');
                 if (id) {
                     history.replaceState(null, null, `#${id}`);
-                }
-                
-                // Find the index of the current screen
-                const index = Array.from(orderedSections).indexOf(entry.target);
-                if (index !== -1) {
-                    currentScreenIndex = index;
                 }
             }
         });
@@ -126,17 +105,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll to next section when scroll indicator is clicked
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', () => {
-            navigateToScreen(1); // Always go to second screen
+            navigateToScreen(1, true); // Force go to second screen
         });
     }
     
     // Handle CTA button clicks
     const ctaButtons = document.querySelectorAll('.cta-button');
+    const ctaSection = document.getElementById('cta');
     
     ctaButtons.forEach(button => {
         if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
             button.addEventListener('click', () => {
-                ctaSection.scrollIntoView({ behavior: 'smooth' });
+                const index = Array.from(screens).indexOf(ctaSection);
+                if (index !== -1) {
+                    navigateToScreen(index, true);
+                }
             });
         }
     });
@@ -170,23 +153,31 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Scroll to signup section
             setTimeout(() => {
-                ctaSection.scrollIntoView({ behavior: 'smooth' });
+                const index = Array.from(screens).indexOf(ctaSection);
+                if (index !== -1) {
+                    navigateToScreen(index, true);
+                }
             }, 500);
         });
     });
     
     // "About Our Mission" link scrolls to mission section
     const missionLink = document.querySelector('.footer-links a:nth-child(4)');
+    const missionSection = document.getElementById('mission');
     
     if (missionLink && missionSection) {
         missionLink.addEventListener('click', (e) => {
             e.preventDefault();
-            missionSection.scrollIntoView({ behavior: 'smooth' });
+            const index = Array.from(screens).indexOf(missionSection);
+            if (index !== -1) {
+                navigateToScreen(index, true);
+            }
         });
     }
     
     // Horizontal scroll for personas
     const personasContainer = document.querySelector('.personas-scroll');
+    const personasSection = document.getElementById('personas');
     
     if (personasContainer) {
         // Add drag scroll functionality
@@ -291,7 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // If no persona was selected, show message
             if (!selectedPersona) {
                 alert('Please select a companion first');
-                personasSection.scrollIntoView({ behavior: 'smooth' });
+                const index = Array.from(screens).indexOf(document.getElementById('personas'));
+                if (index !== -1) {
+                    navigateToScreen(index, true);
+                }
                 return;
             }
             
@@ -319,88 +313,95 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Improved scrolling with better control
+    // Improved scrolling with direct navigation control
     let isScrolling = false;
     let scrollTimeout;
     let lastWheelTime = 0;
-    let initialScrollTriggered = false;
-    let firstScrollHandled = false;
+    let firstScrollOccurred = false;
 
-    // Function to navigate to a specific screen - completely redesigned
-    function navigateToScreen(targetIndex) {
-        if (isScrolling) return;
+    // Direct navigation to screens without skipping
+    function navigateToScreen(targetIndex, forceScroll = false) {
+        if (isScrolling && !forceScroll) return;
         
         // Validate target index
         if (targetIndex < 0) targetIndex = 0;
-        if (targetIndex >= orderedSections.length) targetIndex = orderedSections.length - 1;
+        if (targetIndex >= screens.length) targetIndex = screens.length - 1;
         
-        // CRITICAL: If we're on the intro section and this is the first scroll,
-        // ALWAYS go to the features section (index 1)
-        if (currentScreenIndex === 0 && !firstScrollHandled) {
-            targetIndex = 1; // Force navigation to features section
-            firstScrollHandled = true;
-            console.log("First scroll detected - forcing navigation to features section");
+        // Check if this is the first scroll from the hero section
+        if (currentScreenIndex === 0 && targetIndex > 1 && !forceScroll) {
+            // Force going to section 1 on first scroll down from hero
+            targetIndex = 1;
+            console.log("First scroll detected, forcing navigation to section 1");
+        } else if (!forceScroll) {
+            // For normal scrolling, only allow going one section at a time
+            if (Math.abs(targetIndex - currentScreenIndex) > 1) {
+                targetIndex = currentScreenIndex + (targetIndex > currentScreenIndex ? 1 : -1);
+                console.log(`Limiting scroll to one section at a time: ${currentScreenIndex} → ${targetIndex}`);
+            }
         }
         
-        // Don't scroll to the same section (unless it's the intro section)
-        if (targetIndex === currentScreenIndex && targetIndex !== 0) return;
-        
-        isScrolling = true;
-        console.log(`Navigating from section ${currentScreenIndex} to ${targetIndex}`);
-        
-        const targetSection = orderedSections[targetIndex];
-        if (!targetSection) {
-            console.error("Target section not found");
-            isScrolling = false;
+        // Skip if we're already on this section and it's not the landing page
+        if (targetIndex === currentScreenIndex && targetIndex !== 0 && !forceScroll) {
             return;
         }
         
-        // Always update our position tracker
+        isScrolling = true;
+        
+        // Logging for debugging
+        console.log(`Navigating from section ${currentScreenIndex} (${screens[currentScreenIndex].id}) to ${targetIndex} (${screens[targetIndex].id})`);
+        
+        // Update the current screen index first
         currentScreenIndex = targetIndex;
         
-        // Different behavior for desktop and mobile
+        // Activate the correct screen
+        document.querySelectorAll('.screen').forEach((screen, idx) => {
+            if (idx === targetIndex) {
+                screen.classList.add('active');
+            } else {
+                screen.classList.remove('active');
+            }
+        });
+        
+        // Scroll differently based on device type
         if (!isMobile) {
-            // For desktop: Use direct scrolling
-            targetSection.scrollIntoView({behavior: 'auto'});
+            // Direct instant scroll for desktop
+            screens[targetIndex].scrollIntoView({behavior: 'auto'});
             
-            // Reset scroll state quickly on desktop
+            // Track if this was the first scroll
+            if (targetIndex === 1 && !firstScrollOccurred) {
+                firstScrollOccurred = true;
+            }
+            
+            // Reset scroll state quickly
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
-                initialScrollTriggered = true;
-            }, 150); // Super short for desktop
+            }, 200);
         } else {
-            // For mobile: Keep smooth scrolling
-            targetSection.scrollIntoView({behavior: 'smooth'});
+            // Smooth scroll for mobile
+            screens[targetIndex].scrollIntoView({behavior: 'smooth'});
             
-            // Reset scroll state after animation completes
+            // Track if this was the first scroll
+            if (targetIndex === 1 && !firstScrollOccurred) {
+                firstScrollOccurred = true;
+            }
+            
+            // Reset scroll state after animation
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
-                initialScrollTriggered = true;
             }, 800);
         }
     }
     
-    // Special event handler for the first section
-    introSection.addEventListener('wheel', (e) => {
-        if (isScrolling) return;
-        
-        if (e.deltaY > 0 && currentScreenIndex === 0) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Go directly to features on the first scroll
-            navigateToScreen(1);
-        }
-    }, { passive: false });
-    
-    // Wheel event handler with special handling for the first scroll
+    // More reliable wheel event handler
     snapContainer.addEventListener('wheel', (e) => {
-        // Don't block scrolling in the personas container
-        if (e.target.closest('.personas-scroll')) return;
+        // Skip if in personas section horizontal scroll
+        if (e.target.closest('.personas-scroll')) {
+            return;
+        }
         
-        // Prevent default to control scrolling
+        // Block default scroll behavior
         e.preventDefault();
         
         // Skip if already scrolling
@@ -408,20 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Simple debounce
         const now = Date.now();
-        if (now - lastWheelTime < 80) return;
+        if (now - lastWheelTime < 100) return;
         lastWheelTime = now;
         
         // Get scroll direction
         const direction = Math.sign(e.deltaY);
         
-        // Special handling for first section
-        if (currentScreenIndex === 0 && direction > 0) {
-            // First scroll down always goes to features (section 1)
-            navigateToScreen(1);
-            return;
-        }
-        
-        // Normal navigation for other sections
+        // Navigate to next section based on direction
         navigateToScreen(currentScreenIndex + direction);
     }, { passive: false });
     
@@ -430,14 +424,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchEndY = 0;
     
     snapContainer.addEventListener('touchstart', (e) => {
-        // Ignore touches in the personas container
+        // Skip if in personas scroll area
         if (e.target.closest('.personas-scroll')) return;
         
         touchStartY = e.touches[0].clientY;
     }, { passive: true });
     
     snapContainer.addEventListener('touchend', (e) => {
-        // Ignore touches in the personas container
+        // Skip if in personas scroll area
         if (e.target.closest('.personas-scroll')) return;
         
         touchEndY = e.changedTouches[0].clientY;
@@ -445,20 +439,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate the distance swiped
         const touchDiff = touchStartY - touchEndY;
         
-        // Skip if already in a scrolling animation
+        // Skip if already scrolling
         if (isScrolling) return;
         
-        // Determine direction and navigate (with a reasonable threshold)
+        // Determine direction and navigate with threshold
         if (Math.abs(touchDiff) > 50) {
             const direction = touchDiff > 0 ? 1 : -1;
-            
-            // Special handling for first section
-            if (currentScreenIndex === 0 && direction > 0) {
-                // First swipe down always goes to features (section 1)
-                navigateToScreen(1);
-                return;
-            }
-            
             navigateToScreen(currentScreenIndex + direction);
         }
     }, { passive: true });
@@ -469,14 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
             e.preventDefault();
-            
-            // Special handling for first section
-            if (currentScreenIndex === 0) {
-                // First key navigation down always goes to features (section 1)
-                navigateToScreen(1);
-                return;
-            }
-            
             navigateToScreen(currentScreenIndex + 1);
         } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
             e.preventDefault();
@@ -562,12 +540,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Make first screen active on load and ensure we're at the top
     if (screens.length > 0) {
-        screens[0].classList.add('active');
+        // Set the first screen as active
+        screens.forEach((screen, idx) => {
+            if (idx === 0) {
+                screen.classList.add('active');
+            } else {
+                screen.classList.remove('active');
+            }
+        });
         
-        // Multiple safeguards to ensure we start at the top
+        // Reset and force scroll to top
+        currentScreenIndex = 0;
         setTimeout(() => {
             window.scrollTo({top: 0, behavior: 'instant'});
-            currentScreenIndex = 0;
         }, 100);
     }
     
@@ -577,9 +562,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetSection = document.getElementById(targetId);
         if (targetSection) {
             setTimeout(() => {
-                const index = Array.from(orderedSections).indexOf(targetSection);
+                const index = Array.from(screens).indexOf(targetSection);
                 if (index !== -1) {
-                    navigateToScreen(index);
+                    navigateToScreen(index, true);
                 }
             }, 500);
         }
