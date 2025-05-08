@@ -8,24 +8,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     // Force initial scroll to top to ensure we start at the first screen
-    window.scrollTo(0, 0);
+    window.scrollTo({top: 0, behavior: 'instant'});
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+        document.body.style.overflow = '';
+    }, 100);
     
-    // Set initial screen index
+    // Track the current screen index explicitly
     let currentScreenIndex = 0;
     
-    // Array of screen references for direct access
-    const screenArray = Array.from(screens);
-    
-    // Intersection Observer for each section
+    // Intersection Observer for each section with more precise detection
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.5 // Increased threshold for better detection
+        threshold: [0.2, 0.5, 0.8] // Multiple thresholds for better detection
     };
     
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                const prevActive = document.querySelector('.screen.active');
+                if (prevActive) {
+                    prevActive.classList.remove('active');
+                }
+                
                 entry.target.classList.add('active');
                 
                 // Update URL hash without scroll jump
@@ -35,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Find the index of the current screen
-                const index = screenArray.indexOf(entry.target);
+                const index = Array.from(screens).indexOf(entry.target);
                 if (index !== -1) {
                     currentScreenIndex = index;
                 }
@@ -100,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll to next section when scroll indicator is clicked
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', () => {
-            navigateToScreen(1); // Always go to the second screen (Features)
+            navigateToScreen(1); // Always go to second screen
         });
     }
     
@@ -300,83 +306,58 @@ document.addEventListener('DOMContentLoaded', () => {
     let isScrolling = false;
     let scrollTimeout;
     let lastWheelTime = 0;
-    let firstScroll = true; // Track if this is the first scroll action
+    let initialScrollTriggered = false;
 
-    // Map of section IDs to their indices
-    const sectionIndices = {};
-    screenArray.forEach((screen, index) => {
-        const id = screen.id;
-        if (id) {
-            sectionIndices[id] = index;
-        }
-    });
-
-    // Function to get visible screen more reliably
-    function getVisibleScreenIndex() {
-        // If we're at the top, we're at the first screen
-        if (window.scrollY < 10) {
-            return 0;
-        }
-        
-        // Otherwise, use the intersection observer data or calculate based on position
-        let bestIndex = 0;
-        let bestVisibility = 0;
-        
-        screenArray.forEach((screen, index) => {
-            const rect = screen.getBoundingClientRect();
-            // Calculate how much of the screen is visible
-            const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-            const visibility = visibleHeight / screen.offsetHeight;
-            
-            if (visibility > bestVisibility) {
-                bestVisibility = visibility;
-                bestIndex = index;
-            }
-        });
-        
-        return bestIndex;
-    }
-
-    // Function to navigate to a specific screen - faster for desktop
-    function navigateToScreen(index) {
+    // Function to navigate to a specific screen - redesigned for reliability
+    function navigateToScreen(targetIndex) {
         if (isScrolling) return;
         
-        if (index < 0) index = 0;
-        if (index >= screenArray.length) index = screenArray.length - 1;
+        // Validate target index
+        if (targetIndex < 0) targetIndex = 0;
+        if (targetIndex >= screens.length) targetIndex = screens.length - 1;
         
-        isScrolling = true;
-        currentScreenIndex = index;
+        // Ensure we're not already on this screen
+        if (targetIndex === currentScreenIndex && targetIndex !== 0) return;
         
-        // Handle special case for first scroll action - always go to second screen
-        if (firstScroll && index > 0) {
-            index = 1; // Force navigate to the second screen
-            currentScreenIndex = 1;
-            firstScroll = false;
+        // Don't allow skipping screens (when scrolling, only move one at a time)
+        if (initialScrollTriggered && Math.abs(targetIndex - currentScreenIndex) > 1) {
+            targetIndex = currentScreenIndex + (targetIndex > currentScreenIndex ? 1 : -1);
         }
         
-        // Scroll to the target section
-        // Use instant scrolling for desktop and smooth for mobile
+        isScrolling = true;
+        console.log(`Navigating from section ${currentScreenIndex} to ${targetIndex}`);
+        
+        // Handle scrolling differently for desktop vs mobile
         if (!isMobile) {
-            // Faster, more direct scroll for desktop
-            screenArray[index].scrollIntoView();
+            // For desktop: Use direct scrolling for immediate feedback
+            screens[targetIndex].scrollIntoView({behavior: 'auto'});
             
-            // Very short timeout for desktop
+            // Set as current immediately 
+            currentScreenIndex = targetIndex;
+            
+            // Reset scroll state quickly on desktop
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
-            }, 300); // Much shorter for desktop
+                initialScrollTriggered = true;
+            }, 200);
         } else {
-            // Keep smooth scrolling for mobile
-            screenArray[index].scrollIntoView({ behavior: 'smooth' });
+            // For mobile: Keep smooth scrolling
+            screens[targetIndex].scrollIntoView({behavior: 'smooth'});
             
+            // Update current index
+            currentScreenIndex = targetIndex;
+            
+            // Reset scroll state after animation completes
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
+                initialScrollTriggered = true;
             }, 800);
         }
     }
     
-    // More responsive wheel event handler with debouncing
+    // More reliable wheel event handler with proper section tracking
     snapContainer.addEventListener('wheel', (e) => {
         // Don't block scrolling in the personas container
         if (e.target.closest('.personas-scroll')) {
@@ -391,23 +372,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Simple debounce
         const now = Date.now();
-        if (now - lastWheelTime < 50) return; // 50ms debounce
+        if (now - lastWheelTime < 100) return; // 100ms debounce for more reliability
         lastWheelTime = now;
         
         // Get scroll direction
         const direction = Math.sign(e.deltaY);
         
-        // For first scroll down, always go to second section
-        if (firstScroll && direction > 0) {
-            navigateToScreen(1); // Second screen
-            return;
-        }
+        // Calculate target index - always move exactly one section
+        const targetIndex = currentScreenIndex + direction;
         
-        // Get current screen index reliably
-        currentScreenIndex = getVisibleScreenIndex();
-        
-        // Scroll with direction
-        navigateToScreen(currentScreenIndex + direction);
+        // Navigate to the next section only
+        navigateToScreen(targetIndex);
     }, { passive: false });
     
     // Improved touch events for mobile
@@ -436,16 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Determine direction and navigate (with a reasonable threshold)
         if (Math.abs(touchDiff) > 50) {
             const direction = touchDiff > 0 ? 1 : -1;
-            
-            // For first scroll down, always go to second section
-            if (firstScroll && direction > 0) {
-                navigateToScreen(1); // Second screen
-                return;
-            }
-            
-            // Get current screen index reliably
-            currentScreenIndex = getVisibleScreenIndex();
-            
             navigateToScreen(currentScreenIndex + direction);
         }
     }, { passive: true });
@@ -456,23 +421,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
             e.preventDefault();
-            
-            // For first down arrow, always go to second section
-            if (firstScroll) {
-                navigateToScreen(1); // Second screen
-                return;
-            }
-            
-            // Get current screen index reliably
-            currentScreenIndex = getVisibleScreenIndex();
-            
             navigateToScreen(currentScreenIndex + 1);
         } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
             e.preventDefault();
-            
-            // Get current screen index reliably
-            currentScreenIndex = getVisibleScreenIndex();
-            
             navigateToScreen(currentScreenIndex - 1);
         }
     });
@@ -554,13 +505,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
     
     // Make first screen active on load and ensure we're at the top
-    if (screenArray.length > 0) {
-        screenArray[0].classList.add('active');
-        // Force scroll to top to prevent skipping first screen
+    if (screens.length > 0) {
+        screens[0].classList.add('active');
+        
+        // Multiple safeguards to ensure we start at the top
         setTimeout(() => {
-            window.scrollTo(0, 0);
+            window.scrollTo({top: 0, behavior: 'instant'});
             currentScreenIndex = 0;
-            firstScroll = true;
         }, 100);
     }
     
@@ -570,8 +521,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetSection = document.getElementById(targetId);
         if (targetSection) {
             setTimeout(() => {
-                targetSection.scrollIntoView({ behavior: 'smooth' });
-                firstScroll = false;
+                const index = Array.from(screens).indexOf(targetSection);
+                if (index !== -1) {
+                    navigateToScreen(index);
+                }
             }, 500);
         }
     }
