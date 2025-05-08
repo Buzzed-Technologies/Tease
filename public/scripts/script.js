@@ -4,6 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const screens = document.querySelectorAll('.screen');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
+    // Detect if this is a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Apply smooth transitions only on mobile devices
+    if (isMobile) {
+        screens.forEach(screen => {
+            screen.classList.add('smooth-transition');
+        });
+    }
+    
     // Intersection Observer for each section
     const observerOptions = {
         root: null,
@@ -284,8 +294,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle wheel events for more responsive scrolling
     snapContainer.addEventListener('wheel', (e) => {
-        // Always prevent default to ensure smooth controlled scrolling
+        // Always prevent default to ensure controlled scrolling
         e.preventDefault();
+        
+        // Skip if already in a scrolling animation
+        if (isScrolling) return;
         
         // Determine scroll direction
         const direction = Math.sign(e.deltaY);
@@ -295,34 +308,26 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Different handling for trackpad vs mouse wheel
         if (isTrackPad) {
-            // Accumulate small trackpad movements
+            // Accumulate small trackpad movements but with smaller threshold
             scrollAccumulator += e.deltaY;
             
-            // Check if we've accumulated enough movement
-            if (Math.abs(scrollAccumulator) > 40) {
+            // Check if we've accumulated enough movement - lower threshold
+            if (Math.abs(scrollAccumulator) > 20) {
                 const scrollDirection = Math.sign(scrollAccumulator);
                 // Reset accumulator after using it
                 scrollAccumulator = 0;
                 
-                if (!isScrolling) {
-                    handleScroll(scrollDirection);
-                }
+                // Immediate response for trackpad once threshold is met
+                handleScrollInstant(scrollDirection);
             }
         } else {
-            // For mouse wheel, immediate response with minimal threshold
-            if (!isScrolling && Math.abs(e.deltaY) > 5) {
-                handleScroll(direction);
-            }
+            // For mouse wheel, IMMEDIATE response with NO threshold
+            handleScrollInstant(direction);
         }
     }, { passive: false });
     
-    // Unified scroll handler function
-    function handleScroll(direction) {
-        // Throttle rapid scrolls
-        const now = Date.now();
-        if (now - lastScrollTime < 50) return;
-        lastScrollTime = now;
-        
+    // Unified scroll handler function - INSTANT VERSION
+    function handleScrollInstant(direction) {
         // Find currently visible screen
         let visibleScreenIndex = 0;
         screens.forEach((screen, index) => {
@@ -339,16 +344,33 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set scrolling state
         isScrolling = true;
         
-        // Navigate to next/previous screen
-        navigateToScreen(visibleScreenIndex + direction);
+        // Calculate target screen
+        const targetIndex = visibleScreenIndex + direction;
+        currentScreenIndex = targetIndex;
         
-        // Reset scrolling state after animation completes
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-            // Also reset accumulator when done
-            scrollAccumulator = 0;
-        }, 500);
+        // For desktop, truly instant navigation
+        if (!isMobile) {
+            // Instant jump to target section
+            const targetY = screens[targetIndex].offsetTop;
+            window.scrollTo(0, targetY);
+            
+            // Very short reset to prevent multiple scrolls
+            setTimeout(() => {
+                isScrolling = false;
+            }, 50);
+        } else {
+            // For mobile devices, use smooth scrolling
+            screens[targetIndex].scrollIntoView({ behavior: 'smooth' });
+            
+            // Longer reset for animation to complete
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+            }, 500);
+        }
+        
+        // Always reset accumulator
+        scrollAccumulator = 0;
     }
     
     // Touch events for mobile with enhanced sensitivity
@@ -382,21 +404,56 @@ document.addEventListener('DOMContentLoaded', () => {
             swipeThreshold = 5;
         }
         
-        if (Math.abs(touchDiff) > swipeThreshold) {
+        if (Math.abs(touchDiff) > swipeThreshold && !isScrolling) {
             const direction = touchDiff > 0 ? 1 : -1;
-            handleScroll(direction);
+            // For mobile, we'll keep smoother scrolling
+            handleScrollMobile(direction);
         }
     });
+    
+    // Unified scroll handler for mobile (smoother)
+    function handleScrollMobile(direction) {
+        // Find currently visible screen
+        let visibleScreenIndex = 0;
+        screens.forEach((screen, index) => {
+            const rect = screen.getBoundingClientRect();
+            if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                visibleScreenIndex = index;
+            }
+        });
+        
+        // Prevent scrolling if we're already at the boundary
+        if (direction > 0 && visibleScreenIndex === screens.length - 1) return;
+        if (direction < 0 && visibleScreenIndex === 0) return;
+        
+        // Set scrolling state
+        isScrolling = true;
+        
+        // Calculate target index
+        const targetIndex = visibleScreenIndex + direction;
+        currentScreenIndex = targetIndex;
+        
+        // For mobile, always use smooth scrolling
+        screens[targetIndex].scrollIntoView({ behavior: 'smooth' });
+        
+        // Reset scrolling state after animation completes
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+            scrollAccumulator = 0;
+        }, 500);
+    }
     
     // Add keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
         if (!isScrolling) {
             if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
                 e.preventDefault();
-                handleScroll(1);
+                // Use the instant scroll for keyboard too
+                handleScrollInstant(1);
             } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
                 e.preventDefault();
-                handleScroll(-1);
+                handleScrollInstant(-1);
             }
         }
     });
