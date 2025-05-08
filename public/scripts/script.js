@@ -270,6 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let scrollTimeout;
     let isScrolling = false;
     let currentScreenIndex = 0;
+    let lastDirection = 0;
+    let scrollAccumulator = 0;
     
     // Function to navigate to a specific screen
     function navigateToScreen(index) {
@@ -282,25 +284,49 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle wheel events for more responsive scrolling
     snapContainer.addEventListener('wheel', (e) => {
-        // Prevent default only during our controlled scrolling
-        if (isScrolling) {
-            e.preventDefault();
-            return;
-        }
-        
-        const now = Date.now();
-        // Throttle scroll events to prevent rapid firing
-        if (now - lastScrollTime < 100) return;
-        lastScrollTime = now;
+        // Always prevent default to ensure smooth controlled scrolling
+        e.preventDefault();
         
         // Determine scroll direction
-        const direction = e.deltaY > 0 ? 1 : -1;
+        const direction = Math.sign(e.deltaY);
+        
+        // Detect if this is likely a trackpad gesture (smaller, precise movements)
+        const isTrackPad = Math.abs(e.deltaY) < 40;
+        
+        // Different handling for trackpad vs mouse wheel
+        if (isTrackPad) {
+            // Accumulate small trackpad movements
+            scrollAccumulator += e.deltaY;
+            
+            // Check if we've accumulated enough movement
+            if (Math.abs(scrollAccumulator) > 40) {
+                const scrollDirection = Math.sign(scrollAccumulator);
+                // Reset accumulator after using it
+                scrollAccumulator = 0;
+                
+                if (!isScrolling) {
+                    handleScroll(scrollDirection);
+                }
+            }
+        } else {
+            // For mouse wheel, immediate response with minimal threshold
+            if (!isScrolling && Math.abs(e.deltaY) > 5) {
+                handleScroll(direction);
+            }
+        }
+    }, { passive: false });
+    
+    // Unified scroll handler function
+    function handleScroll(direction) {
+        // Throttle rapid scrolls
+        const now = Date.now();
+        if (now - lastScrollTime < 50) return;
+        lastScrollTime = now;
         
         // Find currently visible screen
         let visibleScreenIndex = 0;
         screens.forEach((screen, index) => {
             const rect = screen.getBoundingClientRect();
-            // If more than half the screen is visible, consider it the current one
             if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
                 visibleScreenIndex = index;
             }
@@ -310,31 +336,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (direction > 0 && visibleScreenIndex === screens.length - 1) return;
         if (direction < 0 && visibleScreenIndex === 0) return;
         
-        // Set scrolling state and navigate
+        // Set scrolling state
         isScrolling = true;
-        e.preventDefault();
         
-        // Use a small threshold to make scrolling more responsive
-        const scrollThreshold = 5; // Much lower threshold for ultra-responsive scrolling
-        
-        // Only navigate if the scroll is significant enough
-        if (Math.abs(e.deltaY) > scrollThreshold) {
-            navigateToScreen(visibleScreenIndex + direction);
-        }
+        // Navigate to next/previous screen
+        navigateToScreen(visibleScreenIndex + direction);
         
         // Reset scrolling state after animation completes
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
             isScrolling = false;
-        }, 700); // Slightly longer than the CSS transition
-    }, { passive: false });
+            // Also reset accumulator when done
+            scrollAccumulator = 0;
+        }, 500);
+    }
     
     // Touch events for mobile with enhanced sensitivity
     let touchStartY = 0;
     let touchEndY = 0;
+    let touchStartTime = 0;
     
     snapContainer.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
     }, { passive: true });
     
     snapContainer.addEventListener('touchmove', (e) => {
@@ -346,36 +370,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate the distance swiped
         const touchDiff = touchStartY - touchEndY;
         
-        // Use a lower threshold for touch to make it more responsive
-        const swipeThreshold = 10; // Very low threshold - minimal swipe required
+        // Calculate swipe velocity (distance/time)
+        const touchTime = Date.now() - touchStartTime;
+        const velocity = Math.abs(touchDiff) / touchTime;
+        
+        // Adaptive threshold based on velocity - faster swipes need less distance
+        let swipeThreshold = 10;
+        
+        // For quick flicks, reduce the threshold
+        if (velocity > 0.5) {
+            swipeThreshold = 5;
+        }
         
         if (Math.abs(touchDiff) > swipeThreshold) {
-            // Find current visible screen
-            let visibleScreenIndex = 0;
-            screens.forEach((screen, index) => {
-                const rect = screen.getBoundingClientRect();
-                if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-                    visibleScreenIndex = index;
-                }
-            });
-            
-            // Navigate based on swipe direction
-            if (touchDiff > 0) { // Swipe up, go to next
-                navigateToScreen(visibleScreenIndex + 1);
-            } else { // Swipe down, go to previous
-                navigateToScreen(visibleScreenIndex - 1);
-            }
+            const direction = touchDiff > 0 ? 1 : -1;
+            handleScroll(direction);
         }
     });
     
     // Add keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-            navigateToScreen(currentScreenIndex + 1);
-            e.preventDefault();
-        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-            navigateToScreen(currentScreenIndex - 1);
-            e.preventDefault();
+        if (!isScrolling) {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
+                e.preventDefault();
+                handleScroll(1);
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                handleScroll(-1);
+            }
         }
     });
     
