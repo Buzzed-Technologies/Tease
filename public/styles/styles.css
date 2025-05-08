@@ -165,27 +165,29 @@ a:hover {
     opacity: 0.8;
 }
 
-/* Snap Scroll Container */
+/* Enhanced Snap Scrolling */
 .snap-container {
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-    /* Remove smooth scrolling from container - we'll handle it in JS */
-    scroll-behavior: auto;
-    scroll-snap-type: y proximity;
+    scroll-behavior: smooth; /* Use smooth scrolling by default */
+    scroll-snap-type: y mandatory; /* Change to mandatory for more predictable snapping */
     -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
 .screen {
     height: 100vh;
+    min-height: 100vh;
     scroll-snap-align: start;
+    scroll-snap-stop: always; /* Force stopping at each section */
     display: flex;
     flex-direction: column;
     justify-content: center;
     position: relative;
     padding: 0 10%;
-    /* No transition for instant response - we'll apply transitions in JS */
-    transition: none;
+    /* Smooth transition for all screens */
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* Add this class dynamically for mobile transitions */
@@ -668,14 +670,31 @@ a:hover {
         0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Footer */
-footer {
+/* Footer section specific styling */
+#footer-section {
+    min-height: 100vh;
+    justify-content: center;
     background-color: var(--darker);
-    padding: 3rem 10%;
-    margin-top: auto;
     border-top: 1px solid rgba(128, 0, 32, 0.5);
+    padding: 0;
 }
 
+#footer-section footer {
+    background: transparent;
+    border-top: none;
+    padding: 3rem 10%;
+    width: 100%;
+    margin: 0;
+}
+
+/* Update footer to work within the section */
+footer {
+    background-color: transparent;
+    padding: 3rem 0;
+    width: 100%;
+}
+
+/* Footer */
 .footer-content {
     display: flex;
     flex-direction: column;
