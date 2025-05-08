@@ -17,6 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Track the current screen index explicitly
     let currentScreenIndex = 0;
     
+    // Direct access to each section for more reliable navigation
+    const introSection = document.getElementById('intro');
+    const featuresSection = document.getElementById('features');
+    const experienceSection = document.getElementById('experience');
+    const missionSection = document.getElementById('mission');
+    const personasSection = document.getElementById('personas');
+    const ctaSection = document.getElementById('cta');
+    const footerSection = document.getElementById('footer-section');
+
+    // Array of sections in order for easier navigation
+    const orderedSections = [
+        introSection,
+        featuresSection,
+        experienceSection,
+        missionSection, 
+        personasSection,
+        ctaSection,
+        footerSection
+    ];
+    
     // Intersection Observer for each section with more precise detection
     const observerOptions = {
         root: null,
@@ -41,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Find the index of the current screen
-                const index = Array.from(screens).indexOf(entry.target);
+                const index = Array.from(orderedSections).indexOf(entry.target);
                 if (index !== -1) {
                     currentScreenIndex = index;
                 }
@@ -112,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle CTA button clicks
     const ctaButtons = document.querySelectorAll('.cta-button');
-    const ctaSection = document.getElementById('cta');
     
     ctaButtons.forEach(button => {
         if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
@@ -158,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // "About Our Mission" link scrolls to mission section
     const missionLink = document.querySelector('.footer-links a:nth-child(4)');
-    const missionSection = document.getElementById('mission');
     
     if (missionLink && missionSection) {
         missionLink.addEventListener('click', (e) => {
@@ -169,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Horizontal scroll for personas
     const personasContainer = document.querySelector('.personas-scroll');
-    const personasSection = document.getElementById('personas');
     
     if (personasContainer) {
         // Add drag scroll functionality
@@ -274,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // If no persona was selected, show message
             if (!selectedPersona) {
                 alert('Please select a companion first');
-                document.getElementById('personas').scrollIntoView({ behavior: 'smooth' });
+                personasSection.scrollIntoView({ behavior: 'smooth' });
                 return;
             }
             
@@ -302,51 +319,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Improved scrolling with better control - more responsive for desktop
+    // Improved scrolling with better control
     let isScrolling = false;
     let scrollTimeout;
     let lastWheelTime = 0;
     let initialScrollTriggered = false;
+    let firstScrollHandled = false;
 
-    // Function to navigate to a specific screen - redesigned for reliability
+    // Function to navigate to a specific screen - completely redesigned
     function navigateToScreen(targetIndex) {
         if (isScrolling) return;
         
         // Validate target index
         if (targetIndex < 0) targetIndex = 0;
-        if (targetIndex >= screens.length) targetIndex = screens.length - 1;
+        if (targetIndex >= orderedSections.length) targetIndex = orderedSections.length - 1;
         
-        // Ensure we're not already on this screen
-        if (targetIndex === currentScreenIndex && targetIndex !== 0) return;
-        
-        // Don't allow skipping screens (when scrolling, only move one at a time)
-        if (initialScrollTriggered && Math.abs(targetIndex - currentScreenIndex) > 1) {
-            targetIndex = currentScreenIndex + (targetIndex > currentScreenIndex ? 1 : -1);
+        // CRITICAL: If we're on the intro section and this is the first scroll,
+        // ALWAYS go to the features section (index 1)
+        if (currentScreenIndex === 0 && !firstScrollHandled) {
+            targetIndex = 1; // Force navigation to features section
+            firstScrollHandled = true;
+            console.log("First scroll detected - forcing navigation to features section");
         }
+        
+        // Don't scroll to the same section (unless it's the intro section)
+        if (targetIndex === currentScreenIndex && targetIndex !== 0) return;
         
         isScrolling = true;
         console.log(`Navigating from section ${currentScreenIndex} to ${targetIndex}`);
         
-        // Handle scrolling differently for desktop vs mobile
+        const targetSection = orderedSections[targetIndex];
+        if (!targetSection) {
+            console.error("Target section not found");
+            isScrolling = false;
+            return;
+        }
+        
+        // Always update our position tracker
+        currentScreenIndex = targetIndex;
+        
+        // Different behavior for desktop and mobile
         if (!isMobile) {
-            // For desktop: Use direct scrolling for immediate feedback
-            screens[targetIndex].scrollIntoView({behavior: 'auto'});
-            
-            // Set as current immediately 
-            currentScreenIndex = targetIndex;
+            // For desktop: Use direct scrolling
+            targetSection.scrollIntoView({behavior: 'auto'});
             
             // Reset scroll state quickly on desktop
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
                 initialScrollTriggered = true;
-            }, 200);
+            }, 150); // Super short for desktop
         } else {
             // For mobile: Keep smooth scrolling
-            screens[targetIndex].scrollIntoView({behavior: 'smooth'});
-            
-            // Update current index
-            currentScreenIndex = targetIndex;
+            targetSection.scrollIntoView({behavior: 'smooth'});
             
             // Reset scroll state after animation completes
             clearTimeout(scrollTimeout);
@@ -357,12 +382,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // More reliable wheel event handler with proper section tracking
+    // Special event handler for the first section
+    introSection.addEventListener('wheel', (e) => {
+        if (isScrolling) return;
+        
+        if (e.deltaY > 0 && currentScreenIndex === 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Go directly to features on the first scroll
+            navigateToScreen(1);
+        }
+    }, { passive: false });
+    
+    // Wheel event handler with special handling for the first scroll
     snapContainer.addEventListener('wheel', (e) => {
         // Don't block scrolling in the personas container
-        if (e.target.closest('.personas-scroll')) {
-            return;
-        }
+        if (e.target.closest('.personas-scroll')) return;
         
         // Prevent default to control scrolling
         e.preventDefault();
@@ -372,17 +408,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Simple debounce
         const now = Date.now();
-        if (now - lastWheelTime < 100) return; // 100ms debounce for more reliability
+        if (now - lastWheelTime < 80) return;
         lastWheelTime = now;
         
         // Get scroll direction
         const direction = Math.sign(e.deltaY);
         
-        // Calculate target index - always move exactly one section
-        const targetIndex = currentScreenIndex + direction;
+        // Special handling for first section
+        if (currentScreenIndex === 0 && direction > 0) {
+            // First scroll down always goes to features (section 1)
+            navigateToScreen(1);
+            return;
+        }
         
-        // Navigate to the next section only
-        navigateToScreen(targetIndex);
+        // Normal navigation for other sections
+        navigateToScreen(currentScreenIndex + direction);
     }, { passive: false });
     
     // Improved touch events for mobile
@@ -411,6 +451,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Determine direction and navigate (with a reasonable threshold)
         if (Math.abs(touchDiff) > 50) {
             const direction = touchDiff > 0 ? 1 : -1;
+            
+            // Special handling for first section
+            if (currentScreenIndex === 0 && direction > 0) {
+                // First swipe down always goes to features (section 1)
+                navigateToScreen(1);
+                return;
+            }
+            
             navigateToScreen(currentScreenIndex + direction);
         }
     }, { passive: true });
@@ -421,6 +469,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
             e.preventDefault();
+            
+            // Special handling for first section
+            if (currentScreenIndex === 0) {
+                // First key navigation down always goes to features (section 1)
+                navigateToScreen(1);
+                return;
+            }
+            
             navigateToScreen(currentScreenIndex + 1);
         } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
             e.preventDefault();
@@ -521,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetSection = document.getElementById(targetId);
         if (targetSection) {
             setTimeout(() => {
-                const index = Array.from(screens).indexOf(targetSection);
+                const index = Array.from(orderedSections).indexOf(targetSection);
                 if (index !== -1) {
                     navigateToScreen(index);
                 }
