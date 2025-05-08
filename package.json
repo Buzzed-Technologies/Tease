@@ -1,0 +1,21 @@
+{
+  "name": "tease",
+  "version": "1.0.0",
+  "description": "AI Adult Companion Service",
+  "main": "public/index.html",
+  "scripts": {
+    "dev": "serve public",
+    "deploy": "vercel",
+    "deploy:prod": "vercel --prod"
+  },
+  "keywords": [
+    "ai",
+    "adult",
+    "companion"
+  ],
+  "author": "Tease AI",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+} 
