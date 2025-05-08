@@ -165,30 +165,27 @@ a:hover {
     opacity: 0.8;
 }
 
-/* Enhanced Snap Scrolling */
+/* Snap Scroll Container */
 .snap-container {
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-    scroll-behavior: smooth; /* Use smooth scrolling by default */
-    scroll-snap-type: y mandatory; /* Change to mandatory for more predictable snapping */
+    /* Remove smooth scrolling from container - we'll handle it in JS */
+    scroll-behavior: auto;
+    scroll-snap-type: y proximity;
     -webkit-overflow-scrolling: touch;
-    position: relative;
-    scroll-padding: 0; /* Reset any scroll padding */
 }
 
 .screen {
     height: 100vh;
-    min-height: 100vh;
     scroll-snap-align: start;
-    scroll-snap-stop: always; /* Force stopping at each section */
     display: flex;
     flex-direction: column;
     justify-content: center;
     position: relative;
     padding: 0 10%;
-    /* Shorter transition for desktop */
-    transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    /* No transition for instant response - we'll apply transitions in JS */
+    transition: none;
 }
 
 /* Add this class dynamically for mobile transitions */
@@ -671,33 +668,14 @@ a:hover {
         0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Footer section specific styling - make it 25% height */
-#footer-section {
-    min-height: 25vh;
-    height: 25vh;
-    justify-content: center;
-    background-color: var(--darker);
-    border-top: 1px solid rgba(128, 0, 32, 0.5);
-    padding: 0;
-    scroll-snap-align: end; /* Change to end for the last section */
-}
-
-#footer-section footer {
-    background: transparent;
-    border-top: none;
-    padding: 1.5rem 10%;
-    width: 100%;
-    margin: 0;
-}
-
-/* Update footer to work within the section */
-footer {
-    background-color: transparent;
-    padding: 3rem 0;
-    width: 100%;
-}
-
 /* Footer */
+footer {
+    background-color: var(--darker);
+    padding: 3rem 10%;
+    margin-top: auto;
+    border-top: 1px solid rgba(128, 0, 32, 0.5);
+}
+
 .footer-content {
     display: flex;
     flex-direction: column;
@@ -935,18 +913,4 @@ footer {
     font-size: 0.9rem;
     line-height: 1.5;
     margin-bottom: 0;
-}
-
-/* Personas section needs special handling for horizontal scrolling */
-#personas .personas-scroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    /* Ensure it doesn't interfere with page scrolling */
-    touch-action: pan-x;
-    -ms-touch-action: pan-x;
-}
-
-/* Stop the wheel event from being captured when hovering personas */
-#personas .personas-container {
-    pointer-events: auto;
 } 
