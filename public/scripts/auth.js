@@ -1,7 +1,9 @@
 // Supabase client initialization
 const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+// Create the client using the imported library
+const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 // DOM Elements
 let loginForm, signupForm, personaButtons, personaSelected = null;
