@@ -146,17 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // "About Our Mission" link scrolls to mission section
-    const missionLink = document.querySelector('.footer-links a:nth-child(4)');
-    const missionSection = document.getElementById('mission');
-    
-    if (missionLink && missionSection) {
-        missionLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            missionSection.scrollIntoView({ behavior: 'smooth' });
-        });
-    }
-    
     // Horizontal scroll for personas
     const personasContainer = document.querySelector('.personas-scroll');
     if (personasContainer) {
