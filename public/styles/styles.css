@@ -646,10 +646,9 @@ a:hover {
 }
 
 /* Footer */
-footer {
+#footer {
     background-color: var(--darker);
-    padding: 3rem 10%;
-    margin-top: auto;
+    justify-content: center;
     border-top: 1px solid rgba(128, 0, 32, 0.5);
 }
 
@@ -660,6 +659,7 @@ footer {
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0;
 }
 
 .footer-links {
