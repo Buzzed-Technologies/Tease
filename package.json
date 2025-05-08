@@ -5,8 +5,11 @@
   "main": "public/index.html",
   "scripts": {
     "dev": "serve public",
+    "start": "serve public",
     "deploy": "vercel",
-    "deploy:prod": "vercel --prod"
+    "deploy:prod": "vercel --prod",
+    "lint": "eslint public/scripts/**/*.js",
+    "test": "echo \"No tests configured\""
   },
   "keywords": [
     "ai",
@@ -15,7 +18,15 @@
   ],
   "author": "Tease AI",
   "license": "UNLICENSED",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.6",
+    "stripe": "^14.18.0"
+  },
   "devDependencies": {
+    "eslint": "^8.57.0",
     "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 } 
