@@ -1,21 +1,25 @@
 {
   "name": "tease",
-  "version": "1.0.0",
-  "description": "AI Adult Companion Service",
-  "main": "public/index.html",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "serve public",
-    "deploy": "vercel",
-    "deploy:prod": "vercel --prod"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "keywords": [
-    "ai",
-    "adult",
-    "companion"
-  ],
-  "author": "Tease AI",
-  "license": "UNLICENSED",
+  "dependencies": {
+    "@stripe/stripe-js": "^2.4.0",
+    "@supabase/supabase-js": "^2.39.3",
+    "bcryptjs": "^2.4.3",
+    "micro": "^10.0.1",
+    "next": "14.1.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "stripe": "^14.14.0"
+  },
   "devDependencies": {
-    "serve": "^14.2.1"
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.1.0"
   }
 } 
