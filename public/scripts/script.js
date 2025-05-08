@@ -1,257 +1,260 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Elements
+    // TikTok-style Scrolling System
     const app = document.querySelector('.app-container');
     const screens = document.querySelectorAll('.screen');
     const footer = document.querySelector('footer');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
-    // Add footer to sections for unified scrolling
-    const sections = [...screens];
-    if (footer) sections.push(footer);
-    
-    // Detect if this is a mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // Apply smooth transitions only on mobile devices
-    if (isMobile) {
-        screens.forEach(screen => {
-            screen.classList.add('smooth-transition');
-        });
-    }
-    
-    // Current section index and scrolling state
-    let currentIndex = 0;
+    let currentSection = 0;
     let isScrolling = false;
+    let touchStartY = 0;
+    let touchEndY = 0;
+    let startTime = 0;
     
     // Disable native scrolling
     document.body.style.overflow = 'hidden';
     app.style.height = '100vh';
     app.style.overflow = 'hidden';
     
-    // Initialize - show first section
-    updateActiveSection();
+    // Set initial section
+    updateSection(0);
     
-    // Intersection Observer for section visibility
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.3
-    };
-    
-    const sectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
+    // Helper function to move to a specific section
+    function updateSection(index) {
+        if (index < 0) index = 0;
+        if (index > screens.length) index = screens.length;
+        
+        currentSection = index;
+        
+        // Special case for footer
+        if (index === screens.length) {
+            // Show footer
+            const lastScreenHeight = window.innerHeight;
+            const footerHeight = footer.offsetHeight;
+            
+            screens.forEach((screen, i) => {
+                if (i < screens.length - 1) {
+                    // Hide all but the last screen
+                    screen.style.transform = `translateY(-100%)`;
+                    screen.classList.remove('active');
+                } else {
+                    // Position the last screen to show footer
+                    screen.style.transform = `translateY(calc(-100% + ${lastScreenHeight - footerHeight}px))`;
+                    screen.classList.add('active');
+                }
+            });
+            
+            footer.style.transform = 'translateY(0)';
+            footer.style.visibility = 'visible';
+            footer.style.opacity = '1';
+            
+            // Update URL hash
+            history.replaceState(null, null, `#footer`);
+            
+            return;
+        }
+        
+        // Normal section display
+        screens.forEach((screen, i) => {
+            if (i === index) {
+                screen.style.transform = 'translateY(0)';
+                screen.classList.add('active');
                 
-                // Update URL hash without scroll jump
-                const id = entry.target.getAttribute('id');
+                // Add animation classes to children
+                const elements = screen.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
+                elements.forEach((el, index) => {
+                    el.style.transition = `transform 0.8s ease ${index * 0.08}s, opacity 0.8s ease ${index * 0.08}s`;
+                    el.classList.add('animate-in');
+                });
+                
+                // Update URL hash
+                const id = screen.getAttribute('id');
                 if (id) {
                     history.replaceState(null, null, `#${id}`);
                 }
+            } else if (i < index) {
+                // Screens above current
+                screen.style.transform = 'translateY(-100%)';
+                screen.classList.remove('active');
+            } else {
+                // Screens below current
+                screen.style.transform = 'translateY(100%)';
+                screen.classList.remove('active');
             }
         });
-    }, observerOptions);
+        
+        // Hide footer when not on last section
+        footer.style.transform = 'translateY(100%)';
+        footer.style.visibility = 'hidden';
+        footer.style.opacity = '0';
+    }
     
-    sections.forEach(section => {
-        sectionObserver.observe(section);
+    // Set up initial screen positions
+    screens.forEach((screen, i) => {
+        if (i !== 0) {
+            screen.style.transform = 'translateY(100%)';
+        }
         
-        // Add initial animations class
-        section.classList.add('fade-in');
-        
-        // Add animation classes to children
-        const elements = section.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
-        elements.forEach((el, index) => {
-            el.style.transitionDelay = `${index * 0.1}s`;
-            el.classList.add('animate-in');
-        });
+        // Make sure screens are set to fixed positioning for smooth transitions
+        screen.style.position = 'fixed';
+        screen.style.top = '0';
+        screen.style.left = '0';
+        screen.style.width = '100%';
+        screen.style.height = '100vh';
+        screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+        screen.style.zIndex = `${10 - i}`;
     });
     
-    // First screen particle animation
-    const animatedBg = document.querySelector('.animated-bg');
-    if (animatedBg) {
-        const addParticle = () => {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            // Random position, size and animation duration
-            const size = Math.random() * 5 + 2;
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            const duration = Math.random() * 10 + 10;
-            const delay = Math.random() * 5;
-            
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${posX}%`;
-            particle.style.top = `${posY}%`;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.animationDelay = `${delay}s`;
-            
-            animatedBg.appendChild(particle);
-            
-            // Remove particle after animation completes
-            setTimeout(() => {
-                if (particle && particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-            }, (duration + delay) * 1000);
-        };
-        
-        // Create initial particles
-        for (let i = 0; i < 15; i++) {
-            addParticle();
-        }
-        
-        // Add new particles periodically
-        setInterval(addParticle, 3000);
-    }
+    // Setup footer for the transition
+    footer.style.position = 'fixed';
+    footer.style.bottom = '0';
+    footer.style.left = '0';
+    footer.style.width = '100%';
+    footer.style.transform = 'translateY(100%)';
+    footer.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease';
+    footer.style.zIndex = '1';
+    footer.style.visibility = 'hidden';
     
-    // Custom scroll function
-    function scrollToSection(index) {
-        if (isScrolling || index < 0 || index >= sections.length) return;
-        
-        isScrolling = true;
-        currentIndex = index;
-        
-        // Remove active class from all sections
-        sections.forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Add active class to current section
-        sections[index].classList.add('active');
-        
-        // Update URL hash for screen sections
-        if (index < screens.length) {
-            const id = sections[index].getAttribute('id');
-            if (id) {
-                history.replaceState(null, null, `#${id}`);
-            }
-        }
-        
-        // Scroll the section into view
-        sections[index].scrollIntoView({ behavior: 'smooth' });
-        
-        // Update any UI elements based on current position
-        updateActiveSection();
-        
-        // Reset scrolling state after animation completes
-        setTimeout(() => {
-            isScrolling = false;
-        }, 800);
-    }
-    
-    // Update active section and UI elements
-    function updateActiveSection() {
-        // Hide scroll indicator on last screen
-        if (scrollIndicator) {
-            scrollIndicator.style.opacity = (currentIndex >= screens.length - 1) ? '0' : '1';
-        }
-        
-        // Add visible class to all sections
-        sections.forEach((section, index) => {
-            if (index === currentIndex) {
-                section.classList.add('active', 'visible');
-            } else {
-                section.classList.remove('active', 'visible');
-                if (Math.abs(index - currentIndex) > 1) {
-                    section.classList.remove('visible');
-                }
-            }
-        });
-    }
-    
-    // Scroll wheel event handler
-    document.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        
+    // Handle wheel events for scrolling
+    window.addEventListener('wheel', (e) => {
         if (isScrolling) return;
         
+        // Determine scroll direction
         const direction = Math.sign(e.deltaY);
-        const newIndex = currentIndex + direction;
         
-        if (newIndex >= 0 && newIndex < sections.length) {
-            scrollToSection(newIndex);
+        if (direction !== 0) {
+            isScrolling = true;
+            
+            const nextSection = currentSection + direction;
+            if (nextSection >= 0 && nextSection <= screens.length) {
+                updateSection(nextSection);
+            }
+            
+            // Debounce scrolling
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
         }
-    }, { passive: false });
+    }, { passive: true });
     
     // Touch events for mobile
-    let touchStartY = 0;
-    let touchEndY = 0;
-    let touchStartTime = 0;
-    
     document.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
-        touchStartTime = Date.now();
+        startTime = Date.now();
     }, { passive: true });
     
     document.addEventListener('touchmove', (e) => {
+        if (isScrolling) return;
         touchEndY = e.touches[0].clientY;
     }, { passive: true });
     
     document.addEventListener('touchend', () => {
+        if (isScrolling) return;
+        
         const touchDiff = touchStartY - touchEndY;
-        const touchTime = Date.now() - touchStartTime;
-        const velocity = Math.abs(touchDiff) / touchTime;
+        const timeDiff = Date.now() - startTime;
         
-        // Adaptive threshold based on velocity
-        const swipeThreshold = velocity > 0.5 ? 30 : 60;
-        
-        if (Math.abs(touchDiff) > swipeThreshold && !isScrolling) {
-            const direction = touchDiff > 0 ? 1 : -1;
-            const newIndex = currentIndex + direction;
+        // Detect swipe vs tap - velocity based
+        if (Math.abs(touchDiff) > 50 || (Math.abs(touchDiff) > 20 && timeDiff < 200)) {
+            isScrolling = true;
             
-            if (newIndex >= 0 && newIndex < sections.length) {
-                scrollToSection(newIndex);
+            // Determine direction (positive = down, negative = up)
+            const direction = touchDiff > 0 ? 1 : -1;
+            
+            const nextSection = currentSection + direction;
+            if (nextSection >= 0 && nextSection <= screens.length) {
+                updateSection(nextSection);
             }
+            
+            // Debounce scrolling
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
         }
-    });
+    }, { passive: true });
     
-    // Keyboard navigation
+    // Keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
         if (isScrolling) return;
         
-        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+        let direction = 0;
+        
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
+            direction = 1;
             e.preventDefault();
-            const newIndex = currentIndex + 1;
-            if (newIndex < sections.length) {
-                scrollToSection(newIndex);
-            }
         } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            direction = -1;
             e.preventDefault();
-            const newIndex = currentIndex - 1;
-            if (newIndex >= 0) {
-                scrollToSection(newIndex);
+        }
+        
+        if (direction !== 0) {
+            isScrolling = true;
+            
+            const nextSection = currentSection + direction;
+            if (nextSection >= 0 && nextSection <= screens.length) {
+                updateSection(nextSection);
             }
-        } else if (e.key === 'Home') {
-            e.preventDefault();
-            scrollToSection(0);
-        } else if (e.key === 'End') {
-            e.preventDefault();
-            scrollToSection(sections.length - 1);
+            
+            // Debounce scrolling
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
         }
     });
     
     // Scroll indicator click
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', () => {
-            scrollToSection(currentIndex + 1);
+            if (isScrolling) return;
+            
+            isScrolling = true;
+            updateSection(currentSection + 1);
+            
+            // Debounce scrolling
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
         });
     }
     
     // Handle CTA button clicks
     const ctaButtons = document.querySelectorAll('.cta-button');
     const ctaSection = document.getElementById('cta');
+    const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
     
-    if (ctaSection) {
-        const ctaIndex = [...sections].findIndex(section => section.id === 'cta');
-        
-        ctaButtons.forEach(button => {
-            if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
-                button.addEventListener('click', () => {
-                    scrollToSection(ctaIndex);
-                });
-            }
+    ctaButtons.forEach(button => {
+        if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
+            button.addEventListener('click', () => {
+                if (isScrolling) return;
+                
+                isScrolling = true;
+                updateSection(ctaSectionIndex);
+                
+                // Debounce scrolling
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 800);
+            });
+        }
+    });
+    
+    // "About Our Mission" link scrolls to mission section
+    const missionLink = document.querySelector('.footer-links a:nth-child(4)');
+    const missionSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'mission');
+    
+    if (missionLink && missionSectionIndex !== -1) {
+        missionLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (isScrolling) return;
+            
+            isScrolling = true;
+            updateSection(missionSectionIndex);
+            
+            // Debounce scrolling
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
         });
     }
     
@@ -282,27 +285,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update button text
             button.textContent = 'Selected';
             
-            // Scroll to signup section
-            if (ctaSection) {
-                const ctaIndex = [...sections].findIndex(section => section.id === 'cta');
+            // Scroll to signup section after a delay
+            setTimeout(() => {
+                if (isScrolling) return;
+                
+                isScrolling = true;
+                updateSection(ctaSectionIndex);
+                
+                // Debounce scrolling
                 setTimeout(() => {
-                    scrollToSection(ctaIndex);
-                }, 500);
-            }
+                    isScrolling = false;
+                }, 800);
+            }, 500);
         });
     });
-    
-    // "About Our Mission" link scrolls to mission section
-    const missionLink = document.querySelector('.footer-links a:nth-child(4)');
-    const missionSection = document.getElementById('mission');
-    
-    if (missionLink && missionSection) {
-        missionLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const missionIndex = [...sections].findIndex(section => section.id === 'mission');
-            scrollToSection(missionIndex);
-        });
-    }
     
     // Horizontal scroll for personas
     const personasContainer = document.querySelector('.personas-scroll');
@@ -352,6 +348,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // First screen particle animation
+    const animatedBg = document.querySelector('.animated-bg');
+    if (animatedBg) {
+        const addParticle = () => {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random position, size and animation duration
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const duration = Math.random() * 10 + 10;
+            const delay = Math.random() * 5;
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.top = `${posY}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            
+            animatedBg.appendChild(particle);
+            
+            // Remove particle after animation completes
+            setTimeout(() => {
+                if (particle && particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, (duration + delay) * 1000);
+        };
+        
+        // Create initial particles
+        for (let i = 0; i < 15; i++) {
+            addParticle();
+        }
+        
+        // Add new particles periodically
+        setInterval(addParticle, 3000);
+    }
+    
     // Phone number input validation and formatting
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
@@ -394,8 +430,18 @@ document.addEventListener('DOMContentLoaded', () => {
             // If no persona was selected, show message
             if (!selectedPersona) {
                 alert('Please select a companion first');
-                const personaIndex = [...sections].findIndex(section => section.id === 'personas');
-                scrollToSection(personaIndex);
+                
+                // Scroll to personas section
+                const personasSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'personas');
+                if (personasSectionIndex !== -1) {
+                    isScrolling = true;
+                    updateSection(personasSectionIndex);
+                    
+                    // Debounce scrolling
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 800);
+                }
                 return;
             }
             
@@ -426,13 +472,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add CSS classes for animations
     const style = document.createElement('style');
     style.textContent = `
-        .fade-in {
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        
-        .fade-in.active {
-            opacity: 1;
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg);
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
         }
         
         .animate-in {
@@ -452,23 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
             border-radius: 50%;
             opacity: 0;
             animation: float linear forwards;
-        }
-        
-        @keyframes float {
-            0% {
-                opacity: 0;
-                transform: translateY(0) rotate(0deg);
-            }
-            10% {
-                opacity: 0.5;
-            }
-            90% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-100px) rotate(360deg);
-            }
         }
         
         .persona.selected {
@@ -496,39 +533,79 @@ document.addEventListener('DOMContentLoaded', () => {
         .success-message h3 {
             margin-bottom: 1rem;
         }
-
-        /* Custom scroll styles */
-        .app-container {
-            position: relative;
-            height: 100vh;
-            overflow: hidden;
+        
+        /* Page dots navigation */
+        .section-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-
-        main.snap-container {
-            height: 100%;
-            overflow: hidden;
-            position: relative;
+        
+        .section-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-
-        .screen, footer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.8s ease, visibility 0.8s;
-        }
-
-        .screen.visible, .screen.active,
-        footer.visible, footer.active {
-            visibility: visible;
-            opacity: 1;
+        
+        .section-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.3);
         }
     `;
     document.head.appendChild(style);
     
-    // Initial activation
-    sections[0].classList.add('active', 'visible');
+    // Add section navigation dots
+    const sectionsNav = document.createElement('div');
+    sectionsNav.className = 'section-dots';
+    
+    // Create dots for each section plus footer
+    for (let i = 0; i <= screens.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = i === 0 ? 'section-dot active' : 'section-dot';
+        
+        // Add click event for navigation
+        dot.addEventListener('click', () => {
+            if (isScrolling) return;
+            
+            isScrolling = true;
+            updateSection(i);
+            
+            // Debounce scrolling
+            setTimeout(() => {
+                isScrolling = false;
+            }, 800);
+        });
+        
+        sectionsNav.appendChild(dot);
+    }
+    
+    document.body.appendChild(sectionsNav);
+    
+    // Update dots when section changes
+    function updateDots() {
+        const dots = document.querySelectorAll('.section-dot');
+        
+        dots.forEach((dot, i) => {
+            if (i === currentSection) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+    
+    // Add dot updating to the section change
+    const originalUpdateSection = updateSection;
+    updateSection = function(index) {
+        originalUpdateSection(index);
+        updateDots();
+    };
 }); 
