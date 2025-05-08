@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat | Tease AI Adult Companion</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="chat-header">
+            <div class="header-content">
+                <a href="/dashboard.html" class="back-link"><i class="fas fa-chevron-left"></i></a>
+                <div class="persona-header">
+                    <div class="persona-mini-avatar" id="persona-avatar"></div>
+                    <div class="persona-info">
+                        <h3 id="persona-name">Your Companion</h3>
+                        <span id="persona-status">Online</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="settings-btn" class="icon-button"><i class="fas fa-cog"></i></button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="chat-container">
+            <div class="messages-container" id="messages">
+                <!-- Messages will be dynamically added here by JavaScript -->
+                <div class="message system">
+                    <div class="message-content">
+                        <p>Your conversation with your AI companion is private and secure.</p>
+                    </div>
+                </div>
+                
+                <div class="message ai">
+                    <div class="message-avatar" id="ai-avatar"></div>
+                    <div class="message-content">
+                        <p>Hello there. I'm so glad to finally meet you. How are you feeling today?</p>
+                        <span class="message-time">Just now</span>
+                    </div>
+                </div>
+                
+                <!-- Typing indicator -->
+                <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                    <div class="dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-container">
+                <form id="message-form">
+                    <div class="message-input-wrapper">
+                        <textarea 
+                            id="message-input" 
+                            placeholder="Type your message..." 
+                            rows="1"
+                            autocomplete="off"
+                        ></textarea>
+                        <button type="button" id="attachment-btn" class="icon-button">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                    </div>
+                    <button type="submit" id="send-btn" class="icon-button send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
+        
+        <!-- Settings Modal -->
+        <div class="modal" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Chat Settings</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <h4>Chat Experience</h4>
+                        <div class="setting-item">
+                            <label for="explicit-content">Explicit Content</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="explicit-content" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <label for="response-length">Response Length</label>
+                            <select id="response-length">
+                                <option value="short">Short</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="long">Long</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h4>Companion Settings</h4>
+                        <div class="setting-item">
+                            <label for="ai-memory">Memory</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="ai-memory" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                            <p class="setting-description">Your companion remembers your conversations</p>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group danger-zone">
+                        <h4>Danger Zone</h4>
+                        <button id="clear-chat-history" class="danger-button">Clear Chat History</button>
+                        <p class="setting-description">This will permanently delete all your chat messages</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-settings" class="cta-button">Save Changes</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Overlay for modals -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/chat.js"></script>
+</body>
+</html> 

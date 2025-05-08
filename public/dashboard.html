@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Tease AI Adult Companion</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo">tease</div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#account" class="active">Account</a></li>
+                        <li><a href="#subscription">Subscription</a></li>
+                        <li><a href="#persona">My Companion</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button id="logout-btn" class="text-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="dashboard-container">
+            <section id="account" class="dashboard-section active">
+                <div class="dashboard-card">
+                    <h2>Account <span class="highlight">Details</span></h2>
+                    
+                    <div class="user-details">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3 id="user-name">Loading...</h3>
+                            <p id="user-phone">Loading...</p>
+                        </div>
+                    </div>
+                    
+                    <form id="update-account-form" class="dashboard-form">
+                        <div class="form-group">
+                            <label for="update-name">Name</label>
+                            <input type="text" id="update-name" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="update-email">Email (Optional)</label>
+                            <input type="email" id="update-email" placeholder="Your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="update-password">New Password (leave blank to keep current)</label>
+                            <input type="password" id="update-password" placeholder="New password">
+                        </div>
+                        <div class="form-message" id="account-message"></div>
+                        <button type="submit" class="cta-button">Update Account</button>
+                    </form>
+                </div>
+            </section>
+            
+            <section id="subscription" class="dashboard-section">
+                <div class="dashboard-card">
+                    <h2>Subscription <span class="highlight">Status</span></h2>
+                    
+                    <div id="subscription-status" class="subscription-details">
+                        <div class="subscription-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading subscription details...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="active-subscription" class="subscription-active" style="display: none;">
+                        <div class="subscription-header">
+                            <div class="subscription-badge">
+                                <i class="fas fa-check-circle"></i> Active
+                            </div>
+                            <div class="subscription-actions">
+                                <button id="cancel-subscription" class="text-button warning"><i class="fas fa-times-circle"></i> Cancel Subscription</button>
+                            </div>
+                        </div>
+                        
+                        <div class="subscription-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Plan:</span>
+                                <span id="plan-name" class="detail-value">Premium</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Billing Cycle:</span>
+                                <span id="billing-cycle" class="detail-value">Monthly</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Next Billing Date:</span>
+                                <span id="next-billing" class="detail-value">June 15, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Amount:</span>
+                                <span id="billing-amount" class="detail-value">$19.99</span>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method">
+                            <h4>Payment Method</h4>
+                            <div class="card-info">
+                                <i class="fab fa-cc-visa"></i>
+                                <span id="card-last4">••••</span>
+                                <button id="update-payment-method" class="text-button small"><i class="fas fa-pen"></i> Update</button>
+                            </div>
+                        </div>
+                        
+                        <div class="billing-history">
+                            <h4>Billing History</h4>
+                            <div id="billing-history-list">
+                                <!-- Dynamically filled from JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="inactive-subscription" class="subscription-inactive" style="display: none;">
+                        <div class="subscription-header">
+                            <div class="subscription-badge inactive">
+                                <i class="fas fa-times-circle"></i> Inactive
+                            </div>
+                        </div>
+                        
+                        <p>You don't have an active subscription. Subscribe now to access premium features and continue your intimate journey with your AI companion.</p>
+                        
+                        <div class="subscription-plans">
+                            <div class="plan-card">
+                                <div class="plan-header">
+                                    <h3>Monthly</h3>
+                                    <div class="plan-price">$19.99<span>/month</span></div>
+                                </div>
+                                <ul class="plan-features">
+                                    <li><i class="fas fa-check"></i> Unlimited conversations</li>
+                                    <li><i class="fas fa-check"></i> Personalized experiences</li>
+                                    <li><i class="fas fa-check"></i> Advanced fantasy scenarios</li>
+                                    <li><i class="fas fa-check"></i> Cancel anytime</li>
+                                </ul>
+                                <button class="cta-button subscribe-btn" data-plan="monthly">Subscribe</button>
+                            </div>
+                            
+                            <div class="plan-card featured">
+                                <div class="plan-tag">Best Value</div>
+                                <div class="plan-header">
+                                    <h3>Annual</h3>
+                                    <div class="plan-price">$149.99<span>/year</span></div>
+                                    <div class="plan-saving">Save 38%</div>
+                                </div>
+                                <ul class="plan-features">
+                                    <li><i class="fas fa-check"></i> All monthly features</li>
+                                    <li><i class="fas fa-check"></i> Priority support</li>
+                                    <li><i class="fas fa-check"></i> Early access to new personas</li>
+                                    <li><i class="fas fa-check"></i> Personal fantasy customization</li>
+                                </ul>
+                                <button class="cta-button subscribe-btn" data-plan="annual">Subscribe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="persona" class="dashboard-section">
+                <div class="dashboard-card">
+                    <h2>My <span class="highlight">Companion</span></h2>
+                    
+                    <div id="current-persona" class="current-persona">
+                        <div class="persona-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading your companion...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="persona-details" class="persona-details" style="display: none;">
+                        <div class="persona-header">
+                            <div class="persona-image" id="persona-image">
+                                <!-- Persona image will be set via CSS background in JS -->
+                            </div>
+                            <div class="persona-info">
+                                <h3 id="persona-name">Aria</h3>
+                                <span id="persona-style" class="persona-tag">The Passionate</span>
+                                <p id="persona-description">Intense, seductive, and emotionally expressive. Aria creates immersive experiences through intimate fantasy fulfillment.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="persona-actions">
+                            <a href="/chat.html" class="cta-button"><i class="fas fa-comment-alt"></i> Start Conversation</a>
+                            <button id="change-persona" class="outline-button"><i class="fas fa-exchange-alt"></i> Change Companion</button>
+                        </div>
+                    </div>
+                    
+                    <div id="select-persona" class="persona-selection" style="display: none;">
+                        <h3>Choose a New Companion</h3>
+                        <p>Select from our collection of AI companions, each with a unique personality and style.</p>
+                        
+                        <div class="personas-grid">
+                            <div class="persona-card" data-persona="aria" data-style="passionate">
+                                <div class="persona-card-image"></div>
+                                <h4>Aria</h4>
+                                <span class="persona-tag">The Passionate</span>
+                                <p>Intense, seductive, and emotionally expressive.</p>
+                                <button class="select-persona-btn">Select</button>
+                            </div>
+                            
+                            <div class="persona-card" data-persona="zara" data-style="playful">
+                                <div class="persona-card-image"></div>
+                                <h4>Zara</h4>
+                                <span class="persona-tag">The Playful</span>
+                                <p>Adventurous, flirtatious, and spontaneous.</p>
+                                <button class="select-persona-btn">Select</button>
+                            </div>
+                            
+                            <div class="persona-card" data-persona="demi" data-style="dominant">
+                                <div class="persona-card-image"></div>
+                                <h4>Demi</h4>
+                                <span class="persona-tag">The Dominant</span>
+                                <p>Confident, assertive, and commanding.</p>
+                                <button class="select-persona-btn">Select</button>
+                            </div>
+                            
+                            <div class="persona-card" data-persona="luna" data-style="sensual">
+                                <div class="persona-card-image"></div>
+                                <h4>Luna</h4>
+                                <span class="persona-tag">The Sensual</span>
+                                <p>Intuitive, seductive, and attentive.</p>
+                                <button class="select-persona-btn">Select</button>
+                            </div>
+                            
+                            <div class="persona-card" data-persona="thea" data-style="intellectual">
+                                <div class="persona-card-image"></div>
+                                <h4>Thea</h4>
+                                <span class="persona-tag">The Intellectual</span>
+                                <p>Thoughtful, witty, and articulate.</p>
+                                <button class="select-persona-btn">Select</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="logo">tease</div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                    <a href="#">About Our Mission</a>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+                <div class="copyright">
+                    &copy; 2025 Tease AI. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Stripe.js for payment processing -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- Dashboard Scripts -->
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/dashboard.js"></script>
+</body>
+</html> 

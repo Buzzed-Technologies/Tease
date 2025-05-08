@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Plan | Tease AI Adult Companion</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .subscription-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 5%;
+        }
+        
+        .logo-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .logo-image {
+            max-width: 150px;
+        }
+        
+        .subscription-content {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .subscription-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .subscription-header h1 {
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .subscription-description {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+        
+        .subscription-form {
+            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.7), rgba(15, 15, 15, 0.7));
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        
+        .plans-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .plan-option {
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(15, 15, 15, 0.8));
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-option:hover {
+            transform: translateY(-5px);
+            border-color: rgba(128, 0, 32, 0.4);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .plan-option.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(128, 0, 32, 0.3);
+        }
+        
+        .plan-option.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--primary);
+            background-color: rgba(20, 20, 20, 0.8);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            right: 2rem;
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .plan-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: block;
+            color: var(--light);
+        }
+        
+        .price-period {
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+        
+        .plan-features {
+            margin: 1.5rem 0;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .plan-features li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .plan-features i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+        
+        .payment-details {
+            margin-top: 3rem;
+            border-top: 1px solid rgba(128, 0, 32, 0.2);
+            padding-top: 2rem;
+        }
+        
+        .payment-details h3 {
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        .form-row {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        #card-element {
+            background-color: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        #card-element.focus {
+            border-color: var(--primary);
+        }
+        
+        #card-errors {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .subscription-action {
+            margin-top: 2rem;
+        }
+        
+        .subscription-confirmation {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .confirmation-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .confirmation-message {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .confirmation-description {
+            color: var(--light-gray);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+        
+        .legal-info {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        #payment-status {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        #payment-status.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="subscription-container">
+        <div class="logo-container">
+            <a href="/">
+                <img src="/images/logo.png" alt="Tease" class="logo-image">
+            </a>
+        </div>
+        
+        <div class="subscription-content">
+            <div id="subscription-form">
+                <div class="subscription-header">
+                    <h1>Choose Your Plan</h1>
+                    <p class="subscription-description">Select the subscription that best fits your needs and unlock the full Tease experience.</p>
+                </div>
+                
+                <form class="subscription-form" id="payment-form">
+                    <input type="hidden" id="selected-plan" name="plan" value="monthly">
+                    
+                    <div class="plans-container">
+                        <div class="plan-option" data-plan="monthly">
+                            <h3 class="plan-name">Monthly</h3>
+                            <span class="plan-price">$29.99<span class="price-period">/month</span></span>
+                            <p>Perfect for exploring what Tease has to offer.</p>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> Unlimited conversations</li>
+                                <li><i class="fas fa-check"></i> Access to all personas</li>
+                                <li><i class="fas fa-check"></i> Basic customization</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="plan-option" data-plan="quarterly">
+                            <div class="popular-badge">Popular</div>
+                            <h3 class="plan-name">Quarterly</h3>
+                            <span class="plan-price">$69.99<span class="price-period">/3 months</span></span>
+                            <p>Save 22% with our most popular plan.</p>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> Unlimited conversations</li>
+                                <li><i class="fas fa-check"></i> Access to all personas</li>
+                                <li><i class="fas fa-check"></i> Advanced customization</li>
+                                <li><i class="fas fa-check"></i> Priority support</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="plan-option" data-plan="annual">
+                            <h3 class="plan-name">Annual</h3>
+                            <span class="plan-price">$199.99<span class="price-period">/year</span></span>
+                            <p>Best value with 44% savings for a full year.</p>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> Unlimited conversations</li>
+                                <li><i class="fas fa-check"></i> Access to all personas</li>
+                                <li><i class="fas fa-check"></i> Premium customization</li>
+                                <li><i class="fas fa-check"></i> VIP support</li>
+                                <li><i class="fas fa-check"></i> Early access to new features</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-details">
+                        <h3>Payment Information</h3>
+                        
+                        <div class="form-section">
+                            <div class="form-row">
+                                <label for="card-element" class="form-label">Credit or Debit Card</label>
+                                <div id="card-element"></div>
+                                <div id="card-errors" role="alert"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="subscription-action">
+                            <button type="submit" class="btn btn-primary btn-block" id="subscribe-button">Subscribe for $29.99/month</button>
+                            <div id="payment-status"></div>
+                        </div>
+                        
+                        <div class="legal-info">
+                            <p>By subscribing, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>. You can cancel your subscription at any time from your account settings.</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="subscription-confirmation" class="subscription-confirmation hidden">
+                <div class="confirmation-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="confirmation-message" id="confirmation-message">Thank you! Your subscription is now active.</h2>
+                <p class="confirmation-description">You now have full access to all Tease features. Your companion is waiting to start your personalized experience.</p>
+                <button class="btn btn-primary" id="continue-to-chat">Continue to Chat</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/subscription.js"></script>
+</body>
+</html> 

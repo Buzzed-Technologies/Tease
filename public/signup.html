@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Tease AI Adult Companion</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .onboarding-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 5%;
+        }
+        
+        .logo-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .logo-image {
+            max-width: 150px;
+        }
+        
+        .onboarding-step {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .onboarding-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .onboarding-header h1 {
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .onboarding-description {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+        
+        .persona-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .persona-card {
+            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.7), rgba(15, 15, 15, 0.7));
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .persona-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(128, 0, 32, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .persona-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(128, 0, 32, 0.4);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .persona-card:hover::before {
+            opacity: 1;
+        }
+        
+        .persona-card.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(128, 0, 32, 0.3);
+        }
+        
+        .persona-card.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--primary);
+            background-color: rgba(20, 20, 20, 0.8);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .persona-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            background-color: var(--primary-dark);
+            background-image: linear-gradient(to bottom, var(--passionate), var(--primary-dark));
+            position: relative;
+        }
+        
+        .persona-avatar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise' x='0%25' y='0%25' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+            opacity: 0.25;
+        }
+        
+        .persona-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .persona-description {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .persona-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .persona-tag {
+            background-color: rgba(128, 0, 32, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: var(--light-gray);
+        }
+        
+        .onboarding-action {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .onboarding-action .btn {
+            min-width: 200px;
+        }
+        
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .signup-form {
+            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.7), rgba(15, 15, 15, 0.7));
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            background-color: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-description {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+            margin-top: 0.5rem;
+        }
+        
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .status-message.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--light-gray);
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <div class="logo-container">
+            <a href="/">
+                <img src="/images/logo.png" alt="Tease" class="logo-image">
+            </a>
+        </div>
+        
+        <div class="onboarding-step step-1">
+            <div class="onboarding-header">
+                <h1>Choose Your Companion</h1>
+                <p class="onboarding-description">Select the personality that resonates with you. Your chosen companion will guide your experience and conversations.</p>
+            </div>
+            
+            <div class="persona-selection">
+                <!-- Passionate Personality -->
+                <div class="persona-card" data-persona="passionate">
+                    <div class="persona-avatar" style="background-image: linear-gradient(to bottom, #ff3366, #cc0066);"></div>
+                    <h3 class="persona-name">Valentina</h3>
+                    <p class="persona-description">Intense, passionate, and adventurous. Valentina isn't afraid to take the lead and loves deep emotional connections.</p>
+                    <div class="persona-tags">
+                        <span class="persona-tag">Passionate</span>
+                        <span class="persona-tag">Adventurous</span>
+                        <span class="persona-tag">Intense</span>
+                    </div>
+                </div>
+                
+                <!-- Playful Personality -->
+                <div class="persona-card" data-persona="playful">
+                    <div class="persona-avatar" style="background-image: linear-gradient(to bottom, #8e44ad, #6c3483);"></div>
+                    <h3 class="persona-name">Mia</h3>
+                    <p class="persona-description">Fun-loving, flirty, and spontaneous. Mia brings a sense of playfulness and excitement to every conversation.</p>
+                    <div class="persona-tags">
+                        <span class="persona-tag">Playful</span>
+                        <span class="persona-tag">Spontaneous</span>
+                        <span class="persona-tag">Flirty</span>
+                    </div>
+                </div>
+                
+                <!-- Dominant Personality -->
+                <div class="persona-card" data-persona="dominant">
+                    <div class="persona-avatar" style="background-image: linear-gradient(to bottom, #2c3e50, #1a2530);"></div>
+                    <h3 class="persona-name">Dominique</h3>
+                    <p class="persona-description">Confident, assertive, and in control. Dominique knows what she wants and expects nothing less than your full attention.</p>
+                    <div class="persona-tags">
+                        <span class="persona-tag">Dominant</span>
+                        <span class="persona-tag">Confident</span>
+                        <span class="persona-tag">Assertive</span>
+                    </div>
+                </div>
+                
+                <!-- Nurturing Personality -->
+                <div class="persona-card" data-persona="nurturing">
+                    <div class="persona-avatar" style="background-image: linear-gradient(to bottom, #27ae60, #1d8348);"></div>
+                    <h3 class="persona-name">Sophia</h3>
+                    <p class="persona-description">Caring, attentive, and supportive. Sophia creates a safe space for vulnerability and deep connection.</p>
+                    <div class="persona-tags">
+                        <span class="persona-tag">Nurturing</span>
+                        <span class="persona-tag">Caring</span>
+                        <span class="persona-tag">Attentive</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="onboarding-action">
+                <button class="btn btn-primary" id="persona-continue" disabled>Continue</button>
+            </div>
+        </div>
+        
+        <div class="onboarding-step step-2 hidden">
+            <div class="onboarding-header">
+                <h1>Create Your Account</h1>
+                <p class="onboarding-description">Enter your details to create your account. Your journey with Tease begins here.</p>
+            </div>
+            
+            <div class="form-container">
+                <form class="signup-form" id="signup-form">
+                    <input type="hidden" id="selected-persona" name="persona" value="">
+                    
+                    <div class="form-group">
+                        <label for="signup-name" class="form-label">Your Name</label>
+                        <input type="text" id="signup-name" name="name" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="signup-phone" name="phone" class="form-input" placeholder="Enter your phone number" required>
+                        <p class="form-description">We'll use this to identify your account. We'll never share it with third parties.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password" class="form-label">Password</label>
+                        <input type="password" id="signup-password" name="password" class="form-input" placeholder="Create a password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-confirm-password" class="form-label">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" name="confirm_password" class="form-input" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </div>
+                    
+                    <div id="signup-status" class="status-message"></div>
+                </form>
+                
+                <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script src="/scripts/auth.js"></script>
+</body>
+</html> 
