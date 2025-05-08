@@ -270,16 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let startY = 0;
     let startScrollTop = 0;
     let scrollEndTimer;
-    let lastY = 0;
-    let scrollVelocity = 0;
-    let lastMoveTime = 0;
     
     snapContainer.addEventListener('touchstart', (e) => {
         isScrolling = true;
-        startY = lastY = e.touches[0].clientY;
+        startY = e.touches[0].clientY;
         startScrollTop = snapContainer.scrollTop;
-        scrollVelocity = 0;
-        lastMoveTime = performance.now();
         
         cancelAnimationFrame(scrollEndTimer);
     }, { passive: true });
@@ -288,16 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isScrolling) return;
         
         const y = e.touches[0].clientY;
-        const currentTime = performance.now();
-        const deltaTime = currentTime - lastMoveTime;
-        
-        // Calculate velocity (pixels per millisecond)
-        if (deltaTime > 0) {
-            scrollVelocity = (lastY - y) / deltaTime;
-        }
-        
-        // Amplify the movement (increase sensitivity)
-        const deltaY = (startY - y) * 2.5;
+        const deltaY = startY - y;
         
         // Add resistance at the top and bottom of the container
         if (
@@ -308,9 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             snapContainer.scrollTop = startScrollTop + deltaY;
         }
-        
-        lastY = y;
-        lastMoveTime = currentTime;
     }, { passive: true });
     
     snapContainer.addEventListener('touchend', () => {
@@ -319,33 +302,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const screenHeight = window.innerHeight;
         const currentScroll = snapContainer.scrollTop;
-        const currentScreen = Math.floor(currentScroll / screenHeight);
         const mod = currentScroll % screenHeight;
         let targetScroll;
         
-        // Use velocity to determine scroll direction more naturally
-        const velocityThreshold = 0.5; // pixels per millisecond
-        
-        if (Math.abs(scrollVelocity) > velocityThreshold) {
-            // If swiping with significant velocity, go in that direction
-            if (scrollVelocity > 0) {
-                targetScroll = (currentScreen + 1) * screenHeight;
-            } else {
-                targetScroll = currentScreen * screenHeight;
-            }
+        if (mod > screenHeight / 2) {
+            targetScroll = currentScroll + (screenHeight - mod);
         } else {
-            // Otherwise use position threshold (reduced to 30% for easier scrolling)
-            if (mod > screenHeight * 0.3) {
-                targetScroll = (currentScreen + 1) * screenHeight;
-            } else {
-                targetScroll = currentScreen * screenHeight;
-            }
+            targetScroll = currentScroll - mod;
         }
         
         // Smooth animation to snap point
         const startTime = performance.now();
         const startScroll = snapContainer.scrollTop;
-        const distance = targetScroll - startScroll;
         const duration = 300;
         
         function animateScroll(currentTime) {
@@ -353,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const progress = Math.min(elapsed / duration, 1);
             const ease = easeOutCubic(progress);
             
-            snapContainer.scrollTop = startScroll + distance * ease;
+            snapContainer.scrollTop = startScroll + (targetScroll - startScroll) * ease;
             
             if (progress < 1) {
                 scrollEndTimer = requestAnimationFrame(animateScroll);

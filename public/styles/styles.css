@@ -26,6 +26,8 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    /* Prevent scroll chaining on macOS */
+    overscroll-behavior: none;
 }
 
 body {
@@ -34,6 +36,8 @@ body {
     color: var(--light);
     overflow-x: hidden;
     line-height: 1.6;
+    /* Prevent scroll chaining on other browsers */
+    overscroll-behavior: none;
 }
 
 h1, h2, h3 {
@@ -164,8 +168,11 @@ a:hover {
 /* Snap Scroll Container */
 .snap-container {
     height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    /* Remove mandatory snap and use proximity instead for a smoother feel */
+    scroll-snap-type: y proximity;
 }
 
 .screen {
@@ -176,6 +183,8 @@ a:hover {
     justify-content: center;
     position: relative;
     padding: 0 10%;
+    /* Add transition for smoother movement */
+    transition: transform 0.5s ease-out;
 }
 
 .content {
@@ -646,9 +655,10 @@ a:hover {
 }
 
 /* Footer */
-#footer {
+footer {
     background-color: var(--darker);
-    justify-content: center;
+    padding: 3rem 10%;
+    margin-top: auto;
     border-top: 1px solid rgba(128, 0, 32, 0.5);
 }
 
@@ -659,7 +669,6 @@ a:hover {
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0;
 }
 
 .footer-links {

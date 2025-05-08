@@ -265,76 +265,119 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Smooth inertia scrolling
+    // Enhanced scrolling - more responsive with less effort
+    let lastScrollTime = 0;
+    let scrollTimeout;
     let isScrolling = false;
-    let startY = 0;
-    let startScrollTop = 0;
-    let scrollEndTimer;
+    let currentScreenIndex = 0;
+    
+    // Function to navigate to a specific screen
+    function navigateToScreen(index) {
+        if (index < 0) index = 0;
+        if (index >= screens.length) index = screens.length - 1;
+        
+        currentScreenIndex = index;
+        screens[index].scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Handle wheel events for more responsive scrolling
+    snapContainer.addEventListener('wheel', (e) => {
+        // Prevent default only during our controlled scrolling
+        if (isScrolling) {
+            e.preventDefault();
+            return;
+        }
+        
+        const now = Date.now();
+        // Throttle scroll events to prevent rapid firing
+        if (now - lastScrollTime < 100) return;
+        lastScrollTime = now;
+        
+        // Determine scroll direction
+        const direction = e.deltaY > 0 ? 1 : -1;
+        
+        // Find currently visible screen
+        let visibleScreenIndex = 0;
+        screens.forEach((screen, index) => {
+            const rect = screen.getBoundingClientRect();
+            // If more than half the screen is visible, consider it the current one
+            if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                visibleScreenIndex = index;
+            }
+        });
+        
+        // Prevent scrolling if we're already at the boundary
+        if (direction > 0 && visibleScreenIndex === screens.length - 1) return;
+        if (direction < 0 && visibleScreenIndex === 0) return;
+        
+        // Set scrolling state and navigate
+        isScrolling = true;
+        e.preventDefault();
+        
+        // Use a small threshold to make scrolling more responsive
+        const scrollThreshold = 5; // Much lower threshold for ultra-responsive scrolling
+        
+        // Only navigate if the scroll is significant enough
+        if (Math.abs(e.deltaY) > scrollThreshold) {
+            navigateToScreen(visibleScreenIndex + direction);
+        }
+        
+        // Reset scrolling state after animation completes
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, 700); // Slightly longer than the CSS transition
+    }, { passive: false });
+    
+    // Touch events for mobile with enhanced sensitivity
+    let touchStartY = 0;
+    let touchEndY = 0;
     
     snapContainer.addEventListener('touchstart', (e) => {
-        isScrolling = true;
-        startY = e.touches[0].clientY;
-        startScrollTop = snapContainer.scrollTop;
-        
-        cancelAnimationFrame(scrollEndTimer);
+        touchStartY = e.touches[0].clientY;
     }, { passive: true });
     
     snapContainer.addEventListener('touchmove', (e) => {
-        if (!isScrolling) return;
-        
-        const y = e.touches[0].clientY;
-        const deltaY = startY - y;
-        
-        // Add resistance at the top and bottom of the container
-        if (
-            (snapContainer.scrollTop <= 0 && deltaY < 0) ||
-            (snapContainer.scrollTop + snapContainer.clientHeight >= snapContainer.scrollHeight && deltaY > 0)
-        ) {
-            snapContainer.scrollTop = startScrollTop + deltaY * 0.3;
-        } else {
-            snapContainer.scrollTop = startScrollTop + deltaY;
-        }
+        // Store current position while moving
+        touchEndY = e.touches[0].clientY;
     }, { passive: true });
     
     snapContainer.addEventListener('touchend', () => {
-        if (!isScrolling) return;
-        isScrolling = false;
+        // Calculate the distance swiped
+        const touchDiff = touchStartY - touchEndY;
         
-        const screenHeight = window.innerHeight;
-        const currentScroll = snapContainer.scrollTop;
-        const mod = currentScroll % screenHeight;
-        let targetScroll;
+        // Use a lower threshold for touch to make it more responsive
+        const swipeThreshold = 10; // Very low threshold - minimal swipe required
         
-        if (mod > screenHeight / 2) {
-            targetScroll = currentScroll + (screenHeight - mod);
-        } else {
-            targetScroll = currentScroll - mod;
-        }
-        
-        // Smooth animation to snap point
-        const startTime = performance.now();
-        const startScroll = snapContainer.scrollTop;
-        const duration = 300;
-        
-        function animateScroll(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = easeOutCubic(progress);
+        if (Math.abs(touchDiff) > swipeThreshold) {
+            // Find current visible screen
+            let visibleScreenIndex = 0;
+            screens.forEach((screen, index) => {
+                const rect = screen.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                    visibleScreenIndex = index;
+                }
+            });
             
-            snapContainer.scrollTop = startScroll + (targetScroll - startScroll) * ease;
-            
-            if (progress < 1) {
-                scrollEndTimer = requestAnimationFrame(animateScroll);
+            // Navigate based on swipe direction
+            if (touchDiff > 0) { // Swipe up, go to next
+                navigateToScreen(visibleScreenIndex + 1);
+            } else { // Swipe down, go to previous
+                navigateToScreen(visibleScreenIndex - 1);
             }
         }
-        
-        scrollEndTimer = requestAnimationFrame(animateScroll);
     });
     
-    // Easing function
-    function easeOutCubic(x) {
-        return 1 - Math.pow(1 - x, 3);
-    }
+    // Add keyboard navigation for accessibility
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+            navigateToScreen(currentScreenIndex + 1);
+            e.preventDefault();
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            navigateToScreen(currentScreenIndex - 1);
+            e.preventDefault();
+        }
+    });
     
     // Add CSS classes for animations
     const style = document.createElement('style');
@@ -415,5 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make first screen active on load
     if (screens.length > 0) {
         screens[0].classList.add('active');
+        currentScreenIndex = 0;
     }
 }); 
