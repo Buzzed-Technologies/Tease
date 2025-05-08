@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Detect if this is a mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
+    // Force initial scroll to top to ensure we start at the first screen
+    window.scrollTo(0, 0);
+    
     // Intersection Observer for each section
     const observerOptions = {
         root: null,
@@ -152,6 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Horizontal scroll for personas
     const personasContainer = document.querySelector('.personas-scroll');
+    const personasSection = document.getElementById('personas');
+    
     if (personasContainer) {
         // Add drag scroll functionality
         let isDown = false;
@@ -182,6 +187,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const walk = (x - startX) * 2; // Scroll speed
             personasContainer.scrollLeft = scrollLeft - walk;
         });
+        
+        // Prevent vertical scrolling from interfering with horizontal scrolling
+        personasContainer.addEventListener('wheel', (e) => {
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                // User is scrolling horizontally, let it pass through
+                return;
+            }
+            
+            // If personas are being scrolled horizontally, don't allow vertical scrolling
+            if (personasContainer.scrollWidth > personasContainer.clientWidth) {
+                if (e.deltaY !== 0) {
+                    e.stopPropagation();
+                }
+            }
+        }, { passive: true });
         
         // Show/hide scroll hint based on scroll position
         const scrollHint = document.querySelector('.scroll-hint');
@@ -268,12 +288,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Improved scrolling with better control
+    // Improved scrolling with better control - more responsive for desktop
     let isScrolling = false;
     let currentScreenIndex = 0;
     let scrollTimeout;
+    let lastWheelTime = 0;
 
-    // Function to navigate to a specific screen
+    // Function to navigate to a specific screen - faster for desktop
     function navigateToScreen(index) {
         if (isScrolling) return;
         
@@ -283,28 +304,50 @@ document.addEventListener('DOMContentLoaded', () => {
         isScrolling = true;
         currentScreenIndex = index;
         
-        // Scroll to the target section with smooth behavior
-        screens[index].scrollIntoView({ behavior: 'smooth' });
-        
-        // Reset scrolling state after animation completes
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-        }, 800); // Match this with the CSS transition time
+        // Scroll to the target section
+        // Use instant scrolling for desktop and smooth for mobile
+        if (!isMobile) {
+            // Faster, more direct scroll for desktop
+            screens[index].scrollIntoView();
+            
+            // Very short timeout for desktop
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+            }, 300); // Much shorter for desktop
+        } else {
+            // Keep smooth scrolling for mobile
+            screens[index].scrollIntoView({ behavior: 'smooth' });
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+            }, 800);
+        }
     }
     
-    // Simplified and more reliable wheel event handler
+    // More responsive wheel event handler with debouncing
     snapContainer.addEventListener('wheel', (e) => {
-        // Prevent default scrolling
+        // Don't block scrolling in the personas container
+        if (e.target.closest('.personas-scroll')) {
+            return;
+        }
+        
+        // Prevent default to control scrolling
         e.preventDefault();
         
-        // Skip if already in a scrolling animation
+        // Skip if already scrolling
         if (isScrolling) return;
         
-        // Get scroll direction (positive = scroll down)
+        // Simple debounce
+        const now = Date.now();
+        if (now - lastWheelTime < 50) return; // 50ms debounce
+        lastWheelTime = now;
+        
+        // Get scroll direction
         const direction = Math.sign(e.deltaY);
         
-        // Navigate to the next/previous screen based on scroll direction
+        // Scroll with direction
         navigateToScreen(currentScreenIndex + direction);
     }, { passive: false });
     
@@ -313,10 +356,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchEndY = 0;
     
     snapContainer.addEventListener('touchstart', (e) => {
+        // Ignore touches in the personas container
+        if (e.target.closest('.personas-scroll')) return;
+        
         touchStartY = e.touches[0].clientY;
     }, { passive: true });
     
     snapContainer.addEventListener('touchend', (e) => {
+        // Ignore touches in the personas container
+        if (e.target.closest('.personas-scroll')) return;
+        
         touchEndY = e.changedTouches[0].clientY;
         
         // Calculate the distance swiped
@@ -421,10 +470,14 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
     
-    // Make first screen active on load
+    // Make first screen active on load and ensure we're at the top
     if (screens.length > 0) {
         screens[0].classList.add('active');
         currentScreenIndex = 0;
+        // Force scroll to top to prevent skipping first screen
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 100);
     }
     
     // If URL has a hash, scroll to that section
