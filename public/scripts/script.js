@@ -7,21 +7,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Detect if this is a mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Force initial scroll to top to ensure we start at the first screen
-    window.scrollTo({top: 0, behavior: 'instant'});
+    // COMPLETELY DISABLE SCROLLING
+    // This prevents any unwanted scroll behavior
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    snapContainer.style.overflow = 'hidden';
     
-    // Implement a more aggressive scroll lock on init
-    const htmlElement = document.documentElement;
-    htmlElement.style.scrollBehavior = 'auto';
-    htmlElement.style.overflow = 'hidden';
-    
-    // Reset styles after a delay to unblock scrolling
-    setTimeout(() => {
-        document.body.style.overflow = '';
-        htmlElement.style.overflow = '';
-        htmlElement.style.scrollBehavior = 'smooth';
-    }, 200);
+    // Fix all screens in absolute position - prevents any native scrolling
+    screens.forEach((screen, idx) => {
+        screen.style.position = 'absolute';
+        screen.style.top = '0';
+        screen.style.left = '0';
+        screen.style.width = '100%';
+        screen.style.height = '100vh';
+        screen.style.zIndex = idx === 0 ? '2' : '1'; // First screen on top
+        screen.style.opacity = idx === 0 ? '1' : '0'; // Only first screen visible
+        screen.style.pointerEvents = idx === 0 ? 'auto' : 'none';
+    });
     
     // Track the current screen index explicitly
     let currentScreenIndex = 0;
@@ -30,51 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenIds = Array.from(screens).map(screen => screen.id);
     console.log('Screen order:', screenIds);
     
-    // Flag to track if first scroll has happened
-    let hasScrolledOnce = false;
+    // Flag to track if first transition has happened
+    let hasTransitionedOnce = false;
     
-    // CRITICAL: Override all scroll events initially
-    function handleFirstScroll(e) {
-        console.log("First scroll detected - forcing navigation to Features section");
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Navigate directly to the features section
-        const featuresSection = document.getElementById('features');
-        if (featuresSection) {
-            navigateToScreenById('features');
-            hasScrolledOnce = true;
-            
-            // Remove this event listener after first use
-            window.removeEventListener('wheel', handleFirstScroll, { capture: true });
-            window.removeEventListener('touchmove', handleFirstScroll, { capture: true });
-            console.log("First scroll handlers removed, normal scrolling enabled");
-        }
-        return false;
-    }
-    
-    // Add high-priority capture phase listeners for the first scroll
-    window.addEventListener('wheel', handleFirstScroll, { capture: true, passive: false });
-    window.addEventListener('touchmove', handleFirstScroll, { capture: true, passive: false });
-    
-    // Disable intersection observer temporarily
+    // Intersection Observer to update URL only
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.5
+        threshold: 0.8
     };
     
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            // Only update active class, don't change currentScreenIndex here
-            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-                const prevActive = document.querySelector('.screen.active');
-                if (prevActive) {
-                    prevActive.classList.remove('active');
-                }
-                
-                entry.target.classList.add('active');
-                
+            if (entry.isIntersecting && entry.intersectionRatio > 0.8) {
                 // Update URL hash without scroll jump
                 const id = entry.target.getAttribute('id');
                 if (id) {
@@ -141,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll to next section when scroll indicator is clicked
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', () => {
-            navigateToScreenById('features');
+            goToSection(1); // Go to features section
         });
     }
     
@@ -152,7 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ctaButtons.forEach(button => {
         if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
             button.addEventListener('click', () => {
-                navigateToScreenById('cta');
+                const index = Array.from(screens).findIndex(screen => screen.id === 'cta');
+                if (index !== -1) {
+                    goToSection(index);
+                }
             });
         }
     });
@@ -186,7 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Scroll to signup section
             setTimeout(() => {
-                navigateToScreenById('cta');
+                const index = Array.from(screens).findIndex(screen => screen.id === 'cta');
+                if (index !== -1) {
+                    goToSection(index);
+                }
             }, 500);
         });
     });
@@ -198,7 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (missionLink && missionSection) {
         missionLink.addEventListener('click', (e) => {
             e.preventDefault();
-            navigateToScreenById('mission');
+            const index = Array.from(screens).findIndex(screen => screen.id === 'mission');
+            if (index !== -1) {
+                goToSection(index);
+            }
         });
     }
     
@@ -237,20 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
             personasContainer.scrollLeft = scrollLeft - walk;
         });
         
-        // Prevent vertical scrolling from interfering with horizontal scrolling
+        // Allow horizontal scrolling in personas section
         personasContainer.addEventListener('wheel', (e) => {
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                // User is scrolling horizontally, let it pass through
-                return;
+                e.stopPropagation();
+                personasContainer.scrollLeft += e.deltaX;
             }
-            
-            // If personas are being scrolled horizontally, don't allow vertical scrolling
-            if (personasContainer.scrollWidth > personasContainer.clientWidth) {
-                if (e.deltaY !== 0) {
-                    e.stopPropagation();
-                }
-            }
-        }, { passive: true });
+        }, { passive: false });
         
         // Show/hide scroll hint based on scroll position
         const scrollHint = document.querySelector('.scroll-hint');
@@ -309,7 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // If no persona was selected, show message
             if (!selectedPersona) {
                 alert('Please select a companion first');
-                navigateToScreenById('personas');
+                const index = Array.from(screens).findIndex(screen => screen.id === 'personas');
+                if (index !== -1) {
+                    goToSection(index);
+                }
                 return;
             }
             
@@ -337,174 +312,169 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Improved scrolling with direct navigation control
-    let isScrolling = false;
-    let scrollTimeout;
-    let lastWheelTime = 0;
-    let firstScrollOccurred = false;
+    // Transition in progress flag
+    let isTransitioning = false;
 
-    // Lookup function to convert section ID to index
-    function getSectionIndexById(id) {
-        for (let i = 0; i < screens.length; i++) {
-            if (screens[i].id === id) {
-                return i;
-            }
-        }
-        console.error(`Section with ID "${id}" not found`);
-        return -1;
-    }
-    
-    // Navigate directly to a section by ID
-    function navigateToScreenById(id, forceScroll = true) {
-        const index = getSectionIndexById(id);
-        if (index !== -1) {
-            navigateToScreen(index, forceScroll);
-        }
-    }
-
-    // Direct navigation to screens without skipping
-    function navigateToScreen(targetIndex, forceScroll = false) {
-        if (isScrolling && !forceScroll) return;
+    // Direct navigation to section by index - completely replaces scrolling
+    function goToSection(targetIndex) {
+        // Prevent transitions while one is in progress
+        if (isTransitioning) return;
         
         // Validate target index
         if (targetIndex < 0) targetIndex = 0;
         if (targetIndex >= screens.length) targetIndex = screens.length - 1;
         
-        // ESSENTIAL FIX: Special handling for scroll from hero
-        if (currentScreenIndex === 0 && !hasScrolledOnce && !forceScroll) {
-            console.log("First scroll from hero detected - forcing navigation to Features only");
-            // Force navigation to features section on first scroll from hero
-            targetIndex = getSectionIndexById('features');
-            hasScrolledOnce = true;
-        } else if (!forceScroll) {
-            // For normal scrolling, only allow going one section at a time
-            if (Math.abs(targetIndex - currentScreenIndex) > 1) {
-                targetIndex = currentScreenIndex + (targetIndex > currentScreenIndex ? 1 : -1);
-                console.log(`Limiting scroll to one section at a time: ${currentScreenIndex} → ${targetIndex}`);
+        // CRITICAL FIX: Always force sequential navigation
+        if (targetIndex > currentScreenIndex) {
+            // Moving forward - only allow one step at a time
+            if (targetIndex > currentScreenIndex + 1) {
+                targetIndex = currentScreenIndex + 1;
+            }
+        } else if (targetIndex < currentScreenIndex) {
+            // Moving backward - only allow one step at a time
+            if (targetIndex < currentScreenIndex - 1) {
+                targetIndex = currentScreenIndex - 1;
             }
         }
         
-        // Skip if we're already on this section and it's not the landing page
-        if (targetIndex === currentScreenIndex && targetIndex !== 0 && !forceScroll) {
-            return;
-        }
+        // Nothing to do if trying to go to current section
+        if (targetIndex === currentScreenIndex) return;
         
-        isScrolling = true;
+        // Start transition
+        isTransitioning = true;
         
-        // Logging for debugging
-        console.log(`Navigating from section ${currentScreenIndex} (${screens[currentScreenIndex].id}) to ${targetIndex} (${screens[targetIndex].id})`);
+        // Log for debugging
+        console.log(`Navigating from ${currentScreenIndex} (${screens[currentScreenIndex].id}) to ${targetIndex} (${screens[targetIndex].id})`);
         
-        // Update the current screen index first
-        currentScreenIndex = targetIndex;
+        // Determine transition direction
+        const isMovingDown = targetIndex > currentScreenIndex;
         
-        // Activate the correct screen
-        document.querySelectorAll('.screen').forEach((screen, idx) => {
-            if (idx === targetIndex) {
-                screen.classList.add('active');
-            } else {
-                screen.classList.remove('active');
-            }
-        });
+        // Set initial positions for animation
+        screens[targetIndex].style.zIndex = '2';
+        screens[currentScreenIndex].style.zIndex = '1';
         
-        // Scroll differently based on device type
-        if (!isMobile) {
-            // Direct instant scroll for desktop
-            screens[targetIndex].scrollIntoView({behavior: 'auto'});
-            
-            // Track if this was the first scroll
-            if (targetIndex === 1 && !firstScrollOccurred) {
-                firstScrollOccurred = true;
-            }
-            
-            // Reset scroll state quickly
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                isScrolling = false;
-            }, 200);
+        if (isMovingDown) {
+            // Moving down - slide up from bottom
+            screens[targetIndex].style.transform = 'translateY(100%)';
         } else {
-            // Smooth scroll for mobile
-            screens[targetIndex].scrollIntoView({behavior: 'smooth'});
-            
-            // Track if this was the first scroll
-            if (targetIndex === 1 && !firstScrollOccurred) {
-                firstScrollOccurred = true;
-            }
-            
-            // Reset scroll state after animation
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                isScrolling = false;
-            }, 800);
+            // Moving up - slide down from top
+            screens[targetIndex].style.transform = 'translateY(-100%)';
         }
+        
+        // Make target visible but don't transition yet
+        screens[targetIndex].style.opacity = '1';
+        screens[targetIndex].style.pointerEvents = 'auto';
+        
+        // Force reflow to ensure CSS changes are applied before transition
+        void screens[targetIndex].offsetWidth;
+        
+        // Add transition for smooth animation
+        screens[targetIndex].style.transition = 'transform 0.5s ease-out';
+        screens[currentScreenIndex].style.transition = 'transform 0.5s ease-out';
+        
+        // Start animation
+        screens[targetIndex].style.transform = 'translateY(0)';
+        
+        if (isMovingDown) {
+            screens[currentScreenIndex].style.transform = 'translateY(-100%)';
+        } else {
+            screens[currentScreenIndex].style.transform = 'translateY(100%)';
+        }
+        
+        // Set active class for animations
+        screens[currentScreenIndex].classList.remove('active');
+        screens[targetIndex].classList.add('active');
+        
+        // Update URL
+        const id = screens[targetIndex].id;
+        if (id) {
+            history.replaceState(null, null, `#${id}`);
+        }
+        
+        // Wait for transition to complete
+        setTimeout(() => {
+            // Hide previous screen
+            screens[currentScreenIndex].style.opacity = '0';
+            screens[currentScreenIndex].style.pointerEvents = 'none';
+            
+            // Update current index
+            currentScreenIndex = targetIndex;
+            
+            // Reset transition to prevent unwanted effects
+            screens.forEach(screen => {
+                screen.style.transition = '';
+            });
+            
+            // End transition
+            isTransitioning = false;
+            
+            // Track first transition
+            if (!hasTransitionedOnce) {
+                hasTransitionedOnce = true;
+            }
+        }, 500);
     }
     
-    // More reliable wheel event handler
-    snapContainer.addEventListener('wheel', (e) => {
-        // Skip if in personas section horizontal scroll
-        if (e.target.closest('.personas-scroll')) {
-            return;
-        }
+    // Handle keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (isTransitioning) return;
         
-        // Block default scroll behavior
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+            e.preventDefault();
+            goToSection(currentScreenIndex + 1);
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            e.preventDefault();
+            goToSection(currentScreenIndex - 1);
+        }
+    });
+    
+    // Handle wheel events for navigation
+    window.addEventListener('wheel', (e) => {
         e.preventDefault();
         
-        // Skip if already scrolling
-        if (isScrolling) return;
+        // Skip if transition is in progress
+        if (isTransitioning) return;
         
-        // Simple debounce
-        const now = Date.now();
-        if (now - lastWheelTime < 100) return;
-        lastWheelTime = now;
-        
-        // Get scroll direction
+        // Determine scroll direction
         const direction = Math.sign(e.deltaY);
         
-        // Navigate to next section based on direction
-        navigateToScreen(currentScreenIndex + direction);
+        // Navigate based on direction
+        if (direction > 0) {
+            goToSection(currentScreenIndex + 1);
+        } else if (direction < 0) {
+            goToSection(currentScreenIndex - 1);
+        }
     }, { passive: false });
     
-    // Improved touch events for mobile
+    // Handle touch events for mobile
     let touchStartY = 0;
-    let touchEndY = 0;
     
-    snapContainer.addEventListener('touchstart', (e) => {
+    window.addEventListener('touchstart', (e) => {
         // Skip if in personas scroll area
         if (e.target.closest('.personas-scroll')) return;
         
         touchStartY = e.touches[0].clientY;
     }, { passive: true });
     
-    snapContainer.addEventListener('touchend', (e) => {
+    window.addEventListener('touchend', (e) => {
         // Skip if in personas scroll area
         if (e.target.closest('.personas-scroll')) return;
         
-        touchEndY = e.changedTouches[0].clientY;
+        // Skip if transition is in progress
+        if (isTransitioning) return;
         
-        // Calculate the distance swiped
+        const touchEndY = e.changedTouches[0].clientY;
         const touchDiff = touchStartY - touchEndY;
         
-        // Skip if already scrolling
-        if (isScrolling) return;
-        
-        // Determine direction and navigate with threshold
+        // Navigate based on swipe direction
         if (Math.abs(touchDiff) > 50) {
-            const direction = touchDiff > 0 ? 1 : -1;
-            navigateToScreen(currentScreenIndex + direction);
+            if (touchDiff > 0) {
+                goToSection(currentScreenIndex + 1);
+            } else {
+                goToSection(currentScreenIndex - 1);
+            }
         }
     }, { passive: true });
-    
-    // Add keyboard navigation for accessibility
-    document.addEventListener('keydown', (e) => {
-        if (isScrolling) return;
-        
-        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
-            e.preventDefault();
-            navigateToScreen(currentScreenIndex + 1);
-        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-            e.preventDefault();
-            navigateToScreen(currentScreenIndex - 1);
-        }
-    });
     
     // Add CSS classes for animations
     const style = document.createElement('style');
@@ -582,31 +552,13 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
     
-    // Make first screen active on load and ensure we're at the top
-    if (screens.length > 0) {
-        // Set the first screen as active
-        screens.forEach((screen, idx) => {
-            if (idx === 0) {
-                screen.classList.add('active');
-            } else {
-                screen.classList.remove('active');
-            }
-        });
-        
-        // Reset and force scroll to top
-        currentScreenIndex = 0;
-        setTimeout(() => {
-            window.scrollTo({top: 0, behavior: 'instant'});
-        }, 100);
-    }
-    
-    // If URL has a hash, scroll to that section
+    // If URL has a hash, go to that section
     if (window.location.hash) {
         const targetId = window.location.hash.substring(1);
-        const targetSection = document.getElementById(targetId);
-        if (targetSection) {
+        const targetIndex = Array.from(screens).findIndex(screen => screen.id === targetId);
+        if (targetIndex !== -1) {
             setTimeout(() => {
-                navigateToScreenById(targetId);
+                goToSection(targetIndex);
             }, 500);
         }
     }
