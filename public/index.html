@@ -202,22 +202,42 @@
                 <div class="content">
                     <h2>Create Your <span class="highlight">Account</span></h2>
                     <p>Take the first step toward exploring your desires without contributing to exploitation.</p>
-                    <div class="signup-form">
+                    <div class="signup-form" id="signup-form">
                         <div class="form-group">
                             <label for="name">Your Name</label>
-                            <input type="text" id="name" placeholder="Enter your name">
+                            <input type="text" id="name" placeholder="Enter your name" required>
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
                             <div class="phone-input">
-                                <input type="tel" id="phone" placeholder="Enter your phone number" pattern="[0-9]*" inputmode="numeric">
+                                <input type="tel" id="phone" placeholder="Enter your phone number" pattern="[0-9]*" inputmode="numeric" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="password">Create Password</label>
-                            <input type="password" id="password" placeholder="Enter your password">
+                            <input type="password" id="password" placeholder="Enter your password" required>
                         </div>
-                        <button class="cta-button large">Start Your Experience</button>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                        </div>
+                        
+                        <input type="hidden" id="selected-persona" value="">
+                        
+                        <div class="form-message" id="signup-message"></div>
+                        
+                        <button type="button" id="signup-button" class="cta-button large">Start Your Experience</button>
+                        
+                        <div class="login-link">
+                            Already have an account? <a href="/login.html">Sign In</a>
+                        </div>
+                    </div>
+                    
+                    <div id="signup-success" class="success-message" style="display: none;">
+                        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+                        <h3>Welcome to Tease!</h3>
+                        <p id="success-message">You're all set to start your experience.</p>
+                        <button id="continue-button" class="cta-button">Continue to Your Dashboard</button>
                     </div>
                 </div>
             </section>
@@ -244,6 +264,8 @@
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script src="/scripts/script.js"></script>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html> 

@@ -89,6 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         footer.style.opacity = '0';
     }
     
+    // Expose updateSection globally for other scripts to use
+    window.updateSection = updateSection;
+    
     // Set up initial screen positions
     screens.forEach((screen, i) => {
         if (i !== 0) {
