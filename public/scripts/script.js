@@ -4,9 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const screens = document.querySelectorAll('.screen');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
-    // Get only content screens (exclude footer)
-    const contentScreens = Array.from(screens).filter(screen => !screen.closest('footer'));
-    
     // Detect if this is a mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
@@ -160,11 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Variable to track if we're scrolling horizontally in the personas section
-    let isHorizontalScrolling = false;
-    const personasContainer = document.querySelector('.personas-scroll');
-
     // Horizontal scroll for personas
+    const personasContainer = document.querySelector('.personas-scroll');
+    let isHorizontalScrolling = false; // Flag to track horizontal scrolling
+    
     if (personasContainer) {
         // Add drag scroll functionality
         let isDown = false;
@@ -173,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         personasContainer.addEventListener('mousedown', (e) => {
             isDown = true;
-            isHorizontalScrolling = true; // Set flag for horizontal scrolling
             personasContainer.classList.add('active');
             startX = e.pageX - personasContainer.offsetLeft;
             scrollLeft = personasContainer.scrollLeft;
@@ -181,18 +176,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         personasContainer.addEventListener('mouseleave', () => {
             isDown = false;
-            setTimeout(() => {
-                isHorizontalScrolling = false; // Reset after a short delay
-            }, 100);
             personasContainer.classList.remove('active');
         });
         
         personasContainer.addEventListener('mouseup', () => {
             isDown = false;
-            setTimeout(() => {
-                isHorizontalScrolling = false; // Reset after a short delay
-            }, 100);
             personasContainer.classList.remove('active');
+            // After horizontal scrolling, set a short timeout before allowing vertical scrolls again
+            if (isHorizontalScrolling) {
+                setTimeout(() => {
+                    isHorizontalScrolling = false;
+                }, 100);
+            }
         });
         
         personasContainer.addEventListener('mousemove', (e) => {
@@ -200,7 +195,57 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const x = e.pageX - personasContainer.offsetLeft;
             const walk = (x - startX) * 2; // Scroll speed
+            
+            // Only set horizontal scrolling flag if actual scrolling happens
+            if (Math.abs(walk) > 5) {
+                isHorizontalScrolling = true;
+            }
+            
             personasContainer.scrollLeft = scrollLeft - walk;
+        });
+        
+        // Touch handlers specifically for the personas container
+        let touchStartX;
+        let touchStartY;
+        
+        personasContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            startX = touchStartX;
+            scrollLeft = personasContainer.scrollLeft;
+        }, { passive: true });
+        
+        personasContainer.addEventListener('touchmove', (e) => {
+            if (!touchStartX || !touchStartY) return;
+            
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            
+            // Calculate horizontal and vertical distance
+            const diffX = touchStartX - touchX;
+            const diffY = touchStartY - touchY;
+            
+            // If horizontal movement is greater than vertical, it's a horizontal swipe
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // This is a horizontal swipe, prevent default to avoid vertical scroll
+                e.preventDefault();
+                isHorizontalScrolling = true;
+                
+                // Update horizontal scroll
+                personasContainer.scrollLeft = scrollLeft + diffX;
+            }
+        }, { passive: false });
+        
+        personasContainer.addEventListener('touchend', () => {
+            // After horizontal scrolling, set a short timeout before allowing vertical scrolls again
+            if (isHorizontalScrolling) {
+                setTimeout(() => {
+                    isHorizontalScrolling = false;
+                }, 300);
+            }
+            
+            touchStartX = null;
+            touchStartY = null;
         });
         
         // Show/hide scroll hint based on scroll position
@@ -217,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
+    
     // Phone number input validation and formatting
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
@@ -240,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.value = value;
         });
     }
-
+    
     // Form submission
     const signupForm = document.querySelector('.signup-form');
     if (signupForm) {
@@ -287,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Sign up:', { name, phone, persona: selectedPersona });
         });
     }
-
+    
     // Enhanced scrolling - more responsive with less effort
     let lastScrollTime = 0;
     let scrollTimeout;
@@ -295,24 +340,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScreenIndex = 0;
     let lastDirection = 0;
     let scrollAccumulator = 0;
-
+    
     // Function to navigate to a specific screen
     function navigateToScreen(index) {
         if (index < 0) index = 0;
-        if (index >= contentScreens.length) index = contentScreens.length - 1;
+        if (index >= screens.length) index = screens.length - 1;
         
         currentScreenIndex = index;
-        contentScreens[index].scrollIntoView({ behavior: 'smooth' });
+        screens[index].scrollIntoView({ behavior: 'smooth' });
     }
-
+    
     // Handle wheel events for more responsive scrolling
     snapContainer.addEventListener('wheel', (e) => {
-        // Check if the wheel event is occurring within the personas container
-        const isInPersonasContainer = e.target.closest('.personas-scroll') !== null;
-        
-        // If in personas container and scrolling horizontally, don't interfere
-        if (isInPersonasContainer && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-            return; // Let the browser handle horizontal scrolling
+        // Skip if we're in the middle of a horizontal scroll in the personas section
+        if (isHorizontalScrolling) {
+            e.preventDefault();
+            return;
         }
         
         // Always prevent default to ensure controlled scrolling
@@ -320,6 +363,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Skip if already in a scrolling animation
         if (isScrolling) return;
+        
+        // Find the current visible screen
+        let visibleScreenIndex = getCurrentVisibleScreenIndex();
+        
+        // Check if we're at the last screen before footer
+        const isLastScreen = visibleScreenIndex === screens.length - 1;
+        const hasFooterInView = isElementInViewport(document.querySelector('footer'));
+        
+        // If we're at the last screen and footer is in view, don't override scrolling
+        if (isLastScreen && hasFooterInView && e.deltaY > 0) {
+            return;
+        }
         
         // Determine scroll direction
         const direction = Math.sign(e.deltaY);
@@ -332,8 +387,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Accumulate small trackpad movements but with smaller threshold
             scrollAccumulator += e.deltaY;
             
-            // Check if we've accumulated enough movement - lower threshold
-            if (Math.abs(scrollAccumulator) > 20) {
+            // Higher threshold to make desktop scrolling more controlled
+            const threshold = 40; // Increased from 20 to make desktop scrolling less sensitive
+            
+            // Check if we've accumulated enough movement
+            if (Math.abs(scrollAccumulator) > threshold) {
                 const scrollDirection = Math.sign(scrollAccumulator);
                 // Reset accumulator after using it
                 scrollAccumulator = 0;
@@ -342,24 +400,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleScrollInstant(scrollDirection);
             }
         } else {
-            // For mouse wheel, IMMEDIATE response with NO threshold
-            handleScrollInstant(direction);
+            // For mouse wheel, increase threshold to make scrolling less sensitive
+            // Only trigger if the wheel event is significant
+            if (Math.abs(e.deltaY) > 50) {
+                handleScrollInstant(direction);
+            }
         }
     }, { passive: false });
     
-    // Unified scroll handler function - INSTANT VERSION
-    function handleScrollInstant(direction) {
-        // Find currently visible screen among content screens only
+    // Helper function to check if an element is in viewport
+    function isElementInViewport(el) {
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+    
+    // Get current visible screen index helper function
+    function getCurrentVisibleScreenIndex() {
         let visibleScreenIndex = 0;
-        contentScreens.forEach((screen, index) => {
+        screens.forEach((screen, index) => {
             const rect = screen.getBoundingClientRect();
             if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
                 visibleScreenIndex = index;
             }
         });
+        return visibleScreenIndex;
+    }
+    
+    // Unified scroll handler function - INSTANT VERSION
+    function handleScrollInstant(direction) {
+        // Skip if we're in the middle of a horizontal scroll in the personas section
+        if (isHorizontalScrolling) return;
+        
+        // Find currently visible screen
+        let visibleScreenIndex = getCurrentVisibleScreenIndex();
         
         // Prevent scrolling if we're already at the boundary
-        if (direction > 0 && visibleScreenIndex === contentScreens.length - 1) return;
+        if (direction > 0 && visibleScreenIndex === screens.length - 1) return;
         if (direction < 0 && visibleScreenIndex === 0) return;
         
         // Set scrolling state
@@ -369,72 +451,57 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetIndex = visibleScreenIndex + direction;
         currentScreenIndex = targetIndex;
         
-        // For desktop, truly instant navigation
+        // For desktop, use smooth scrolling with better positioning
         if (!isMobile) {
-            // Instant jump to target section
-            const targetY = contentScreens[targetIndex].offsetTop;
-            window.scrollTo(0, targetY);
+            // Instead of instant jump, use smooth scroll with proper positioning
+            const targetY = screens[targetIndex].offsetTop;
+            window.scrollTo({
+                top: targetY,
+                behavior: 'smooth'
+            });
             
-            // Very short reset to prevent multiple scrolls
+            // Longer reset to prevent multiple scrolls on desktop
             setTimeout(() => {
                 isScrolling = false;
-            }, 50);
+                scrollAccumulator = 0; // Reset accumulator
+            }, 800); // Increased from 50ms to 800ms to make desktop scrolling more controlled
         } else {
             // For mobile devices, use smooth scrolling
-            contentScreens[targetIndex].scrollIntoView({ behavior: 'smooth' });
+            screens[targetIndex].scrollIntoView({ behavior: 'smooth' });
             
             // Longer reset for animation to complete
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
+                scrollAccumulator = 0; // Reset accumulator
             }, 500);
         }
-        
-        // Always reset accumulator
-        scrollAccumulator = 0;
     }
     
     // Touch events for mobile with enhanced sensitivity
     let touchStartY = 0;
     let touchEndY = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
     let touchStartTime = 0;
-
+    
     snapContainer.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-        touchStartX = e.touches[0].clientX;
-        touchStartTime = Date.now();
+        // Skip if we're in the middle of a horizontal scroll
+        if (isHorizontalScrolling) return;
         
-        // Check if we're touching in the personas container
-        if (e.target.closest('.personas-scroll')) {
-            isHorizontalScrolling = true;
-        }
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
     }, { passive: true });
-
+    
     snapContainer.addEventListener('touchmove', (e) => {
+        // Skip if we're in the middle of a horizontal scroll
+        if (isHorizontalScrolling) return;
+        
         // Store current position while moving
         touchEndY = e.touches[0].clientY;
-        touchEndX = e.touches[0].clientX;
-        
-        // Detect if this is primarily horizontal movement
-        const deltaX = Math.abs(touchEndX - touchStartX);
-        const deltaY = Math.abs(touchEndY - touchStartY);
-        
-        // If horizontal movement is greater, set flag
-        if (deltaX > deltaY && deltaX > 10) {
-            isHorizontalScrolling = true;
-        }
     }, { passive: true });
-
+    
     snapContainer.addEventListener('touchend', () => {
-        // Don't interfere with horizontal scrolling in personas
-        if (isHorizontalScrolling) {
-            setTimeout(() => {
-                isHorizontalScrolling = false;
-            }, 300);
-            return;
-        }
+        // Skip if we're in the middle of a horizontal scroll
+        if (isHorizontalScrolling) return;
         
         // Calculate the distance swiped
         const touchDiff = touchStartY - touchEndY;
@@ -444,11 +511,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const velocity = Math.abs(touchDiff) / touchTime;
         
         // Adaptive threshold based on velocity - faster swipes need less distance
-        let swipeThreshold = 10;
+        let swipeThreshold = 25; // Increased from 10 to make it less sensitive
         
         // For quick flicks, reduce the threshold
         if (velocity > 0.5) {
-            swipeThreshold = 5;
+            swipeThreshold = 15; // Increased from 5 to make it less sensitive
         }
         
         if (Math.abs(touchDiff) > swipeThreshold && !isScrolling) {
@@ -457,20 +524,17 @@ document.addEventListener('DOMContentLoaded', () => {
             handleScrollMobile(direction);
         }
     });
-
+    
     // Unified scroll handler for mobile (smoother)
     function handleScrollMobile(direction) {
-        // Find currently visible screen among content screens
-        let visibleScreenIndex = 0;
-        contentScreens.forEach((screen, index) => {
-            const rect = screen.getBoundingClientRect();
-            if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-                visibleScreenIndex = index;
-            }
-        });
+        // Skip if we're in the middle of a horizontal scroll
+        if (isHorizontalScrolling) return;
+        
+        // Find currently visible screen
+        let visibleScreenIndex = getCurrentVisibleScreenIndex();
         
         // Prevent scrolling if we're already at the boundary
-        if (direction > 0 && visibleScreenIndex === contentScreens.length - 1) return;
+        if (direction > 0 && visibleScreenIndex === screens.length - 1) return;
         if (direction < 0 && visibleScreenIndex === 0) return;
         
         // Set scrolling state
@@ -481,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentScreenIndex = targetIndex;
         
         // For mobile, always use smooth scrolling
-        contentScreens[targetIndex].scrollIntoView({ behavior: 'smooth' });
+        screens[targetIndex].scrollIntoView({ behavior: 'smooth' });
         
         // Reset scrolling state after animation completes
         clearTimeout(scrollTimeout);
@@ -493,12 +557,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
-        // Skip if horizontal scrolling is active
-        if (isHorizontalScrolling) return;
-        
         if (!isScrolling) {
-            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
                 e.preventDefault();
+                // Use the instant scroll for keyboard too
                 handleScrollInstant(1);
             } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
                 e.preventDefault();
