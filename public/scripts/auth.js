@@ -10,26 +10,41 @@ let loginForm, signupForm, personaButtons, personaSelected = null;
 
 // Initialize the auth system
 function initAuth() {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || !document) {
+        return;
+    }
+    
     // Check if user is logged in
     const user = getCurrentUser();
     updateAuthUI(user);
 
-    // Setup event listeners for login form
-    loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
+    // Only run page-specific code if we're on that page
+    const path = window.location.pathname;
+    
+    // Setup event listeners for login form - only on login page
+    if (path.includes('/login')) {
+        loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
     }
     
-    // Setup event listeners for signup form (both on dedicated page and in homepage)
-    setupSignupForm();
-    
-    // Setup persona selection from homepage
-    setupPersonaSelection();
+    // Homepage and signup functionality
+    if (path === '/' || path === '/index.html' || path.endsWith('/')) {
+        // Setup event listeners for signup form
+        setupSignupForm();
+        
+        // Setup persona selection from homepage
+        setupPersonaSelection();
+    }
 
-    // Setup logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
+    // Setup logout button - only on pages with dashboard features
+    if (path.includes('/dashboard') || path.includes('/chat')) {
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+        }
     }
 }
 
@@ -49,15 +64,28 @@ function setupSignupForm() {
 
 // Setup persona selection from homepage
 function setupPersonaSelection() {
+    // Only run on the homepage to avoid errors on other pages
+    if (window.location.pathname !== '/' && 
+        window.location.pathname !== '/index.html' && 
+        !window.location.pathname.endsWith('/')) {
+        return;
+    }
+    
     // Get all persona buttons on the homepage
     personaButtons = document.querySelectorAll('.persona-button');
     
-    if (personaButtons.length > 0) {
+    if (personaButtons && personaButtons.length > 0) {
         personaButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const persona = button.closest('.persona');
-                const personaName = persona.querySelector('h3').textContent;
+                if (!persona) return;
+                
+                const personaNameEl = persona.querySelector('h3');
                 const personaStyle = persona.getAttribute('data-style');
+                
+                if (!personaNameEl || !personaStyle) return;
+                
+                const personaName = personaNameEl.textContent;
                 
                 // Store the selected persona
                 personaSelected = {
@@ -83,11 +111,16 @@ function setupPersonaSelection() {
                 button.textContent = 'Selected';
                 
                 // Scroll to signup section after a delay
-                const ctaSectionIndex = Array.from(document.querySelectorAll('.screen')).findIndex(screen => screen.id === 'cta');
-                if (ctaSectionIndex !== -1) {
-                    setTimeout(() => {
-                        window.dispatchEvent(new CustomEvent('scrollToSection', { detail: { sectionIndex: ctaSectionIndex } }));
-                    }, 500);
+                const screens = document.querySelectorAll('.screen');
+                if (screens && screens.length) {
+                    const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
+                    if (ctaSectionIndex !== -1) {
+                        setTimeout(() => {
+                            window.dispatchEvent(new CustomEvent('scrollToSection', { 
+                                detail: { sectionIndex: ctaSectionIndex } 
+                            }));
+                        }, 500);
+                    }
                 }
             });
         });
@@ -102,6 +135,7 @@ function getCurrentUser() {
 
 // Update UI based on authentication state
 function updateAuthUI(user) {
+    // Safely get auth-related elements
     const authLinks = document.querySelectorAll('.auth-link');
     const userLinks = document.querySelectorAll('.user-link');
     
@@ -116,31 +150,45 @@ function updateAuthUI(user) {
             el.textContent = user.name;
         });
         
+        // Get current page path
+        const path = window.location.pathname;
+        
         // If on dashboard, load user data
-        if (window.location.pathname.includes('/dashboard')) {
+        if (path.includes('/dashboard')) {
             loadUserDashboard(user);
         }
         
         // If on chat page, initialize chat with the user's persona
-        if (window.location.pathname.includes('/chat')) {
-            initializeChat(user.persona);
+        if (path.includes('/chat')) {
+            if (typeof initializeChat === 'function') {
+                initializeChat(user.persona);
+            }
         }
         
         // If on homepage and logged in, maybe show a welcome back message
-        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        if (path === '/' || path === '/index.html' || path.endsWith('/')) {
             const signupForm = document.getElementById('signup-form');
             const successMessage = document.getElementById('signup-success');
             
             if (signupForm && successMessage) {
                 signupForm.style.display = 'none';
                 successMessage.style.display = 'block';
-                document.getElementById('success-message').textContent = `Welcome back, ${user.name}!`;
+                
+                const successMessageEl = document.getElementById('success-message');
+                if (successMessageEl) {
+                    successMessageEl.textContent = `Welcome back, ${user.name}!`;
+                }
                 
                 // Change button text for logged in users
                 const continueButton = document.getElementById('continue-button');
                 if (continueButton) {
                     continueButton.textContent = 'Go to Your Dashboard';
-                    continueButton.addEventListener('click', () => {
+                    
+                    // Remove any existing event listeners with clone and replace
+                    const newButton = continueButton.cloneNode(true);
+                    continueButton.parentNode.replaceChild(newButton, continueButton);
+                    
+                    newButton.addEventListener('click', () => {
                         window.location.href = '/dashboard.html';
                     });
                 }
@@ -152,9 +200,10 @@ function updateAuthUI(user) {
         userLinks.forEach(link => link.classList.add('hidden'));
         
         // Redirect from protected pages
+        const path = window.location.pathname;
         if (
-            window.location.pathname.includes('/dashboard') || 
-            window.location.pathname.includes('/chat')
+            path.includes('/dashboard') || 
+            path.includes('/chat')
         ) {
             window.location.href = '/login.html';
         }
@@ -215,15 +264,32 @@ async function handleLogin(e) {
 
 // Handle signup from homepage
 async function handleSignupFromHomepage() {
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
+    // Safely get form elements, checking for existence first
+    const nameEl = document.getElementById('name');
+    const phoneEl = document.getElementById('phone');
+    const passwordEl = document.getElementById('password'); 
+    const confirmPasswordEl = document.getElementById('confirm-password');
     const statusEl = document.getElementById('signup-message');
+    
+    // Make sure all required elements exist
+    if (!nameEl || !phoneEl || !passwordEl || !confirmPasswordEl || !statusEl) {
+        console.error('Required signup form elements not found');
+        return;
+    }
+    
+    const name = nameEl.value;
+    const phone = phoneEl.value;
+    const password = passwordEl.value;
+    const confirmPassword = confirmPasswordEl.value;
     
     try {
         // Get selected persona
-        let persona = document.getElementById('selected-persona').value;
+        let persona = '';
+        const selectedPersonaEl = document.getElementById('selected-persona');
+        
+        if (selectedPersonaEl) {
+            persona = selectedPersonaEl.value;
+        }
         
         // If no persona was explicitly selected, use the first one that's marked as selected
         if (!persona) {
@@ -294,9 +360,18 @@ async function handleSignupFromHomepage() {
             successMessage.style.display = 'block';
             
             // Set selected persona name in success message
-            const personaName = document.querySelector(`.persona[data-style="${persona}"] h3`).textContent;
-            document.getElementById('success-message').textContent = 
-                `You're all set to start your experience with ${personaName}.`;
+            const successMessageEl = document.getElementById('success-message');
+            if (successMessageEl) {
+                // Find persona name - safely handling if element doesn't exist
+                let personaName = persona; // Default to the style as name
+                const personaEl = document.querySelector(`.persona[data-style="${persona}"] h3`);
+                if (personaEl) {
+                    personaName = personaEl.textContent;
+                }
+                
+                successMessageEl.textContent = 
+                    `You're all set to start your experience with ${personaName}.`;
+            }
                 
             // Setup continue button
             const continueButton = document.getElementById('continue-button');
