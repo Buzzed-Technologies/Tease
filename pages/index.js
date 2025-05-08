@@ -71,7 +71,39 @@ export default function Home() {
 
     try {
       setIsSubmitting(true);
+      console.log('Starting registration with:', {
+        name: formData.name, 
+        phone: formData.phone, 
+        persona: selectedPersona.name
+      });
       
+      // Direct fetch to API endpoint to bypass AuthContext
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          password: formData.password,
+          persona: selectedPersona.name
+        }),
+      });
+      
+      console.log('API Response status:', response.status);
+      const data = await response.json();
+      console.log('API Response data:', data);
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Registration failed');
+      }
+      
+      setFormSuccess(`Account created successfully! Welcome, ${formData.name}!`);
+      console.log('Registration successful:', data);
+      
+      // Skip automatic login for debugging
+      /*
       const result = await register(
         formData.name,
         formData.phone,
@@ -85,7 +117,9 @@ export default function Home() {
       } else {
         setFormError(result.error);
       }
+      */
     } catch (error) {
+      console.error('Registration error:', error);
       setFormError(error.message || 'An error occurred during registration');
     } finally {
       setIsSubmitting(false);
