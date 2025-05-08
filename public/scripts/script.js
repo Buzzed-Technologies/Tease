@@ -1,134 +1,211 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Get all the elements we need
+    // Elements
     const app = document.querySelector('.app-container');
-    const snapContainer = document.querySelector('.snap-container');
     const screens = document.querySelectorAll('.screen');
-    const scrollIndicator = document.querySelector('.scroll-indicator');
     const footer = document.querySelector('footer');
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    
+    // Add footer to sections for unified scrolling
+    const sections = [...screens];
+    if (footer) sections.push(footer);
     
     // Detect if this is a mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Current section index
+    // Apply smooth transitions only on mobile devices
+    if (isMobile) {
+        screens.forEach(screen => {
+            screen.classList.add('smooth-transition');
+        });
+    }
+    
+    // Current section index and scrolling state
     let currentIndex = 0;
     let isScrolling = false;
-    let touchStartY = 0;
-    let touchEndY = 0;
     
-    // Create a wrapper for the footer to use in scrolling
-    const footerScreen = document.createElement('div');
-    footerScreen.classList.add('screen', 'footer-screen');
-    footerScreen.appendChild(footer);
-    snapContainer.appendChild(footerScreen);
-    
-    // Get all sections including footer
-    const allSections = document.querySelectorAll('.screen');
-    const totalSections = allSections.length;
-    
-    // Disable default scrolling
+    // Disable native scrolling
     document.body.style.overflow = 'hidden';
-    snapContainer.style.overflowY = 'hidden';
+    app.style.height = '100vh';
+    app.style.overflow = 'hidden';
     
-    // Initialize - show first screen
-    allSections[0].classList.add('active');
+    // Initialize - show first section
+    updateActiveSection();
     
-    // Function to navigate to a section
-    function goToSection(index) {
-        if (isScrolling) return;
+    // Intersection Observer for section visibility
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.3
+    };
+    
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                
+                // Update URL hash without scroll jump
+                const id = entry.target.getAttribute('id');
+                if (id) {
+                    history.replaceState(null, null, `#${id}`);
+                }
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        sectionObserver.observe(section);
         
-        // Boundary check
-        if (index < 0) index = 0;
-        if (index >= totalSections) index = totalSections - 1;
+        // Add initial animations class
+        section.classList.add('fade-in');
+        
+        // Add animation classes to children
+        const elements = section.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
+        elements.forEach((el, index) => {
+            el.style.transitionDelay = `${index * 0.1}s`;
+            el.classList.add('animate-in');
+        });
+    });
+    
+    // First screen particle animation
+    const animatedBg = document.querySelector('.animated-bg');
+    if (animatedBg) {
+        const addParticle = () => {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random position, size and animation duration
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const duration = Math.random() * 10 + 10;
+            const delay = Math.random() * 5;
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.top = `${posY}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            
+            animatedBg.appendChild(particle);
+            
+            // Remove particle after animation completes
+            setTimeout(() => {
+                if (particle && particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, (duration + delay) * 1000);
+        };
+        
+        // Create initial particles
+        for (let i = 0; i < 15; i++) {
+            addParticle();
+        }
+        
+        // Add new particles periodically
+        setInterval(addParticle, 3000);
+    }
+    
+    // Custom scroll function
+    function scrollToSection(index) {
+        if (isScrolling || index < 0 || index >= sections.length) return;
         
         isScrolling = true;
         currentIndex = index;
         
         // Remove active class from all sections
-        allSections.forEach(section => {
+        sections.forEach(section => {
             section.classList.remove('active');
         });
         
         // Add active class to current section
-        allSections[index].classList.add('active');
+        sections[index].classList.add('active');
         
-        // Scroll to the section
-        const sectionTop = index * window.innerHeight;
-        snapContainer.style.transform = `translateY(-${sectionTop}px)`;
-        
-        // Update URL hash without scroll jump
-        const id = allSections[index].getAttribute('id');
-        if (id) {
-            history.replaceState(null, null, `#${id}`);
+        // Update URL hash for screen sections
+        if (index < screens.length) {
+            const id = sections[index].getAttribute('id');
+            if (id) {
+                history.replaceState(null, null, `#${id}`);
+            }
         }
         
-        // Allow scrolling again after animation
+        // Scroll the section into view
+        sections[index].scrollIntoView({ behavior: 'smooth' });
+        
+        // Update any UI elements based on current position
+        updateActiveSection();
+        
+        // Reset scrolling state after animation completes
         setTimeout(() => {
             isScrolling = false;
-        }, 700);
+        }, 800);
     }
     
-    // Apply CSS for full-page sections and transitions
-    const styleElement = document.createElement('style');
-    styleElement.textContent = `
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
+    // Update active section and UI elements
+    function updateActiveSection() {
+        // Hide scroll indicator on last screen
+        if (scrollIndicator) {
+            scrollIndicator.style.opacity = (currentIndex >= screens.length - 1) ? '0' : '1';
         }
         
-        .app-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        .snap-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            transition: transform 700ms cubic-bezier(0.645, 0.045, 0.355, 1.000);
-        }
-        
-        .screen {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-        
-        .footer-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--darker);
-        }
-        
-        .footer-screen footer {
-            position: relative;
-            width: 100%;
-            margin: 0;
-        }
-    `;
-    document.head.appendChild(styleElement);
+        // Add visible class to all sections
+        sections.forEach((section, index) => {
+            if (index === currentIndex) {
+                section.classList.add('active', 'visible');
+            } else {
+                section.classList.remove('active', 'visible');
+                if (Math.abs(index - currentIndex) > 1) {
+                    section.classList.remove('visible');
+                }
+            }
+        });
+    }
     
-    // Mouse wheel event
-    window.addEventListener('wheel', (e) => {
+    // Scroll wheel event handler
+    document.addEventListener('wheel', (e) => {
         e.preventDefault();
         
         if (isScrolling) return;
         
-        // Determine scroll direction
         const direction = Math.sign(e.deltaY);
+        const newIndex = currentIndex + direction;
         
-        if (direction > 0) {
-            // Scroll down
-            goToSection(currentIndex + 1);
-        } else {
-            // Scroll up
-            goToSection(currentIndex - 1);
+        if (newIndex >= 0 && newIndex < sections.length) {
+            scrollToSection(newIndex);
         }
     }, { passive: false });
+    
+    // Touch events for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+    let touchStartTime = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', (e) => {
+        touchEndY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchend', () => {
+        const touchDiff = touchStartY - touchEndY;
+        const touchTime = Date.now() - touchStartTime;
+        const velocity = Math.abs(touchDiff) / touchTime;
+        
+        // Adaptive threshold based on velocity
+        const swipeThreshold = velocity > 0.5 ? 30 : 60;
+        
+        if (Math.abs(touchDiff) > swipeThreshold && !isScrolling) {
+            const direction = touchDiff > 0 ? 1 : -1;
+            const newIndex = currentIndex + direction;
+            
+            if (newIndex >= 0 && newIndex < sections.length) {
+                scrollToSection(newIndex);
+            }
+        }
+    });
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -136,40 +213,29 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
             e.preventDefault();
-            goToSection(currentIndex + 1);
+            const newIndex = currentIndex + 1;
+            if (newIndex < sections.length) {
+                scrollToSection(newIndex);
+            }
         } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
             e.preventDefault();
-            goToSection(currentIndex - 1);
+            const newIndex = currentIndex - 1;
+            if (newIndex >= 0) {
+                scrollToSection(newIndex);
+            }
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            scrollToSection(0);
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            scrollToSection(sections.length - 1);
         }
     });
     
-    // Touch events for mobile
-    document.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-    
-    document.addEventListener('touchend', (e) => {
-        touchEndY = e.changedTouches[0].clientY;
-        const difference = touchStartY - touchEndY;
-        
-        // Threshold for swipe detection
-        const threshold = 50;
-        
-        if (Math.abs(difference) > threshold) {
-            if (difference > 0) {
-                // Swipe up - go down
-                goToSection(currentIndex + 1);
-            } else {
-                // Swipe down - go up
-                goToSection(currentIndex - 1);
-            }
-        }
-    }, { passive: true });
-    
-    // Scroll to next section when scroll indicator is clicked
+    // Scroll indicator click
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', () => {
-            goToSection(currentIndex + 1);
+            scrollToSection(currentIndex + 1);
         });
     }
     
@@ -177,20 +243,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctaButtons = document.querySelectorAll('.cta-button');
     const ctaSection = document.getElementById('cta');
     
-    ctaButtons.forEach(button => {
-        if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
-            button.addEventListener('click', () => {
-                // Find the index of the CTA section
-                let ctaIndex = 0;
-                allSections.forEach((section, index) => {
-                    if (section.id === 'cta') {
-                        ctaIndex = index;
-                    }
+    if (ctaSection) {
+        const ctaIndex = [...sections].findIndex(section => section.id === 'cta');
+        
+        ctaButtons.forEach(button => {
+            if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
+                button.addEventListener('click', () => {
+                    scrollToSection(ctaIndex);
                 });
-                goToSection(ctaIndex);
-            });
-        }
-    });
+            }
+        });
+    }
     
     // Persona selection
     const personaButtons = document.querySelectorAll('.persona-button');
@@ -219,18 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update button text
             button.textContent = 'Selected';
             
-            // Find the index of the CTA section
-            let ctaIndex = 0;
-            allSections.forEach((section, index) => {
-                if (section.id === 'cta') {
-                    ctaIndex = index;
-                }
-            });
-            
-            // Navigate to signup section
-            setTimeout(() => {
-                goToSection(ctaIndex);
-            }, 500);
+            // Scroll to signup section
+            if (ctaSection) {
+                const ctaIndex = [...sections].findIndex(section => section.id === 'cta');
+                setTimeout(() => {
+                    scrollToSection(ctaIndex);
+                }, 500);
+            }
         });
     });
     
@@ -241,16 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (missionLink && missionSection) {
         missionLink.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Find the index of the mission section
-            let missionIndex = 0;
-            allSections.forEach((section, index) => {
-                if (section.id === 'mission') {
-                    missionIndex = index;
-                }
-            });
-            
-            goToSection(missionIndex);
+            const missionIndex = [...sections].findIndex(section => section.id === 'mission');
+            scrollToSection(missionIndex);
         });
     }
     
@@ -344,16 +394,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // If no persona was selected, show message
             if (!selectedPersona) {
                 alert('Please select a companion first');
-                
-                // Find the index of the personas section
-                let personasIndex = 0;
-                allSections.forEach((section, index) => {
-                    if (section.id === 'personas') {
-                        personasIndex = index;
-                    }
-                });
-                
-                goToSection(personasIndex);
+                const personaIndex = [...sections].findIndex(section => section.id === 'personas');
+                scrollToSection(personaIndex);
                 return;
             }
             
@@ -379,46 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Normally you would send this data to a server
             console.log('Sign up:', { name, phone, persona: selectedPersona });
         });
-    }
-    
-    // First screen particle animation
-    const animatedBg = document.querySelector('.animated-bg');
-    if (animatedBg) {
-        const addParticle = () => {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            // Random position, size and animation duration
-            const size = Math.random() * 5 + 2;
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            const duration = Math.random() * 10 + 10;
-            const delay = Math.random() * 5;
-            
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${posX}%`;
-            particle.style.top = `${posY}%`;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.animationDelay = `${delay}s`;
-            
-            animatedBg.appendChild(particle);
-            
-            // Remove particle after animation completes
-            setTimeout(() => {
-                if (particle && particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-            }, (duration + delay) * 1000);
-        };
-        
-        // Create initial particles
-        for (let i = 0; i < 15; i++) {
-            addParticle();
-        }
-        
-        // Add new particles periodically
-        setInterval(addParticle, 3000);
     }
     
     // Add CSS classes for animations
@@ -494,35 +496,39 @@ document.addEventListener('DOMContentLoaded', () => {
         .success-message h3 {
             margin-bottom: 1rem;
         }
+
+        /* Custom scroll styles */
+        .app-container {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        main.snap-container {
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen, footer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .screen.visible, .screen.active,
+        footer.visible, footer.active {
+            visibility: visible;
+            opacity: 1;
+        }
     `;
     document.head.appendChild(style);
     
-    // Intersection Observer for each section
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.3
-    };
-    
-    const sectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                
-                // Add animation classes to children
-                const elements = entry.target.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
-                elements.forEach((el, index) => {
-                    el.style.transitionDelay = `${index * 0.1}s`;
-                    el.classList.add('animate-in');
-                });
-            }
-        });
-    }, observerOptions);
-    
-    screens.forEach(screen => {
-        sectionObserver.observe(screen);
-        
-        // Add initial animations class
-        screen.classList.add('fade-in');
-    });
+    // Initial activation
+    sections[0].classList.add('active', 'visible');
 }); 
