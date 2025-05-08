@@ -7,10 +7,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Register API called with body:', JSON.stringify(req.body));
     const { name, phone, password, persona } = req.body;
 
     // Validate required fields
     if (!name || !phone || !password || !persona) {
+      console.log('Missing required fields');
       return res.status(400).json({ 
         success: false, 
         error: 'All fields are required' 
@@ -20,6 +22,7 @@ export default async function handler(req, res) {
     // Validate phone number format
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     if (!phoneRegex.test(phone.replace(/\s+/g, ''))) {
+      console.log('Invalid phone format:', phone);
       return res.status(400).json({ 
         success: false, 
         error: 'Invalid phone number format' 
@@ -28,6 +31,7 @@ export default async function handler(req, res) {
 
     // Validate password length
     if (password.length < 6) {
+      console.log('Password too short');
       return res.status(400).json({ 
         success: false, 
         error: 'Password must be at least 6 characters' 
@@ -36,6 +40,7 @@ export default async function handler(req, res) {
 
     // Normalize phone number by removing spaces
     const normalizedPhone = phone.replace(/\s+/g, '');
+    console.log('Attempting to register user with phone:', normalizedPhone);
 
     const result = await registerUser(
       name, 
@@ -43,6 +48,8 @@ export default async function handler(req, res) {
       password, 
       persona
     );
+
+    console.log('Registration result:', JSON.stringify(result));
 
     if (!result.success) {
       return res.status(400).json(result);
