@@ -314,11 +314,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Transition in progress flag
     let isTransitioning = false;
+    // Track last action time to prevent double-firing
+    let lastActionTime = 0;
+    // Debounce duration in milliseconds
+    const DEBOUNCE_TIME = 500;
 
     // Direct navigation to section by index - completely replaces scrolling
     function goToSection(targetIndex) {
+        // Debounce all navigation to prevent double-firing
+        const now = Date.now();
+        if (now - lastActionTime < DEBOUNCE_TIME) {
+            console.log("Debouncing navigation - too soon");
+            return;
+        }
+        lastActionTime = now;
+        
         // Prevent transitions while one is in progress
-        if (isTransitioning) return;
+        if (isTransitioning) {
+            console.log("Navigation blocked - transition in progress");
+            return;
+        }
         
         // Validate target index
         if (targetIndex < 0) targetIndex = 0;
@@ -415,8 +430,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
     
-    // Handle keyboard navigation
+    // Variables for improved event handling
+    let lastWheelTime = 0;
+    let wheelTimeout = null;
+    const WHEEL_DEBOUNCE_TIME = 100;
+    
+    // Handle keyboard navigation with debounce
     document.addEventListener('keydown', (e) => {
+        // Skip if transition is already in progress
         if (isTransitioning) return;
         
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
@@ -428,52 +449,105 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Handle wheel events for navigation
+    // Handle wheel events for navigation with improved debounce
+    // Use single event handler to prevent multiple event triggers
     window.addEventListener('wheel', (e) => {
         e.preventDefault();
+        
+        // Skip if already in personas section
+        if (e.target.closest('.personas-scroll')) return;
         
         // Skip if transition is in progress
         if (isTransitioning) return;
         
-        // Determine scroll direction
-        const direction = Math.sign(e.deltaY);
+        // Debounce wheel events
+        const now = Date.now();
+        if (now - lastWheelTime < WHEEL_DEBOUNCE_TIME) return;
+        lastWheelTime = now;
         
-        // Navigate based on direction
-        if (direction > 0) {
-            goToSection(currentScreenIndex + 1);
-        } else if (direction < 0) {
-            goToSection(currentScreenIndex - 1);
-        }
+        // Clear any pending timeout
+        if (wheelTimeout) clearTimeout(wheelTimeout);
+        
+        // Set a timeout to prevent rapid-fire events
+        wheelTimeout = setTimeout(() => {
+            // Determine scroll direction
+            const direction = Math.sign(e.deltaY);
+            
+            // Navigate based on direction
+            if (direction > 0) {
+                goToSection(currentScreenIndex + 1);
+            } else if (direction < 0) {
+                goToSection(currentScreenIndex - 1);
+            }
+        }, 50);
     }, { passive: false });
     
-    // Handle touch events for mobile
+    // Touch event variables
     let touchStartY = 0;
+    let touchStartX = 0;
+    let isTouchActive = false;
+    let touchDebounceTimer = null;
     
+    // Handle touch events for mobile with debounce
     window.addEventListener('touchstart', (e) => {
         // Skip if in personas scroll area
         if (e.target.closest('.personas-scroll')) return;
         
+        // Record starting touch position
         touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        isTouchActive = true;
     }, { passive: true });
     
+    window.addEventListener('touchmove', (e) => {
+        // Skip if in personas scroll area or not active
+        if (!isTouchActive || e.target.closest('.personas-scroll')) return;
+        
+        // Prevent native scrolling behavior
+        e.preventDefault();
+    }, { passive: false });
+    
     window.addEventListener('touchend', (e) => {
-        // Skip if in personas scroll area
-        if (e.target.closest('.personas-scroll')) return;
+        // Skip if touch wasn't active or in personas scroll area
+        if (!isTouchActive || e.target.closest('.personas-scroll')) {
+            isTouchActive = false;
+            return;
+        }
         
         // Skip if transition is in progress
-        if (isTransitioning) return;
-        
-        const touchEndY = e.changedTouches[0].clientY;
-        const touchDiff = touchStartY - touchEndY;
-        
-        // Navigate based on swipe direction
-        if (Math.abs(touchDiff) > 50) {
-            if (touchDiff > 0) {
-                goToSection(currentScreenIndex + 1);
-            } else {
-                goToSection(currentScreenIndex - 1);
-            }
+        if (isTransitioning) {
+            isTouchActive = false;
+            return;
         }
+        
+        // Clear any existing debounce timer
+        if (touchDebounceTimer) clearTimeout(touchDebounceTimer);
+        
+        // Set debounce timer
+        touchDebounceTimer = setTimeout(() => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const touchEndX = e.changedTouches[0].clientX;
+            
+            const touchDiffY = touchStartY - touchEndY;
+            const touchDiffX = touchStartX - touchEndX;
+            
+            // Only respond to primarily vertical swipes
+            if (Math.abs(touchDiffY) > Math.abs(touchDiffX) && Math.abs(touchDiffY) > 50) {
+                if (touchDiffY > 0) {
+                    goToSection(currentScreenIndex + 1);
+                } else {
+                    goToSection(currentScreenIndex - 1);
+                }
+            }
+            
+            isTouchActive = false;
+        }, 50);
+    }, { passive: true });
+    
+    // Cleanup touch state on touch cancel
+    window.addEventListener('touchcancel', () => {
+        isTouchActive = false;
+        if (touchDebounceTimer) clearTimeout(touchDebounceTimer);
     }, { passive: true });
     
     // Add CSS classes for animations
