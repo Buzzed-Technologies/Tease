@@ -167,6 +167,89 @@ document.addEventListener('DOMContentLoaded', () => {
         let startX;
         let scrollLeft;
         
+        // Add smooth scrolling behavior to personas container
+        personasContainer.style.scrollBehavior = 'smooth';
+        
+        // Function to scroll to a specific persona
+        function scrollToPersona(index) {
+            const personas = personasContainer.querySelectorAll('.persona');
+            if (personas[index]) {
+                const personaWidth = personas[0].offsetWidth;
+                const scrollPosition = index * (personaWidth + 20); // 20px is the margin-right
+                personasContainer.scrollTo({
+                    left: scrollPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Add arrow navigation for personas
+        const personasSection = document.getElementById('personas');
+        if (personasSection) {
+            // Create left and right navigation arrows
+            const leftArrow = document.createElement('div');
+            leftArrow.className = 'persona-nav-arrow left';
+            leftArrow.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            
+            const rightArrow = document.createElement('div');
+            rightArrow.className = 'persona-nav-arrow right';
+            rightArrow.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            
+            personasSection.querySelector('.personas-container').appendChild(leftArrow);
+            personasSection.querySelector('.personas-container').appendChild(rightArrow);
+            
+            // Current persona index
+            let currentPersonaIndex = 0;
+            const totalPersonas = personasContainer.querySelectorAll('.persona').length;
+            
+            // Navigation arrow click events
+            leftArrow.addEventListener('click', () => {
+                if (currentPersonaIndex > 0) {
+                    currentPersonaIndex--;
+                    scrollToPersona(currentPersonaIndex);
+                }
+            });
+            
+            rightArrow.addEventListener('click', () => {
+                if (currentPersonaIndex < totalPersonas - 1) {
+                    currentPersonaIndex++;
+                    scrollToPersona(currentPersonaIndex);
+                }
+            });
+            
+            // Show/hide arrows based on scroll position
+            personasContainer.addEventListener('scroll', () => {
+                const maxScrollLeft = personasContainer.scrollWidth - personasContainer.clientWidth;
+                
+                // Update current index based on scroll position
+                const personaWidth = personasContainer.querySelector('.persona').offsetWidth + 20;
+                currentPersonaIndex = Math.round(personasContainer.scrollLeft / personaWidth);
+                
+                // Show/hide arrows
+                if (personasContainer.scrollLeft <= 10) {
+                    leftArrow.style.opacity = '0.2';
+                } else {
+                    leftArrow.style.opacity = '1';
+                }
+                
+                if (personasContainer.scrollLeft >= maxScrollLeft - 10) {
+                    rightArrow.style.opacity = '0.2';
+                } else {
+                    rightArrow.style.opacity = '1';
+                }
+                
+                // Update scroll hint opacity
+                const scrollHint = document.querySelector('.scroll-hint');
+                if (scrollHint) {
+                    if (personasContainer.scrollLeft > maxScrollLeft - 100) {
+                        scrollHint.style.opacity = '0';
+                    } else {
+                        scrollHint.style.opacity = '0.7';
+                    }
+                }
+            });
+        }
+        
         personasContainer.addEventListener('mousedown', (e) => {
             isDown = true;
             personasContainer.classList.add('active');
@@ -177,6 +260,12 @@ document.addEventListener('DOMContentLoaded', () => {
         personasContainer.addEventListener('mouseleave', () => {
             isDown = false;
             personasContainer.classList.remove('active');
+            // After horizontal scrolling, set a short timeout before allowing vertical scrolls again
+            if (isHorizontalScrolling) {
+                setTimeout(() => {
+                    isHorizontalScrolling = false;
+                }, 100);
+            }
         });
         
         personasContainer.addEventListener('mouseup', () => {
@@ -188,6 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     isHorizontalScrolling = false;
                 }, 100);
             }
+            
+            // Snap to closest persona after manual scrolling
+            const personaWidth = personasContainer.querySelector('.persona').offsetWidth + 20;
+            const index = Math.round(personasContainer.scrollLeft / personaWidth);
+            scrollToPersona(index);
         });
         
         personasContainer.addEventListener('mousemove', (e) => {
@@ -244,23 +338,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 300);
             }
             
+            // Snap to closest persona after touch scrolling
+            if (touchStartX !== null) {
+                const personaWidth = personasContainer.querySelector('.persona').offsetWidth + 20;
+                const index = Math.round(personasContainer.scrollLeft / personaWidth);
+                scrollToPersona(index);
+            }
+            
             touchStartX = null;
             touchStartY = null;
         });
-        
-        // Show/hide scroll hint based on scroll position
-        const scrollHint = document.querySelector('.scroll-hint');
-        
-        if (scrollHint) {
-            personasContainer.addEventListener('scroll', () => {
-                const maxScrollLeft = personasContainer.scrollWidth - personasContainer.clientWidth;
-                if (personasContainer.scrollLeft > maxScrollLeft - 100) {
-                    scrollHint.style.opacity = '0';
-                } else {
-                    scrollHint.style.opacity = '0.7';
-                }
-            });
-        }
     }
     
     // Phone number input validation and formatting
@@ -423,7 +510,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get current visible screen index helper function
     function getCurrentVisibleScreenIndex() {
         let visibleScreenIndex = 0;
+        
+        // For the first screen, make sure we detect it properly
+        const firstScreen = screens[0];
+        const firstScreenRect = firstScreen.getBoundingClientRect();
+        
+        // If the first screen is still significantly visible, consider it as the current screen
+        if (firstScreenRect.bottom > window.innerHeight * 0.3) {
+            return 0;
+        }
+        
+        // For other screens, use the standard center-point detection
         screens.forEach((screen, index) => {
+            if (index === 0) return; // Skip first screen (already handled)
+            
             const rect = screen.getBoundingClientRect();
             if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
                 visibleScreenIndex = index;
@@ -440,6 +540,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Find currently visible screen
         let visibleScreenIndex = getCurrentVisibleScreenIndex();
         
+        // Special handling for the first screen when scrolling down
+        if (visibleScreenIndex === 0 && direction > 0) {
+            // Always go to the second screen when scrolling down from the first
+            visibleScreenIndex = 0; // Ensure it's 0 for the calculation below
+        }
+        
         // Prevent scrolling if we're already at the boundary
         if (direction > 0 && visibleScreenIndex === screens.length - 1) return;
         if (direction < 0 && visibleScreenIndex === 0) return;
@@ -454,10 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // For desktop, use smooth scrolling with better positioning
         if (!isMobile) {
             // Instead of instant jump, use smooth scroll with proper positioning
-            const targetY = screens[targetIndex].offsetTop;
-            window.scrollTo({
-                top: targetY,
-                behavior: 'smooth'
+            screens[targetIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
             
             // Longer reset to prevent multiple scrolls on desktop
@@ -641,6 +746,53 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .success-message h3 {
             margin-bottom: 1rem;
+        }
+        
+        /* Personas Navigation Arrows */
+        .persona-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .persona-nav-arrow:hover {
+            background-color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .persona-nav-arrow.left {
+            left: 10px;
+        }
+        
+        .persona-nav-arrow.right {
+            right: 10px;
+        }
+        
+        /* Improve personas scrolling effect */
+        .personas-scroll {
+            transition: transform 0.3s ease;
+            scroll-behavior: smooth;
+        }
+        
+        .personas-scroll.active {
+            scroll-behavior: auto;
+            cursor: grabbing;
+        }
+        
+        .persona {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
         }
     `;
     document.head.appendChild(style);
