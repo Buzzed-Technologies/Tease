@@ -1,9 +1,45 @@
 // Supabase client initialization
 const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
 
-// Create the client using the imported library
-const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+// Try to get the API key from different sources
+let supabaseAnonKey;
+
+// Function to initialize Supabase client
+function initSupabase() {
+    try {
+        // Create the client using the imported library
+        console.log('Initializing Supabase client');
+        return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    } catch (error) {
+        console.error('Failed to initialize Supabase client:', error);
+        return null;
+    }
+}
+
+// Check for API key in various sources
+if (typeof window !== 'undefined') {
+    // Try to get from window.__env__ (sometimes used for client-side env vars)
+    if (window.__env__ && window.__env__.SUPABASE_ANON_KEY) {
+        supabaseAnonKey = window.__env__.SUPABASE_ANON_KEY;
+        console.log('Using Supabase key from window.__env__');
+    } 
+    // Try to get from a meta tag
+    else {
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]');
+        if (metaKey) {
+            supabaseAnonKey = metaKey.getAttribute('content');
+            console.log('Using Supabase key from meta tag');
+        }
+        // Use the hardcoded key as last resort
+        else {
+            supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+            console.log('Using hardcoded Supabase key');
+        }
+    }
+}
+
+// Initialize the Supabase client
+const supabase = initSupabase();
 
 // DOM Elements
 let loginForm, signupForm, personaButtons, personaSelected = null;

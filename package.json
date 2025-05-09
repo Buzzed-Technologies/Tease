@@ -2,10 +2,11 @@
   "name": "tease",
   "version": "1.0.0",
   "description": "AI Adult Companion Service",
-  "main": "public/index.html",
+  "main": "server.js",
   "scripts": {
-    "dev": "serve public",
-    "start": "serve public",
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo \"No build step required\"",
     "deploy": "vercel",
     "deploy:prod": "vercel --prod",
     "lint": "eslint public/scripts/**/*.js",
@@ -20,6 +21,8 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.6",
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
     "stripe": "^14.18.0"
   },
   "devDependencies": {
