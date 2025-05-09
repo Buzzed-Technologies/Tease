@@ -289,6 +289,7 @@
                         <span class="persona-tag">Adventurous</span>
                         <span class="persona-tag">Intense</span>
                     </div>
+                    <button class="persona-details-button">View Details</button>
                 </div>
                 
                 <!-- Playful Personality -->
@@ -302,6 +303,7 @@
                         <span class="persona-tag">Spontaneous</span>
                         <span class="persona-tag">Flirty</span>
                     </div>
+                    <button class="persona-details-button">View Details</button>
                 </div>
                 
                 <!-- Dominant Personality -->
@@ -315,6 +317,7 @@
                         <span class="persona-tag">Confident</span>
                         <span class="persona-tag">Assertive</span>
                     </div>
+                    <button class="persona-details-button">View Details</button>
                 </div>
                 
                 <!-- Nurturing Personality -->
@@ -328,6 +331,7 @@
                         <span class="persona-tag">Caring</span>
                         <span class="persona-tag">Attentive</span>
                     </div>
+                    <button class="persona-details-button">View Details</button>
                 </div>
             </div>
             
@@ -385,8 +389,246 @@
         </div>
     </div>
     
+    <!-- Persona Detail Modal -->
+    <div id="persona-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-close"><i class="fas fa-times"></i></div>
+            <div class="persona-detail-card">
+                <div class="persona-detail-image"></div>
+                <div class="persona-detail-header">
+                    <h2 class="persona-detail-name"></h2>
+                    <span class="persona-detail-tag"></span>
+                </div>
+                <div class="persona-detail-body">
+                    <h3>Personality</h3>
+                    <p class="persona-detail-description"></p>
+                    <h3>Interaction Style</h3>
+                    <p class="persona-detail-style"></p>
+                    <h3>Perfect For</h3>
+                    <div class="persona-detail-traits"></div>
+                    <h3>Signature Phrases</h3>
+                    <div class="persona-detail-phrases"></div>
+                </div>
+                <div class="persona-detail-footer">
+                    <button class="persona-button">Select <span class="persona-detail-select-name"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script src="/scripts/auth.js"></script>
+    <script>
+        // Define traits and example phrases for each persona
+        const personaDetails = {
+            passionate: {
+                traits: ['Deep emotional connection', 'Intense fantasy scenarios', 'Expressive romance'],
+                phrases: [
+                    '"Let me show you how much I desire you, darling."',
+                    '"I want to feel every inch of your body against mine, lover."',
+                    '"Our connection is more than physical—it\'s something deeper."'
+                ]
+            },
+            playful: {
+                traits: ['Spontaneous adventures', 'Light-hearted fun', 'Playful teasing'],
+                phrases: [
+                    '"Wanna play a little game, cutie?"',
+                    '"I bet you can\'t catch me... but it\'ll be fun to try!"',
+                    '"You\'re so cute when you\'re all worked up, hottie."'
+                ]
+            },
+            dominant: {
+                traits: ['Clear boundaries', 'Disciplined structure', 'Nurturing authority'],
+                phrases: [
+                    '"You\'ll do as I say, won\'t you, kitten?"',
+                    '"Good behavior deserves a reward. Bad behavior has consequences."',
+                    '"I\'ll take care of you, but you must follow my rules."'
+                ]
+            },
+            nurturing: {
+                traits: ['Emotional support', 'Safe exploration', 'Gentle guidance'],
+                phrases: [
+                    '"I\'m here for you, sweetheart, whatever you need."',
+                    '"Let\'s explore at your pace, there\'s no rush, dear one."',
+                    '"You\'re safe with me to express yourself fully."'
+                ]
+            }
+        };
+        
+        // Modal functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const personaModal = document.getElementById('persona-modal');
+            const personaDetailsButtons = document.querySelectorAll('.persona-details-button');
+            const modalClose = document.querySelector('.modal-close');
+            const modalOverlay = document.querySelector('.modal-overlay');
+            
+            // Open persona detail modal
+            function openPersonaModal(persona) {
+                if (!persona) return;
+                
+                const personaName = persona.querySelector('.persona-name').textContent;
+                const personaStyle = persona.getAttribute('data-persona');
+                const personaDetailedStyle = persona.querySelector('.persona-style') ? 
+                                            persona.querySelector('.persona-style').value : '';
+                const personaDescription = persona.querySelector('.persona-description').textContent;
+                
+                // Set modal content
+                document.querySelector('.persona-detail-name').textContent = personaName;
+                document.querySelector('.persona-detail-tag').textContent = personaStyle.charAt(0).toUpperCase() + personaStyle.slice(1);
+                document.querySelector('.persona-detail-description').textContent = personaDescription;
+                document.querySelector('.persona-detail-style').textContent = personaDetailedStyle;
+                document.querySelector('.persona-detail-select-name').textContent = personaName;
+                
+                // Set background gradient for the persona's style
+                const detailImage = document.querySelector('.persona-detail-image');
+                detailImage.style.backgroundImage = persona.querySelector('.persona-avatar').style.backgroundImage;
+                
+                // Add traits
+                const traitsContainer = document.querySelector('.persona-detail-traits');
+                traitsContainer.innerHTML = '';
+                if (personaDetails[personaStyle] && personaDetails[personaStyle].traits) {
+                    personaDetails[personaStyle].traits.forEach(trait => {
+                        const traitEl = document.createElement('div');
+                        traitEl.classList.add('persona-trait');
+                        traitEl.textContent = trait;
+                        traitsContainer.appendChild(traitEl);
+                    });
+                }
+                
+                // Add phrases
+                const phrasesContainer = document.querySelector('.persona-detail-phrases');
+                phrasesContainer.innerHTML = '';
+                if (personaDetails[personaStyle] && personaDetails[personaStyle].phrases) {
+                    personaDetails[personaStyle].phrases.forEach(phrase => {
+                        const phraseEl = document.createElement('div');
+                        phraseEl.classList.add('persona-phrase');
+                        phraseEl.textContent = phrase;
+                        phrasesContainer.appendChild(phraseEl);
+                    });
+                }
+                
+                // Store reference to this persona for selection
+                personaModal.setAttribute('data-persona-element', persona.outerHTML);
+                
+                // Show modal with animation
+                personaModal.classList.add('active');
+                setTimeout(() => {
+                    document.querySelector('.persona-detail-card').style.opacity = '1';
+                    document.querySelector('.persona-detail-card').style.transform = 'translateY(0)';
+                }, 10);
+                
+                // Prevent body scrolling
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Close persona detail modal
+            function closePersonaModal() {
+                document.querySelector('.persona-detail-card').style.opacity = '0';
+                document.querySelector('.persona-detail-card').style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    personaModal.classList.remove('active');
+                }, 300);
+                
+                // Re-enable body scrolling
+                document.body.style.overflow = '';
+            }
+            
+            // Setup event listeners for persona detail buttons
+            if (personaDetailsButtons.length > 0) {
+                personaDetailsButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const persona = button.closest('.persona-card');
+                        if (persona) {
+                            openPersonaModal(persona);
+                        }
+                    });
+                });
+            }
+            
+            // Setup modal close button
+            if (modalClose) {
+                modalClose.addEventListener('click', closePersonaModal);
+            }
+            
+            // Close modal when clicking on overlay
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', closePersonaModal);
+            }
+            
+            // Handle persona selection from modal
+            if (personaModal) {
+                const modalPersonaButton = personaModal.querySelector('.persona-button');
+                if (modalPersonaButton) {
+                    modalPersonaButton.addEventListener('click', () => {
+                        // Get the persona element from the modal
+                        const personaHTML = personaModal.getAttribute('data-persona-element');
+                        if (personaHTML) {
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = personaHTML;
+                            const persona = tempDiv.firstChild;
+                            
+                            // Get persona data
+                            const personaName = persona.querySelector('.persona-name').textContent;
+                            const personaStyle = persona.getAttribute('data-persona');
+                            const personaDetailedStyle = persona.querySelector('.persona-style') ? 
+                                                        persona.querySelector('.persona-style').value : '';
+                            
+                            // Store the selected persona in a hidden input
+                            const selectedPersonaInput = document.getElementById('selected-persona');
+                            if (selectedPersonaInput) {
+                                selectedPersonaInput.value = personaName;
+                            }
+                            
+                            // Store additional persona data as custom data attributes
+                            document.getElementById('selected-persona').setAttribute('data-style', personaStyle);
+                            document.getElementById('selected-persona').setAttribute('data-detailed-style', personaDetailedStyle);
+                            
+                            // Update UI
+                            const personaContinueBtn = document.getElementById('persona-continue');
+                            if (personaContinueBtn) {
+                                personaContinueBtn.removeAttribute('disabled');
+                            }
+                            
+                            // Find the actual persona element in the DOM and update its appearance
+                            const actualPersona = document.querySelector(`.persona-card[data-persona="${personaStyle}"]`);
+                            if (actualPersona) {
+                                // Update all personas to remove selected state
+                                document.querySelectorAll('.persona-card').forEach(p => {
+                                    p.classList.remove('selected');
+                                });
+                                
+                                // Add selected class to this persona
+                                actualPersona.classList.add('selected');
+                                
+                                // Update detail button text
+                                const detailButton = actualPersona.querySelector('.persona-details-button');
+                                if (detailButton) {
+                                    detailButton.textContent = 'Selected';
+                                }
+                            }
+                            
+                            // Close the modal
+                            closePersonaModal();
+                        }
+                    });
+                }
+            }
+            
+            // Handle continue button
+            const personaContinueBtn = document.getElementById('persona-continue');
+            if (personaContinueBtn) {
+                personaContinueBtn.addEventListener('click', () => {
+                    const step1 = document.querySelector('.step-1');
+                    const step2 = document.querySelector('.step-2');
+                    if (step1 && step2) {
+                        step1.classList.add('hidden');
+                        step2.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html> 

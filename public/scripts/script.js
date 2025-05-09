@@ -266,46 +266,219 @@ document.addEventListener('DOMContentLoaded', () => {
     const personaButtons = document.querySelectorAll('.persona-button');
     let selectedPersona = null;
     
-    personaButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const persona = button.closest('.persona');
-            const personaName = persona.querySelector('h3').textContent;
-            const personaStyle = persona.getAttribute('data-style');
-            const personaDetailedStyle = persona.querySelector('.persona-style') ? 
-                                        persona.querySelector('.persona-style').value : '';
-            
-            // Store the selected persona
-            selectedPersona = {
-                name: personaName,
-                style: personaStyle,
-                detailedStyle: personaDetailedStyle
-            };
-            
-            // Remove selected class from all personas
-            document.querySelectorAll('.persona').forEach(p => {
-                p.classList.remove('selected');
+    // Modal functionality
+    const personaDetailModal = document.getElementById('persona-modal');
+    const personaDetailsButtons = document.querySelectorAll('.persona-details-button');
+    const modalClose = document.querySelector('.modal-close');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    
+    // Define traits and example phrases for each persona
+    const personaDetails = {
+        passionate: {
+            traits: ['Deep emotional connection', 'Intense fantasy scenarios', 'Expressive romance'],
+            phrases: [
+                '"Let me show you how much I desire you, darling."',
+                '"I want to feel every inch of your body against mine, lover."',
+                '"Our connection is more than physical—it\'s something deeper."'
+            ]
+        },
+        playful: {
+            traits: ['Spontaneous adventures', 'Light-hearted fun', 'Playful teasing'],
+            phrases: [
+                '"Wanna play a little game, cutie?"',
+                '"I bet you can\'t catch me... but it\'ll be fun to try!"',
+                '"You\'re so cute when you\'re all worked up, hottie."'
+            ]
+        },
+        dominant: {
+            traits: ['Clear boundaries', 'Disciplined structure', 'Nurturing authority'],
+            phrases: [
+                '"You\'ll do as I say, won\'t you, kitten?"',
+                '"Good behavior deserves a reward. Bad behavior has consequences."',
+                '"I\'ll take care of you, but you must follow my rules."'
+            ]
+        },
+        sensual: {
+            traits: ['Slow, deliberate pacing', 'Focus on sensation', 'Tantric connection'],
+            phrases: [
+                '"Feel how slowly my fingers trace your skin, love."',
+                '"Let\'s savor every moment, every touch, every breath."',
+                '"The anticipation is part of the pleasure, dear."'
+            ]
+        },
+        intellectual: {
+            traits: ['Psychological depth', 'Witty conversation', 'Complex scenarios'],
+            phrases: [
+                '"Your mind is as enticing as your body, brilliant one."',
+                '"Let\'s explore this fascinating fantasy together."',
+                '"I find your analytical approach so stimulating."'
+            ]
+        }
+    };
+    
+    // Open persona detail modal
+    function openPersonaModal(persona) {
+        if (!persona) return;
+        
+        const personaName = persona.querySelector('h3').textContent;
+        const personaStyle = persona.getAttribute('data-style');
+        const personaDetailedStyle = persona.querySelector('.persona-style') ? 
+                                    persona.querySelector('.persona-style').value : '';
+        const personaDescription = persona.querySelector('p').textContent;
+        const personaTag = persona.querySelector('.persona-tag').textContent;
+        
+        // Set modal content
+        document.querySelector('.persona-detail-name').textContent = personaName;
+        document.querySelector('.persona-detail-tag').textContent = personaTag;
+        document.querySelector('.persona-detail-description').textContent = personaDescription;
+        document.querySelector('.persona-detail-style').textContent = personaDetailedStyle;
+        document.querySelector('.persona-detail-select-name').textContent = personaName;
+        
+        // Set background gradient for the persona's style
+        const detailImage = document.querySelector('.persona-detail-image');
+        detailImage.style.background = `linear-gradient(to bottom, var(--${personaStyle}), var(--primary-dark))`;
+        
+        // Add traits
+        const traitsContainer = document.querySelector('.persona-detail-traits');
+        traitsContainer.innerHTML = '';
+        if (personaDetails[personaStyle] && personaDetails[personaStyle].traits) {
+            personaDetails[personaStyle].traits.forEach(trait => {
+                const traitEl = document.createElement('div');
+                traitEl.classList.add('persona-trait');
+                traitEl.textContent = trait;
+                traitsContainer.appendChild(traitEl);
             });
-            
-            // Add selected class to this persona
-            persona.classList.add('selected');
-            
-            // Update button text
-            button.textContent = 'Selected';
-            
-            // Scroll to signup section after a delay
-            setTimeout(() => {
-                if (isScrolling) return;
-                
-                isScrolling = true;
-                updateSection(ctaSectionIndex);
-                
-                // Debounce scrolling
-                setTimeout(() => {
-                    isScrolling = false;
-                }, 800);
-            }, 500);
+        }
+        
+        // Add phrases
+        const phrasesContainer = document.querySelector('.persona-detail-phrases');
+        phrasesContainer.innerHTML = '';
+        if (personaDetails[personaStyle] && personaDetails[personaStyle].phrases) {
+            personaDetails[personaStyle].phrases.forEach(phrase => {
+                const phraseEl = document.createElement('div');
+                phraseEl.classList.add('persona-phrase');
+                phraseEl.textContent = phrase;
+                phrasesContainer.appendChild(phraseEl);
+            });
+        }
+        
+        // Store reference to this persona for selection
+        personaDetailModal.setAttribute('data-persona-element', persona.outerHTML);
+        
+        // Show modal with animation
+        personaDetailModal.classList.add('active');
+        setTimeout(() => {
+            document.querySelector('.persona-detail-card').style.opacity = '1';
+            document.querySelector('.persona-detail-card').style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Close persona detail modal
+    function closePersonaModal() {
+        document.querySelector('.persona-detail-card').style.opacity = '0';
+        document.querySelector('.persona-detail-card').style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            personaDetailModal.classList.remove('active');
+        }, 300);
+        
+        // Re-enable body scrolling
+        document.body.style.overflow = '';
+    }
+    
+    // Setup event listeners for persona detail buttons
+    if (personaDetailsButtons.length > 0) {
+        personaDetailsButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const persona = button.closest('.persona');
+                if (persona) {
+                    openPersonaModal(persona);
+                }
+            });
         });
-    });
+    }
+    
+    // Setup modal close button
+    if (modalClose) {
+        modalClose.addEventListener('click', closePersonaModal);
+    }
+    
+    // Close modal when clicking on overlay
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closePersonaModal);
+    }
+    
+    // Handle persona selection from modal
+    if (personaDetailModal) {
+        const modalPersonaButton = personaDetailModal.querySelector('.persona-button');
+        if (modalPersonaButton) {
+            modalPersonaButton.addEventListener('click', () => {
+                // Get the persona element from the modal
+                const personaHTML = personaDetailModal.getAttribute('data-persona-element');
+                if (personaHTML) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = personaHTML;
+                    const persona = tempDiv.firstChild;
+                    
+                    const personaNameEl = persona.querySelector('h3');
+                    const personaStyle = persona.getAttribute('data-style');
+                    const personaDetailedStyle = persona.querySelector('.persona-style') ? 
+                                                persona.querySelector('.persona-style').value : '';
+                    
+                    // Store the selected persona
+                    selectedPersona = {
+                        name: personaNameEl.textContent,
+                        style: personaStyle,
+                        detailedStyle: personaDetailedStyle
+                    };
+                    
+                    // Update hidden input with selected persona
+                    const selectedPersonaInput = document.getElementById('selected-persona');
+                    if (selectedPersonaInput) {
+                        selectedPersonaInput.value = selectedPersona.name;
+                    }
+                    
+                    console.log('Selected persona:', selectedPersona);
+                    
+                    // Close the modal
+                    closePersonaModal();
+                    
+                    // Find the actual persona element in the DOM and update its appearance
+                    const actualPersona = document.querySelector(`.persona[data-style="${personaStyle}"]`);
+                    if (actualPersona) {
+                        // Update all personas to remove selected state
+                        document.querySelectorAll('.persona').forEach(p => {
+                            p.classList.remove('selected');
+                        });
+                        
+                        // Add selected class to this persona
+                        actualPersona.classList.add('selected');
+                        
+                        // Update detail button text
+                        const detailButton = actualPersona.querySelector('.persona-details-button');
+                        if (detailButton) {
+                            detailButton.textContent = 'Selected';
+                        }
+                    }
+                    
+                    // Scroll to signup section after a delay
+                    setTimeout(() => {
+                        if (isScrolling) return;
+                        
+                        isScrolling = true;
+                        updateSection(ctaSectionIndex);
+                        
+                        // Debounce scrolling
+                        setTimeout(() => {
+                            isScrolling = false;
+                        }, 800);
+                    }, 500);
+                }
+            });
+        }
+    }
     
     // Horizontal scroll for personas
     const personasContainer = document.querySelector('.personas-scroll');

@@ -149,7 +149,7 @@
                                     <span class="persona-tag">The Passionate</span>
                                     <p>Intense, seductive, and emotionally expressive. Aria creates immersive experiences through intimate fantasy fulfillment.</p>
                                     <input type="hidden" class="persona-style" value="Deeply passionate and sensual with a tendency to use pet names like 'darling' and 'lover'. Expresses emotions intensely and creates vivid, immersive scenarios. Combines physical desire with emotional connection.">
-                                    <button class="persona-button">Select Aria</button>
+                                    <button class="persona-details-button">View Details</button>
                                 </div>
                             </div>
                             
@@ -160,7 +160,7 @@
                                     <span class="persona-tag">The Playful</span>
                                     <p>Adventurous, flirtatious, and spontaneous. Zara brings excitement and exploration to every encounter.</p>
                                     <input type="hidden" class="persona-style" value="Playfully teasing and adventurous with a bubbly personality. Uses playful nicknames like 'cutie' and 'hottie'. Loves spontaneous role-play, exciting scenarios, and pushing boundaries in a fun, lighthearted way.">
-                                    <button class="persona-button">Select Zara</button>
+                                    <button class="persona-details-button">View Details</button>
                                 </div>
                             </div>
                             
@@ -171,7 +171,7 @@
                                     <span class="persona-tag">The Dominant</span>
                                     <p>Confident, assertive, and commanding. Demi provides structure, discipline, and control in your interactions.</p>
                                     <input type="hidden" class="persona-style" value="Very commanding and authoritative with a motherly undertone. Uses pet names like 'kitten' and 'good boy/girl'. Sets clear expectations, provides firm guidance, and rewards obedience while punishing disobedience with gentle but firm discipline.">
-                                    <button class="persona-button">Select Demi</button>
+                                    <button class="persona-details-button">View Details</button>
                                 </div>
                             </div>
                             
@@ -182,7 +182,7 @@
                                     <span class="persona-tag">The Sensual</span>
                                     <p>Intuitive, seductive, and attentive. Luna focuses on building tension and creating intense sensory experiences.</p>
                                     <input type="hidden" class="persona-style" value="Deeply sensual and intuitive with a focus on physical sensation. Uses descriptive language that engages all senses. Prefers 'love' and 'dear' as terms of endearment. Creates slow-building, tantric experiences with attention to every physical detail.">
-                                    <button class="persona-button">Select Luna</button>
+                                    <button class="persona-details-button">View Details</button>
                                 </div>
                             </div>
                             
@@ -193,7 +193,7 @@
                                     <span class="persona-tag">The Intellectual</span>
                                     <p>Thoughtful, witty, and articulate. Thea connects through mental stimulation alongside physical exploration.</p>
                                     <input type="hidden" class="persona-style" value="Intellectually stimulating with psychological depth. Engages in wordplay and sophisticated conversation before and during intimate encounters. Uses literary references and enjoys detailed fantasy scenarios with complex plots. Affectionately calls you 'brilliant' and 'fascinating'.">
-                                    <button class="persona-button">Select Thea</button>
+                                    <button class="persona-details-button">View Details</button>
                                 </div>
                             </div>
                         </div>
@@ -275,6 +275,34 @@
                 </div>
             </div>
         </footer>
+    </div>
+
+    <!-- Persona Detail Modal -->
+    <div id="persona-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-close"><i class="fas fa-times"></i></div>
+            <div class="persona-detail-card">
+                <div class="persona-detail-image"></div>
+                <div class="persona-detail-header">
+                    <h2 class="persona-detail-name"></h2>
+                    <span class="persona-detail-tag"></span>
+                </div>
+                <div class="persona-detail-body">
+                    <h3>Personality</h3>
+                    <p class="persona-detail-description"></p>
+                    <h3>Interaction Style</h3>
+                    <p class="persona-detail-style"></p>
+                    <h3>Perfect For</h3>
+                    <div class="persona-detail-traits"></div>
+                    <h3>Signature Phrases</h3>
+                    <div class="persona-detail-phrases"></div>
+                </div>
+                <div class="persona-detail-footer">
+                    <button class="persona-button">Select <span class="persona-detail-select-name"></span></button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Necessary libraries -->
