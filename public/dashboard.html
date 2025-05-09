@@ -409,7 +409,7 @@
 <body>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <div class="logo">tease</div>
+                <div class="logo">tease</div>
             
             <div class="header-controls">
                 <div class="user-info">
@@ -458,16 +458,16 @@
                             <div class="stat-card">
                                 <div class="stat-value" id="sessions-count">0</div>
                                 <div class="stat-label">Chat Sessions</div>
-                            </div>
+                        </div>
                             
                             <div class="stat-card">
                                 <div class="stat-value" id="days-count">0</div>
                                 <div class="stat-label">Days Active</div>
-                            </div>
                         </div>
-                    </div>
-                </section>
-                
+                        </div>
+                </div>
+            </section>
+            
                 <!-- Subscription Section -->
                 <section id="subscription-section" class="content-section">
                     <div class="section-header">
@@ -558,23 +558,23 @@
                     <div class="section-header">
                         <h2>Account Settings</h2>
                         <p class="section-description">Update your account information and preferences.</p>
-                    </div>
+                </div>
                     
                     <form class="settings-form" id="settings-form">
                         <div class="form-group">
                             <label for="settings-name" class="form-label">Name</label>
                             <input type="text" id="settings-name" class="form-input" placeholder="Your name">
-                        </div>
+                </div>
                         
                         <div class="form-group">
                             <label for="settings-password" class="form-label">New Password</label>
                             <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
-                        </div>
+                </div>
                         
                         <div class="form-group">
                             <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
                             <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
-                        </div>
+                </div>
                         
                         <button type="submit" class="action-button">Save Changes</button>
                         
@@ -593,7 +593,7 @@
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
         // DOM elements
         const userDisplayName = document.getElementById('user-display-name');
@@ -830,25 +830,25 @@
         });
         
         // Navigation
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
                 // Prevent navigation for external links
                 const href = this.getAttribute('href');
                 if (href.startsWith('/')) return;
                 
-                e.preventDefault();
-                
+                    e.preventDefault();
+                    
                 // Update active link
                 navLinks.forEach(navLink => navLink.classList.remove('active'));
-                this.classList.add('active');
-                
+                    this.classList.add('active');
+                    
                 // Show corresponding section
                 const sectionId = href.replace('#', '') + '-section';
                 contentSections.forEach(section => {
-                    section.classList.remove('active');
+                        section.classList.remove('active');
                     if (section.id === sectionId) {
-                        section.classList.add('active');
-                    }
+                            section.classList.add('active');
+                        }
                 });
             });
         });

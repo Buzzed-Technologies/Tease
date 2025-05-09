@@ -315,9 +315,9 @@
         .success-message {
             color: var(--light-gray);
             line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        
+                margin-bottom: 2rem;
+            }
+            
         .action-button {
             display: inline-block;
             padding: 1rem 2rem;
@@ -365,13 +365,13 @@
                         <h2 class="model-name" id="model-name">Your AI Companion</h2>
                         <p class="model-message" id="model-message">"I can't wait to get to know you better. Choose a package that fits your desires, and let's begin our journey together."</p>
                     </div>
-                </div>
-                
+                        </div>
+                        
                 <div class="packages-container" id="packages-container">
                     <!-- Packages will be loaded dynamically -->
                     <div class="loading-indicator">Loading packages...</div>
-                </div>
-                
+                        </div>
+                        
                 <div id="subscription-message" class="subscription-message"></div>
                 
                 <div class="subscription-footer">
@@ -392,7 +392,7 @@
             <div id="success-view" class="hidden">
                 <div class="success-container">
                     <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-check-circle"></i>
                     </div>
                     <h1 class="success-title">Subscription Activated!</h1>
                     <p class="success-message" id="success-message">Thank you for subscribing. Your premium experience with <span id="model-name-success"></span> is now active.</p>
@@ -401,7 +401,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
@@ -411,7 +411,7 @@
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
         // Stripe initialization
         const stripePublicKey = document.querySelector('meta[name="stripe-public-key"]')?.getAttribute('content') || 
@@ -430,7 +430,7 @@
         const successView = document.getElementById('success-view');
         
         // Get user data from local storage
-        const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+            const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
         
         // Check if user is logged in
         if (!userData.id) {
