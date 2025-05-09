@@ -4,9 +4,15 @@ const path = require('path');
 const dotenv = require('dotenv');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const bodyParser = require('body-parser');
+const { createClient } = require('@supabase/supabase-js');
 
 // Load environment variables
 dotenv.config();
+
+// Initialize Supabase client
+const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,17 +38,13 @@ app.get('/api/config', (req, res) => {
 // Stripe API endpoints
 app.post('/api/create-customer', async (req, res) => {
   try {
-    const { email, paymentMethodId, name, phone } = req.body;
+    const { email, name, phone } = req.body;
     
-    // Create a customer in Stripe
+    // Create a customer in Stripe without payment method
     const customer = await stripe.customers.create({
       email,
-      payment_method: paymentMethodId,
       name,
-      phone,
-      invoice_settings: {
-        default_payment_method: paymentMethodId,
-      },
+      phone
     });
     
     res.json({ customerId: customer.id });
@@ -52,24 +54,49 @@ app.post('/api/create-customer', async (req, res) => {
   }
 });
 
-app.post('/api/create-subscription', async (req, res) => {
+app.post('/api/create-checkout-session', async (req, res) => {
   try {
-    const { customerId, priceId } = req.body;
+    const { customerId, priceId, userId, userPhone, successUrl, cancelUrl } = req.body;
     
-    // Create the subscription
-    const subscription = await stripe.subscriptions.create({
+    // Create a Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      items: [{ price: priceId }],
-      expand: ['latest_invoice.payment_intent'],
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      success_url: successUrl || `${req.headers.origin}/subscription-success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `${req.headers.origin}/subscription.html`,
+      metadata: {
+        userId: userId,
+        userPhone: userPhone
+      }
     });
     
-    res.json({
-      subscriptionId: subscription.id,
-      clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-      status: subscription.status,
-    });
+    res.json({ sessionId: session.id, url: session.url });
   } catch (error) {
-    console.error('Error creating subscription:', error);
+    console.error('Error creating checkout session:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/create-portal-session', async (req, res) => {
+  try {
+    const { customerId, returnUrl } = req.body;
+    
+    // Create a billing portal session for managing subscriptions
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: returnUrl || `${req.headers.origin}/dashboard.html`,
+    });
+    
+    res.json({ url: portalSession.url });
+  } catch (error) {
+    console.error('Error creating portal session:', error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -86,6 +113,115 @@ app.post('/api/cancel-subscription', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+// Webhook handler for Stripe events
+app.post('/api/webhook', bodyParser.raw({type: 'application/json'}), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err) {
+    console.error(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object;
+      // Fulfill the order
+      await handleSuccessfulSubscription(session);
+      break;
+    case 'customer.subscription.deleted':
+      const subscription = event.data.object;
+      await handleCanceledSubscription(subscription);
+      break;
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  res.status(200).json({received: true});
+});
+
+// Helper function to handle successful subscription
+async function handleSuccessfulSubscription(session) {
+  try {
+    // Get customer and subscription details
+    const subscriptionId = session.subscription;
+    const customerId = session.customer;
+    const userId = session.metadata?.userId;
+    const userPhone = session.metadata?.userPhone;
+    
+    if (!userPhone) {
+      console.error('No user phone in session metadata');
+      return;
+    }
+    
+    // Get subscription details to determine plan
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const priceId = subscription.items.data[0].price.id;
+    let plan = 'monthly';
+    
+    if (priceId === 'price_1RMiTFB71e12H8w7mfD9dfc9') {
+      plan = 'yearly';
+    } else if (priceId === 'price_1RMiSnB71e12H8w7iJ73uN0u') {
+      plan = 'quarterly';
+    }
+    
+    // Update user in database
+    const { error } = await supabase
+      .from('sex_mode')
+      .update({
+        is_subscribed: true,
+        subscription_plan: plan,
+        subscription_start: new Date().toISOString(),
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscriptionId
+      })
+      .eq('phone', userPhone);
+    
+    if (error) {
+      console.error('Error updating user subscription:', error);
+    }
+  } catch (error) {
+    console.error('Error handling successful subscription:', error);
+  }
+}
+
+// Helper function to handle subscription cancellation
+async function handleCanceledSubscription(subscription) {
+  try {
+    // Find user with this subscription ID
+    const { data, error } = await supabase
+      .from('sex_mode')
+      .select('phone')
+      .eq('stripe_subscription_id', subscription.id)
+      .single();
+    
+    if (error || !data) {
+      console.error('Error finding user with subscription:', error);
+      return;
+    }
+    
+    // Update user subscription status
+    const { error: updateError } = await supabase
+      .from('sex_mode')
+      .update({
+        is_subscribed: false,
+        subscription_end: new Date().toISOString()
+      })
+      .eq('phone', data.phone);
+    
+    if (updateError) {
+      console.error('Error updating user subscription status:', updateError);
+    }
+  } catch (error) {
+    console.error('Error handling canceled subscription:', error);
+  }
+}
 
 // Middleware to inject environment variables into HTML files
 app.use((req, res, next) => {
@@ -145,4 +281,4 @@ app.listen(PORT, () => {
   if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     console.log(`Key starts with: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0, 5)}...`);
   }
-}); 
+});

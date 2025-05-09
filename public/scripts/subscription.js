@@ -1,7 +1,7 @@
 // Stripe subscription management
 // The public key will be injected from environment variables
 let STRIPE_PUBLIC_KEY = '';
-let stripe, elements, cardElement;
+let stripe;
 
 // Product and price IDs
 const PRODUCT_ID = 'prod_SHH0ETnX7ueUOc';
@@ -32,34 +32,8 @@ function initSubscription() {
         STRIPE_PUBLIC_KEY = metaTag.getAttribute('content');
     }
     
-    // Initialize Stripe elements
+    // Initialize Stripe 
     stripe = Stripe(STRIPE_PUBLIC_KEY);
-    elements = stripe.elements();
-    
-    // Create card element
-    cardElement = elements.create('card', {
-        style: {
-            base: {
-                color: '#ffffff',
-                fontFamily: '"Montserrat", sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        }
-    });
-    
-    // Mount card element
-    const cardContainer = document.getElementById('card-element');
-    if (cardContainer) {
-        cardElement.mount('#card-element');
-    }
     
     // Handle form submission
     const subscriptionForm = document.getElementById('subscription-form');
@@ -92,6 +66,14 @@ function initSubscription() {
         
         // Select the first plan by default
         planButtons[0].click();
+    }
+    
+    // Check for successful redirect from Stripe
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    if (sessionId) {
+        handleSuccessfulPayment(sessionId);
     }
 }
 
@@ -129,16 +111,6 @@ async function handleSubscription(e) {
     statusEl.classList.remove('error');
     
     try {
-        // Create payment method
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement
-        });
-        
-        if (error) {
-            throw new Error(error.message);
-        }
-        
         // Create Stripe customer
         statusEl.textContent = 'Creating customer...';
         const customerResponse = await fetch('/api/create-customer', {
@@ -147,8 +119,7 @@ async function handleSubscription(e) {
             body: JSON.stringify({
                 email: user.email || '',
                 name: user.name || '',
-                phone: user.phone || '',
-                paymentMethodId: paymentMethod.id
+                phone: user.phone || ''
             })
         });
         
@@ -159,59 +130,35 @@ async function handleSubscription(e) {
         
         const { customerId } = await customerResponse.json();
         
-        // Create subscription
-        statusEl.textContent = 'Setting up subscription...';
-        const subscriptionResponse = await fetch('/api/create-subscription', {
+        // Store customer ID in user data
+        user.stripeCustomerId = customerId;
+        localStorage.setItem('tease_user', JSON.stringify(user));
+        
+        // Create Stripe checkout session
+        statusEl.textContent = 'Redirecting to payment...';
+        const checkoutResponse = await fetch('/api/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 customerId,
-                priceId
+                priceId,
+                userId: user.id,
+                userPhone: user.phone,
+                successUrl: `${window.location.origin}/subscription-success.html`,
+                cancelUrl: `${window.location.origin}/subscription.html`
             })
         });
         
-        if (!subscriptionResponse.ok) {
-            const errorData = await subscriptionResponse.json();
-            throw new Error(errorData.error || 'Error creating subscription');
+        if (!checkoutResponse.ok) {
+            const errorData = await checkoutResponse.json();
+            throw new Error(errorData.error || 'Error creating checkout session');
         }
         
-        const { subscriptionId, clientSecret, status } = await subscriptionResponse.json();
+        const { url } = await checkoutResponse.json();
         
-        // If payment requires authentication, confirm it
-        if (status === 'incomplete' && clientSecret) {
-            statusEl.textContent = 'Confirming payment...';
-            const { error: confirmError } = await stripe.confirmCardPayment(clientSecret);
-            
-            if (confirmError) {
-                throw new Error(confirmError.message);
-            }
-        }
+        // Redirect to Stripe Checkout
+        window.location.href = url;
         
-        // Update user subscription status in Supabase
-        statusEl.textContent = 'Updating account...';
-        const { error: updateError } = await supabase
-            .from('sex_mode')
-            .update({ 
-                is_subscribed: true,
-                subscription_plan: selectedPlan,
-                subscription_start: new Date().toISOString(),
-                stripe_customer_id: customerId,
-                stripe_subscription_id: subscriptionId
-            })
-            .eq('phone', user.phone);
-        
-        if (updateError) {
-            throw new Error(updateError.message);
-        }
-        
-        // Update user in local storage
-        user.isSubscribed = true;
-        user.stripeCustomerId = customerId;
-        user.stripeSubscriptionId = subscriptionId;
-        localStorage.setItem('tease_user', JSON.stringify(user));
-        
-        // Show confirmation
-        showSubscriptionConfirmation();
     } catch (error) {
         console.error('Subscription error:', error);
         statusEl.textContent = error.message;
@@ -221,6 +168,15 @@ async function handleSubscription(e) {
         subscribeBtn.disabled = false;
         subscribeBtn.textContent = 'Subscribe';
     }
+}
+
+// Handle successful payment after redirect
+async function handleSuccessfulPayment(sessionId) {
+    // Update UI to show confirmation
+    showSubscriptionConfirmation();
+    
+    // In a real implementation, this would be handled by the webhook
+    // This is just for the UI feedback
 }
 
 // Show subscription confirmation
@@ -254,55 +210,35 @@ function showSubscriptionConfirmation() {
     }
 }
 
-// Cancel subscription
-async function cancelSubscription() {
+// Redirect to Stripe customer portal to manage subscription
+async function manageSubscription() {
     const user = getCurrentUser();
-    if (!user || !user.isSubscribed || !user.stripeSubscriptionId) {
+    if (!user || !user.stripeCustomerId) {
         return;
     }
     
-    const confirmCancel = confirm('Are you sure you want to cancel your subscription? You will lose access to premium features.');
-    
-    if (confirmCancel) {
-        try {
-            // Cancel subscription in Stripe
-            const cancelResponse = await fetch('/api/cancel-subscription', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    subscriptionId: user.stripeSubscriptionId
-                })
-            });
-            
-            if (!cancelResponse.ok) {
-                const errorData = await cancelResponse.json();
-                throw new Error(errorData.error || 'Error canceling subscription');
-            }
-            
-            // Update user subscription status in Supabase
-            const { error } = await supabase
-                .from('sex_mode')
-                .update({ 
-                    is_subscribed: false,
-                    subscription_end: new Date().toISOString()
-                })
-                .eq('phone', user.phone);
-            
-            if (error) {
-                throw new Error(error.message);
-            }
-            
-            // Update user in local storage
-            user.isSubscribed = false;
-            localStorage.setItem('tease_user', JSON.stringify(user));
-            
-            // Update UI
-            alert('Your subscription has been canceled.');
-            window.location.reload();
-        } catch (error) {
-            console.error('Error canceling subscription:', error);
-            alert('There was an error canceling your subscription. Please try again.');
+    try {
+        const response = await fetch('/api/create-portal-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                customerId: user.stripeCustomerId,
+                returnUrl: `${window.location.origin}/dashboard.html`
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error creating portal session');
         }
+        
+        const { url } = await response.json();
+        
+        // Redirect to Stripe Customer Portal
+        window.location.href = url;
+    } catch (error) {
+        console.error('Error accessing customer portal:', error);
+        alert('There was an error accessing the subscription management portal. Please try again.');
     }
 }
 
@@ -313,10 +249,10 @@ function initSubscriptionManagement() {
         return;
     }
     
-    // Setup cancel subscription button
-    const cancelBtn = document.getElementById('cancel-subscription');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', cancelSubscription);
+    // Setup manage subscription button
+    const manageBtn = document.getElementById('manage-subscription');
+    if (manageBtn) {
+        manageBtn.addEventListener('click', manageSubscription);
     }
 }
 
@@ -326,5 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initSubscription();
     } else if (window.location.pathname.includes('/dashboard')) {
         initSubscriptionManagement();
+    } else if (window.location.pathname.includes('/subscription-success')) {
+        showSubscriptionConfirmation();
     }
 }); 
