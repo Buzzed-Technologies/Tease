@@ -480,55 +480,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.addEventListener('click', closePersonaModal);
     }
     
-    // Function to update persona display in form
-    function updatePersonaDisplay(persona) {
-        const displayElement = document.getElementById('persona-display');
-        if (!displayElement) return;
-        
-        const placeholderElement = displayElement.querySelector('.persona-display-placeholder');
-        const selectedElement = displayElement.querySelector('.persona-display-selected');
-        const avatarElement = displayElement.querySelector('.persona-display-avatar');
-        const nameElement = document.getElementById('persona-display-name');
-        const styleElement = document.getElementById('persona-display-style');
-        
-        console.log('Updating persona display with:', persona);
-        
-        if (!persona || !persona.name) {
-            // Show placeholder, hide selected
-            if (placeholderElement) placeholderElement.style.display = 'block';
-            if (selectedElement) selectedElement.style.display = 'none';
-            return;
-        }
-        
-        // Hide placeholder, show selected
-        if (placeholderElement) placeholderElement.style.display = 'none';
-        if (selectedElement) selectedElement.style.display = 'flex';
-        
-        // Update avatar based on persona style
-        if (avatarElement && persona.style) {
-            let gradientStyle = 'linear-gradient(to bottom, var(--primary), var(--primary-dark))';
-            
-            // Map style to gradient
-            const styleMap = {
-                'passionate': 'linear-gradient(to bottom, var(--passionate), var(--primary-dark))',
-                'playful': 'linear-gradient(to bottom, var(--playful), var(--primary-dark))',
-                'dominant': 'linear-gradient(to bottom, var(--dominant), var(--primary-dark))',
-                'sensual': 'linear-gradient(to bottom, var(--sensual), var(--primary-dark))',
-                'intellectual': 'linear-gradient(to bottom, var(--intellectual), var(--primary-dark))'
-            };
-            
-            if (styleMap[persona.style]) {
-                gradientStyle = styleMap[persona.style];
-            }
-            
-            avatarElement.style.background = gradientStyle;
-        }
-        
-        // Update text content
-        if (nameElement) nameElement.textContent = persona.name;
-        if (styleElement) styleElement.textContent = persona.detailedStyle || `${persona.style || 'Custom'} style`;
-    }
-    
     // Handle persona selection from modal
     if (personaDetailModal) {
         const modalPersonaButton = personaDetailModal.querySelector('.persona-button');
@@ -546,24 +497,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     const personaDetailedStyle = persona.querySelector('.persona-style') ? 
                                                 persona.querySelector('.persona-style').value : '';
                     
-                    // Create a clear object structure for the selected persona
-                    selectedPersona = {
+                    // Store the selected persona in global variable
+                    window.selectedPersona = {
                         name: personaNameEl.textContent,
                         style: personaStyle,
                         detailedStyle: personaDetailedStyle
                     };
                     
-                    // Update hidden input with selected persona data
+                    // For debugging
+                    console.log('Selected persona (global):', window.selectedPersona);
+                    
+                    // Update hidden input with selected persona data - use both methods for redundancy
                     const selectedPersonaInput = document.getElementById('selected-persona');
                     if (selectedPersonaInput) {
-                        selectedPersonaInput.value = JSON.stringify(selectedPersona);
+                        selectedPersonaInput.value = JSON.stringify(window.selectedPersona);
+                        
+                        // Also set data attributes for fallback
+                        selectedPersonaInput.setAttribute('data-persona-name', window.selectedPersona.name);
+                        selectedPersonaInput.setAttribute('data-persona-style', window.selectedPersona.style);
+                        
+                        // For debugging
+                        console.log('Updated hidden input value:', selectedPersonaInput.value);
+                        console.log('Updated data attributes:', 
+                            selectedPersonaInput.getAttribute('data-persona-name'),
+                            selectedPersonaInput.getAttribute('data-persona-style'));
                     }
-                    
-                    // Update the visual display in the form
-                    updatePersonaDisplay(selectedPersona);
-                    
-                    console.log('Selected persona:', selectedPersona);
-                    console.log('Hidden input value:', selectedPersonaInput ? selectedPersonaInput.value : 'not found');
                     
                     // Close the modal
                     closePersonaModal();
@@ -578,6 +536,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         // Add selected class to this persona
                         actualPersona.classList.add('selected');
+                        
+                        // Add a data attribute to the personas container to mark selection
+                        const personasContainer = document.querySelector('.personas-container');
+                        if (personasContainer) {
+                            personasContainer.setAttribute('data-selection-complete', 'true');
+                            personasContainer.setAttribute('data-selected-persona', window.selectedPersona.name);
+                        }
                         
                         // Update detail button text
                         const detailButton = actualPersona.querySelector('.persona-details-button');
@@ -720,6 +685,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const formButton = signupForm.querySelector('.cta-button');
         formButton.addEventListener('click', (e) => {
             e.preventDefault();
+            
+            // Debug all potential persona sources
+            console.log('Checking persona selection:', {
+                globalSelectedPersona: window.selectedPersona,
+                localSelectedPersona: selectedPersona,
+                hiddenInputValue: document.getElementById('selected-persona')?.value,
+                hiddenInputDataAttributes: {
+                    name: document.getElementById('selected-persona')?.getAttribute('data-persona-name'),
+                    style: document.getElementById('selected-persona')?.getAttribute('data-persona-style')
+                },
+                selectedPersonaInDOM: document.querySelector('.persona.selected'),
+                personasContainerData: {
+                    selectionComplete: document.querySelector('.personas-container')?.getAttribute('data-selection-complete'),
+                    selectedPersona: document.querySelector('.personas-container')?.getAttribute('data-selected-persona')
+                }
+            });
+            
             const name = document.getElementById('name').value;
             const age = document.getElementById('age').value;
             const phone = document.getElementById('phone').value;
@@ -737,46 +719,75 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Get selected persona from either the stored variable or the hidden field
+            // Get selected persona using multiple fallback methods
             let personaData = null;
             
-            // First check the global variable (most reliable)
-            if (selectedPersona && selectedPersona.name) {
+            // Method 1: Check global window.selectedPersona
+            if (window.selectedPersona && window.selectedPersona.name) {
+                personaData = window.selectedPersona;
+                console.log('Using global selectedPersona');
+            } 
+            // Method 2: Check local selectedPersona variable
+            else if (selectedPersona && selectedPersona.name) {
                 personaData = selectedPersona;
-                console.log('Using persona from global variable:', personaData);
-            } else {
-                // Try to get from hidden input
+                console.log('Using local selectedPersona');
+            } 
+            // Method 3: Check hidden input value
+            else {
                 const selectedPersonaInput = document.getElementById('selected-persona');
-                
                 if (selectedPersonaInput && selectedPersonaInput.value) {
                     try {
                         personaData = JSON.parse(selectedPersonaInput.value);
-                        console.log('Using persona from hidden input (parsed JSON):', personaData);
+                        console.log('Using parsed JSON from hidden input');
                     } catch (e) {
-                        // If it's not JSON, treat it as just the name
-                        if (selectedPersonaInput.value) {
+                        // If not JSON, try data attributes
+                        const personaName = selectedPersonaInput.getAttribute('data-persona-name');
+                        const personaStyle = selectedPersonaInput.getAttribute('data-persona-style');
+                        
+                        if (personaName) {
+                            personaData = {
+                                name: personaName,
+                                style: personaStyle || ''
+                            };
+                            console.log('Using data attributes from hidden input');
+                        } else if (selectedPersonaInput.value) {
+                            // As last resort, treat the value as just the name
                             personaData = { name: selectedPersonaInput.value };
-                            console.log('Using persona from hidden input (plain text):', personaData);
+                            console.log('Using raw value from hidden input');
                         }
                     }
                 }
             }
             
-            // If still no persona data, check for selected persona in DOM as last resort
-            if (!personaData || !personaData.name) {
+            // Method 4: Check DOM for selected persona
+            if (!personaData) {
                 const selectedPersonaElement = document.querySelector('.persona.selected');
                 if (selectedPersonaElement) {
-                    const personaNameEl = selectedPersonaElement.querySelector('h3');
+                    const personaName = selectedPersonaElement.querySelector('h3')?.textContent;
                     const personaStyle = selectedPersonaElement.getAttribute('data-style');
-                    const personaDetailedStyle = selectedPersonaElement.querySelector('.persona-style') ? 
-                                                selectedPersonaElement.querySelector('.persona-style').value : '';
                     
-                    personaData = {
-                        name: personaNameEl.textContent,
-                        style: personaStyle,
-                        detailedStyle: personaDetailedStyle
-                    };
-                    console.log('Using persona from DOM selection:', personaData);
+                    if (personaName) {
+                        personaData = {
+                            name: personaName,
+                            style: personaStyle || ''
+                        };
+                        console.log('Using DOM selected persona element');
+                    }
+                }
+            }
+            
+            // Method 5: Check personas container data attributes
+            if (!personaData) {
+                const personasContainer = document.querySelector('.personas-container');
+                if (personasContainer && personasContainer.getAttribute('data-selection-complete') === 'true') {
+                    const personaName = personasContainer.getAttribute('data-selected-persona');
+                    if (personaName) {
+                        personaData = {
+                            name: personaName,
+                            style: 'unknown'
+                        };
+                        console.log('Using personas container data attributes');
+                    }
                 }
             }
             
@@ -784,15 +795,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // If no persona was selected, show message
             if (!personaData || !personaData.name) {
-                document.getElementById('signup-message').textContent = 'Please select a companion first';
-                document.getElementById('signup-message').classList.add('error');
+                alert('Please select a companion first');
                 
-                // Clear the message after 3 seconds
-                setTimeout(() => {
-                    document.getElementById('signup-message').textContent = '';
-                    document.getElementById('signup-message').classList.remove('error');
-                }, 3000);
-                
+                // Scroll to personas section
+                const personasSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'personas');
+                if (personasSectionIndex !== -1) {
+                    isScrolling = true;
+                    updateSection(personasSectionIndex);
+                    
+                    // Debounce scrolling
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 800);
+                }
                 return;
             }
             
