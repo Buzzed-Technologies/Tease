@@ -378,30 +378,33 @@ async function handleLogin(e) {
         const { data, error } = await supabase
             .from('sex_mode')
             .select('*')
-            .eq('phone', phone)
-            .single();
+            .eq('phone', phone);
             
         if (error) {
             console.error('Database error:', error);
             throw new Error('Login failed. Please try again later.');
         }
         
-        if (!data) {
+        // Check if user exists
+        if (!data || data.length === 0) {
             throw new Error('User not found. Please check your phone number.');
         }
         
+        // Get the first user (should only be one with this phone number)
+        const user = data[0];
+        
         // Verify password (in production, use secure auth methods)
-        if (data.password_hash !== password) {
+        if (user.password_hash !== password) {
             throw new Error('Incorrect password');
         }
         
         // Store user in local storage
         localStorage.setItem('tease_user', JSON.stringify({
-            id: data.id,
-            phone: data.phone,
-            name: data.name,
-            persona: data.persona,
-            isSubscribed: data.is_subscribed
+            id: user.id,
+            phone: user.phone,
+            name: user.name,
+            persona: user.persona,
+            isSubscribed: user.is_subscribed
         }));
         
         // Update last login date
@@ -411,7 +414,7 @@ async function handleLogin(e) {
             .eq('phone', phone);
         
         // Redirect based on subscription status
-        if (data.is_subscribed) {
+        if (user.is_subscribed) {
             window.location.href = '/dashboard.html';
         } else {
             window.location.href = '/subscription.html';
