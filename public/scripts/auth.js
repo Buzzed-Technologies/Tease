@@ -379,10 +379,6 @@ async function handleLogin(e) {
             .from('sex_mode')
             .select('*')
             .eq('phone', phone)
-            .headers({
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            })
             .single();
             
         if (error) {
@@ -412,10 +408,6 @@ async function handleLogin(e) {
         await supabase
             .from('sex_mode')
             .update({ last_login_date: new Date() })
-            .headers({
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            })
             .eq('phone', phone);
         
         // Redirect based on subscription status
