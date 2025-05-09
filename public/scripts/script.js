@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Global variable to store the selected persona
+    window.selectedPersonaGlobal = null;
+    let selectedPersona = null;
+    
     // TikTok-style Scrolling System
     const app = document.querySelector('.app-container');
     const screens = document.querySelectorAll('.screen');
@@ -32,11 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         input.addEventListener('blur', () => {
-            isInputFocused = false;
-            // Re-enable transitions when focus is lost
-            screens.forEach(screen => {
-                screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
-            });
+            // Delay to wait for potential new focus event
+            setTimeout(() => {
+                if (!document.activeElement || 
+                    !document.activeElement.matches('input, textarea, select')) {
+                    isInputFocused = false;
+                    // Re-enable transitions when focus is lost
+                    screens.forEach(screen => {
+                        screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+                    });
+                }
+            }, 100);
         });
     });
     
@@ -288,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Persona selection
     const personaButtons = document.querySelectorAll('.persona-button');
-    let selectedPersona = null;
     
     // Modal functionality
     const personaDetailModal = document.getElementById('persona-modal');
@@ -358,6 +367,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.persona-detail-style').textContent = personaDetailedStyle;
         document.querySelector('.persona-detail-select-name').textContent = personaName;
         
+        // Store the attribute in the modal button for direct access
+        const modalPersonaButton = personaDetailModal.querySelector('.persona-button');
+        if (modalPersonaButton) {
+            modalPersonaButton.setAttribute('data-persona-name', personaName);
+            modalPersonaButton.setAttribute('data-persona-style', personaStyle);
+            modalPersonaButton.setAttribute('data-persona-detailed-style', personaDetailedStyle);
+        }
+        
         // Set background gradient for the persona's style
         const detailImage = document.querySelector('.persona-detail-image');
         detailImage.style.background = `linear-gradient(to bottom, var(--${personaStyle}), var(--primary-dark))`;
@@ -388,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Store reference to this persona for selection
         personaDetailModal.setAttribute('data-persona-element', persona.outerHTML);
+        personaDetailModal.setAttribute('data-persona-style', personaStyle);
         
         // Show modal with animation
         personaDetailModal.classList.add('active');
@@ -434,80 +452,213 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.addEventListener('click', closePersonaModal);
     }
     
+    // Modal persona selection
     // Handle persona selection from modal
     if (personaDetailModal) {
         const modalPersonaButton = personaDetailModal.querySelector('.persona-button');
         if (modalPersonaButton) {
             modalPersonaButton.addEventListener('click', () => {
-                // Get the persona element from the modal
-                const personaHTML = personaDetailModal.getAttribute('data-persona-element');
-                if (personaHTML) {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = personaHTML;
-                    const persona = tempDiv.firstChild;
-                    
-                    const personaNameEl = persona.querySelector('h3');
-                    const personaStyle = persona.getAttribute('data-style');
-                    const personaDetailedStyle = persona.querySelector('.persona-style') ? 
-                                                persona.querySelector('.persona-style').value : '';
-                    
-                    // Store the selected persona
+                // Get persona details directly from button attributes
+                const personaName = modalPersonaButton.getAttribute('data-persona-name');
+                const personaStyle = modalPersonaButton.getAttribute('data-persona-style');
+                const personaDetailedStyle = modalPersonaButton.getAttribute('data-persona-detailed-style');
+                
+                // If we have persona data
+                if (personaName && personaStyle) {
+                    // Store the selected persona in multiple places for redundancy
                     selectedPersona = {
-                        name: personaNameEl.textContent,
+                        name: personaName,
                         style: personaStyle,
                         detailedStyle: personaDetailedStyle
                     };
                     
-                    // Update hidden input with selected persona
+                    // Global variable
+                    window.selectedPersonaGlobal = selectedPersona;
+                    
+                    // Session storage
+                    sessionStorage.setItem('selectedPersona', JSON.stringify(selectedPersona));
+                    
+                    // Local storage (temporary)
+                    localStorage.setItem('temp_selectedPersona', JSON.stringify(selectedPersona));
+                    
+                    // Hidden input
                     const selectedPersonaInput = document.getElementById('selected-persona');
                     if (selectedPersonaInput) {
-                        selectedPersonaInput.value = selectedPersona.name;
-                        
-                        // Add data attributes for additional info
+                        selectedPersonaInput.value = personaName;
                         selectedPersonaInput.setAttribute('data-style', personaStyle);
                         selectedPersonaInput.setAttribute('data-detailed-style', personaDetailedStyle);
                     }
                     
                     console.log('Selected persona:', selectedPersona);
                     
-                    // Close the modal
+                    // Ensure persona is selected properly
+                    ensurePersonaSelected();
+                    
+                    // Close modal
                     closePersonaModal();
                     
-                    // Find the actual persona element in the DOM and update its appearance
-                    const actualPersona = document.querySelector(`.persona[data-style="${personaStyle}"]`);
-                    if (actualPersona) {
-                        // Update all personas to remove selected state
-                        document.querySelectorAll('.persona').forEach(p => {
-                            p.classList.remove('selected');
-                        });
-                        
-                        // Add selected class to this persona
-                        actualPersona.classList.add('selected');
-                        
-                        // Update detail button text
-                        const detailButton = actualPersona.querySelector('.persona-details-button');
-                        if (detailButton) {
-                            detailButton.textContent = 'Selected';
-                        }
-                    }
-                    
-                    // Store selected persona in sessionStorage for persistence
-                    sessionStorage.setItem('selectedPersona', JSON.stringify(selectedPersona));
-                    
-                    // Scroll to signup section after a delay
+                    // Scroll to signup section
                     setTimeout(() => {
-                        if (isScrolling) return;
-                        
-                        isScrolling = true;
-                        updateSection(ctaSectionIndex);
-                        
-                        // Debounce scrolling
-                        setTimeout(() => {
-                            isScrolling = false;
-                        }, 800);
-                    }, 500);
+                        const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
+                        if (ctaSectionIndex !== -1) {
+                            updateSection(ctaSectionIndex);
+                            
+                            // Make the form section static
+                            const ctaSection = document.getElementById('cta');
+                            if (ctaSection) {
+                                ctaSection.style.position = 'fixed';
+                                ctaSection.style.overflow = 'auto';
+                            }
+                            
+                            // Focus on the first input
+                            setTimeout(() => {
+                                const nameInput = document.getElementById('name');
+                                if (nameInput) nameInput.focus();
+                            }, 800);
+                        }
+                    }, 300);
                 }
             });
+        }
+    }
+    
+    // Add a function to manually check and apply persona selection
+    function ensurePersonaSelected() {
+        console.log("Ensuring persona is selected...");
+        
+        // First try to get the selection from the global variable
+        let personaData = selectedPersona;
+        console.log("From variable:", personaData);
+        
+        // Then try from window global
+        if (!personaData && window.selectedPersonaGlobal) {
+            personaData = window.selectedPersonaGlobal;
+            console.log("From window global:", personaData);
+        }
+        
+        // Then try from session storage
+        if (!personaData) {
+            try {
+                const stored = sessionStorage.getItem('selectedPersona');
+                if (stored) {
+                    personaData = JSON.parse(stored);
+                    console.log("From sessionStorage:", personaData);
+                }
+            } catch (e) {
+                console.error("Failed to parse from sessionStorage:", e);
+            }
+        }
+        
+        // Finally, try from local storage
+        if (!personaData) {
+            try {
+                const stored = localStorage.getItem('temp_selectedPersona');
+                if (stored) {
+                    personaData = JSON.parse(stored);
+                    console.log("From localStorage:", personaData);
+                }
+            } catch (e) {
+                console.error("Failed to parse from localStorage:", e);
+            }
+        }
+        
+        // If we found persona data, apply it
+        if (personaData && personaData.name) {
+            // Set the global variable
+            selectedPersona = personaData;
+            window.selectedPersonaGlobal = personaData;
+            
+            // Update the hidden input
+            const selectedPersonaInput = document.getElementById('selected-persona');
+            if (selectedPersonaInput) {
+                selectedPersonaInput.value = personaData.name;
+                selectedPersonaInput.setAttribute('data-style', personaData.style || '');
+                selectedPersonaInput.setAttribute('data-detailed-style', personaData.detailedStyle || '');
+            }
+            
+            // Mark the appropriate persona as selected
+            document.querySelectorAll('.persona').forEach(persona => {
+                if (persona.getAttribute('data-style') === personaData.style) {
+                    persona.classList.add('selected');
+                    const detailButton = persona.querySelector('.persona-details-button');
+                    if (detailButton) {
+                        detailButton.textContent = 'Selected';
+                    }
+                }
+            });
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // Function to make CTA section static when using the form
+    function makeCtaSectionStatic() {
+        const ctaSection = document.getElementById('cta');
+        if (!ctaSection) return;
+        
+        const formSection = ctaSection.querySelector('.signup-form');
+        if (!formSection) return;
+        
+        // Make the CTA section position fixed when in view
+        // This prevents scrolling issues
+        formSection.addEventListener('click', () => {
+            ctaSection.style.position = 'fixed';
+            ctaSection.style.zIndex = '999';
+            ctaSection.style.top = '0';
+            ctaSection.style.left = '0';
+            ctaSection.style.width = '100%';
+            ctaSection.style.height = '100vh';
+            ctaSection.style.overflow = 'auto';
+            ctaSection.style.transform = 'translateY(0)';
+            
+            // Prevent screen snapping while using the form
+            isScrolling = true;
+            isInputFocused = true;
+        });
+        
+        // All input fields in the form
+        const formInputs = formSection.querySelectorAll('input, textarea, select');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                // Disable scrolling while input is focused
+                isInputFocused = true;
+                isScrolling = true;
+                
+                // Fix the CTA section in place
+                ctaSection.style.position = 'fixed';
+                ctaSection.style.overflow = 'auto';
+                
+                // Prevent touchmove events from triggering scroll
+                document.addEventListener('touchmove', preventScroll, { passive: false });
+            });
+            
+            input.addEventListener('blur', () => {
+                // Don't immediately re-enable scrolling
+                // We'll do that only if user deliberately navigates
+                setTimeout(() => {
+                    // If another input is focused, keep disabled
+                    if (!document.activeElement || 
+                        !document.activeElement.matches('input, textarea, select')) {
+                        isInputFocused = false;
+                    }
+                }, 100);
+                
+                // Remove the touchmove prevention
+                document.removeEventListener('touchmove', preventScroll);
+            });
+        });
+        
+        // Check for persona selection whenever the form is shown
+        ensurePersonaSelected();
+    }
+    
+    // Function to prevent scroll events
+    function preventScroll(e) {
+        // Only prevent the default scroll behavior if we're not scrolling within the form
+        if (!e.target.closest('.signup-form')) {
+            e.preventDefault();
         }
     }
     
@@ -622,12 +773,86 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Form submission
+    // Form submission - replace with this improved version
     const signupForm = document.querySelector('.signup-form');
     if (signupForm) {
+        // Make the CTA section static for form input
+        makeCtaSectionStatic();
+        
+        // Check for persona selection when the form is visible
+        setTimeout(ensurePersonaSelected, 1000);
+        
         const formButton = signupForm.querySelector('.cta-button');
         formButton.addEventListener('click', (e) => {
             e.preventDefault();
+            
+            // Force check for persona selection
+            ensurePersonaSelected();
+            
+            // Check for persona in multiple ways
+            let personaData = selectedPersona;
+            
+            // Try global variable first
+            if (!personaData) {
+                personaData = window.selectedPersonaGlobal;
+            }
+            
+            // Then check the DOM for selected personas
+            if (!personaData) {
+                document.querySelectorAll('.persona').forEach(persona => {
+                    if (persona.classList.contains('selected')) {
+                        const name = persona.querySelector('h3').textContent;
+                        const style = persona.getAttribute('data-style');
+                        const detailedStyle = persona.querySelector('.persona-style') ? 
+                                            persona.querySelector('.persona-style').value : '';
+                        
+                        personaData = {
+                            name: name,
+                            style: style,
+                            detailedStyle: detailedStyle
+                        };
+                    }
+                });
+            }
+            
+            // Then try session storage
+            if (!personaData) {
+                const storedPersona = sessionStorage.getItem('selectedPersona');
+                if (storedPersona) {
+                    try {
+                        personaData = JSON.parse(storedPersona);
+                    } catch (e) {
+                        console.error("Failed to parse stored persona:", e);
+                    }
+                }
+            }
+            
+            // Finally try local storage
+            if (!personaData) {
+                const storedPersona = localStorage.getItem('temp_selectedPersona');
+                if (storedPersona) {
+                    try {
+                        personaData = JSON.parse(storedPersona);
+                    } catch (e) {
+                        console.error("Failed to parse stored persona:", e);
+                    }
+                }
+            }
+            
+            // Last resort - try the hidden input
+            if (!personaData) {
+                const selectedPersonaInput = document.getElementById('selected-persona');
+                if (selectedPersonaInput && selectedPersonaInput.value) {
+                    personaData = {
+                        name: selectedPersonaInput.value,
+                        style: selectedPersonaInput.getAttribute('data-style') || '',
+                        detailedStyle: selectedPersonaInput.getAttribute('data-detailed-style') || ''
+                    };
+                }
+            }
+            
+            console.log("Form submission persona data:", personaData);
+            
             const name = document.getElementById('name').value;
             const age = document.getElementById('age').value;
             const phone = document.getElementById('phone').value;
@@ -645,27 +870,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Try to get persona from various sources (selectedPersona variable, session storage, or hidden input)
-            let personaData = selectedPersona;
-            
-            if (!personaData) {
-                // Try to get from session storage
-                const storedPersona = sessionStorage.getItem('selectedPersona');
-                if (storedPersona) {
-                    personaData = JSON.parse(storedPersona);
-                } else {
-                    // Try to get from hidden input
-                    const selectedPersonaInput = document.getElementById('selected-persona');
-                    if (selectedPersonaInput && selectedPersonaInput.value) {
-                        personaData = {
-                            name: selectedPersonaInput.value,
-                            style: selectedPersonaInput.getAttribute('data-style') || '',
-                            detailedStyle: selectedPersonaInput.getAttribute('data-detailed-style') || ''
-                        };
-                    }
-                }
-            }
-            
             // If still no persona, show error and scroll to personas section
             if (!personaData || !personaData.name) {
                 alert('Please select a companion first');
@@ -673,13 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Scroll to personas section
                 const personasSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'personas');
                 if (personasSectionIndex !== -1) {
-                    isScrolling = true;
                     updateSection(personasSectionIndex);
-                    
-                    // Debounce scrolling
-                    setTimeout(() => {
-                        isScrolling = false;
-                    }, 800);
                 }
                 return;
             }
@@ -716,6 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Clear session storage after successful signup
             sessionStorage.removeItem('selectedPersona');
+            localStorage.removeItem('temp_selectedPersona');
             
             // Normally you would send this data to a server
             console.log('Sign up:', userData);
