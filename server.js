@@ -2,12 +2,17 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const bodyParser = require('body-parser');
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Parse JSON request body
+app.use(bodyParser.json());
 
 // Add this debug endpoint to help troubleshoot environment variable issues
 app.get('/api/config', (req, res) => {
@@ -18,9 +23,68 @@ app.get('/api/config', (req, res) => {
     env: process.env.NODE_ENV,
     keysAvailable: {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      STRIPE_PUBLIC_KEY: !!process.env.STRIPE_PUBLIC_KEY,
       // Don't include actual keys in response
     }
   });
+});
+
+// Stripe API endpoints
+app.post('/api/create-customer', async (req, res) => {
+  try {
+    const { email, paymentMethodId, name, phone } = req.body;
+    
+    // Create a customer in Stripe
+    const customer = await stripe.customers.create({
+      email,
+      payment_method: paymentMethodId,
+      name,
+      phone,
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+    });
+    
+    res.json({ customerId: customer.id });
+  } catch (error) {
+    console.error('Error creating customer:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/create-subscription', async (req, res) => {
+  try {
+    const { customerId, priceId } = req.body;
+    
+    // Create the subscription
+    const subscription = await stripe.subscriptions.create({
+      customer: customerId,
+      items: [{ price: priceId }],
+      expand: ['latest_invoice.payment_intent'],
+    });
+    
+    res.json({
+      subscriptionId: subscription.id,
+      clientSecret: subscription.latest_invoice.payment_intent.client_secret,
+      status: subscription.status,
+    });
+  } catch (error) {
+    console.error('Error creating subscription:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/cancel-subscription', async (req, res) => {
+  try {
+    const { subscriptionId } = req.body;
+    
+    const subscription = await stripe.subscriptions.cancel(subscriptionId);
+    
+    res.json({ status: subscription.status });
+  } catch (error) {
+    console.error('Error canceling subscription:', error);
+    res.status(400).json({ error: error.message });
+  }
 });
 
 // Middleware to inject environment variables into HTML files
@@ -32,6 +96,7 @@ app.use((req, res, next) => {
     if (typeof body === 'string' && this.getHeader('content-type')?.includes('text/html')) {
       // Replace placeholders with environment variables
       body = body.replace(/%SUPABASE_ANON_KEY%/g, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
+      body = body.replace(/%STRIPE_PUBLIC_KEY%/g, process.env.STRIPE_PUBLIC_KEY || '');
       
       // Log for debugging
       console.log(`Injected env vars into ${req.path}`);
@@ -64,6 +129,7 @@ app.get('/:page', (req, res) => {
     
     // Replace placeholders with environment variables
     htmlContent = htmlContent.replace(/%SUPABASE_ANON_KEY%/g, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
+    htmlContent = htmlContent.replace(/%STRIPE_PUBLIC_KEY%/g, process.env.STRIPE_PUBLIC_KEY || '');
     
     res.send(htmlContent);
   } else {

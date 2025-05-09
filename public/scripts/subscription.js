@@ -1,6 +1,15 @@
 // Stripe subscription management
-const STRIPE_PUBLIC_KEY = 'pk_test_51ORGZlKGxMb2f9qNn3fWx7Iw4LCB6ZbMBj6lMaGHXvxbJEZzB7x3gHxRy0O5oHW5oFW0JmXGQJvOmNIXZi36TZ9300OqAkrTfu';
+// The public key will be injected from environment variables
+let STRIPE_PUBLIC_KEY = '';
 let stripe, elements, cardElement;
+
+// Product and price IDs
+const PRODUCT_ID = 'prod_SHH0ETnX7ueUOc';
+const PRICE_IDS = {
+    yearly: 'price_1RMiTFB71e12H8w7mfD9dfc9',
+    quarterly: 'price_1RMiSnB71e12H8w7iJ73uN0u',
+    monthly: 'price_1RMiSBB71e12H8w7sPZau77s'
+};
 
 // Initialize subscription system
 function initSubscription() {
@@ -15,6 +24,12 @@ function initSubscription() {
     if (user.isSubscribed) {
         showSubscriptionConfirmation();
         return;
+    }
+    
+    // Get Stripe public key from meta tag
+    const metaTag = document.querySelector('meta[name="stripe-public-key"]');
+    if (metaTag) {
+        STRIPE_PUBLIC_KEY = metaTag.getAttribute('content');
     }
     
     // Initialize Stripe elements
@@ -99,6 +114,13 @@ async function handleSubscription(e) {
     const subscribeBtn = document.getElementById('subscribe-button');
     const statusEl = document.getElementById('payment-status');
     const selectedPlan = document.getElementById('selected-plan').value;
+    const priceId = PRICE_IDS[selectedPlan];
+    
+    if (!priceId) {
+        statusEl.textContent = 'Invalid plan selected. Please try again.';
+        statusEl.classList.add('error');
+        return;
+    }
     
     // Disable button and show processing state
     subscribeBtn.disabled = true;
@@ -117,22 +139,64 @@ async function handleSubscription(e) {
             throw new Error(error.message);
         }
         
-        // In a real implementation, you would call your backend API to:
-        // 1. Create a Stripe customer
-        // 2. Create a subscription with the selected plan
-        // 3. Update the user's subscription status in your database
+        // Create Stripe customer
+        statusEl.textContent = 'Creating customer...';
+        const customerResponse = await fetch('/api/create-customer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: user.email || '',
+                name: user.name || '',
+                phone: user.phone || '',
+                paymentMethodId: paymentMethod.id
+            })
+        });
         
-        // For this demo, we'll simulate a successful subscription
-        statusEl.textContent = 'Payment successful! Setting up your subscription...';
+        if (!customerResponse.ok) {
+            const errorData = await customerResponse.json();
+            throw new Error(errorData.error || 'Error creating customer');
+        }
+        
+        const { customerId } = await customerResponse.json();
+        
+        // Create subscription
+        statusEl.textContent = 'Setting up subscription...';
+        const subscriptionResponse = await fetch('/api/create-subscription', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                customerId,
+                priceId
+            })
+        });
+        
+        if (!subscriptionResponse.ok) {
+            const errorData = await subscriptionResponse.json();
+            throw new Error(errorData.error || 'Error creating subscription');
+        }
+        
+        const { subscriptionId, clientSecret, status } = await subscriptionResponse.json();
+        
+        // If payment requires authentication, confirm it
+        if (status === 'incomplete' && clientSecret) {
+            statusEl.textContent = 'Confirming payment...';
+            const { error: confirmError } = await stripe.confirmCardPayment(clientSecret);
+            
+            if (confirmError) {
+                throw new Error(confirmError.message);
+            }
+        }
         
         // Update user subscription status in Supabase
+        statusEl.textContent = 'Updating account...';
         const { error: updateError } = await supabase
             .from('sex_mode')
             .update({ 
                 is_subscribed: true,
                 subscription_plan: selectedPlan,
                 subscription_start: new Date().toISOString(),
-                payment_method_id: paymentMethod.id
+                stripe_customer_id: customerId,
+                stripe_subscription_id: subscriptionId
             })
             .eq('phone', user.phone);
         
@@ -142,6 +206,8 @@ async function handleSubscription(e) {
         
         // Update user in local storage
         user.isSubscribed = true;
+        user.stripeCustomerId = customerId;
+        user.stripeSubscriptionId = subscriptionId;
         localStorage.setItem('tease_user', JSON.stringify(user));
         
         // Show confirmation
@@ -191,7 +257,7 @@ function showSubscriptionConfirmation() {
 // Cancel subscription
 async function cancelSubscription() {
     const user = getCurrentUser();
-    if (!user || !user.isSubscribed) {
+    if (!user || !user.isSubscribed || !user.stripeSubscriptionId) {
         return;
     }
     
@@ -199,9 +265,19 @@ async function cancelSubscription() {
     
     if (confirmCancel) {
         try {
-            // In a real implementation, you would call your backend API to:
-            // 1. Cancel the subscription in Stripe
-            // 2. Update the user's subscription status in your database
+            // Cancel subscription in Stripe
+            const cancelResponse = await fetch('/api/cancel-subscription', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subscriptionId: user.stripeSubscriptionId
+                })
+            });
+            
+            if (!cancelResponse.ok) {
+                const errorData = await cancelResponse.json();
+                throw new Error(errorData.error || 'Error canceling subscription');
+            }
             
             // Update user subscription status in Supabase
             const { error } = await supabase

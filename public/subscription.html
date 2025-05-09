@@ -8,6 +8,9 @@
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%SUPABASE_ANON_KEY%">
     
+    <!-- Stripe API Key -->
+    <meta name="stripe-public-key" content="%STRIPE_PUBLIC_KEY%">
+    
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -260,11 +263,11 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-theme">
     <div class="subscription-container">
         <div class="logo-container">
-            <a href="/">
-                <img src="/images/logo.png" alt="Tease" class="logo-image">
+            <a href="/" class="logo-link">
+                <img src="/images/logo.png" alt="Tease Logo" class="logo-image">
             </a>
         </div>
         
@@ -276,50 +279,54 @@
                 </div>
                 
                 <form class="subscription-form" id="payment-form">
-                    <input type="hidden" id="selected-plan" name="plan" value="monthly">
-                    
                     <div class="plans-container">
-                        <div class="plan-option" data-plan="monthly">
-                            <h3 class="plan-name">Monthly</h3>
-                            <span class="plan-price">$29.99<span class="price-period">/month</span></span>
-                            <p>Perfect for exploring what Tease has to offer.</p>
+                        <div class="plan-option" data-plan="yearly">
+                            <div class="popular-badge">Most Popular</div>
+                            <h3 class="plan-name">Annual Plan</h3>
+                            <span class="plan-price">$19.99<span class="price-period">/month</span></span>
+                            <p>Billed annually at $239.88</p>
                             <ul class="plan-features">
-                                <li><i class="fas fa-check"></i> Unlimited conversations</li>
-                                <li><i class="fas fa-check"></i> Access to all personas</li>
-                                <li><i class="fas fa-check"></i> Basic customization</li>
+                                <li><i class="fas fa-check"></i> Unlimited messaging</li>
+                                <li><i class="fas fa-check"></i> Custom personality options</li>
+                                <li><i class="fas fa-check"></i> Image generation</li>
+                                <li><i class="fas fa-check"></i> Voice messages</li>
+                                <li><i class="fas fa-check"></i> Advanced role-play modes</li>
+                                <li><i class="fas fa-check"></i> <strong>Save 16% compared to monthly</strong></li>
                             </ul>
                         </div>
                         
                         <div class="plan-option" data-plan="quarterly">
-                            <div class="popular-badge">Popular</div>
-                            <h3 class="plan-name">Quarterly</h3>
-                            <span class="plan-price">$69.99<span class="price-period">/3 months</span></span>
-                            <p>Save 22% with our most popular plan.</p>
+                            <h3 class="plan-name">Quarterly Plan</h3>
+                            <span class="plan-price">$21.99<span class="price-period">/month</span></span>
+                            <p>Billed quarterly at $65.97</p>
                             <ul class="plan-features">
-                                <li><i class="fas fa-check"></i> Unlimited conversations</li>
-                                <li><i class="fas fa-check"></i> Access to all personas</li>
-                                <li><i class="fas fa-check"></i> Advanced customization</li>
-                                <li><i class="fas fa-check"></i> Priority support</li>
+                                <li><i class="fas fa-check"></i> Unlimited messaging</li>
+                                <li><i class="fas fa-check"></i> Custom personality options</li>
+                                <li><i class="fas fa-check"></i> Image generation</li>
+                                <li><i class="fas fa-check"></i> Voice messages</li>
+                                <li><i class="fas fa-check"></i> Advanced role-play modes</li>
+                                <li><i class="fas fa-check"></i> <strong>Save 8% compared to monthly</strong></li>
                             </ul>
                         </div>
                         
-                        <div class="plan-option" data-plan="annual">
-                            <h3 class="plan-name">Annual</h3>
-                            <span class="plan-price">$199.99<span class="price-period">/year</span></span>
-                            <p>Best value with 44% savings for a full year.</p>
+                        <div class="plan-option" data-plan="monthly">
+                            <h3 class="plan-name">Monthly Plan</h3>
+                            <span class="plan-price">$23.99<span class="price-period">/month</span></span>
+                            <p>Billed monthly</p>
                             <ul class="plan-features">
-                                <li><i class="fas fa-check"></i> Unlimited conversations</li>
-                                <li><i class="fas fa-check"></i> Access to all personas</li>
-                                <li><i class="fas fa-check"></i> Premium customization</li>
-                                <li><i class="fas fa-check"></i> VIP support</li>
-                                <li><i class="fas fa-check"></i> Early access to new features</li>
+                                <li><i class="fas fa-check"></i> Unlimited messaging</li>
+                                <li><i class="fas fa-check"></i> Custom personality options</li>
+                                <li><i class="fas fa-check"></i> Image generation</li>
+                                <li><i class="fas fa-check"></i> Voice messages</li>
+                                <li><i class="fas fa-check"></i> Advanced role-play modes</li>
                             </ul>
                         </div>
                     </div>
                     
+                    <input type="hidden" id="selected-plan" name="plan" value="yearly">
+                    
                     <div class="payment-details">
                         <h3>Payment Information</h3>
-                        
                         <div class="form-section">
                             <div class="form-row">
                                 <label for="card-element" class="form-label">Credit or Debit Card</label>
@@ -327,16 +334,14 @@
                                 <div id="card-errors" role="alert"></div>
                             </div>
                         </div>
-                        
-                        <div class="subscription-action">
-                            <button type="submit" class="btn btn-primary btn-block" id="subscribe-button">Subscribe for $29.99/month</button>
-                            <div id="payment-status"></div>
-                        </div>
-                        
-                        <div class="legal-info">
-                            <p>By subscribing, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>. You can cancel your subscription at any time from your account settings.</p>
-                        </div>
                     </div>
+                    
+                    <div class="subscription-action">
+                        <button id="subscribe-button" type="submit" class="primary-button">Subscribe for $19.99/month</button>
+                        <div id="payment-status"></div>
+                    </div>
+                    
+                    <p class="legal-info">By subscribing, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>. You can cancel your subscription at any time from your account settings.</p>
                 </form>
             </div>
             
@@ -345,18 +350,16 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h2 class="confirmation-message" id="confirmation-message">Thank you! Your subscription is now active.</h2>
-                <p class="confirmation-description">You now have full access to all Tease features. Your companion is waiting to start your personalized experience.</p>
-                <button class="btn btn-primary" id="continue-to-chat">Continue to Chat</button>
+                <p class="confirmation-description">Your payment has been processed successfully. You now have full access to all premium features of Tease.</p>
+                <button id="continue-to-chat" class="primary-button">Continue to Chat</button>
             </div>
         </div>
     </div>
     
-    <!-- Necessary libraries -->
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    
-    <!-- Application scripts -->
-    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/supabase.js"></script>
     <script src="/scripts/subscription.js"></script>
 </body>
 </html> 
