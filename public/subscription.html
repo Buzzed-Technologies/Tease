@@ -464,6 +464,31 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is newly signed up
+            const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+            const isNewUser = userData.created_at && 
+                              (new Date() - new Date(userData.created_at) < 1000 * 60 * 30); // 30 minutes
+            
+            // Customize header for new users
+            if (isNewUser && userData.persona) {
+                const headerTitle = document.querySelector('.subscription-header h1');
+                const headerDesc = document.querySelector('.subscription-description');
+                
+                if (headerTitle) {
+                    headerTitle.innerHTML = `Complete Your <span style="color: var(--primary);">Experience</span>`;
+                }
+                
+                if (headerDesc) {
+                    headerDesc.innerHTML = `Welcome ${userData.name || 'there'}! You're just one step away from experiencing ${userData.persona} and unlocking the full potential of Tease.`;
+                }
+                
+                // Also update button text
+                const subscribeButton = document.getElementById('subscribe-button');
+                if (subscribeButton) {
+                    subscribeButton.textContent = 'Start Your Adventure';
+                }
+            }
+            
             // Plan selection functionality
             const planOptions = document.querySelectorAll('.plan-option');
             const selectedPlanInput = document.getElementById('selected-plan');

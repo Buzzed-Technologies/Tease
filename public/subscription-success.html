@@ -253,37 +253,55 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Redirect to dashboard automatically after a brief delay
-            setTimeout(() => {
-                window.location.href = '/dashboard.html';
-            }, 3000);
+            // Get user data
+            const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+            const isNewUser = userData.created_at && 
+                              (new Date() - new Date(userData.created_at) < 1000 * 60 * 30); // 30 minutes
             
-            // Show success state after a brief loading period
-            // In a real implementation, this would check the session status
+            // Customize content for new users
+            if (isNewUser && userData.persona) {
+                const confirmationMessage = document.querySelector('.confirmation-message');
+                if (confirmationMessage) {
+                    confirmationMessage.textContent = "Welcome to Tease!";
+                }
+                
+                const confirmationDescription = document.querySelector('.confirmation-description');
+                if (confirmationDescription) {
+                    confirmationDescription.textContent = 
+                        `Your subscription is active and you're all set to start your experience with ${userData.persona}. Get ready for an intimate adventure tailored to your desires.`;
+                }
+                
+                // Change button text
+                const dashboardButton = document.getElementById('continue-to-dashboard');
+                if (dashboardButton) {
+                    dashboardButton.textContent = 'Start Chatting with ' + userData.persona;
+                }
+            }
+            
+            // Set current date
+            const now = new Date();
+            document.getElementById('start-date').textContent = now.toLocaleDateString();
+            
+            // Get plan from local storage if available
+            if (userData.subscriptionPlan) {
+                const planMap = {
+                    'monthly': 'Monthly Plan',
+                    'quarterly': 'Quarterly Plan',
+                    'yearly': 'Annual Plan'
+                };
+                document.getElementById('plan-name').textContent = planMap[userData.subscriptionPlan] || 'Premium Plan';
+            }
+            
+            // Show success state after brief loading period
             setTimeout(() => {
                 document.getElementById('loading-state').classList.add('hidden');
                 document.getElementById('success-state').classList.remove('hidden');
-                
-                // Set current date
-                const now = new Date();
-                document.getElementById('start-date').textContent = now.toLocaleDateString();
-                
-                // Get plan from local storage if available
-                const user = JSON.parse(localStorage.getItem('tease_user') || '{}');
-                if (user.subscriptionPlan) {
-                    const planMap = {
-                        'monthly': 'Monthly Plan',
-                        'quarterly': 'Quarterly Plan',
-                        'yearly': 'Annual Plan'
-                    };
-                    document.getElementById('plan-name').textContent = planMap[user.subscriptionPlan] || 'Premium Plan';
-                }
-                
-                // Setup continue button
-                document.getElementById('continue-to-dashboard').addEventListener('click', () => {
-                    window.location.href = '/dashboard.html';
-                });
-            }, 2000);
+            }, 1500);
+            
+            // Setup continue button
+            document.getElementById('continue-to-dashboard').addEventListener('click', () => {
+                window.location.href = isNewUser && userData.persona ? '/chat.html' : '/dashboard.html';
+            });
         });
     </script>
 </body>

@@ -331,6 +331,21 @@ function updateAuthUI(user) {
         // Get current page path
         const path = window.location.pathname;
         
+        // Check if user has a subscription
+        const hasSubscription = user.isSubscribed || false;
+        
+        // Redirect non-subscribed users to subscription page unless they're already there
+        if (!hasSubscription && 
+            !path.includes('/subscription') && 
+            !path.includes('/chat') &&
+            !path === '/' && 
+            !path === '/index.html' && 
+            !path.endsWith('/')) {
+            console.log('User not subscribed, redirecting to subscription page');
+            window.location.href = '/subscription.html';
+            return;
+        }
+        
         // If on dashboard, load user data
         if (path.includes('/dashboard')) {
             loadUserDashboard(user);
@@ -367,7 +382,12 @@ function updateAuthUI(user) {
                     continueButton.parentNode.replaceChild(newButton, continueButton);
                     
                     newButton.addEventListener('click', () => {
-                        window.location.href = '/dashboard.html';
+                        // If user is not subscribed, direct them to subscription page
+                        if (!hasSubscription) {
+                            window.location.href = '/subscription.html';
+                        } else {
+                            window.location.href = '/dashboard.html';
+                        }
                     });
                 }
             }
@@ -381,7 +401,8 @@ function updateAuthUI(user) {
         const path = window.location.pathname;
         if (
             path.includes('/dashboard') || 
-            path.includes('/chat')
+            path.includes('/chat') ||
+            path.includes('/subscription-success')
         ) {
             window.location.href = '/login.html';
         }
@@ -678,16 +699,16 @@ async function handleSignupFromHomepage() {
             signupSuccess.style.display = 'block';
             successMessage.textContent = `You're all set to start your experience with ${personaSelected.name}.`;
             
-            // Set up continue button
+            // Set up continue button to redirect to subscription page
             const continueButton = document.getElementById('continue-button');
             if (continueButton) {
                 continueButton.addEventListener('click', function() {
-                    window.location.href = '/dashboard.html';
+                    window.location.href = '/subscription.html';
                 });
             }
         } else {
             // Fallback if DOM elements not found
-            window.location.href = '/dashboard.html';
+            window.location.href = '/subscription.html';
         }
         
     } catch (error) {

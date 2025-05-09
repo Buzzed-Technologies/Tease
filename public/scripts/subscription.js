@@ -36,6 +36,30 @@ function initSubscription() {
         return;
     }
     
+    // Check if user is newly signed up
+    const isNewUser = user.created_at && 
+                     (new Date() - new Date(user.created_at) < 1000 * 60 * 30); // 30 minutes
+    
+    // Customize the page for new users
+    if (isNewUser && user.persona) {
+        const headerTitle = document.querySelector('.subscription-header h1');
+        const headerDesc = document.querySelector('.subscription-description');
+        
+        if (headerTitle) {
+            headerTitle.innerHTML = `Complete Your <span style="color: var(--primary);">Experience</span>`;
+        }
+        
+        if (headerDesc) {
+            headerDesc.innerHTML = `Welcome ${user.name || 'there'}! You're just one step away from experiencing ${user.persona} and unlocking the full potential of Tease.`;
+        }
+        
+        // Also update button text
+        const subscribeButton = document.getElementById('subscribe-button');
+        if (subscribeButton) {
+            subscribeButton.textContent = 'Start Your Adventure';
+        }
+    }
+    
     // Update subscription status if already subscribed
     if (user.isSubscribed) {
         showSubscriptionConfirmation();
@@ -73,7 +97,7 @@ function initSubscription() {
                 
                 // Update subscription button text with price
                 const subBtn = document.getElementById('subscribe-button');
-                if (subBtn) {
+                if (subBtn && !isNewUser) {
                     const planPrice = btn.querySelector('.plan-price').textContent;
                     subBtn.textContent = `Subscribe for ${planPrice}`;
                 }
@@ -208,21 +232,47 @@ function showSubscriptionConfirmation() {
         confirmationEl.classList.remove('hidden');
     }
     
+    // Get current user
+    const user = getCurrentUser();
+    
+    // Check if user is newly signed up
+    const isNewUser = user && user.created_at && 
+                     (new Date() - new Date(user.created_at) < 1000 * 60 * 30); // 30 minutes
+    
     // Update message
     const messageEl = document.getElementById('confirmation-message');
-    if (messageEl) {
-        const user = getCurrentUser();
-        if (user) {
+    if (messageEl && user) {
+        if (isNewUser) {
+            // Custom message for new users
+            messageEl.textContent = `Welcome to Tease, ${user.name}!`;
+        } else {
+            // Standard message for returning users
             messageEl.textContent = `Thank you, ${user.name}! Your subscription is now active.`;
+        }
+    }
+    
+    // Update description for new users
+    if (isNewUser && user && user.persona) {
+        const descriptionEl = document.querySelector('.confirmation-description');
+        if (descriptionEl) {
+            descriptionEl.textContent = `Your subscription is active and you're all set to start your experience with ${user.persona}. Get ready for an intimate adventure tailored to your desires.`;
         }
     }
     
     // Setup continue button
     const continueBtn = document.getElementById('continue-to-chat');
     if (continueBtn) {
-        continueBtn.addEventListener('click', () => {
-            window.location.href = '/chat.html';
-        });
+        // For new users, take them directly to chat with their selected persona
+        if (isNewUser && user && user.persona) {
+            continueBtn.textContent = `Start Chatting with ${user.persona}`;
+            continueBtn.addEventListener('click', () => {
+                window.location.href = '/chat.html';
+            });
+        } else {
+            continueBtn.addEventListener('click', () => {
+                window.location.href = '/chat.html';
+            });
+        }
     }
 }
 
@@ -281,4 +331,101 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (window.location.pathname.includes('/subscription-success')) {
         showSubscriptionConfirmation();
     }
+});
+
+// Subscription handler
+document.addEventListener('DOMContentLoaded', function() {
+    // Get user data
+    const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+    const isNewUser = userData.created_at && 
+                      (new Date() - new Date(userData.created_at) < 1000 * 60 * 30); // 30 minutes
+    
+    console.log('User data:', userData);
+    console.log('Is new user:', isNewUser);
+    
+    // Check if user data exists
+    if (!userData.id) {
+        console.error('No user data found, redirecting to login');
+        window.location.href = '/login.html';
+        return;
+    }
+    
+    // Handle form submission
+    const paymentForm = document.getElementById('payment-form');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedPlan = document.getElementById('selected-plan').value;
+            const paymentStatus = document.getElementById('payment-status');
+            
+            // Set loading state
+            const subscribeButton = document.getElementById('subscribe-button');
+            const originalButtonText = subscribeButton.textContent;
+            subscribeButton.textContent = 'Processing...';
+            subscribeButton.disabled = true;
+            
+            // In a real app, this would create a Stripe checkout session
+            // For this demo, we'll just simulate a successful payment
+            setTimeout(() => {
+                try {
+                    console.log('Processing subscription to plan:', selectedPlan);
+                    
+                    // Update user data with subscription info
+                    userData.isSubscribed = true;
+                    userData.subscriptionPlan = selectedPlan;
+                    userData.subscriptionDate = new Date().toISOString();
+                    
+                    // Save updated user data
+                    localStorage.setItem('tease_user', JSON.stringify(userData));
+                    
+                    // Show success state or redirect
+                    window.location.href = '/subscription-success.html';
+                    
+                } catch (error) {
+                    console.error('Error processing subscription:', error);
+                    
+                    // Reset button
+                    subscribeButton.textContent = originalButtonText;
+                    subscribeButton.disabled = false;
+                    
+                    // Show error
+                    if (paymentStatus) {
+                        paymentStatus.textContent = 'There was an error processing your payment. Please try again.';
+                        paymentStatus.classList.add('error');
+                    }
+                }
+            }, 2000);
+        });
+    }
+    
+    // Handle subscription success page
+    if (window.location.pathname.includes('/subscription-success')) {
+        // Show appropriate success message
+        if (isNewUser) {
+            const confirmationMessage = document.querySelector('.confirmation-message');
+            if (confirmationMessage) {
+                confirmationMessage.textContent = "Welcome to Tease!";
+            }
+            
+            const confirmationDescription = document.querySelector('.confirmation-description');
+            if (confirmationDescription) {
+                confirmationDescription.textContent = 
+                    `Your subscription is active and you're all set to start your experience with ${userData.persona || 'your AI companion'}.`;
+            }
+        }
+        
+        // Set up continue button
+        const continueButton = document.getElementById('continue-to-dashboard');
+        if (continueButton) {
+            continueButton.addEventListener('click', function() {
+                window.location.href = '/dashboard.html';
+            });
+        }
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initSubscription();
 }); 
