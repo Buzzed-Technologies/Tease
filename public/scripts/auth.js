@@ -366,7 +366,7 @@ function updateAuthUI(user) {
 async function handleLogin(e) {
     e.preventDefault();
     
-    const phone = document.getElementById('phone').value;
+    let phone = document.getElementById('phone').value;
     const password = document.getElementById('password').value;
     const statusEl = document.getElementById('login-message');
     
@@ -374,11 +374,16 @@ async function handleLogin(e) {
         statusEl.textContent = 'Logging in...';
         statusEl.classList.remove('error');
         
+        // Normalize phone number by removing all non-digit characters
+        const normalizedPhone = phone.replace(/\D/g, '');
+        
+        console.log('Attempting login with normalized phone:', normalizedPhone);
+        
         // Query the sex_mode table for user with this phone & password
         const { data, error } = await supabase
             .from('sex_mode')
             .select('*')
-            .eq('phone', phone);
+            .or(`phone.eq.${normalizedPhone},phone.eq.${phone},phone.ilike.%${normalizedPhone}%`);
             
         if (error) {
             console.error('Database error:', error);
@@ -392,6 +397,8 @@ async function handleLogin(e) {
         
         // Get the first user (should only be one with this phone number)
         const user = data[0];
+        
+        console.log('Found user with phone:', user.phone);
         
         // Verify password (in production, use secure auth methods)
         if (user.password_hash !== password) {
@@ -411,7 +418,7 @@ async function handleLogin(e) {
         await supabase
             .from('sex_mode')
             .update({ last_login_date: new Date() })
-            .eq('phone', phone);
+            .eq('id', user.id);
         
         // Redirect based on subscription status
         if (user.is_subscribed) {
