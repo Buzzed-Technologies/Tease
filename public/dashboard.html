@@ -29,7 +29,6 @@
                     <ul>
                         <li><a href="#account" class="active">Account</a></li>
                         <li><a href="#subscription">Subscription</a></li>
-                        <li><a href="#persona">My Companion</a></li>
                     </ul>
                 </nav>
                 <div class="header-actions">
@@ -168,78 +167,6 @@
                                 </ul>
                                 <button class="cta-button subscribe-btn" data-plan="annual">Subscribe</button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="persona" class="dashboard-section">
-                <div class="dashboard-card">
-                    <h2>My <span class="highlight">Companion</span></h2>
-                    
-                    <div id="current-persona" class="current-persona">
-                        <div class="persona-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading your companion...</p>
-                        </div>
-                    </div>
-                    
-                    <div id="persona-details" class="persona-details" style="display: none;">
-                        <div class="persona-header">
-                            <div class="persona-image" id="persona-image">
-                                <!-- Persona image will be set via CSS background in JS -->
-                            </div>
-                            <div class="persona-info">
-                                <h3 id="persona-name">Aria</h3>
-                                <span id="persona-style" class="persona-tag">The Passionate</span>
-                                <p id="persona-description">Intense, seductive, and emotionally expressive. Aria creates immersive experiences through intimate fantasy fulfillment.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="persona-actions">
-                            <p>Your conversation with your AI companion is available in a separate application.</p>
-                        </div>
-                        
-                        <div class="persona-preferences">
-                            <h3>Companion Preferences</h3>
-                            <form id="persona-preferences-form">
-                                <div class="form-group">
-                                    <label for="persona-nickname">Nickname for your companion</label>
-                                    <input type="text" id="persona-nickname" placeholder="Enter a nickname">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Allowed Topics</label>
-                                    <div class="checkbox-group">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="topic-romantic" checked>
-                                            <span class="checkbox-text">Romantic</span>
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="topic-explicit" checked>
-                                            <span class="checkbox-text">Explicit</span>
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="topic-fantasy" checked>
-                                            <span class="checkbox-text">Fantasy</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="interaction-style">Interaction Style</label>
-                                    <select id="interaction-style">
-                                        <option value="playful">Playful & Teasing</option>
-                                        <option value="passionate" selected>Passionate & Intense</option>
-                                        <option value="gentle">Gentle & Romantic</option>
-                                        <option value="dominant">Dominant & Assertive</option>
-                                        <option value="submissive">Submissive & Eager to Please</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-message" id="persona-preferences-message"></div>
-                                <button type="submit" class="cta-button">Save Preferences</button>
-                            </form>
                         </div>
                     </div>
                 </div>

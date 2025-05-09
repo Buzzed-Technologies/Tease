@@ -602,9 +602,6 @@ async function checkAuthStatus() {
     // Check subscription status and update UI
     await updateSubscriptionStatus(userData);
     
-    // Load persona details
-    await loadPersonaDetails(userData);
-    
     // Setup form handlers
     setupFormHandlers(userData);
 }
@@ -759,66 +756,7 @@ async function startSubscription(plan, userData) {
     }
 }
 
-async function loadPersonaDetails(userData) {
-    try {
-        console.log('Loading persona details for user:', userData);
-        
-        document.getElementById('current-persona').style.display = 'none';
-        document.getElementById('persona-details').style.display = 'block';
-        
-        // Set persona details
-        document.getElementById('persona-name').textContent = 'Aria';
-        document.getElementById('persona-style').textContent = 'The Passionate';
-        document.getElementById('persona-description').textContent = 'Intense, seductive, and emotionally expressive. Aria creates immersive experiences through intimate fantasy fulfillment.';
-        
-        // Try to set persona image if it exists
-        try {
-            document.getElementById('persona-image').style.backgroundImage = 'url("/images/persona-aria.jpg")';
-        } catch (error) {
-            console.warn('Could not set persona image:', error);
-        }
-        
-        // Set form values based on user preferences
-        document.getElementById('persona-nickname').value = userData.personaNickname || '';
-        document.getElementById('topic-romantic').checked = userData.topicRomantic !== false;
-        document.getElementById('topic-explicit').checked = userData.topicExplicit !== false;
-        document.getElementById('topic-fantasy').checked = userData.topicFantasy !== false;
-        document.getElementById('interaction-style').value = userData.interactionStyle || 'passionate';
-    } catch (error) {
-        console.error('Error loading persona details:', error);
-    }
-}
-
 function setupFormHandlers(userData) {
-    // Handle persona preferences form
-    const preferencesForm = document.getElementById('persona-preferences-form');
-    if (preferencesForm) {
-        preferencesForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const preferenceData = {
-                personaNickname: document.getElementById('persona-nickname').value,
-                topicRomantic: document.getElementById('topic-romantic').checked,
-                topicExplicit: document.getElementById('topic-explicit').checked,
-                topicFantasy: document.getElementById('topic-fantasy').checked,
-                interactionStyle: document.getElementById('interaction-style').value
-            };
-            
-            // Save preferences (in a real app, this would go to the server)
-            const updatedUserData = { ...userData, ...preferenceData };
-            localStorage.setItem('tease_user', JSON.stringify(updatedUserData));
-            
-            // Show success message
-            const messageEl = document.getElementById('persona-preferences-message');
-            messageEl.textContent = 'Preferences saved successfully';
-            messageEl.classList.add('success');
-            setTimeout(() => {
-                messageEl.textContent = '';
-                messageEl.classList.remove('success');
-            }, 3000);
-        });
-    }
-    
     // Handle account form
     const accountForm = document.getElementById('update-account-form');
     if (accountForm) {
