@@ -591,9 +591,51 @@
     <script>
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        let supabase;
+        
+        // First try to get the key from meta tag
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
+        let supabaseKey = null;
+        
+        // Check if the key is a real key or just the placeholder
+        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+            console.log('Using API key from meta tag');
+            supabaseKey = metaKey;
+            initSupabase();
+        } else {
+            // Fetch API key from server config endpoint
+            console.log('Meta tag key not available, trying to fetch from server...');
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.supabaseKey) {
+                        console.log('Using API key from server');
+                        supabaseKey = config.supabaseKey;
+                    } else {
+                        // Fall back to hardcoded key
+                        console.log('Using hardcoded API key as fallback');
+                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    }
+                    initSupabase();
+                })
+                .catch(error => {
+                    console.error('Error fetching config:', error);
+                    // Fall back to hardcoded key
+                    console.log('Using hardcoded API key due to error');
+                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                });
+        }
+        
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                // Initialize the rest of the app once Supabase is ready
+                initDashboard();
+            } else {
+                console.error('Supabase client library not loaded');
+            }
+        }
         
         // DOM elements
         const userDisplayName = document.getElementById('user-display-name');
