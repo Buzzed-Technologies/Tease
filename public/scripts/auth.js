@@ -388,7 +388,7 @@ async function handleLogin(e) {
         }
         
         // Verify password (in production, use secure auth methods)
-        if (data.password !== password) {
+        if (data.password_hash !== password) {
             throw new Error('Incorrect password');
         }
         
@@ -477,7 +477,7 @@ async function handleSignupFromHomepage() {
                 { 
                     phone, 
                     name, 
-                    password, 
+                    password_hash: password, 
                     persona,
                     is_subscribed: false,
                     created_at: new Date()
