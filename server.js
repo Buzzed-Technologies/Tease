@@ -17,8 +17,15 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Parse JSON request body
-app.use(bodyParser.json());
+// Initialize middleware
+// Parse JSON for all routes EXCEPT the webhook
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/webhook') {
+    next();
+  } else {
+    bodyParser.json()(req, res, next);
+  }
+});
 
 // Add this debug endpoint to help troubleshoot environment variable issues
 app.get('/api/config', (req, res) => {
@@ -122,6 +129,7 @@ app.post('/api/webhook', bodyParser.raw({type: 'application/json'}), async (req,
   let event;
 
   try {
+    // Use the raw body for signature verification
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (err) {
     console.error(`Webhook Error: ${err.message}`);
