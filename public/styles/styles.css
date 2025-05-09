@@ -580,8 +580,6 @@ a:hover {
 #cta {
     background: radial-gradient(ellipse at bottom, var(--primary-dark) 0%, var(--darker) 80%);
     text-align: center;
-    min-height: 100vh;
-    height: auto;
 }
 
 .signup-form {
@@ -618,9 +616,7 @@ a:hover {
 .form-group input:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(128, 0, 32, 0.3);
-    position: relative;
-    z-index: 5;
+    box-shadow: 0 0 0 2px rgba(128, 0, 32, 0.2);
 }
 
 .phone-input {
@@ -897,22 +893,6 @@ footer {
         padding: 1.5rem;
         width: 100%;
         max-width: 350px;
-    }
-
-    #cta .content {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-    
-    /* Add extra padding to prevent inputs from being too close to screen edges */
-    .signup-form {
-        margin-bottom: 4rem;
-    }
-
-    /* Make form inputs easier to tap on mobile */
-    .form-group input {
-        height: 48px;
-        font-size: 16px; /* Prevents iOS zoom */
     }
 }
 

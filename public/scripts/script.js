@@ -19,8 +19,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set initial section
     updateSection(0);
     
+    // Disable scrolling when input fields are focused to prevent jumping to another section
+    function setupInputFocusHandlers() {
+        const formInputs = document.querySelectorAll('input, textarea, select');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('focus', (e) => {
+                // Set a flag to prevent scrolling while input is focused
+                isInputFocused = true;
+                // Store current section to prevent changing it
+                focusedSectionIndex = currentSection;
+            });
+            
+            input.addEventListener('blur', (e) => {
+                // Reset the flag when input loses focus
+                isInputFocused = false;
+            });
+            
+            // Prevent scroll triggering when tapping in input field
+            input.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Prevent default scrolling behavior on mobile
+            input.addEventListener('touchmove', (e) => {
+                e.stopPropagation();
+            });
+        });
+    }
+    
+    // Call the setup function after DOM is loaded
+    setupInputFocusHandlers();
+
+    // Variables to track input focus state
+    let isInputFocused = false;
+    let focusedSectionIndex = null;
+    
     // Helper function to move to a specific section
     function updateSection(index) {
+        // Don't update section if an input is focused
+        if (isInputFocused && focusedSectionIndex === currentSection) {
+            return;
+        }
+        
         if (index < 0) index = 0;
         if (index > screens.length) index = screens.length;
         
@@ -89,34 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
         footer.style.opacity = '0';
     }
     
-    // Variable to track if we're currently interacting with form inputs
-    let isFormFocused = false;
-    
-    // Find all input fields in the signup form
-    const formInputs = document.querySelectorAll('.signup-form input, .signup-form select, .signup-form textarea');
-    
-    // Add event listeners for focus and blur events
-    formInputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            isFormFocused = true;
-            // If we're in the CTA section, make sure it stays visible
-            const ctaSection = document.getElementById('cta');
-            if (ctaSection) {
-                const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
-                if (ctaSectionIndex !== -1 && currentSection !== ctaSectionIndex) {
-                    updateSection(ctaSectionIndex);
-                }
-            }
-        });
-        
-        input.addEventListener('blur', () => {
-            // Add a small delay before allowing scrolling again
-            setTimeout(() => {
-                isFormFocused = false;
-            }, 100);
-        });
-    });
-    
     // Explicitly expose updateSection globally for other scripts to use
     window.updateSection = updateSection;
     console.log('updateSection is now available globally');
@@ -147,10 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
     footer.style.zIndex = '1';
     footer.style.visibility = 'hidden';
     
-    // Handle wheel events for scrolling
+    // Modify the wheel event handler
     window.addEventListener('wheel', (e) => {
-        // Don't scroll if a form input has focus
-        if (isScrolling || isFormFocused) return;
+        // Ignore wheel events when input is focused
+        if (isInputFocused) return;
+        
+        if (isScrolling) return;
         
         // Determine scroll direction
         const direction = Math.sign(e.deltaY);
@@ -172,22 +187,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Touch events for mobile
     document.addEventListener('touchstart', (e) => {
-        // Don't initiate touch scrolling if a form field is focused
-        if (isFormFocused) return;
-        
         touchStartY = e.touches[0].clientY;
         startTime = Date.now();
     }, { passive: true });
     
+    // Update touch events to respect input focus state
     document.addEventListener('touchmove', (e) => {
-        // Don't process touch movement if scrolling or form focused
-        if (isScrolling || isFormFocused) return;
+        // Don't process touch events for scrolling if input is focused
+        if (isInputFocused) return;
+        if (isScrolling) return;
         touchEndY = e.touches[0].clientY;
     }, { passive: true });
     
     document.addEventListener('touchend', () => {
-        // Don't process touch end if scrolling or form focused
-        if (isScrolling || isFormFocused) return;
+        // Don't process touch events for scrolling if input is focused
+        if (isInputFocused || isScrolling) return;
         
         const touchDiff = touchStartY - touchEndY;
         const timeDiff = Date.now() - startTime;
@@ -213,8 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
-        // Don't process keyboard navigation if scrolling, form focused, or if target is an input
-        if (isScrolling || isFormFocused || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (isScrolling) return;
         
         let direction = 0;
         
