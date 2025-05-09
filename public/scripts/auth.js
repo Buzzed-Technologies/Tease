@@ -1,5 +1,8 @@
 // Supabase client initialization
 const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // Try to get the API key from different sources
 let supabaseAnonKey;
@@ -410,102 +413,61 @@ function updateAuthUI(user) {
 }
 
 // Handle login form submission
-async function handleLogin(e) {
-    e.preventDefault();
+async function handleLogin(telegramUsername, password) {
+  try {
+    // Strip @ from telegram username if included
+    telegramUsername = telegramUsername.replace('@', '');
     
-    let phone = document.getElementById('phone').value;
-    const password = document.getElementById('password').value;
-    const statusEl = document.getElementById('login-message');
-    
-    try {
-        statusEl.textContent = 'Logging in...';
-        statusEl.classList.remove('error');
-        
-        // Normalize phone number by removing all non-digit characters
-        const normalizedPhone = phone.replace(/\D/g, '');
-        
-        console.log('Attempting login with phone:', phone);
-        console.log('Normalized phone:', normalizedPhone);
-        
-        // For debugging - get all users to see phone formats
-        const allUsers = await supabase
-            .from('sex_mode')
-            .select('phone')
-            .limit(5);
-        
-        console.log('Sample phone numbers in database:', allUsers.data);
-        
-        // Try a broader search to find the user
-        let { data, error } = await supabase
-            .from('sex_mode')
-            .select('*');
-            
-        if (error) {
-            console.error('Database error:', error);
-            throw new Error('Login failed. Please try again later.');
-        }
-        
-        console.log(`Found ${data.length} total users`);
-        
-        // Filter users manually to find phone number matches
-        let user = null;
-        
-        if (data && data.length > 0) {
-            // Try different phone formats
-            user = data.find(u => {
-                const dbPhone = u.phone || '';
-                const dbPhoneNormalized = dbPhone.replace(/\D/g, '');
-                
-                return (
-                    dbPhone === phone ||
-                    dbPhoneNormalized === normalizedPhone ||
-                    dbPhone.includes(normalizedPhone) ||
-                    normalizedPhone.includes(dbPhoneNormalized)
-                );
-            });
-            
-            if (user) {
-                console.log('Found matching user with phone:', user.phone);
-            }
-        }
-        
-        // Check if user exists
-        if (!user) {
-            console.log('No matching user found for:', phone, 'or', normalizedPhone);
-            throw new Error('User not found. Please check your phone number.');
-        }
-        
-        // Verify password (in production, use secure auth methods)
-        if (user.password_hash !== password) {
-            throw new Error('Incorrect password');
-        }
-        
-        // Store user in local storage
-        localStorage.setItem('tease_user', JSON.stringify({
-            id: user.id,
-            phone: user.phone,
-            name: user.name,
-            persona: user.persona,
-            isSubscribed: user.is_subscribed
-        }));
-        
-        // Update last login date
-        await supabase
-            .from('sex_mode')
-            .update({ last_login_date: new Date() })
-            .eq('phone', user.phone);
-        
-        // Redirect based on subscription status
-        if (user.is_subscribed) {
-            window.location.href = '/dashboard.html';
-        } else {
-            window.location.href = '/subscription.html';
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        statusEl.textContent = error.message;
-        statusEl.classList.add('error');
+    // Hash the password
+    const passwordHash = await hashPassword(password);
+
+    // Query the database for the user
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('telegram_username', telegramUsername)
+      .eq('password_hash', passwordHash)
+      .single();
+
+    if (error) {
+      throw error;
     }
+
+    if (data) {
+      // Store user data in local storage
+      const userData = {
+        id: data.id,
+        name: data.name,
+        telegram_username: data.telegram_username,
+        subscription_status: data.subscription_status,
+        model_id: data.model_id
+      };
+      
+      localStorage.setItem('tease_user', JSON.stringify(userData));
+      
+      // Redirect based on subscription status
+      if (data.subscription_status) {
+        // If subscribed, go to dashboard
+        window.location.href = '/dashboard.html';
+      } else {
+        // If not subscribed, go to subscription page
+        window.location.href = '/subscription.html';
+      }
+      
+      return { success: true };
+    } else {
+      return { 
+        success: false, 
+        message: 'Invalid Telegram username or password'
+      };
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    return { 
+      success: false, 
+      message: 'An error occurred during login'
+    };
+  }
 }
 
 // Handle signup from homepage
@@ -841,4 +803,12 @@ async function hashPassword(password) {
         // Fallback for browsers that don't support crypto.subtle
         return password; // Not secure, but prevents errors
     }
-} 
+}
+
+// Export functions for use in other scripts
+window.teaseAuth = {
+  handleLogin,
+  handleSignupFromHomepage,
+  handleLogout,
+  loadUserDashboard
+}; 

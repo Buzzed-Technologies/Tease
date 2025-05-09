@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Tease | Your AI Adult Companion</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .invite-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #170811 0%, #0a0a0a 100%);
+            padding: 2rem 5%;
+        }
+        
+        .logo-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--light);
+            text-align: center;
+        }
+        
+        .tagline {
+            color: var(--primary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 0.5rem;
+        }
+        
+        .invite-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .columns {
+            display: flex;
+            width: 100%;
+            gap: 3rem;
+        }
+        
+        .model-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .model-image {
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 3/4;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: rgba(128, 0, 32, 0.2);
+            margin-bottom: 2rem;
+            background-size: cover;
+            background-position: center top;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .model-info {
+            text-align: center;
+            max-width: 450px;
+        }
+        
+        .model-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .model-bio {
+            color: var(--light-gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .signup-column {
+            flex: 1;
+            background: rgba(20, 20, 20, 0.5);
+            border-radius: 12px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            max-width: 500px;
+        }
+        
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .signup-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .signup-description {
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--light);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            background-color: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-description {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+            margin-top: 0.5rem;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: var(--light);
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .signup-message {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .signup-message.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            display: block;
+        }
+        
+        .signup-message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            display: block;
+        }
+        
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--light-gray);
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive layout */
+        @media (max-width: 992px) {
+            .columns {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .model-column, .signup-column {
+                max-width: 500px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invite-container">
+        <div class="logo-container">
+            <div class="logo">tease</div>
+            <div class="tagline">ai adult companion</div>
+        </div>
+        
+        <div class="invite-content">
+            <div class="columns">
+                <div class="model-column">
+                    <div class="model-image" id="model-image"></div>
+                    <div class="model-info">
+                        <h2 class="model-name" id="model-name">Loading...</h2>
+                        <p class="model-bio" id="model-bio">Loading model information...</p>
+                    </div>
+                </div>
+                
+                <div class="signup-column">
+                    <div class="signup-header">
+                        <h1>You've Been Invited</h1>
+                        <p class="signup-description">Create your account to start your personal AI experience.</p>
+                    </div>
+                    
+                    <form id="signup-form">
+                        <input type="hidden" id="model-id" name="model-id" value="">
+                        
+                        <div class="form-group">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telegram" class="form-label">Telegram Username</label>
+                            <input type="text" id="telegram" name="telegram" class="form-input" placeholder="@yourusername" required>
+                            <p class="form-description">We'll use this to identify your account. Don't include the @ symbol.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Create a password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password" class="form-label">Confirm Password</label>
+                            <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Create My Account</button>
+                        
+                        <div id="signup-message" class="signup-message"></div>
+                    </form>
+                    
+                    <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    
+    <script>
+        // Supabase client initialization
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Get model name from URL
+        const urlParams = window.location.pathname.split('/');
+        const modelName = urlParams[urlParams.indexOf('invite') + 1]?.toLowerCase();
+        
+        // DOM elements
+        const modelImage = document.getElementById('model-image');
+        const modelNameEl = document.getElementById('model-name');
+        const modelBio = document.getElementById('model-bio');
+        const modelIdInput = document.getElementById('model-id');
+        const signupForm = document.getElementById('signup-form');
+        const signupMessage = document.getElementById('signup-message');
+        
+        // Fetch model data
+        async function fetchModelData() {
+            if (!modelName) {
+                showError('Invalid invitation link. Please check the URL and try again.');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase
+                    .from('models')
+                    .select('*')
+                    .ilike('name', modelName)
+                    .single();
+                
+                if (error) throw error;
+                
+                if (!data) {
+                    showError('Model not found. Please check the invitation link.');
+                    return;
+                }
+                
+                // Update the UI with model data
+                modelNameEl.textContent = data.name;
+                modelBio.textContent = data.bio || 'Your personal AI companion';
+                
+                // Set background image if available
+                if (data.pictures && data.pictures.length > 0) {
+                    modelImage.style.backgroundImage = `url(/images/models/${data.pictures[0]})`;
+                } else {
+                    modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
+                }
+                
+                // Set model ID in the form
+                modelIdInput.value = data.id;
+                
+            } catch (error) {
+                console.error('Error fetching model data:', error);
+                showError('Unable to load model information. Please try again later.');
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            signupMessage.textContent = message;
+            signupMessage.className = 'signup-message error';
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            signupMessage.textContent = message;
+            signupMessage.className = 'signup-message success';
+        }
+        
+        // Hash password with SHA-256
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Handle form submission
+        signupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const telegram = document.getElementById('telegram').value.trim().replace('@', '');
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const modelId = modelIdInput.value;
+            
+            // Validate input
+            if (!name || !telegram || !password) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match.');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters long.');
+                return;
+            }
+            
+            if (!modelId) {
+                showError('Invalid model selection. Please refresh the page and try again.');
+                return;
+            }
+            
+            try {
+                // Check if user already exists
+                const { data: existingUser, error: checkError } = await supabase
+                    .from('profiles')
+                    .select('telegram_username')
+                    .eq('telegram_username', telegram)
+                    .maybeSingle();
+                
+                if (checkError) throw checkError;
+                
+                if (existingUser) {
+                    showError('A user with this Telegram username already exists. Please log in instead.');
+                    return;
+                }
+                
+                // Hash the password
+                const passwordHash = await hashPassword(password);
+                
+                // Create new user
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .insert([
+                        {
+                            name: name,
+                            telegram_username: telegram,
+                            password_hash: passwordHash,
+                            model_id: modelId
+                        }
+                    ])
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                // Store user in local storage
+                localStorage.setItem('tease_user', JSON.stringify({
+                    id: data.id,
+                    name: data.name,
+                    telegram: data.telegram_username,
+                    model_id: data.model_id,
+                    subscribed: false
+                }));
+                
+                // Show success message
+                showSuccess('Account created successfully! Redirecting to subscription page...');
+                
+                // Redirect to subscription page after a short delay
+                setTimeout(() => {
+                    window.location.href = '/subscription.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                showError('An error occurred during signup. Please try again later.');
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', fetchModelData);
+    </script>
+</body>
+</html> 

@@ -395,23 +395,26 @@ app.use(express.static('public', {
   }
 }));
 
-// Handle HTML page requests
+// Handle invite links with model parameter
+app.get('/invite/:model', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'invite.html'));
+});
+
+// Handle root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Handle all other routes by serving the appropriate HTML file if it exists
 app.get('/:page', (req, res) => {
   const page = req.params.page;
-  const htmlFile = path.join(__dirname, 'public', `${page}.html`);
+  const filePath = path.join(__dirname, 'public', `${page}.html`);
   
-  // Check if file exists
-  if (fs.existsSync(htmlFile)) {
-    let htmlContent = fs.readFileSync(htmlFile, 'utf8');
-    
-    // Replace placeholders with environment variables
-    htmlContent = htmlContent.replace(/%SUPABASE_ANON_KEY%/g, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
-    htmlContent = htmlContent.replace(/%STRIPE_PUBLIC_KEY%/g, process.env.STRIPE_PUBLIC_KEY || '');
-    
-    res.send(htmlContent);
+  // Check if file exists, otherwise serve a 404 page
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
   } else {
-    // Fallback to index.html for non-existent pages (SPA behavior)
-    res.redirect('/');
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
   }
 });
 

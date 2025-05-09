@@ -2,17 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#050505">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Tease AI Adult Companion</title>
-    
-    <!-- Supabase API Key -->
-    <meta name="supabase-anon-key" content="%SUPABASE_ANON_KEY%">
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -22,184 +17,322 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        .auth-container {
+        .login-container {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: calc(100vh - 200px);
-            padding: 2rem 1rem;
-            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.9)),
-                        url('/images/bg-pattern.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        .auth-card {
-            background: linear-gradient(to bottom, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 0.95));
-            border-radius: 15px;
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(128, 0, 32, 0.3);
-            text-align: center;
+            flex-direction: column;
+            background: linear-gradient(135deg, #170811 0%, #0a0a0a 100%);
+            padding: 2rem 5%;
         }
         
         .logo-container {
             margin-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
         }
         
-        .auth-form {
-            margin: 2rem 0;
-            text-align: left;
-        }
-        
-        .auth-form .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .auth-form label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
             color: var(--light);
+            text-align: center;
         }
         
-        .auth-form input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(128, 0, 32, 0.3);
-            background-color: rgba(20, 20, 20, 0.6);
-            color: var(--light);
+        .tagline {
+            color: var(--primary);
             font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .auth-form input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(128, 0, 32, 0.2);
-        }
-        
-        .cta-button.large {
-            width: 100%;
-            padding: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             margin-top: 0.5rem;
         }
         
-        .auth-footer {
-            margin-top: 1.5rem;
-            font-size: 0.95rem;
+        .login-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        .login-form-container {
+            background: rgba(20, 20, 20, 0.5);
+            border-radius: 12px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .login-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .login-description {
             color: var(--light-gray);
+            line-height: 1.6;
         }
         
-        .auth-footer a {
-            color: var(--primary);
-            text-decoration: none;
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--light);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            background-color: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: var(--light);
             font-weight: 600;
-            transition: all 0.3s ease;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
         }
         
-        .auth-footer a:hover {
-            text-decoration: underline;
+        .login-btn:hover {
+            background-color: var(--primary-dark);
         }
         
-        .form-message {
-            min-height: 24px;
-            padding: 0.5rem;
-            margin: 1rem 0;
+        .login-message {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
             font-size: 0.9rem;
             text-align: center;
-            border-radius: 4px;
+            display: none;
         }
         
-        .form-message.error {
+        .login-message.error {
             background-color: rgba(231, 76, 60, 0.2);
             color: #e74c3c;
             border: 1px solid rgba(231, 76, 60, 0.3);
+            display: block;
         }
         
-        .phone-input {
-            position: relative;
+        .login-message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            display: block;
         }
         
-        .phone-input input {
-            padding-left: 25px;
-        }
-        
-        .phone-input::before {
-            content: "+";
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
+        .signup-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
             color: var(--light-gray);
-            font-size: 1rem;
+        }
+        
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .signup-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <main class="auth-container">
-            <div class="auth-card">
-                <div class="logo-container">
-                    <div class="logo">tease</div>
-                    <div class="tagline">ai adult companion</div>
+    <div class="login-container">
+        <div class="logo-container">
+            <a href="/">
+                <div class="logo">tease</div>
+                <div class="tagline">ai adult companion</div>
+            </a>
+        </div>
+        
+        <div class="login-content">
+            <div class="login-form-container">
+                <div class="login-header">
+                    <h1>Welcome Back</h1>
+                    <p class="login-description">Log in to continue your personal AI experience.</p>
                 </div>
-                <h2>Welcome <span class="highlight">Back</span></h2>
-                <p>Sign in to continue your intimate journey</p>
                 
-                <form id="login-form" class="auth-form">
+                <form id="login-form">
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <div class="phone-input">
-                            <input type="tel" id="phone" placeholder="Enter your phone number" pattern="[0-9]*" inputmode="numeric" autocomplete="tel" required>
-                        </div>
+                        <label for="telegram" class="form-label">Telegram Username</label>
+                        <input type="text" id="telegram" name="telegram" class="form-input" placeholder="Your Telegram username" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Your password" required>
                     </div>
-                    <div class="form-message" id="login-message"></div>
-                    <button type="submit" class="cta-button large">Sign In</button>
+                    
+                    <button type="submit" class="login-btn">Log In</button>
+                    
+                    <div id="login-message" class="login-message"></div>
                 </form>
                 
-                <div class="auth-footer">
-                    <p>Don't have an account? <a href="/index.html#cta">Sign Up</a></p>
-                </div>
+                <p class="signup-link">Don't have an account? <a href="/">Get an invitation</a></p>
             </div>
-        </main>
-
-        <footer>
-            <div class="footer-content">
-                <div class="logo">tease</div>
-                <div class="footer-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Contact</a>
-                    <a href="#">About Our Mission</a>
-                </div>
-                <div class="social-links">
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
-                <div class="copyright">
-                    &copy; 2025 Tease AI. All rights reserved.
-                </div>
-            </div>
-        </footer>
+        </div>
     </div>
 
     <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     
-    <!-- Application scripts -->
-    <script src="/scripts/auth.js"></script>
+    <script>
+        // Supabase client initialization
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // DOM elements
+        const loginForm = document.getElementById('login-form');
+        const loginMessage = document.getElementById('login-message');
+        
+        // Show error message
+        function showError(message) {
+            loginMessage.textContent = message;
+            loginMessage.className = 'login-message error';
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            loginMessage.textContent = message;
+            loginMessage.className = 'login-message success';
+        }
+        
+        // Hash password with SHA-256 (same method as in signup)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Handle form submission
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const telegram = document.getElementById('telegram').value.trim().replace('@', '');
+            const password = document.getElementById('password').value;
+            
+            // Validate input
+            if (!telegram || !password) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+            
+            try {
+                // Disable button and show loading state
+                const submitBtn = this.querySelector('.login-btn');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Logging in...';
+                
+                // Hash the password for comparison
+                const passwordHash = await hashPassword(password);
+                
+                // Query the user
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('id, name, telegram_username, password_hash, subscription_status, model_id, stripe_customer_id')
+                    .eq('telegram_username', telegram)
+                    .single();
+                
+                if (error) {
+                    showError('User not found. Please check your Telegram username.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    return;
+                }
+                
+                // Verify password
+                if (data.password_hash !== passwordHash) {
+                    showError('Incorrect password. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    return;
+                }
+                
+                // Get model info
+                const { data: modelData, error: modelError } = await supabase
+                    .from('models')
+                    .select('name')
+                    .eq('id', data.model_id)
+                    .single();
+                
+                if (modelError) {
+                    console.error('Error fetching model data:', modelError);
+                }
+                
+                // Store user in local storage
+                localStorage.setItem('tease_user', JSON.stringify({
+                    id: data.id,
+                    name: data.name,
+                    telegram: data.telegram_username,
+                    model_id: data.model_id,
+                    model_name: modelData ? modelData.name : null,
+                    subscribed: data.subscription_status,
+                    stripe_customer_id: data.stripe_customer_id
+                }));
+                
+                // Update last login in database
+                await supabase
+                    .from('profiles')
+                    .update({ updated_at: new Date().toISOString() })
+                    .eq('id', data.id);
+                
+                // Show success message
+                showSuccess('Login successful! Redirecting...');
+                
+                // Redirect based on subscription status
+                setTimeout(() => {
+                    if (data.subscription_status) {
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        window.location.href = '/subscription.html';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('An error occurred during login. Please try again later.');
+                
+                // Re-enable button
+                const submitBtn = this.querySelector('.login-btn');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log In';
+            }
+        });
+    </script>
 </body>
 </html> 

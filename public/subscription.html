@@ -2,20 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#050505">
-    <title>Choose Your Plan | Tease AI Adult Companion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe | Tease AI Adult Companion</title>
     
-    <!-- Supabase API Key -->
-    <meta name="supabase-anon-key" content="%SUPABASE_ANON_KEY%">
-    
-    <!-- Stripe API Key -->
+    <!-- Stripe public key (injected during deployment) -->
     <meta name="stripe-public-key" content="%STRIPE_PUBLIC_KEY%">
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -25,17 +20,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            overflow-x: hidden;
-        }
-        
         .subscription-container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background: linear-gradient(135deg, #170811 0%, #0a0a0a 100%);
             padding: 2rem 5%;
-            overflow-x: hidden;
-            width: 100%;
         }
         
         .logo-container {
@@ -43,19 +33,27 @@
             text-align: center;
         }
         
-        .text-logo {
+        .logo {
             font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            color: var(--light);
+            text-align: center;
+        }
+        
+        .tagline {
             color: var(--primary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 0.5rem;
         }
         
         .subscription-content {
             flex: 1;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
-            overflow-x: visible;
+            padding: 2rem 0;
         }
         
         .subscription-header {
@@ -64,454 +62,695 @@
         }
         
         .subscription-header h1 {
-            margin-bottom: 1rem;
             font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .subscription-header span {
+            color: var(--primary);
         }
         
         .subscription-description {
-            max-width: 600px;
-            margin: 0 auto 2rem;
             color: var(--light-gray);
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .model-highlight {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            background: rgba(20, 20, 20, 0.5);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+        }
+        
+        .model-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: rgba(128, 0, 32, 0.2);
+            background-size: cover;
+            background-position: center top;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .model-details {
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .model-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+        
+        .model-message {
+            color: var(--light-gray);
+            font-style: italic;
+            margin-bottom: 0;
             line-height: 1.6;
         }
         
-        .subscription-form {
-            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.7), rgba(15, 15, 15, 0.7));
-            border: 1px solid rgba(128, 0, 32, 0.2);
+        .packages-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .package-card {
+            background: rgba(20, 20, 20, 0.5);
             border-radius: 12px;
             padding: 2rem;
-            overflow: hidden;
-        }
-        
-        .plans-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .plan-option {
-            background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(15, 15, 15, 0.8));
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(128, 0, 32, 0.2);
-            border-radius: 10px;
-            padding: 1.5rem;
-            cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
         
-        .plan-option:hover {
-            transform: translateY(-5px);
-            border-color: rgba(128, 0, 32, 0.4);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .plan-option.selected {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(128, 0, 32, 0.3);
-        }
-        
-        .plan-option.selected::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: var(--primary);
-            background-color: rgba(20, 20, 20, 0.8);
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-        }
-        
-        .popular-badge {
+        .package-card::before {
+            content: '';
             position: absolute;
             top: 0;
-            right: 2rem;
-            background-color: var(--primary);
-            color: var(--light);
-            padding: 0.2rem 1rem;
-            font-size: 0.8rem;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(128, 0, 32, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
-        .plan-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
+        .package-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(128, 0, 32, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .package-card:hover::before {
+            opacity: 1;
+        }
+        
+        .package-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(128, 0, 32, 0.2);
+        }
+        
+        .package-name {
             font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
         }
         
-        .plan-price {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: block;
-            color: var(--light);
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
         }
         
         .price-period {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--light-gray);
         }
         
-        .plan-features {
-            margin: 1.5rem 0;
-            list-style: none;
-            padding: 0;
+        .package-features {
+            margin-bottom: 2rem;
         }
         
-        .plan-features li {
-            margin-bottom: 0.8rem;
+        .feature-item {
             display: flex;
             align-items: flex-start;
+            margin-bottom: 1rem;
         }
         
-        .plan-features i {
+        .feature-icon {
             color: var(--primary);
-            margin-right: 0.5rem;
-            font-size: 0.9rem;
-            margin-top: 0.3rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
         }
         
-        .subscription-action {
-            margin-top: 2rem;
-            text-align: center;
-        }
-        
-        .subscription-confirmation {
-            text-align: center;
-            padding: 3rem 2rem;
-        }
-        
-        .confirmation-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
-        
-        .confirmation-message {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .confirmation-description {
+        .feature-text {
             color: var(--light-gray);
-            max-width: 500px;
-            margin: 0 auto 2rem;
-            line-height: 1.6;
+            line-height: 1.5;
         }
         
-        .legal-info {
+        .package-button {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: var(--light);
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .package-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .package-popular {
+            position: absolute;
+            top: 12px;
+            right: -30px;
+            background: var(--primary);
+            color: var(--light);
+            padding: 0.5rem 3rem;
+            transform: rotate(45deg);
             font-size: 0.8rem;
-            color: var(--light-gray);
-            margin-top: 2rem;
-            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
-        #payment-status {
-            margin-top: 1rem;
-            padding: 0.8rem;
+        .subscription-message {
+            margin-top: 2rem;
+            padding: 1rem;
             border-radius: 8px;
             font-size: 0.9rem;
+            text-align: center;
+            display: none;
         }
         
-        #payment-status.error {
+        .subscription-message.error {
             background-color: rgba(231, 76, 60, 0.2);
             color: #e74c3c;
             border: 1px solid rgba(231, 76, 60, 0.3);
+            display: block;
+        }
+        
+        .subscription-message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            display: block;
+        }
+        
+        .subscription-footer {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+        
+        .guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(20, 20, 20, 0.3);
+            border-radius: 8px;
+        }
+        
+        .guarantee-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        /* Success page styles */
+        .success-container {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.5);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #2ecc71;
+            margin-bottom: 2rem;
+        }
+        
+        .success-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .success-message {
+            color: var(--light-gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .action-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: var(--light);
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            text-decoration: none;
+        }
+        
+        .action-button:hover {
+            background-color: var(--primary-dark);
         }
         
         .hidden {
             display: none;
         }
-        
-        .secure-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1rem;
-            color: var(--light-gray);
-            font-size: 0.9rem;
-        }
-        
-        .secure-badge i {
-            color: #4CAF50;
-            margin-right: 0.5rem;
-        }
-        
-        .primary-button {
-            display: block;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            box-shadow: 
-                inset 0 -3px 8px rgba(0, 0, 0, 0.5),
-                inset 0 3px 4px rgba(255, 255, 255, 0.1),
-                0 2px 10px rgba(0, 0, 0, 0.3);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-        
-        .primary-button:hover {
-            background-color: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: 
-                inset 0 -3px 8px rgba(0, 0, 0, 0.5),
-                inset 0 3px 4px rgba(255, 255, 255, 0.1),
-                0 5px 15px rgba(128, 0, 32, 0.4);
-        }
-        
-        /* Mobile Responsive Styles */
-        @media (max-width: 768px) {
-            .subscription-form {
-                padding: 1.5rem;
-            }
-            
-            .subscription-header {
-                margin-bottom: 2rem;
-            }
-            
-            .subscription-header h1 {
-                font-size: 2rem;
-            }
-            
-            .plan-option {
-                margin-bottom: 1rem;
-            }
-            
-            .plan-name {
-                font-size: 1.2rem;
-            }
-            
-            .plan-price {
-                font-size: 1.8rem;
-            }
-            
-            .plan-features li {
-                font-size: 0.9rem;
-            }
-            
-            .plans-container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .subscription-container {
-                padding: 1.5rem 4%;
-            }
-            
-            .subscription-form {
-                padding: 1.2rem;
-                border-radius: 10px;
-            }
-            
-            .plans-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .popular-badge {
-                font-size: 0.7rem;
-                padding: 0.2rem 0.8rem;
-                right: 1rem;
-            }
-            
-            .plan-features {
-                margin: 1rem 0;
-            }
-            
-            .plan-features li {
-                margin-bottom: 0.6rem;
-                font-size: 0.85rem;
-            }
-            
-            .confirmation-message {
-                font-size: 1.3rem;
-            }
-            
-            .confirmation-description {
-                font-size: 0.9rem;
-            }
-            
-            /* Fix for better touch targets */
-            .primary-button {
-                min-height: 44px;
-                width: 100%;
-            }
-            
-            .subscription-header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .subscription-description {
-                font-size: 0.9rem;
-            }
-        }
-        
-        /* iOS Safari fix */
-        @supports (-webkit-touch-callout: none) {
-            .subscription-container {
-                min-height: -webkit-fill-available;
-            }
-        }
     </style>
 </head>
-<body class="dark-theme">
+<body>
     <div class="subscription-container">
         <div class="logo-container">
-            <a href="/" class="logo-link">
-                <div class="text-logo">tease</div>
+            <a href="/">
+                <div class="logo">tease</div>
+                <div class="tagline">ai adult companion</div>
             </a>
         </div>
         
         <div class="subscription-content">
-            <div id="subscription-form">
+            <!-- Subscription selection view -->
+            <div id="subscription-view">
                 <div class="subscription-header">
-                    <h1>Choose Your Plan</h1>
-                    <p class="subscription-description">Select the subscription that best fits your needs and unlock the full Tease experience.</p>
+                    <h1>Choose Your <span>Experience</span></h1>
+                    <p class="subscription-description">Select a subscription package to start your personal AI experience with your companion.</p>
                 </div>
                 
-                <form class="subscription-form" id="payment-form">
-                    <div class="plans-container">
-                        <div class="plan-option" data-plan="yearly">
-                            <div class="popular-badge">Most Popular</div>
-                            <h3 class="plan-name">Annual Plan</h3>
-                            <span class="plan-price">$16.67<span class="price-period">/month</span></span>
-                            <p>Billed annually at $199.99</p>
-                            <ul class="plan-features">
-                                <li><i class="fas fa-check"></i> Unlimited messaging</li>
-                                <li><i class="fas fa-check"></i> Custom personality options</li>
-                                <li><i class="fas fa-check"></i> Voice messages</li>
-                                <li><i class="fas fa-check"></i> Advanced role-play modes</li>
-                                <li><i class="fas fa-check"></i> <strong>Save 16% compared to monthly</strong></li>
-                            </ul>
+                <div class="model-highlight" id="model-highlight">
+                    <div class="model-image" id="model-image"></div>
+                    <div class="model-details">
+                        <h2 class="model-name" id="model-name">Your AI Companion</h2>
+                        <p class="model-message" id="model-message">"I can't wait to get to know you better. Choose a package that fits your desires, and let's begin our journey together."</p>
+                    </div>
+                </div>
+                
+                <div class="packages-container" id="packages-container">
+                    <!-- Packages will be loaded dynamically -->
+                    <div class="loading-indicator">Loading packages...</div>
+                </div>
+                
+                <div id="subscription-message" class="subscription-message"></div>
+                
+                <div class="subscription-footer">
+                    <p>All subscriptions include unlimited conversations, personalized responses, and a safe, private experience. You can cancel anytime.</p>
+                    
+                    <div class="guarantee">
+                        <div class="guarantee-icon">
+                            <i class="fas fa-shield-alt"></i>
                         </div>
-                        
-                        <div class="plan-option" data-plan="quarterly">
-                            <h3 class="plan-name">Quarterly Plan</h3>
-                            <span class="plan-price">$18.66<span class="price-period">/month</span></span>
-                            <p>Billed quarterly at $55.99</p>
-                            <ul class="plan-features">
-                                <li><i class="fas fa-check"></i> Unlimited messaging</li>
-                                <li><i class="fas fa-check"></i> Custom personality options</li>
-                                <li><i class="fas fa-check"></i> Voice messages</li>
-                                <li><i class="fas fa-check"></i> Advanced role-play modes</li>
-                                <li><i class="fas fa-check"></i> <strong>Save 7% compared to monthly</strong></li>
-                            </ul>
-                        </div>
-                        
-                        <div class="plan-option" data-plan="monthly">
-                            <h3 class="plan-name">Monthly Plan</h3>
-                            <span class="plan-price">$19.99<span class="price-period">/month</span></span>
-                            <p>Billed monthly</p>
-                            <ul class="plan-features">
-                                <li><i class="fas fa-check"></i> Unlimited messaging</li>
-                                <li><i class="fas fa-check"></i> Custom personality options</li>
-                                <li><i class="fas fa-check"></i> Voice messages</li>
-                                <li><i class="fas fa-check"></i> Advanced role-play modes</li>
-                            </ul>
+                        <div class="guarantee-text">
+                            <strong>100% Privacy Guarantee</strong>: Your conversations and personal information are completely private and secure. We never share your data with third parties.
                         </div>
                     </div>
-                    
-                    <input type="hidden" id="selected-plan" name="plan" value="yearly">
-                    
-                    <div class="subscription-action">
-                        <button id="subscribe-button" type="submit" class="primary-button">Continue to Payment</button>
-                        <div id="payment-status"></div>
-                        <div class="secure-badge">
-                            <i class="fas fa-lock"></i> Secure payment via Stripe
-                        </div>
-                    </div>
-                    
-                    <p class="legal-info">By subscribing, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>. You can cancel your subscription at any time from your account settings.</p>
-                </form>
+                </div>
             </div>
             
-            <div id="subscription-confirmation" class="subscription-confirmation hidden">
-                <div class="confirmation-icon">
-                    <i class="fas fa-check-circle"></i>
+            <!-- Success view (hidden initially) -->
+            <div id="success-view" class="hidden">
+                <div class="success-container">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h1 class="success-title">Subscription Activated!</h1>
+                    <p class="success-message" id="success-message">Thank you for subscribing. Your premium experience with <span id="model-name-success"></span> is now active.</p>
+                    <a href="/dashboard.html" class="action-button">Go to Dashboard</a>
                 </div>
-                <h2 class="confirmation-message" id="confirmation-message">Thank you! Your subscription is now active.</h2>
-                <p class="confirmation-description">Your payment has been processed successfully. You now have full access to all premium features of Tease.</p>
-                <button id="continue-to-chat" class="primary-button">Continue to Chat</button>
             </div>
         </div>
     </div>
-    
-    <!-- Scripts -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="/scripts/supabase.js"></script>
-    <script src="/scripts/subscription.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is newly signed up
-            const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
-            const isNewUser = userData.created_at && 
-                              (new Date() - new Date(userData.created_at) < 1000 * 60 * 30); // 30 minutes
+        // Supabase client initialization
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Stripe initialization
+        const stripePublicKey = document.querySelector('meta[name="stripe-public-key"]')?.getAttribute('content') || 
+            'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
+        const stripe = Stripe(stripePublicKey);
+        
+        // DOM elements
+        const modelImage = document.getElementById('model-image');
+        const modelName = document.getElementById('model-name');
+        const modelMessage = document.getElementById('model-message');
+        const packagesContainer = document.getElementById('packages-container');
+        const subscriptionMessage = document.getElementById('subscription-message');
+        const modelNameSuccess = document.getElementById('model-name-success');
+        const successMessage = document.getElementById('success-message');
+        const subscriptionView = document.getElementById('subscription-view');
+        const successView = document.getElementById('success-view');
+        
+        // Get user data from local storage
+        const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+        
+        // Check if user is logged in
+        if (!userData.id) {
+            window.location.href = '/login.html';
+        }
+        
+        // Check if already subscribed
+        if (userData.subscribed) {
+            // If already subscribed, redirect to dashboard
+            window.location.href = '/dashboard.html';
+        }
+        
+        // Check for successful payment return from Stripe
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionId) {
+            // Handle successful subscription
+            handleSuccessfulSubscription(sessionId);
+        } else {
+            // Load model data and packages
+            loadModelData();
+        }
+        
+        // Show error message
+        function showError(message) {
+            subscriptionMessage.textContent = message;
+            subscriptionMessage.className = 'subscription-message error';
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            subscriptionMessage.textContent = message;
+            subscriptionMessage.className = 'subscription-message success';
+        }
+        
+        // Load model data and packages
+        async function loadModelData() {
+            try {
+                if (!userData.model_id) {
+                    showError('No AI companion found. Please contact support.');
+                    return;
+                }
+                
+                // Fetch model data
+                const { data: modelData, error: modelError } = await supabase
+                    .from('models')
+                    .select('*')
+                    .eq('id', userData.model_id)
+                    .single();
+                
+                if (modelError) throw modelError;
+                
+                if (!modelData) {
+                    showError('AI companion information not found. Please contact support.');
+                    return;
+                }
+                
+                // Update the UI with model data
+                modelName.textContent = modelData.name;
+                
+                // Set custom greeting message based on model
+                const greetings = [
+                    `"I've been waiting for you. Choose a package that fits your desires, and let's begin our intimate journey together."`,
+                    `"I'm so excited to get to know you better. Select a subscription that works for you, and we can start exploring right away."`,
+                    `"I can't wait to share my thoughts with you. Pick a package that suits you, and let's create something special."`,
+                    `"I'm ready to be your personal companion. Choose your subscription, and I'll be all yours."`,
+                ];
+                
+                // Choose a random greeting or use a default
+                modelMessage.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+                
+                // Set background image if available
+                if (modelData.pictures && modelData.pictures.length > 0) {
+                    modelImage.style.backgroundImage = `url(/images/models/${modelData.pictures[0]})`;
+                } else {
+                    modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
+                }
+                
+                // Fetch packages for this model
+                const { data: packagesData, error: packagesError } = await supabase
+                    .from('packages')
+                    .select('*')
+                    .eq('model_id', userData.model_id)
+                    .order('price', { ascending: true });
+                
+                if (packagesError) throw packagesError;
+                
+                // Display the packages
+                displayPackages(packagesData, modelData.name);
+                
+            } catch (error) {
+                console.error('Error loading model data:', error);
+                showError('Unable to load AI companion information. Please try again later.');
+            }
+        }
+        
+        // Display packages
+        function displayPackages(packages, modelName) {
+            // Clear loading indicator
+            packagesContainer.innerHTML = '';
             
-            // Customize header for new users
-            if (isNewUser && userData.persona) {
-                const headerTitle = document.querySelector('.subscription-header h1');
-                const headerDesc = document.querySelector('.subscription-description');
-                
-                if (headerTitle) {
-                    headerTitle.innerHTML = `Complete Your <span style="color: var(--primary);">Experience</span>`;
-                }
-                
-                if (headerDesc) {
-                    headerDesc.innerHTML = `Welcome ${userData.name || 'there'}! You're just one step away from experiencing ${userData.persona} and unlocking the full potential of Tease.`;
-                }
-                
-                // Also update button text
-                const subscribeButton = document.getElementById('subscribe-button');
-                if (subscribeButton) {
-                    subscribeButton.textContent = 'Start Your Adventure';
-                }
+            // Check if there are packages
+            if (!packages || packages.length === 0) {
+                packagesContainer.innerHTML = '<p class="no-packages">No subscription packages available at this time. Please check back later.</p>';
+                return;
             }
             
-            // Plan selection functionality
-            const planOptions = document.querySelectorAll('.plan-option');
-            const selectedPlanInput = document.getElementById('selected-plan');
+            // Find if there's a "premium" package to highlight
+            const premiumPackage = packages.find(pkg => pkg.name.toLowerCase().includes('premium'));
             
-            planOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove selected class from all options
-                    planOptions.forEach(opt => opt.classList.remove('selected'));
+            // Create a card for each package
+            packages.forEach((pkg, index) => {
+                const isPremium = pkg.id === (premiumPackage?.id);
+                
+                const packageCard = document.createElement('div');
+                packageCard.className = 'package-card';
+                
+                // Add "Popular" badge for premium package
+                if (isPremium) {
+                    const popularBadge = document.createElement('div');
+                    popularBadge.className = 'package-popular';
+                    popularBadge.textContent = 'POPULAR';
+                    packageCard.appendChild(popularBadge);
+                }
+                
+                packageCard.innerHTML = `
+                    <div class="package-header">
+                        <h3 class="package-name">${pkg.name}</h3>
+                        <div class="package-price">$${pkg.price.toFixed(2)}<span class="price-period">/month</span></div>
+                    </div>
                     
-                    // Add selected class to clicked option
-                    this.classList.add('selected');
+                    <div class="package-features">
+                        ${getFeaturesList(pkg)}
+                    </div>
                     
-                    // Update hidden input
-                    selectedPlanInput.value = this.getAttribute('data-plan');
-                });
+                    <button class="package-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id}">
+                        Subscribe Now
+                    </button>
+                `;
+                
+                packagesContainer.appendChild(packageCard);
             });
             
-            // Set initial selected plan
-            const initialPlan = document.querySelector('.plan-option[data-plan="yearly"]');
-            if (initialPlan) {
-                initialPlan.classList.add('selected');
+            // Add event listeners to subscribe buttons
+            const subscribeButtons = document.querySelectorAll('.package-button');
+            subscribeButtons.forEach(button => {
+                button.addEventListener('click', handleSubscribeClick);
+            });
+        }
+        
+        // Get features list based on package
+        function getFeaturesList(pkg) {
+            const basicFeatures = [
+                'Personal AI companion',
+                'Unlimited conversations',
+                'Personalized responses',
+                '24/7 availability',
+                'Private and secure'
+            ];
+            
+            const premiumFeatures = [
+                'Priority access',
+                'Faster response times',
+                'Enhanced personalization',
+                'Extended conversation history',
+                'Premium content'
+            ];
+            
+            // Determine if this is a premium package
+            const isPremium = pkg.name.toLowerCase().includes('premium');
+            const features = isPremium ? [...basicFeatures, ...premiumFeatures] : basicFeatures;
+            
+            // Additional features from the package description
+            if (pkg.description) {
+                // Parse description as additional features if it contains a comma or period
+                const additionalFeatures = pkg.description
+                    .split(/[.,]/)
+                    .map(f => f.trim())
+                    .filter(f => f.length > 0);
+                
+                features.push(...additionalFeatures);
             }
-        });
+            
+            // Create HTML for features list
+            return features.map(feature => `
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-check"></i></div>
+                    <div class="feature-text">${feature}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Handle subscribe button click
+        async function handleSubscribeClick(e) {
+            const button = e.target;
+            const packageId = button.getAttribute('data-package-id');
+            const priceId = button.getAttribute('data-price-id');
+            
+            if (!packageId || !priceId) {
+                showError('Invalid package selection. Please try again.');
+                return;
+            }
+            
+            try {
+                // Disable button and show loading state
+                const originalText = button.textContent;
+                button.disabled = true;
+                button.textContent = 'Processing...';
+                
+                // First create a customer if user doesn't have a Stripe ID
+                if (!userData.stripe_customer_id) {
+                    const { data: customer, error: customerError } = await fetch('/api/create-customer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: userData.name,
+                            email: '', // We use telegram username instead
+                            telegram: userData.telegram
+                        })
+                    }).then(res => res.json());
+                    
+                    if (customerError) {
+                        throw new Error(customerError.message || 'Error creating customer');
+                    }
+                    
+                    // Store the customer ID
+                    userData.stripe_customer_id = customer.id;
+                    localStorage.setItem('tease_user', JSON.stringify(userData));
+                    
+                    // Update the customer ID in the database
+                    await supabase
+                        .from('profiles')
+                        .update({ stripe_customer_id: customer.id })
+                        .eq('id', userData.id);
+                }
+                
+                // Create checkout session
+                const { data: session, error: sessionError } = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        priceId: priceId,
+                        customerId: userData.stripe_customer_id,
+                        userId: userData.id,
+                        packageId: packageId,
+                        successUrl: window.location.origin + '/subscription.html?session_id={CHECKOUT_SESSION_ID}',
+                        cancelUrl: window.location.origin + '/subscription.html'
+                    })
+                }).then(res => res.json());
+                
+                if (sessionError) {
+                    throw new Error(sessionError.message || 'Error creating checkout session');
+                }
+                
+                // Redirect to Stripe Checkout
+                stripe.redirectToCheckout({ sessionId: session.id });
+                
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showError(error.message || 'An error occurred. Please try again later.');
+                
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        }
+        
+        // Handle successful subscription after redirect from Stripe
+        async function handleSuccessfulSubscription(sessionId) {
+            try {
+                // Verify the session
+                const { data: sessionData, error: sessionError } = await fetch('/api/verify-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId })
+                }).then(res => res.json());
+                
+                if (sessionError) {
+                    throw new Error(sessionError.message || 'Error verifying session');
+                }
+                
+                // Update subscription status in database
+                // Note: This should also happen via webhook, but we update it here for instant feedback
+                await supabase
+                    .from('profiles')
+                    .update({ 
+                        subscription_status: true,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userData.id);
+                
+                // Update local user data
+                userData.subscribed = true;
+                localStorage.setItem('tease_user', JSON.stringify(userData));
+                
+                // Show success view
+                subscriptionView.classList.add('hidden');
+                successView.classList.remove('hidden');
+                
+                // Update success message with model name
+                if (userData.model_name) {
+                    modelNameSuccess.textContent = userData.model_name;
+                    successMessage.innerHTML = `Thank you for subscribing. Your premium experience with <strong>${userData.model_name}</strong> is now active.`;
+                }
+                
+                // Clean up the URL to remove the session ID parameter
+                window.history.replaceState({}, document.title, '/subscription.html');
+                
+            } catch (error) {
+                console.error('Error processing successful subscription:', error);
+                showError('There was an issue verifying your subscription. Please check your account status or contact support.');
+            }
+        }
     </script>
 </body>
 </html> 

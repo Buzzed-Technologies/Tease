@@ -27,6 +27,12 @@ const PLAN_PRICES = {
     }
 };
 
+// Initialize Supabase client
+const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
 // Initialize subscription system
 function initSubscription() {
     // Check if user is logged in
@@ -428,4 +434,342 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     initSubscription();
-}); 
+});
+
+// Check if user is logged in
+function checkLoggedIn() {
+  const userData = getCurrentUser();
+  if (!userData.id) {
+    // Redirect to login if user is not logged in
+    window.location.href = '/login.html';
+    return false;
+  }
+  return true;
+}
+
+// Check subscription status
+async function checkSubscriptionStatus() {
+  const userData = getCurrentUser();
+  
+  if (!userData.id) {
+    return { subscribed: false };
+  }
+  
+  try {
+    // Get the latest subscription data from the database
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('subscription_status, stripe_customer_id')
+      .eq('id', userData.id)
+      .single();
+    
+    if (error) throw error;
+    
+    // Update local storage with latest status
+    userData.subscription_status = data.subscription_status;
+    localStorage.setItem('tease_user', JSON.stringify(userData));
+    
+    return { 
+      subscribed: data.subscription_status,
+      stripeCustomerId: data.stripe_customer_id
+    };
+  } catch (error) {
+    console.error('Error checking subscription status:', error);
+    return { subscribed: false };
+  }
+}
+
+// Get packages for a specific model
+async function getPackagesForModel(modelId) {
+  try {
+    // Get the model
+    const { data: model, error: modelError } = await supabase
+      .from('models')
+      .select('*')
+      .eq('id', modelId)
+      .single();
+    
+    if (modelError) throw modelError;
+    
+    // Get packages for this model
+    const { data: packages, error: packagesError } = await supabase
+      .from('packages')
+      .select('*')
+      .eq('model_id', modelId);
+    
+    if (packagesError) throw packagesError;
+    
+    return { model, packages };
+  } catch (error) {
+    console.error('Error getting packages:', error);
+    return { model: null, packages: [] };
+  }
+}
+
+// Start Stripe checkout session
+async function startCheckout(packageId) {
+  const userData = getCurrentUser();
+  
+  if (!userData.id) {
+    return { success: false, message: 'User not logged in' };
+  }
+  
+  try {
+    // In a real app, this would call a serverless function or API endpoint
+    // to create a Stripe Checkout session
+    
+    // For this example, we're simulating the API call
+    
+    // First, get the package details
+    const { data: packageData, error: packageError } = await supabase
+      .from('packages')
+      .select('*')
+      .eq('id', packageId)
+      .single();
+    
+    if (packageError) throw packageError;
+    
+    // Normally this would be handled by a server endpoint that creates
+    // a Stripe Checkout session and returns the session ID
+    
+    // Simulate the redirect to Stripe checkout
+    // In a real app, this would be:
+    // window.location.href = session.url;
+    
+    // For demo purposes, let's simulate a successful subscription
+    simulateSuccessfulSubscription(userData.id, packageData);
+    
+    return { 
+      success: true, 
+      message: 'Redirecting to checkout...',
+      package: packageData
+    };
+  } catch (error) {
+    console.error('Error starting checkout:', error);
+    return { success: false, message: 'Failed to start checkout process' };
+  }
+}
+
+// Simulate a successful subscription (demo purposes only)
+// In a real app, this would be handled by a Stripe webhook
+async function simulateSuccessfulSubscription(userId, packageData) {
+  try {
+    // Generate a fake Stripe customer ID
+    const stripeCustomerId = 'cus_' + Math.random().toString(36).substring(2, 15);
+    
+    // Update the user's profile
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        subscription_status: true,
+        stripe_customer_id: stripeCustomerId
+      })
+      .eq('id', userId);
+    
+    if (error) throw error;
+    
+    // Update local storage
+    const userData = getCurrentUser();
+    userData.subscription_status = true;
+    localStorage.setItem('tease_user', JSON.stringify(userData));
+    
+    // Simulate checkout completion after a delay
+    setTimeout(() => {
+      // Show success message
+      alert(`Successfully subscribed to ${packageData.name} for ${packageData.price}!`);
+      
+      // Redirect to dashboard
+      window.location.href = '/dashboard.html';
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Error simulating subscription:', error);
+  }
+}
+
+// Manage existing subscription
+async function manageSubscription() {
+  const { subscribed, stripeCustomerId } = await checkSubscriptionStatus();
+  
+  if (!subscribed || !stripeCustomerId) {
+    return { success: false, message: 'No active subscription found' };
+  }
+  
+  try {
+    // In a real app, this would create a Stripe Customer Portal session
+    // and redirect the user to it
+    
+    // For this example, we're simulating the portal link
+    
+    // Simulate redirect to Stripe portal
+    alert('In a real app, this would redirect to the Stripe Customer Portal where you can manage your subscription.');
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error managing subscription:', error);
+    return { success: false, message: 'Failed to open subscription management' };
+  }
+}
+
+// Cancel subscription
+async function cancelSubscription() {
+  const userData = getCurrentUser();
+  
+  if (!userData.id) {
+    return { success: false, message: 'User not logged in' };
+  }
+  
+  try {
+    // In a real app, this would call a serverless function or API endpoint
+    // to cancel the subscription in Stripe
+    
+    // For this example, we're just updating the database directly
+    
+    // Update the user's profile
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        subscription_status: false
+      })
+      .eq('id', userData.id);
+    
+    if (error) throw error;
+    
+    // Update local storage
+    userData.subscription_status = false;
+    localStorage.setItem('tease_user', JSON.stringify(userData));
+    
+    return { success: true, message: 'Subscription canceled successfully' };
+  } catch (error) {
+    console.error('Error canceling subscription:', error);
+    return { success: false, message: 'Failed to cancel subscription' };
+  }
+}
+
+// Initialize subscription page
+function initSubscriptionPage() {
+  if (!checkLoggedIn()) return;
+  
+  const packageContainer = document.getElementById('package-container');
+  const loadingElement = document.getElementById('loading-message');
+  const modelNameElement = document.getElementById('model-name');
+  const modelImageElement = document.getElementById('model-image');
+  const modelBioElement = document.getElementById('model-bio');
+  
+  // Check if user is already subscribed
+  checkSubscriptionStatus().then(({ subscribed }) => {
+    if (subscribed) {
+      // If already subscribed, redirect to dashboard
+      window.location.href = '/dashboard.html';
+      return;
+    }
+    
+    const userData = getCurrentUser();
+    
+    if (!userData.model_id) {
+      loadingElement.textContent = 'Error: No model selected. Please restart signup.';
+      return;
+    }
+    
+    // Load packages for the user's model
+    getPackagesForModel(userData.model_id).then(({ model, packages }) => {
+      if (!model || !packages.length) {
+        loadingElement.textContent = 'No subscription packages found for this model.';
+        return;
+      }
+      
+      // Update model information
+      if (modelNameElement) modelNameElement.textContent = model.name;
+      if (modelBioElement) modelBioElement.textContent = model.bio || '';
+      
+      if (modelImageElement && model.pictures && model.pictures.length > 0) {
+        modelImageElement.src = `/images/models/${model.pictures[0]}`;
+        modelImageElement.alt = `${model.name} - AI Companion`;
+      }
+      
+      // Hide loading message
+      loadingElement.style.display = 'none';
+      
+      // Display packages
+      packageContainer.innerHTML = '';
+      
+      packages.forEach(pkg => {
+        const packageCard = document.createElement('div');
+        packageCard.className = 'package-card';
+        
+        // Determine if this is the recommended package
+        const isRecommended = pkg.name.toLowerCase().includes('premium');
+        
+        packageCard.innerHTML = `
+          ${isRecommended ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
+          <h3 class="package-name">${pkg.name}</h3>
+          <div class="package-price">$${parseFloat(pkg.price).toFixed(2)}<span>/month</span></div>
+          <div class="package-description">${pkg.description || 'Access to exclusive content and chats'}</div>
+          <button class="subscribe-button" data-package-id="${pkg.id}">Subscribe Now</button>
+        `;
+        
+        packageContainer.appendChild(packageCard);
+      });
+      
+      // Add event listeners to subscribe buttons
+      const subscribeButtons = document.querySelectorAll('.subscribe-button');
+      subscribeButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+          // Disable all buttons
+          subscribeButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+          });
+          
+          // Get package ID
+          const packageId = this.getAttribute('data-package-id');
+          
+          // Start checkout
+          const result = await startCheckout(packageId);
+          
+          if (!result.success) {
+            alert(result.message);
+            
+            // Re-enable buttons
+            subscribeButtons.forEach(btn => {
+              btn.disabled = false;
+              btn.textContent = 'Subscribe Now';
+            });
+          }
+        });
+      });
+    });
+  });
+}
+
+// Initialize dashboard subscription section
+function initDashboardSubscription() {
+  const manageSubscriptionButton = document.getElementById('manage-subscription');
+  
+  if (manageSubscriptionButton) {
+    manageSubscriptionButton.addEventListener('click', async function() {
+      this.disabled = true;
+      this.textContent = 'Loading...';
+      
+      const result = await manageSubscription();
+      
+      if (!result.success) {
+        alert(result.message);
+      }
+      
+      this.disabled = false;
+      this.textContent = 'Manage Subscription';
+    });
+  }
+}
+
+// Export functions for use in other scripts
+window.teaseSubscription = {
+  checkSubscriptionStatus,
+  getPackagesForModel,
+  startCheckout,
+  manageSubscription,
+  cancelSubscription,
+  initSubscriptionPage,
+  initDashboardSubscription
+}; 

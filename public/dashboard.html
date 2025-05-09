@@ -21,209 +21,861 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #170811 0%, #0a0a0a 100%);
+        }
+        
+        .dashboard-header {
+            background-color: rgba(10, 10, 10, 0.8);
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--light);
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .logout-button {
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-button:hover {
+            background-color: var(--primary);
+            color: var(--light);
+        }
+        
+        .dashboard-content {
+            flex: 1;
+            display: flex;
+            padding: 2rem 5%;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: rgba(15, 15, 15, 0.7);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-right: 2rem;
+            height: fit-content;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--light-gray);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-nav a:hover {
+            background-color: rgba(128, 0, 32, 0.1);
+            color: var(--light);
+        }
+        
+        .sidebar-nav a.active {
+            background-color: rgba(128, 0, 32, 0.2);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .sidebar-nav i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+        }
+        
+        .content-section {
+            display: none;
+            background-color: rgba(15, 15, 15, 0.7);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(128, 0, 32, 0.2);
+            padding-bottom: 1rem;
+        }
+        
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-description {
+            color: var(--light-gray);
+        }
+        
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-card {
+            background-color: rgba(20, 20, 20, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid rgba(128, 0, 32, 0.1);
+        }
+        
+        .info-card h3 {
+            font-size: 1.2rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-card h3 i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .user-details {
+            color: var(--light-gray);
+            line-height: 1.6;
+        }
+        
+        .user-details p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .user-details span.label {
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .subscription-details {
+            background-color: rgba(20, 20, 20, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid rgba(128, 0, 32, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .subscription-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .subscription-status.active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .subscription-status.inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .subscription-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .subscription-info .item {
+            padding: 1rem;
+            background-color: rgba(30, 30, 30, 0.5);
+            border-radius: 8px;
+        }
+        
+        .subscription-info .label {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .subscription-info .value {
+            font-size: 1.2rem;
+            color: var(--light);
+            font-weight: 600;
+        }
+        
+        .action-button {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .action-button.secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .action-button.secondary:hover {
+            background-color: rgba(128, 0, 32, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--light);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 4px;
+            background-color: rgba(30, 30, 30, 0.5);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .settings-form {
+            max-width: 500px;
+        }
+        
+        .companion-card {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background-color: rgba(20, 20, 20, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid rgba(128, 0, 32, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .companion-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: rgba(128, 0, 32, 0.2);
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .companion-info {
+            flex: 1;
+        }
+        
+        .companion-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .companion-bio {
+            color: var(--light-gray);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .stat-section {
+            margin-top: 2rem;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background-color: rgba(20, 20, 20, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(128, 0, 32, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        .message-area {
+            display: none;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .message-area.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            display: block;
+        }
+        
+        .message-area.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="dashboard-container">
         <header class="dashboard-header">
-            <div class="header-content">
-                <div class="logo">tease</div>
-                <nav class="main-nav">
-                    <ul>
-                        <li><a href="#account" class="active nav-link">Account</a></li>
-                        <li><a href="#subscription" class="nav-link">Subscription</a></li>
-                    </ul>
-                </nav>
-                <div class="header-actions">
-                    <button id="logout-btn" class="text-button" aria-label="Logout">
-                        <i class="fas fa-sign-out-alt"></i> 
-                        <span class="btn-text">Logout</span>
-                    </button>
+            <div class="logo">tease</div>
+            
+            <div class="header-controls">
+                <div class="user-info">
+                    <span class="user-name" id="user-display-name">User Name</span>
                 </div>
+                <button id="logout-button" class="logout-button">Logout</button>
             </div>
         </header>
         
-        <main class="dashboard-container">
-            <section id="account" class="dashboard-section active">
-                <div class="dashboard-card">
-                    <h2>Account <span class="highlight">Details</span></h2>
-                    
-                    <div class="user-details">
-                        <div class="user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="user-info">
-                            <h3 id="user-name">Loading...</h3>
-                            <p id="user-phone">Loading...</p>
-                        </div>
-                    </div>
-                    
-                    <form id="update-account-form" class="dashboard-form">
-                        <div class="form-group">
-                            <label for="update-name">Name</label>
-                            <input type="text" id="update-name" placeholder="Your name" autocomplete="name">
-                        </div>
-                        <div class="form-group">
-                            <label for="update-email">Email (Optional)</label>
-                            <input type="email" id="update-email" placeholder="Your email" autocomplete="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="update-password">New Password (leave blank to keep current)</label>
-                            <input type="password" id="update-password" placeholder="New password" autocomplete="new-password">
-                        </div>
-                        <div class="form-message" id="account-message"></div>
-                        <button type="submit" class="cta-button">Update Account</button>
-                    </form>
-                </div>
-            </section>
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <ul class="sidebar-nav">
+                    <li><a href="#dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="#subscription"><i class="fas fa-credit-card"></i> Subscription</a></li>
+                    <li><a href="#profile"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="/chat.html"><i class="fas fa-comment"></i> Chat</a></li>
+                </ul>
+            </div>
             
-            <section id="subscription" class="dashboard-section">
-                <div class="dashboard-card">
-                    <h2>Subscription <span class="highlight">Status</span></h2>
+            <div class="main-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="content-section active">
+                    <div class="section-header">
+                        <h2>Dashboard</h2>
+                        <p class="section-description">Welcome to your personal dashboard. View your account overview and statistics.</p>
+                    </div>
                     
-                    <div id="subscription-status" class="subscription-details">
-                        <div class="subscription-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Loading subscription details...</p>
+                    <div class="companion-card">
+                        <div class="companion-image" id="companion-image"></div>
+                        <div class="companion-info">
+                            <h3 class="companion-name" id="companion-name">Your AI Companion</h3>
+                            <p class="companion-bio" id="companion-bio">Your personal AI companion ready to chat with you and explore your desires.</p>
+                            <a href="/chat.html" class="action-button">Start Chatting</a>
                         </div>
                     </div>
                     
-                    <div id="active-subscription" class="subscription-active" style="display: none;">
-                        <div class="subscription-header">
-                            <div class="subscription-badge">
-                                <i class="fas fa-check-circle"></i> Active
-                            </div>
-                            <div class="subscription-actions">
-                                <button id="manage-subscription" class="text-button" aria-label="Manage Subscription">
-                                    <i class="fas fa-cog"></i> 
-                                    <span class="btn-text">Manage Subscription</span>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="subscription-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Plan:</span>
-                                <span id="plan-name" class="detail-value">Premium</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Billing Cycle:</span>
-                                <span id="billing-cycle" class="detail-value">Monthly</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Next Billing Date:</span>
-                                <span id="next-billing" class="detail-value">June 15, 2025</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Amount:</span>
-                                <span id="billing-amount" class="detail-value">$19.99</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="inactive-subscription" class="subscription-inactive" style="display: none;">
-                        <div class="subscription-header">
-                            <div class="subscription-badge inactive">
-                                <i class="fas fa-times-circle"></i> Inactive
-                            </div>
-                        </div>
-                        
-                        <p>You don't have an active subscription. Subscribe now to access premium features and continue your intimate journey with your AI companion.</p>
-                        
-                        <div class="subscription-plans">
-                            <div class="plan-card">
-                                <div class="plan-header">
-                                    <h3>Monthly</h3>
-                                    <div class="plan-price">$19.99<span>/month</span></div>
-                                </div>
-                                <ul class="plan-features">
-                                    <li><i class="fas fa-check"></i> Unlimited conversations</li>
-                                    <li><i class="fas fa-check"></i> Personalized experiences</li>
-                                    <li><i class="fas fa-check"></i> Advanced fantasy scenarios</li>
-                                    <li><i class="fas fa-check"></i> Cancel anytime</li>
-                                </ul>
-                                <button class="cta-button subscribe-btn" data-plan="monthly">Subscribe</button>
+                    <div class="stat-section">
+                        <h3>Your Stats</h3>
+                        <div class="stat-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="messages-count">0</div>
+                                <div class="stat-label">Messages</div>
                             </div>
                             
-                            <div class="plan-card featured">
-                                <div class="plan-tag">Best Value</div>
-                                <div class="plan-header">
-                                    <h3>Annual</h3>
-                                    <div class="plan-price">$199.99<span>/year</span></div>
-                                    <div class="plan-saving">Save 16%</div>
-                                </div>
-                                <ul class="plan-features">
-                                    <li><i class="fas fa-check"></i> All monthly features</li>
-                                    <li><i class="fas fa-check"></i> Priority support</li>
-                                    <li><i class="fas fa-check"></i> Early access to new personas</li>
-                                    <li><i class="fas fa-check"></i> Personal fantasy customization</li>
-                                </ul>
-                                <button class="cta-button subscribe-btn" data-plan="annual">Subscribe</button>
+                            <div class="stat-card">
+                                <div class="stat-value" id="sessions-count">0</div>
+                                <div class="stat-label">Chat Sessions</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-value" id="days-count">0</div>
+                                <div class="stat-label">Days Active</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <div class="footer-content">
-                <div class="logo">tease</div>
-                <div class="footer-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Contact</a>
-                    <a href="#">About Our Mission</a>
-                </div>
-                <div class="social-links">
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
-                <div class="copyright">
-                    &copy; 2025 Tease AI. All rights reserved.
-                </div>
+                </section>
+                
+                <!-- Subscription Section -->
+                <section id="subscription-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Subscription</h2>
+                        <p class="section-description">Manage your subscription plan and payment details.</p>
+                    </div>
+                    
+                    <div id="subscription-active" class="subscription-details">
+                        <div class="subscription-status active">Active</div>
+                        
+                        <div class="subscription-info">
+                            <div class="item">
+                                <div class="label">Plan</div>
+                                <div class="value" id="plan-name">Premium</div>
+                            </div>
+                            
+                            <div class="item">
+                                <div class="label">Price</div>
+                                <div class="value" id="plan-price">$19.99/month</div>
+                            </div>
+                            
+                            <div class="item">
+                                <div class="label">Next Billing Date</div>
+                                <div class="value" id="next-billing-date">May 15, 2025</div>
+                            </div>
+                        </div>
+                        
+                        <button id="manage-subscription" class="action-button">Manage Subscription</button>
+                    </div>
+                    
+                    <div id="subscription-inactive" class="subscription-details" style="display: none;">
+                        <div class="subscription-status inactive">Inactive</div>
+                        
+                        <p>You don't have an active subscription. Choose a subscription plan to access all features.</p>
+                        
+                        <a href="/subscription.html" class="action-button">View Subscription Plans</a>
+                    </div>
+                </section>
+                
+                <!-- Profile Section -->
+                <section id="profile-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Profile Information</h2>
+                        <p class="section-description">View your personal information and account details.</p>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <div class="info-card">
+                            <h3><i class="fas fa-user"></i> Personal Information</h3>
+                            <div class="user-details">
+                                <p>
+                                    <span class="label">Name:</span>
+                                    <span id="profile-name">User Name</span>
+                                </p>
+                                <p>
+                                    <span class="label">Telegram:</span>
+                                    <span id="profile-telegram">@username</span>
+                                </p>
+                                <p>
+                                    <span class="label">Account Created:</span>
+                                    <span id="profile-created">January 1, 2025</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3><i class="fas fa-robot"></i> AI Companion</h3>
+                            <div class="user-details">
+                                <p>
+                                    <span class="label">Companion:</span>
+                                    <span id="profile-companion">Lucy</span>
+                                </p>
+                                <p>
+                                    <span class="label">Personality:</span>
+                                    <span id="profile-personality">Passionate & Playful</span>
+                                </p>
+                                <p>
+                                    <span class="label">Subscription Status:</span>
+                                    <span id="profile-subscription-status">Active</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Settings Section -->
+                <section id="settings-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Account Settings</h2>
+                        <p class="section-description">Update your account information and preferences.</p>
+                    </div>
+                    
+                    <form class="settings-form" id="settings-form">
+                        <div class="form-group">
+                            <label for="settings-name" class="form-label">Name</label>
+                            <input type="text" id="settings-name" class="form-input" placeholder="Your name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="settings-password" class="form-label">New Password</label>
+                            <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                            <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                        </div>
+                        
+                        <button type="submit" class="action-button">Save Changes</button>
+                        
+                        <div id="settings-message" class="message-area"></div>
+                    </form>
+                </section>
             </div>
-        </footer>
+        </div>
     </div>
 
     <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    
-    <!-- Application scripts -->
-    <script src="/scripts/auth.js"></script>
-    <script src="/scripts/script.js"></script>
     
     <script>
-        // Add event listeners to nav links
-        document.addEventListener('DOMContentLoaded', function() {
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.dashboard-section');
+        // Supabase client initialization
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        const supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content') || 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // DOM elements
+        const userDisplayName = document.getElementById('user-display-name');
+        const logoutButton = document.getElementById('logout-button');
+        const companionImage = document.getElementById('companion-image');
+        const companionName = document.getElementById('companion-name');
+        const companionBio = document.getElementById('companion-bio');
+        const profileName = document.getElementById('profile-name');
+        const profileTelegram = document.getElementById('profile-telegram');
+        const profileCreated = document.getElementById('profile-created');
+        const profileCompanion = document.getElementById('profile-companion');
+        const profilePersonality = document.getElementById('profile-personality');
+        const profileSubscriptionStatus = document.getElementById('profile-subscription-status');
+        const subscriptionActive = document.getElementById('subscription-active');
+        const subscriptionInactive = document.getElementById('subscription-inactive');
+        const planName = document.getElementById('plan-name');
+        const planPrice = document.getElementById('plan-price');
+        const nextBillingDate = document.getElementById('next-billing-date');
+        const manageSubscriptionButton = document.getElementById('manage-subscription');
+        const settingsForm = document.getElementById('settings-form');
+        const settingsName = document.getElementById('settings-name');
+        const settingsPassword = document.getElementById('settings-password');
+        const settingsConfirmPassword = document.getElementById('settings-confirm-password');
+        const settingsMessage = document.getElementById('settings-message');
+        
+        // Navigation elements
+        const navLinks = document.querySelectorAll('.sidebar-nav a');
+        const contentSections = document.querySelectorAll('.content-section');
+        
+        // Stats elements
+        const messagesCount = document.getElementById('messages-count');
+        const sessionsCount = document.getElementById('sessions-count');
+        const daysCount = document.getElementById('days-count');
+        
+        // Get user data from local storage
+        const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+        
+        // Check if user is logged in
+        if (!userData.id) {
+            window.location.href = '/login.html';
+        }
+        
+        // Initialize dashboard
+        async function initDashboard() {
+            try {
+                // Update user display name
+                userDisplayName.textContent = userData.name || 'User';
+                
+                // Fetch the latest user data
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', userData.id)
+                    .single();
+                
+                if (profileError) throw profileError;
+                
+                // Fetch model data
+                const { data: modelData, error: modelError } = await supabase
+                    .from('models')
+                    .select('*')
+                    .eq('id', profile.model_id)
+                    .single();
+                
+                if (modelError) throw modelError;
+                
+                // Update the UI with user data
+                updateUserInterface(profile, modelData);
+                
+                // Load subscription details
+                if (profile.subscription_status) {
+                    subscriptionActive.style.display = 'block';
+                    subscriptionInactive.style.display = 'none';
+                    profileSubscriptionStatus.textContent = 'Active';
+                    
+                    // If there's a stripe_customer_id, fetch subscription details
+                    if (profile.stripe_customer_id) {
+                        fetchSubscriptionDetails(profile.stripe_customer_id);
+                    }
+                } else {
+                    subscriptionActive.style.display = 'none';
+                    subscriptionInactive.style.display = 'block';
+                    profileSubscriptionStatus.textContent = 'Inactive';
+                }
+                
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+            }
+        }
+        
+        // Update user interface with data
+        function updateUserInterface(profile, modelData) {
+            // Update profile information
+            profileName.textContent = profile.name || 'Not provided';
+            profileTelegram.textContent = profile.telegram_username ? `@${profile.telegram_username}` : 'Not provided';
+            profileCreated.textContent = new Date(profile.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
             
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Update active class on nav links
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show the correct section
-                    const targetId = this.getAttribute('href').substring(1);
-                    sections.forEach(section => {
-                        section.classList.remove('active');
-                        if (section.id === targetId) {
-                            section.classList.add('active');
-                            
-                            // Scroll to top of section on mobile
-                            if (window.innerWidth <= 576) {
-                                window.scrollTo(0, 0);
-                            }
-                        }
-                    });
+            // Update companion information
+            if (modelData) {
+                companionName.textContent = modelData.name;
+                companionBio.textContent = modelData.bio || 'Your personal AI companion';
+                profileCompanion.textContent = modelData.name;
+                
+                // Set profile personality based on model
+                const personalities = {
+                    'Lucy': 'Playful & Adventurous',
+                    'Sophia': 'Intellectual & Sensual',
+                    'Emma': 'Nurturing & Empathetic',
+                    'Aria': 'Dominant & Confident',
+                    'Zoe': 'Quirky & Creative'
+                };
+                
+                profilePersonality.textContent = personalities[modelData.name] || 'Custom';
+                
+                // Set companion image
+                if (modelData.pictures && modelData.pictures.length > 0) {
+                    companionImage.style.backgroundImage = `url(/images/models/${modelData.pictures[0]})`;
+                } else {
+                    companionImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
+                }
+            }
+            
+            // Update settings form
+            settingsName.value = profile.name || '';
+            
+            // Update stats (simulate for now)
+            messagesCount.textContent = Math.floor(Math.random() * 500);
+            sessionsCount.textContent = Math.floor(Math.random() * 50);
+            
+            // Calculate days since account creation
+            const createdDate = new Date(profile.created_at);
+            const today = new Date();
+            const diffTime = Math.abs(today - createdDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            daysCount.textContent = diffDays;
+        }
+        
+        // Fetch subscription details
+        async function fetchSubscriptionDetails(customerId) {
+            try {
+                // In a real implementation, this would call an API endpoint
+                // For now, we'll use placeholder data
+                
+                // Simulate fetching subscription data
+                const subscriptionData = {
+                    planName: 'Premium VIP',
+                    price: '$19.99/month',
+                    nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    })
+                };
+                
+                // Update UI with subscription data
+                planName.textContent = subscriptionData.planName;
+                planPrice.textContent = subscriptionData.price;
+                nextBillingDate.textContent = subscriptionData.nextBillingDate;
+                
+            } catch (error) {
+                console.error('Error fetching subscription details:', error);
+            }
+        }
+        
+        // Handle settings form submission
+        settingsForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = settingsName.value.trim();
+            const password = settingsPassword.value.trim();
+            const confirmPassword = settingsConfirmPassword.value.trim();
+            
+            // Validate passwords if provided
+            if (password && password !== confirmPassword) {
+                showMessage(settingsMessage, 'Passwords do not match', 'error');
+                return;
+            }
+            
+            try {
+                // Build update object
+                const updates = { name };
+                
+                // Add password if provided
+                if (password) {
+                    // Hash password (in a real app, you'd do this on the server)
+                    const hashedPassword = await hashPassword(password);
+                    updates.password_hash = hashedPassword;
+                }
+                
+                // Update profile
+                const { error } = await supabase
+                    .from('profiles')
+                    .update(updates)
+                    .eq('id', userData.id);
+                
+                if (error) throw error;
+                
+                // Update local storage
+                userData.name = name;
+                localStorage.setItem('tease_user', JSON.stringify(userData));
+                
+                // Update UI
+                userDisplayName.textContent = name || 'User';
+                profileName.textContent = name || 'Not provided';
+                
+                // Clear password fields
+                settingsPassword.value = '';
+                settingsConfirmPassword.value = '';
+                
+                // Show success message
+                showMessage(settingsMessage, 'Settings updated successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error updating settings:', error);
+                showMessage(settingsMessage, 'Error updating settings', 'error');
+            }
+        });
+        
+        // Handle logout
+        logoutButton.addEventListener('click', function() {
+            localStorage.removeItem('tease_user');
+            window.location.href = '/login.html';
+        });
+        
+        // Handle subscription management
+        manageSubscriptionButton.addEventListener('click', async function() {
+            // In a real implementation, this would redirect to Stripe Customer Portal
+            // For now, we'll just show a message
+            alert('This would redirect to Stripe Customer Portal in a real implementation.');
+        });
+        
+        // Navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Prevent navigation for external links
+                const href = this.getAttribute('href');
+                if (href.startsWith('/')) return;
+                
+                e.preventDefault();
+                
+                // Update active link
+                navLinks.forEach(navLink => navLink.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding section
+                const sectionId = href.replace('#', '') + '-section';
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === sectionId) {
+                        section.classList.add('active');
+                    }
                 });
             });
         });
+        
+        // Helper function to show messages
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message-area ${type}`;
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                element.className = 'message-area';
+                element.textContent = '';
+            }, 3000);
+        }
+        
+        // Helper function to hash password (same as in login/signup)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Initialize dashboard
+        initDashboard();
     </script>
 </body>
 </html> 
