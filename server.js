@@ -29,16 +29,24 @@ app.use((req, res, next) => {
 
 // Add this debug endpoint to help troubleshoot environment variable issues
 app.get('/api/config', (req, res) => {
-  // Send Supabase config to client
+  // Send Supabase config to client with detailed info
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  
+  console.log('Config API endpoint called');
+  console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY available:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.log('Key starts with:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0, 10) + '...');
+  }
+  
   res.json({
     supabaseUrl: 'https://kigcecwfxlonrdxjwsza.supabase.co',
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    supabaseKey: supabaseKey,
     env: process.env.NODE_ENV,
     keysAvailable: {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       STRIPE_PUBLIC_KEY: !!process.env.STRIPE_PUBLIC_KEY,
-      // Don't include actual keys in response
-    }
+    },
+    timestamp: new Date().toISOString()
   });
 });
 
