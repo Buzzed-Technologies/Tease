@@ -975,7 +975,10 @@
                     
                     <button class="package-button" 
                             data-package-id="${pkg.id}" 
-                            data-price-id="${priceId}">
+                            data-price-id="${priceId}"
+                            onclick="window.handleSubscribeClick(event)"
+                            type="button"
+                            style="cursor: pointer;">
                         Subscribe Now
                     </button>
                 `;
@@ -985,7 +988,22 @@
                 // Add direct click handler to the newly created button
                 const button = packageCard.querySelector('.package-button');
                 if (button) {
-                    button.addEventListener('click', window.handleSubscribeClick);
+                    // Make sure button is enabled and styled properly
+                    button.disabled = false;
+                    button.style.cursor = 'pointer';
+                    button.style.pointerEvents = 'auto';
+                    
+                    // Remove and reattach the event listener
+                    button.removeEventListener('click', window.handleSubscribeClick);
+                    button.addEventListener('click', function(e) {
+                        console.log('Button clicked!', e);
+                        window.handleSubscribeClick(e);
+                    });
+                    
+                    // Also listen for mousedown event for better responsiveness
+                    button.addEventListener('mousedown', function(e) {
+                        console.log('Button mousedown!', e);
+                    });
                 }
             });
             
