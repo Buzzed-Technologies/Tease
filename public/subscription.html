@@ -411,14 +411,135 @@
     
     <script>
         // Global handler for subscribe button clicks
+        window.handleSubscribeClick = async function(e) {
+            console.log('Subscribe button clicked:', e.target);
+            
+            try {
+                const button = e.currentTarget || e.target; // Use currentTarget to ensure we get the button, not a child element
+                console.log('Button element:', button);
+                
+                const packageId = button.getAttribute('data-package-id');
+                const priceId = button.getAttribute('data-price-id');
+                
+                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}`);
+                
+                if (!packageId || !priceId) {
+                    showError('Invalid package selection. Please try again.');
+                    return;
+                }
+                
+                console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
+                
+                // Disable button and show loading state
+                const originalText = button.textContent;
+                button.disabled = true;
+                button.textContent = 'Processing...';
+                
+                // First create a customer if user doesn't have a Stripe ID
+                if (!userData.stripe_customer_id) {
+                    console.log('Creating new Stripe customer...');
+                    const createCustomerResponse = await fetch('/api/create-customer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: userData.name,
+                            email: `${userData.telegram}@example.com`, // Using telegram as placeholder email
+                            phone: userData.telegram // Using telegram as contactable info
+                        })
+                    });
+                    
+                    if (!createCustomerResponse.ok) {
+                        const errorData = await createCustomerResponse.json();
+                        throw new Error(errorData.error || 'Error creating customer');
+                    }
+                    
+                    const customer = await createCustomerResponse.json();
+                    console.log('Customer created:', customer);
+                    
+                    // Store the customer ID
+                    userData.stripe_customer_id = customer.customerId;
+                    localStorage.setItem('tease_user', JSON.stringify(userData));
+                    
+                    // Update the customer ID in the database
+                    await supabase
+                        .from('profiles')
+                        .update({ stripe_customer_id: customer.customerId })
+                        .eq('id', userData.id);
+                }
+                
+                // Create checkout session
+                console.log('Creating checkout session with customer ID:', userData.stripe_customer_id);
+                const createSessionResponse = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        priceId: priceId,
+                        customerId: userData.stripe_customer_id,
+                        userId: userData.id,
+                        userPhone: userData.telegram,
+                        successUrl: window.location.origin + '/subscription.html?session_id={CHECKOUT_SESSION_ID}',
+                        cancelUrl: window.location.origin + '/subscription.html'
+                    })
+                });
+                
+                if (!createSessionResponse.ok) {
+                    const errorData = await createSessionResponse.json();
+                    throw new Error(errorData.error || 'Error creating checkout session');
+                }
+                
+                const session = await createSessionResponse.json();
+                console.log('Session created:', session);
+                
+                // Redirect to Stripe Checkout
+                if (session.url) {
+                    console.log('Redirecting to Stripe checkout:', session.url);
+                    window.location.href = session.url;
+                } else if (session.sessionId) {
+                    console.log('Redirecting to Stripe checkout using sessionId:', session.sessionId);
+                    if (stripe) {
+                        stripe.redirectToCheckout({ sessionId: session.sessionId });
+                    } else {
+                        throw new Error('Stripe is not initialized');
+                    }
+                } else {
+                    throw new Error('No URL or session ID returned from server');
+                }
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showError(error.message || 'An error occurred. Please try again later.');
+                
+                // Try to re-enable the button if we can
+                try {
+                    if (e && e.currentTarget) {
+                        const button = e.currentTarget;
+                        button.disabled = false;
+                        button.textContent = 'Subscribe Now';
+                    }
+                } catch (buttonError) {
+                    console.error('Error resetting button:', buttonError);
+                }
+            }
+        };
+        
+        // Update the manual click handler to use the global function
         window.manualSubscribeClick = function(event, packageId, priceId) {
             console.log('Manual subscribe button clicked for package:', packageId, 'with price:', priceId);
             
             // Prevent default to avoid any conflicts
             event.preventDefault();
             
-            // Call the main subscribe handler directly with the package and price data
-            handleSubscribeClick(event, packageId, priceId);
+            // Create a fake event object that simulates the structure expected by handleSubscribeClick
+            const syntheticEvent = {
+                currentTarget: event.currentTarget || event.target,
+                target: event.target
+            };
+            
+            // Call the main subscribe handler
+            window.handleSubscribeClick(syntheticEvent);
         };
         
         // Supabase client initialization
@@ -713,17 +834,8 @@
                 
                 console.log(`Package ${index}: id=${pkg.id}, name=${pkg.name}, price=${pkg.price}, stripePrice=${pkg.stripe_price_id}`);
                 
-                // Ensure price ID is valid - if not, use a fallback format
-                let priceId = pkg.stripe_price_id || '';
-                if (!priceId.startsWith('price_') || priceId.length < 15) {
-                    console.warn(`Warning: Invalid Stripe price ID format for ${pkg.name}: ${priceId}`);
-                    // Use a fallback price ID 
-                    if (pkg.name.toLowerCase().includes('premium')) {
-                        priceId = 'price_1RMiqJB71e12H8w7PDbXswUW'; // Premium package
-                    } else {
-                        priceId = 'price_1RMiqJB71e12H8w7o8ejsbK7'; // Regular package
-                    }
-                    console.log(`Using fallback price ID: ${priceId}`);
+                if (!pkg.stripe_price_id) {
+                    console.warn(`Warning: Package ${pkg.name} doesn't have a Stripe price ID`);
                 }
                 
                 const packageCard = document.createElement('div');
@@ -749,13 +861,38 @@
                     
                     <button class="package-button" 
                             data-package-id="${pkg.id}" 
-                            data-price-id="${priceId}" 
-                            onclick="window.manualSubscribeClick(event, '${pkg.id}', '${priceId}')">
+                            data-price-id="${pkg.stripe_price_id || ''}">
                         Subscribe Now
                     </button>
                 `;
                 
                 packagesContainer.appendChild(packageCard);
+                
+                // Add direct click handler to the newly created button
+                const button = packageCard.querySelector('.package-button');
+                if (button) {
+                    button.addEventListener('click', window.handleSubscribeClick);
+                }
+            });
+            
+            // Add event listeners to subscribe buttons as a backup (redundant approach for reliability)
+            const subscribeButtons = document.querySelectorAll('.package-button');
+            subscribeButtons.forEach(button => {
+                const packageId = button.getAttribute('data-package-id');
+                const priceId = button.getAttribute('data-price-id');
+                console.log(`Button setup for package ${packageId} with price ID ${priceId}`);
+                
+                // Remove any existing event listeners (just in case)
+                button.replaceWith(button.cloneNode(true));
+                
+                // Get the fresh button reference
+                const freshButton = document.querySelector(`.package-button[data-package-id="${packageId}"]`);
+                
+                // Add the event listener directly to the global function
+                freshButton.addEventListener('click', function(e) {
+                    console.log('Button clicked via addEventListener');
+                    window.handleSubscribeClick(e);
+                });
             });
         }
         
@@ -799,136 +936,6 @@
                     <div class="feature-text">${feature}</div>
                 </div>
             `).join('');
-        }
-        
-        // Handle subscribe button click
-        async function handleSubscribeClick(e, packageId, priceId) {
-            console.log('Subscribe function called with event:', e);
-            console.log('Package ID:', packageId || 'Not provided directly');
-            console.log('Price ID:', priceId || 'Not provided directly');
-            
-            try {
-                // If we don't have direct package/price IDs, try to get them from the button element
-                if (!packageId || !priceId) {
-                    const button = e.currentTarget || e.target;
-                    console.log('Button element:', button);
-                    
-                    packageId = button.getAttribute('data-package-id');
-                    priceId = button.getAttribute('data-price-id');
-                    
-                    console.log(`Got from button attributes: packageId=${packageId}, priceId=${priceId}`);
-                }
-                
-                if (!packageId || !priceId) {
-                    showError('Invalid package selection. Please try again.');
-                    return;
-                }
-                
-                console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
-                
-                // Find the button element
-                let button;
-                if (e.currentTarget) {
-                    button = e.currentTarget;
-                } else {
-                    button = document.querySelector(`button[data-package-id="${packageId}"]`);
-                }
-                
-                // Disable button and show loading state
-                if (button) {
-                    const originalText = button.textContent;
-                    button.disabled = true;
-                    button.textContent = 'Processing...';
-                }
-                
-                // First create a customer if user doesn't have a Stripe ID
-                if (!userData.stripe_customer_id) {
-                    console.log('Creating new Stripe customer...');
-                    const createCustomerResponse = await fetch('/api/create-customer', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: userData.name,
-                            email: `${userData.telegram}@example.com`, // Using telegram as placeholder email
-                            phone: userData.telegram // Using telegram as contactable info
-                        })
-                    });
-                    
-                    if (!createCustomerResponse.ok) {
-                        const errorData = await createCustomerResponse.json();
-                        throw new Error(errorData.error || 'Error creating customer');
-                    }
-                    
-                    const customer = await createCustomerResponse.json();
-                    console.log('Customer created:', customer);
-                    
-                    // Store the customer ID
-                    userData.stripe_customer_id = customer.customerId;
-                    localStorage.setItem('tease_user', JSON.stringify(userData));
-                    
-                    // Update the customer ID in the database
-                    await supabase
-                        .from('profiles')
-                        .update({ stripe_customer_id: customer.customerId })
-                        .eq('id', userData.id);
-                }
-                
-                // Create checkout session
-                console.log('Creating checkout session with customer ID:', userData.stripe_customer_id);
-                const createSessionResponse = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        priceId: priceId,
-                        customerId: userData.stripe_customer_id,
-                        userId: userData.id,
-                        userPhone: userData.telegram,
-                        successUrl: window.location.origin + '/subscription.html?session_id={CHECKOUT_SESSION_ID}',
-                        cancelUrl: window.location.origin + '/subscription.html'
-                    })
-                });
-                
-                if (!createSessionResponse.ok) {
-                    const errorData = await createSessionResponse.json();
-                    throw new Error(errorData.error || 'Error creating checkout session');
-                }
-                
-                const session = await createSessionResponse.json();
-                console.log('Session created:', session);
-                
-                // Redirect to Stripe Checkout
-                if (session.url) {
-                    console.log('Redirecting to Stripe checkout:', session.url);
-                    window.location.href = session.url;
-                } else if (session.sessionId) {
-                    console.log('Redirecting to Stripe checkout using sessionId:', session.sessionId);
-                    if (stripe) {
-                        stripe.redirectToCheckout({ sessionId: session.sessionId });
-                    } else {
-                        throw new Error('Stripe is not initialized');
-                    }
-                } else {
-                    throw new Error('No URL or session ID returned from server');
-                }
-            } catch (error) {
-                console.error('Subscription error:', error);
-                showError(error.message || 'An error occurred. Please try again later.');
-                
-                // Try to re-enable the button if we can
-                try {
-                    if (e && e.currentTarget) {
-                        const button = e.currentTarget;
-                        button.disabled = false;
-                        button.textContent = 'Subscribe Now';
-                    }
-                } catch (buttonError) {
-                    console.error('Error resetting button:', buttonError);
-                }
-            }
         }
         
         // Handle successful subscription after redirect from Stripe
