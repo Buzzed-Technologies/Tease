@@ -8,48 +8,89 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 // DOM Elements
 let loginForm, signupForm, personaButtons, personaSelected = null;
 
+// Track initialization status
+let isInitialized = false;
+
 // Initialize the auth system
 function initAuth() {
-    // Check if we're in a browser environment
-    if (typeof window === 'undefined' || !document) {
+    // Prevent double initialization
+    if (isInitialized) {
+        console.log('Auth system already initialized, skipping');
         return;
     }
     
-    // Check if user is logged in
-    const user = getCurrentUser();
-    updateAuthUI(user);
-
-    // Only run page-specific code if we're on that page
-    const path = window.location.pathname;
-    
-    // Setup event listeners for login form - only on login page
-    if (path.includes('/login')) {
-        loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', handleLogin);
-        }
-    }
-    
-    // Homepage and signup functionality
-    if (path === '/' || path === '/index.html' || path.endsWith('/')) {
-        // Setup event listeners for signup form
-        setupSignupForm();
+    try {
+        console.log('Initializing auth system...');
         
-        // Setup persona selection from homepage
-        setupPersonaSelection();
-    }
-
-    // Setup logout button - only on pages with dashboard features
-    if (path.includes('/dashboard') || path.includes('/chat')) {
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
+        // Check if we're in a browser environment
+        if (typeof window === 'undefined' || !document) {
+            console.warn('Not in browser environment, skipping auth initialization');
+            return;
         }
+        
+        // Check if user is logged in
+        const user = getCurrentUser();
+        console.log('Current user:', user ? 'Logged in as ' + user.name : 'Not logged in');
+        
+        // Update UI based on auth state
+        updateAuthUI(user);
+        
+        // Only run page-specific code if we're on that page
+        const path = window.location.pathname;
+        console.log('Current path:', path);
+        
+        // Setup event listeners for login form - only on login page
+        if (path.includes('/login')) {
+            console.log('Setting up login form handlers');
+            loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+                console.log('Login form handler attached');
+            } else {
+                console.warn('Login form not found');
+            }
+        }
+        
+        // Homepage and signup functionality
+        if (path === '/' || path === '/index.html' || path.endsWith('/')) {
+            console.log('Setting up homepage functionality');
+            
+            // Setup event listeners for signup form
+            setupSignupForm();
+            
+            // Setup persona selection from homepage
+            setupPersonaSelection();
+        }
+        
+        // Setup logout button - only on pages with dashboard features
+        if (path.includes('/dashboard') || path.includes('/chat')) {
+            console.log('Setting up dashboard functionality');
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+                console.log('Logout button handler attached');
+            } else {
+                console.warn('Logout button not found');
+            }
+        }
+        
+        // Mark as initialized
+        isInitialized = true;
+        console.log('Auth system initialization complete');
+        
+    } catch (error) {
+        console.error('Error initializing auth system:', error);
     }
 }
 
 // Setup signup form handlers
 function setupSignupForm() {
+    // Only run on the homepage to avoid errors on other pages
+    const path = window.location.pathname;
+    if (path !== '/' && path !== '/index.html' && !path.endsWith('/')) {
+        return;
+    }
+    
     // Look for signup form in the current page
     signupForm = document.getElementById('signup-form');
     
@@ -57,8 +98,34 @@ function setupSignupForm() {
         // For homepage signup form
         const signupButton = document.getElementById('signup-button');
         if (signupButton) {
-            signupButton.addEventListener('click', handleSignupFromHomepage);
+            // Remove existing listeners to prevent duplicates by cloning the button
+            const newButton = signupButton.cloneNode(true);
+            signupButton.parentNode.replaceChild(newButton, signupButton);
+            
+            // Add click event listener to the new button
+            newButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Check if all required elements exist first
+                const nameEl = document.getElementById('name');
+                const phoneEl = document.getElementById('phone');
+                const passwordEl = document.getElementById('password'); 
+                const confirmPasswordEl = document.getElementById('confirm-password');
+                const statusEl = document.getElementById('signup-message');
+                
+                if (!nameEl || !phoneEl || !passwordEl || !confirmPasswordEl || !statusEl) {
+                    console.error('Required signup form elements not found - aborting signup');
+                    return;
+                }
+                
+                // Now we can be sure all elements exist when calling handleSignupFromHomepage
+                handleSignupFromHomepage();
+            });
+        } else {
+            console.warn('Signup button not found');
         }
+    } else {
+        console.warn('Signup form not found');
     }
 }
 
@@ -264,18 +331,12 @@ async function handleLogin(e) {
 
 // Handle signup from homepage
 async function handleSignupFromHomepage() {
-    // Safely get form elements, checking for existence first
+    // These elements should now be guaranteed to exist because of the check in the click handler
     const nameEl = document.getElementById('name');
     const phoneEl = document.getElementById('phone');
     const passwordEl = document.getElementById('password'); 
     const confirmPasswordEl = document.getElementById('confirm-password');
     const statusEl = document.getElementById('signup-message');
-    
-    // Make sure all required elements exist
-    if (!nameEl || !phoneEl || !passwordEl || !confirmPasswordEl || !statusEl) {
-        console.error('Required signup form elements not found');
-        return;
-    }
     
     const name = nameEl.value;
     const phone = phoneEl.value;
@@ -451,5 +512,41 @@ window.addEventListener('scrollToSection', function(e) {
     }
 });
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initAuth); 
+// Wait until DOM is fully loaded and ready
+function onDocumentReady(callback) {
+    // Check if document is already loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        // Call on next available tick
+        setTimeout(callback, 1);
+    } else {
+        document.addEventListener('DOMContentLoaded', callback);
+    }
+}
+
+// Debug function to log element existence
+function debugElement(id) {
+    const el = document.getElementById(id);
+    console.log(`Element ${id} exists: ${!!el}`);
+    if (el) {
+        console.log(`Element type: ${el.tagName}, visible: ${el.style.display !== 'none'}`);
+    }
+}
+
+// Initialize when DOM is loaded - with more robust handling
+onDocumentReady(function() {
+    console.log('Auth.js: Document ready, initializing auth system');
+    
+    // Debug important elements
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html' || window.location.pathname.endsWith('/')) {
+        debugElement('signup-form');
+        debugElement('signup-button');
+        debugElement('name');
+        debugElement('phone');
+        debugElement('password');
+        debugElement('confirm-password');
+        debugElement('signup-message');
+    }
+    
+    // Initialize auth system
+    initAuth();
+}); 

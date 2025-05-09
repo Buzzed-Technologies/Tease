@@ -89,8 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         footer.style.opacity = '0';
     }
     
-    // Expose updateSection globally for other scripts to use
+    // Explicitly expose updateSection globally for other scripts to use
     window.updateSection = updateSection;
+    console.log('updateSection is now available globally');
     
     // Set up initial screen positions
     screens.forEach((screen, i) => {
