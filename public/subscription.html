@@ -410,6 +410,23 @@
     <script src="https://js.stripe.com/v3/"></script>
     
     <script>
+        // Global handler for subscribe button clicks
+        window.manualSubscribeClick = function(event, packageId, priceId) {
+            console.log('Manual subscribe button clicked for package:', packageId, 'with price:', priceId);
+            
+            // Prevent default to avoid any conflicts
+            event.preventDefault();
+            
+            // Create a fake event object that simulates the structure expected by handleSubscribeClick
+            const syntheticEvent = {
+                currentTarget: event.currentTarget || event.target,
+                target: event.target
+            };
+            
+            // Call the main subscribe handler
+            handleSubscribeClick(syntheticEvent);
+        };
+        
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;
@@ -648,8 +665,25 @@
                         displayPackages(fallbackPackages, modelData.name);
                     } else {
                         console.log('Packages found in database:', packagesData);
-                        // Display the packages from the database
-                        displayPackages(packagesData, modelData.name);
+                        
+                        // Check if the packages have valid Stripe price IDs
+                        const hasValidPriceIds = packagesData.every(pkg => {
+                            const isValid = pkg.stripe_price_id && 
+                                           pkg.stripe_price_id.startsWith('price_') && 
+                                           pkg.stripe_price_id.length > 15;
+                            if (!isValid) {
+                                console.warn(`Package ${pkg.name} has invalid Stripe price ID: ${pkg.stripe_price_id}`);
+                            }
+                            return isValid;
+                        });
+                        
+                        if (hasValidPriceIds) {
+                            console.log('Using packages from database');
+                            displayPackages(packagesData, modelData.name);
+                        } else {
+                            console.log('Database packages have invalid Stripe price IDs, using fallback packages');
+                            displayPackages(fallbackPackages, modelData.name);
+                        }
                     }
                 } catch (packageError) {
                     console.error('Error in package query:', packageError);
@@ -710,7 +744,10 @@
                         ${getFeaturesList(pkg)}
                     </div>
                     
-                    <button class="package-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id || ''}">
+                    <button class="package-button" 
+                            data-package-id="${pkg.id}" 
+                            data-price-id="${pkg.stripe_price_id || ''}" 
+                            onclick="window.manualSubscribeClick(event, '${pkg.id}', '${pkg.stripe_price_id || ''}')">
                         Subscribe Now
                     </button>
                 `;
@@ -725,11 +762,17 @@
                 const priceId = button.getAttribute('data-price-id');
                 console.log(`Button setup for package ${packageId} with price ID ${priceId}`);
                 
+                // Add a direct onclick attribute to ensure the click is being captured
+                button.setAttribute('onclick', 'console.log("Button clicked via onclick attribute")');
+                
                 // Remove any existing event listeners
                 button.removeEventListener('click', handleSubscribeClick);
                 
                 // Add the event listener
-                button.addEventListener('click', handleSubscribeClick);
+                button.addEventListener('click', function(e) {
+                    console.log('Button clicked via addEventListener');
+                    handleSubscribeClick(e);
+                });
             });
         }
         
@@ -779,20 +822,22 @@
         async function handleSubscribeClick(e) {
             console.log('Subscribe button clicked:', e.target);
             
-            const button = e.currentTarget; // Use currentTarget to ensure we get the button, not a child element
-            const packageId = button.getAttribute('data-package-id');
-            const priceId = button.getAttribute('data-price-id');
-            
-            console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}`);
-            
-            if (!packageId || !priceId) {
-                showError('Invalid package selection. Please try again.');
-                return;
-            }
-            
-            console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
-            
             try {
+                const button = e.currentTarget; // Use currentTarget to ensure we get the button, not a child element
+                console.log('Button element:', button);
+                
+                const packageId = button.getAttribute('data-package-id');
+                const priceId = button.getAttribute('data-price-id');
+                
+                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}`);
+                
+                if (!packageId || !priceId) {
+                    showError('Invalid package selection. Please try again.');
+                    return;
+                }
+                
+                console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
+                
                 // Disable button and show loading state
                 const originalText = button.textContent;
                 button.disabled = true;
@@ -861,17 +906,30 @@
                 if (session.url) {
                     console.log('Redirecting to Stripe checkout:', session.url);
                     window.location.href = session.url;
+                } else if (session.sessionId) {
+                    console.log('Redirecting to Stripe checkout using sessionId:', session.sessionId);
+                    if (stripe) {
+                        stripe.redirectToCheckout({ sessionId: session.sessionId });
+                    } else {
+                        throw new Error('Stripe is not initialized');
+                    }
                 } else {
-                    stripe.redirectToCheckout({ sessionId: session.sessionId });
+                    throw new Error('No URL or session ID returned from server');
                 }
-                
             } catch (error) {
                 console.error('Subscription error:', error);
                 showError(error.message || 'An error occurred. Please try again later.');
                 
-                // Re-enable button
-                button.disabled = false;
-                button.textContent = originalText;
+                // Try to re-enable the button if we can
+                try {
+                    if (e && e.currentTarget) {
+                        const button = e.currentTarget;
+                        button.disabled = false;
+                        button.textContent = 'Subscribe Now';
+                    }
+                } catch (buttonError) {
+                    console.error('Error resetting button:', buttonError);
+                }
             }
         }
         
