@@ -69,7 +69,7 @@ async function uploadToSupabase(filepath, filename) {
     .storage
     .from('model-images')
     .upload(filename, fileBuffer, {
-      contentType: 'image/jpeg',
+      contentType: 'image/png',
       upsert: true
     });
   
@@ -90,7 +90,7 @@ async function processImages() {
     
     for (let i = 0; i < urls.length; i++) {
       const url = urls[i];
-      const filename = `${model}${i + 1}.jpg`;
+      const filename = `${model}${i + 1}.PNG`;
       const filepath = path.join(tempDir, filename);
       
       try {
