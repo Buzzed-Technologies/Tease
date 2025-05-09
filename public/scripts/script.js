@@ -539,4 +539,318 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     `;
     document.head.appendChild(style);
-}); 
+
+    // Dashboard Functionality
+    initDashboard();
+});
+
+function initDashboard() {
+    // Check if we're on the dashboard page
+    if (!window.location.pathname.includes('/dashboard')) {
+        return;
+    }
+    
+    console.log('Initializing dashboard functionality');
+    
+    // Navigation functionality
+    const navLinks = document.querySelectorAll('.main-nav a');
+    const sections = document.querySelectorAll('.dashboard-section');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            
+            console.log('Navigation clicked:', targetId);
+            
+            // Update active nav link
+            navLinks.forEach(navLink => navLink.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Show target section, hide others
+            sections.forEach(section => {
+                if (section.id === targetId) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        });
+    });
+    
+    // Load user data and subscription status
+    checkAuthStatus();
+}
+
+async function checkAuthStatus() {
+    const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+    
+    if (!userData.phone) {
+        // Not logged in, redirect to login
+        window.location.href = '/login.html';
+        return;
+    }
+    
+    console.log('User data from local storage:', userData);
+    
+    // Display user information
+    document.getElementById('user-name').textContent = userData.name || 'User';
+    document.getElementById('user-phone').textContent = userData.phone || '';
+    document.getElementById('update-name').value = userData.name || '';
+    document.getElementById('update-email').value = userData.email || '';
+    
+    // Check subscription status and update UI
+    await updateSubscriptionStatus(userData);
+    
+    // Load persona details
+    await loadPersonaDetails(userData);
+    
+    // Setup form handlers
+    setupFormHandlers(userData);
+}
+
+async function updateSubscriptionStatus(userData) {
+    try {
+        console.log('Checking subscription status for user:', userData.phone);
+        
+        const response = await fetch('/api/check-subscription', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phone: userData.phone })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('subscription-status').style.display = 'none';
+            
+            console.log('Subscription data:', data);
+            
+            if (data.isSubscribed) {
+                // Show active subscription
+                document.getElementById('active-subscription').style.display = 'block';
+                document.getElementById('inactive-subscription').style.display = 'none';
+                
+                // Update subscription details
+                document.getElementById('plan-name').textContent = data.plan || 'Premium';
+                document.getElementById('billing-cycle').textContent = data.billingCycle || 'Monthly';
+                document.getElementById('next-billing').textContent = data.nextBillingDate || 'Unknown';
+                document.getElementById('billing-amount').textContent = data.amount || '$19.99';
+                
+                // Setup Stripe portal button
+                document.getElementById('manage-subscription').addEventListener('click', async () => {
+                    try {
+                        const portalResponse = await fetch('/api/create-portal-session', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                customerId: data.stripeCustomerId,
+                                returnUrl: window.location.href
+                            })
+                        });
+                        
+                        if (portalResponse.ok) {
+                            const portalData = await portalResponse.json();
+                            window.location.href = portalData.url;
+                        } else {
+                            console.error('Error creating portal session:', await portalResponse.text());
+                            alert('Could not open subscription management. Please try again later.');
+                        }
+                    } catch (error) {
+                        console.error('Error creating portal session:', error);
+                        alert('Could not open subscription management. Please try again later.');
+                    }
+                });
+            } else {
+                // Show inactive subscription
+                document.getElementById('active-subscription').style.display = 'none';
+                document.getElementById('inactive-subscription').style.display = 'block';
+                
+                // Setup subscription buttons
+                const subscribeButtons = document.querySelectorAll('.subscribe-btn');
+                subscribeButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const plan = button.getAttribute('data-plan');
+                        startSubscription(plan, userData);
+                    });
+                });
+            }
+        } else {
+            console.error('Error checking subscription:', await response.text());
+            // Fallback to showing inactive subscription
+            document.getElementById('subscription-status').style.display = 'none';
+            document.getElementById('active-subscription').style.display = 'none';
+            document.getElementById('inactive-subscription').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error checking subscription status:', error);
+        // Fallback to showing inactive subscription
+        document.getElementById('subscription-status').style.display = 'none';
+        document.getElementById('active-subscription').style.display = 'none';
+        document.getElementById('inactive-subscription').style.display = 'block';
+    }
+}
+
+async function startSubscription(plan, userData) {
+    try {
+        // First create a customer if needed
+        let customerId = userData.stripeCustomerId;
+        
+        if (!customerId) {
+            const customerResponse = await fetch('/api/create-customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: userData.email,
+                    name: userData.name,
+                    phone: userData.phone
+                })
+            });
+            
+            if (customerResponse.ok) {
+                const customerData = await customerResponse.json();
+                customerId = customerData.customerId;
+            } else {
+                alert('Could not create customer. Please try again.');
+                return;
+            }
+        }
+        
+        // Get price ID based on selected plan
+        let priceId;
+        if (plan === 'monthly') {
+            priceId = 'price_1RMiRwB71e12H8w7IKKUJRIF'; // Monthly plan price ID
+        } else if (plan === 'annual') {
+            priceId = 'price_1RMiTFB71e12H8w7mfD9dfc9'; // Annual plan price ID
+        } else {
+            priceId = 'price_1RMiSnB71e12H8w7iJ73uN0u'; // Quarterly plan price ID
+        }
+        
+        // Create checkout session
+        const checkoutResponse = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                customerId: customerId,
+                priceId: priceId,
+                userId: userData.id,
+                userPhone: userData.phone,
+                successUrl: `${window.location.origin}/dashboard.html`,
+                cancelUrl: `${window.location.origin}/dashboard.html#subscription`
+            })
+        });
+        
+        if (checkoutResponse.ok) {
+            const sessionData = await checkoutResponse.json();
+            window.location.href = sessionData.url;
+        } else {
+            alert('Could not create checkout session. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error starting subscription:', error);
+        alert('An error occurred. Please try again later.');
+    }
+}
+
+async function loadPersonaDetails(userData) {
+    try {
+        console.log('Loading persona details for user:', userData);
+        
+        document.getElementById('current-persona').style.display = 'none';
+        document.getElementById('persona-details').style.display = 'block';
+        
+        // Set persona details
+        document.getElementById('persona-name').textContent = 'Aria';
+        document.getElementById('persona-style').textContent = 'The Passionate';
+        document.getElementById('persona-description').textContent = 'Intense, seductive, and emotionally expressive. Aria creates immersive experiences through intimate fantasy fulfillment.';
+        
+        // Try to set persona image if it exists
+        try {
+            document.getElementById('persona-image').style.backgroundImage = 'url("/images/persona-aria.jpg")';
+        } catch (error) {
+            console.warn('Could not set persona image:', error);
+        }
+        
+        // Set form values based on user preferences
+        document.getElementById('persona-nickname').value = userData.personaNickname || '';
+        document.getElementById('topic-romantic').checked = userData.topicRomantic !== false;
+        document.getElementById('topic-explicit').checked = userData.topicExplicit !== false;
+        document.getElementById('topic-fantasy').checked = userData.topicFantasy !== false;
+        document.getElementById('interaction-style').value = userData.interactionStyle || 'passionate';
+    } catch (error) {
+        console.error('Error loading persona details:', error);
+    }
+}
+
+function setupFormHandlers(userData) {
+    // Handle persona preferences form
+    const preferencesForm = document.getElementById('persona-preferences-form');
+    if (preferencesForm) {
+        preferencesForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const preferenceData = {
+                personaNickname: document.getElementById('persona-nickname').value,
+                topicRomantic: document.getElementById('topic-romantic').checked,
+                topicExplicit: document.getElementById('topic-explicit').checked,
+                topicFantasy: document.getElementById('topic-fantasy').checked,
+                interactionStyle: document.getElementById('interaction-style').value
+            };
+            
+            // Save preferences (in a real app, this would go to the server)
+            const updatedUserData = { ...userData, ...preferenceData };
+            localStorage.setItem('tease_user', JSON.stringify(updatedUserData));
+            
+            // Show success message
+            const messageEl = document.getElementById('persona-preferences-message');
+            messageEl.textContent = 'Preferences saved successfully';
+            messageEl.classList.add('success');
+            setTimeout(() => {
+                messageEl.textContent = '';
+                messageEl.classList.remove('success');
+            }, 3000);
+        });
+    }
+    
+    // Handle account form
+    const accountForm = document.getElementById('update-account-form');
+    if (accountForm) {
+        accountForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const accountData = {
+                name: document.getElementById('update-name').value,
+                email: document.getElementById('update-email').value,
+                password: document.getElementById('update-password').value
+            };
+            
+            // In a real app, you would send this to the server
+            // For demo, just update local storage
+            if (accountData.name) userData.name = accountData.name;
+            if (accountData.email) userData.email = accountData.email;
+            localStorage.setItem('tease_user', JSON.stringify(userData));
+            
+            // Update display
+            document.getElementById('user-name').textContent = userData.name || 'User';
+            
+            // Reset password field
+            document.getElementById('update-password').value = '';
+            
+            // Show success message
+            const messageEl = document.getElementById('account-message');
+            messageEl.textContent = 'Account updated successfully';
+            messageEl.classList.add('success');
+            setTimeout(() => {
+                messageEl.textContent = '';
+                messageEl.classList.remove('success');
+            }, 3000);
+        });
+    }
+} 

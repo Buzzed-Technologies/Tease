@@ -121,6 +121,84 @@ app.post('/api/cancel-subscription', async (req, res) => {
   }
 });
 
+app.post('/api/check-subscription', async (req, res) => {
+  try {
+    const { phone } = req.body;
+    
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+    
+    // Get user from database
+    const { data, error } = await supabase
+      .from('sex_mode')
+      .select('*')
+      .eq('phone', phone)
+      .single();
+    
+    if (error) {
+      console.error('Error finding user:', error);
+      return res.status(400).json({ error: 'User not found' });
+    }
+    
+    if (!data.is_subscribed || !data.stripe_subscription_id) {
+      return res.json({ 
+        isSubscribed: false 
+      });
+    }
+    
+    // Get subscription details from Stripe
+    try {
+      const subscription = await stripe.subscriptions.retrieve(data.stripe_subscription_id);
+      
+      // Get product details for this subscription
+      const priceId = subscription.items.data[0].price.id;
+      const price = await stripe.prices.retrieve(priceId);
+      
+      // Format billing cycle
+      let billingCycle = 'Monthly';
+      if (data.subscription_plan === 'yearly') {
+        billingCycle = 'Annual';
+      } else if (data.subscription_plan === 'quarterly') {
+        billingCycle = 'Quarterly';
+      }
+      
+      // Format amount
+      const amount = `$${(price.unit_amount / 100).toFixed(2)}`;
+      
+      // Format next billing date
+      const nextBillingDate = new Date(subscription.current_period_end * 1000).toLocaleDateString();
+      
+      return res.json({
+        isSubscribed: true,
+        plan: data.subscription_plan.charAt(0).toUpperCase() + data.subscription_plan.slice(1),
+        billingCycle,
+        nextBillingDate,
+        amount,
+        stripeCustomerId: data.stripe_customer_id,
+        stripeSubscriptionId: data.stripe_subscription_id,
+        status: subscription.status
+      });
+    } catch (stripeError) {
+      console.error('Error retrieving subscription from Stripe:', stripeError);
+      
+      // Even if we can't get details from Stripe, we still know the user is subscribed
+      return res.json({
+        isSubscribed: true,
+        plan: data.subscription_plan.charAt(0).toUpperCase() + data.subscription_plan.slice(1),
+        billingCycle: 'Unknown',
+        nextBillingDate: 'Unknown',
+        amount: 'Unknown',
+        stripeCustomerId: data.stripe_customer_id,
+        stripeSubscriptionId: data.stripe_subscription_id
+      });
+    }
+  } catch (error) {
+    console.error('Error checking subscription:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Webhook handler for Stripe events
 app.post('/api/webhook', bodyParser.raw({type: 'application/json'}), async (req, res) => {
   const sig = req.headers['stripe-signature'];
