@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartY = 0;
     let touchEndY = 0;
     let startTime = 0;
+    let isInputFocused = false; // Track if an input is focused
     
     // Disable native scrolling
     document.body.style.overflow = 'hidden';
@@ -18,6 +19,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set initial section
     updateSection(0);
+    
+    // Prevent scroll jumping when input fields are focused
+    const formInputs = document.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            isInputFocused = true;
+            // Temporarily disable smooth transitions while focused
+            screens.forEach(screen => {
+                screen.style.transition = 'none';
+            });
+        });
+        
+        input.addEventListener('blur', () => {
+            isInputFocused = false;
+            // Re-enable transitions when focus is lost
+            screens.forEach(screen => {
+                screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+            });
+        });
+    });
     
     // Helper function to move to a specific section
     function updateSection(index) {
@@ -121,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle wheel events for scrolling
     window.addEventListener('wheel', (e) => {
-        if (isScrolling) return;
+        if (isScrolling || isInputFocused) return; // Skip if input is focused
         
         // Determine scroll direction
         const direction = Math.sign(e.deltaY);
@@ -143,17 +164,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Touch events for mobile
     document.addEventListener('touchstart', (e) => {
+        // Skip touch handling if an input is focused
+        if (isInputFocused) return;
+        
         touchStartY = e.touches[0].clientY;
         startTime = Date.now();
     }, { passive: true });
     
     document.addEventListener('touchmove', (e) => {
-        if (isScrolling) return;
+        if (isScrolling || isInputFocused) return; // Skip if input is focused
         touchEndY = e.touches[0].clientY;
     }, { passive: true });
     
     document.addEventListener('touchend', () => {
-        if (isScrolling) return;
+        if (isScrolling || isInputFocused) return; // Skip if input is focused
         
         const touchDiff = touchStartY - touchEndY;
         const timeDiff = Date.now() - startTime;
@@ -179,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
-        if (isScrolling) return;
+        if (isScrolling || isInputFocused) return; // Skip if input is focused
         
         let direction = 0;
         
@@ -438,6 +462,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const selectedPersonaInput = document.getElementById('selected-persona');
                     if (selectedPersonaInput) {
                         selectedPersonaInput.value = selectedPersona.name;
+                        
+                        // Add data attributes for additional info
+                        selectedPersonaInput.setAttribute('data-style', personaStyle);
+                        selectedPersonaInput.setAttribute('data-detailed-style', personaDetailedStyle);
                     }
                     
                     console.log('Selected persona:', selectedPersona);
@@ -462,6 +490,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             detailButton.textContent = 'Selected';
                         }
                     }
+                    
+                    // Store selected persona in sessionStorage for persistence
+                    sessionStorage.setItem('selectedPersona', JSON.stringify(selectedPersona));
                     
                     // Scroll to signup section after a delay
                     setTimeout(() => {
@@ -614,8 +645,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // If no persona was selected, show message
-            if (!selectedPersona) {
+            // Try to get persona from various sources (selectedPersona variable, session storage, or hidden input)
+            let personaData = selectedPersona;
+            
+            if (!personaData) {
+                // Try to get from session storage
+                const storedPersona = sessionStorage.getItem('selectedPersona');
+                if (storedPersona) {
+                    personaData = JSON.parse(storedPersona);
+                } else {
+                    // Try to get from hidden input
+                    const selectedPersonaInput = document.getElementById('selected-persona');
+                    if (selectedPersonaInput && selectedPersonaInput.value) {
+                        personaData = {
+                            name: selectedPersonaInput.value,
+                            style: selectedPersonaInput.getAttribute('data-style') || '',
+                            detailedStyle: selectedPersonaInput.getAttribute('data-detailed-style') || ''
+                        };
+                    }
+                }
+            }
+            
+            // If still no persona, show error and scroll to personas section
+            if (!personaData || !personaData.name) {
                 alert('Please select a companion first');
                 
                 // Scroll to personas section
@@ -643,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
             successMessage.innerHTML = `
                 <div class="success-icon"><i class="fas fa-check-circle"></i></div>
                 <h3>Welcome to Tease!</h3>
-                <p>You're all set to start your experience with ${selectedPersona.name}.</p>
+                <p>You're all set to start your experience with ${personaData.name}.</p>
             `;
             
             // Replace form with success message
@@ -656,11 +708,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 name,
                 age,
                 phone,
-                persona: selectedPersona.name,
-                style: selectedPersona.detailedStyle || 'Default style'
+                persona: personaData.name,
+                style: personaData.detailedStyle || 'Default style'
             };
             
             localStorage.setItem('tease_user', JSON.stringify(userData));
+            
+            // Clear session storage after successful signup
+            sessionStorage.removeItem('selectedPersona');
             
             // Normally you would send this data to a server
             console.log('Sign up:', userData);

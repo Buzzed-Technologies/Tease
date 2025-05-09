@@ -348,7 +348,7 @@
             
             <div class="form-container">
                 <form class="signup-form" id="signup-form">
-                    <input type="hidden" id="selected-persona" name="persona" value="">
+                    <input type="hidden" id="selected-persona" name="selected-persona" value="">
                     
                     <div class="form-group">
                         <label for="signup-name" class="form-label">Your Name</label>
@@ -579,6 +579,8 @@
                             const selectedPersonaInput = document.getElementById('selected-persona');
                             if (selectedPersonaInput) {
                                 selectedPersonaInput.value = personaName;
+                                selectedPersonaInput.setAttribute('data-style', personaStyle);
+                                selectedPersonaInput.setAttribute('data-detailed-style', personaDetailedStyle);
                             }
                             
                             // Store additional persona data as custom data attributes
@@ -628,6 +630,80 @@
                     }
                 });
             }
+            
+            // Check for stored persona from index page
+            const storedPersona = sessionStorage.getItem('selectedPersona');
+            
+            if (storedPersona) {
+                const personaData = JSON.parse(storedPersona);
+                console.log('Retrieved stored persona:', personaData);
+                
+                // Set the hidden input
+                const selectedPersonaInput = document.getElementById('selected-persona');
+                if (selectedPersonaInput) {
+                    selectedPersonaInput.value = personaData.name;
+                    selectedPersonaInput.setAttribute('data-style', personaData.style || '');
+                    selectedPersonaInput.setAttribute('data-detailed-style', personaData.detailedStyle || '');
+                }
+                
+                // Highlight the selected card
+                const personaCards = document.querySelectorAll('.persona-card');
+                personaCards.forEach(card => {
+                    const cardStyle = card.getAttribute('data-persona');
+                    if (cardStyle === personaData.style) {
+                        card.classList.add('selected');
+                        // Update button text
+                        const selectButton = card.querySelector('.persona-details-button');
+                        if (selectButton) {
+                            selectButton.textContent = 'Selected';
+                        }
+                    }
+                });
+            }
+            
+            // Handle persona card clicks
+            const personaCards = document.querySelectorAll('.persona-card');
+            personaCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Update all cards to remove selected state
+                    personaCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Mark this card as selected
+                    this.classList.add('selected');
+                    
+                    // Get persona details
+                    const personaName = this.querySelector('.persona-name').textContent;
+                    const personaStyle = this.getAttribute('data-persona');
+                    const personaDetailedStyle = this.querySelector('.persona-style').value;
+                    
+                    // Set the hidden input
+                    const selectedPersonaInput = document.getElementById('selected-persona');
+                    if (selectedPersonaInput) {
+                        selectedPersonaInput.value = personaName;
+                        selectedPersonaInput.setAttribute('data-style', personaStyle);
+                        selectedPersonaInput.setAttribute('data-detailed-style', personaDetailedStyle);
+                    }
+                    
+                    // Store selection in sessionStorage
+                    const personaData = {
+                        name: personaName,
+                        style: personaStyle,
+                        detailedStyle: personaDetailedStyle
+                    };
+                    sessionStorage.setItem('selectedPersona', JSON.stringify(personaData));
+                    
+                    // Update all buttons
+                    document.querySelectorAll('.persona-details-button').forEach(btn => {
+                        btn.textContent = 'Select';
+                    });
+                    
+                    // Update this button
+                    const selectButton = this.querySelector('.persona-details-button');
+                    if (selectButton) {
+                        selectButton.textContent = 'Selected';
+                    }
+                });
+            });
         });
     </script>
 </body>
