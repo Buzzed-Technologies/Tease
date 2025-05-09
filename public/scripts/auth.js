@@ -60,6 +60,9 @@ async function initSupabase() {
 // DOM Elements
 let loginForm, signupForm, personaButtons, personaSelected = null;
 
+// Make personaSelected globally accessible for script.js
+window.personaSelected = null;
+
 // Track initialization status
 let isInitialized = false;
 
@@ -123,6 +126,26 @@ function initAuth() {
         // Only run page-specific code if we're on that page
         const path = window.location.pathname;
         console.log('Current path:', path);
+        
+        // Check for existing persona selection from script.js
+        if (window.selectedPersonaGlobal) {
+            personaSelected = window.selectedPersonaGlobal;
+            console.log('Auth: Using persona from script.js:', personaSelected);
+        } else if (sessionStorage.getItem('selectedPersona')) {
+            try {
+                personaSelected = JSON.parse(sessionStorage.getItem('selectedPersona'));
+                console.log('Auth: Using persona from sessionStorage:', personaSelected);
+            } catch (e) {
+                console.error('Error parsing persona from sessionStorage:', e);
+            }
+        } else if (localStorage.getItem('temp_selectedPersona')) {
+            try {
+                personaSelected = JSON.parse(localStorage.getItem('temp_selectedPersona'));
+                console.log('Auth: Using persona from localStorage:', personaSelected);
+            } catch (e) {
+                console.error('Error parsing persona from localStorage:', e);
+            }
+        }
         
         // Setup event listeners for login form - only on login page
         if (path.includes('/login')) {
@@ -223,6 +246,22 @@ function setupPersonaSelection() {
         return;
     }
     
+    // First check if a persona is already selected in script.js
+    if (window.selectedPersonaGlobal) {
+        console.log('Auth: Found existing persona selection in window.selectedPersonaGlobal:', window.selectedPersonaGlobal);
+        personaSelected = window.selectedPersonaGlobal;
+        window.personaSelected = personaSelected; // Sync with global
+    }
+    
+    // Listen for changes to the selectedPersona in script.js
+    const checkForPersonaUpdates = setInterval(() => {
+        if (window.selectedPersonaGlobal && (!personaSelected || personaSelected.name !== window.selectedPersonaGlobal.name)) {
+            console.log('Auth: Syncing persona selection from script.js:', window.selectedPersonaGlobal);
+            personaSelected = window.selectedPersonaGlobal;
+            window.personaSelected = personaSelected; // Sync with global
+        }
+    }, 1000);
+    
     // Get all persona buttons on the homepage
     personaButtons = document.querySelectorAll('.persona-button');
     
@@ -248,13 +287,17 @@ function setupPersonaSelection() {
                     detailedStyle: personaDetailedStyle
                 };
                 
+                // Sync with global variables
+                window.personaSelected = personaSelected;
+                window.selectedPersonaGlobal = personaSelected;
+                
                 // Update hidden input with selected persona
                 const selectedPersonaInput = document.getElementById('selected-persona');
                 if (selectedPersonaInput) {
                     selectedPersonaInput.value = personaName;
                 }
                 
-                console.log('Selected persona:', personaSelected);
+                console.log('Auth: Selected persona:', personaSelected);
             });
         });
     } else {
@@ -486,8 +529,65 @@ async function handleSignupFromHomepage() {
             return;
         }
         
-        // Check if persona was selected
-        if (!personaSelected) {
+        // Get the persona from multiple possible sources
+        let selectedPersonaData = personaSelected;
+        
+        // If personaSelected is null, try getting it from script.js global
+        if (!selectedPersonaData && window.selectedPersonaGlobal) {
+            selectedPersonaData = window.selectedPersonaGlobal;
+            console.log('Auth: Using persona from window.selectedPersonaGlobal:', selectedPersonaData);
+        }
+        
+        // Try from session storage
+        if (!selectedPersonaData) {
+            try {
+                const storedPersona = sessionStorage.getItem('selectedPersona');
+                if (storedPersona) {
+                    selectedPersonaData = JSON.parse(storedPersona);
+                    console.log('Auth: Using persona from sessionStorage:', selectedPersonaData);
+                }
+            } catch (e) {
+                console.error('Error parsing persona from sessionStorage:', e);
+            }
+        }
+        
+        // Try from local storage
+        if (!selectedPersonaData) {
+            try {
+                const storedPersona = localStorage.getItem('temp_selectedPersona');
+                if (storedPersona) {
+                    selectedPersonaData = JSON.parse(storedPersona);
+                    console.log('Auth: Using persona from localStorage:', selectedPersonaData);
+                }
+            } catch (e) {
+                console.error('Error parsing persona from localStorage:', e);
+            }
+        }
+        
+        // Check if there's a selected persona in the hidden form input
+        if (!selectedPersonaData) {
+            const selectedPersonaInput = document.getElementById('selected-persona');
+            if (selectedPersonaInput && selectedPersonaInput.value) {
+                console.log('Auth: Using persona from hidden input field:', selectedPersonaInput.value);
+                selectedPersonaData = {
+                    name: selectedPersonaInput.value,
+                    style: selectedPersonaInput.getAttribute('data-style') || '',
+                    detailedStyle: selectedPersonaInput.getAttribute('data-detailed-style') || ''
+                };
+            }
+        }
+        
+        // Check if a persona was selected after all our checks
+        if (!selectedPersonaData || !selectedPersonaData.name) {
+            console.error('No persona selected. Current state:', {
+                personaSelected,
+                windowGlobal: window.selectedPersonaGlobal,
+                windowPersonaSelected: window.personaSelected,
+                sessionStorage: sessionStorage.getItem('selectedPersona'),
+                localStorage: localStorage.getItem('temp_selectedPersona'),
+                hiddenInput: document.getElementById('selected-persona')?.value
+            });
+            
             statusEl.textContent = 'Please select a companion persona first.';
             statusEl.className = 'form-message error';
             
@@ -501,6 +601,10 @@ async function handleSignupFromHomepage() {
             }
             return;
         }
+        
+        // Store the valid persona in personaSelected for later use
+        personaSelected = selectedPersonaData;
+        window.personaSelected = personaSelected; // Sync with global variable
         
         // Show loading state
         statusEl.textContent = 'Creating your account...';

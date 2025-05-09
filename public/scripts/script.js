@@ -463,39 +463,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const personaStyle = modalPersonaButton.getAttribute('data-persona-style');
                 const personaDetailedStyle = modalPersonaButton.getAttribute('data-persona-detailed-style');
                 
-                console.log("MODAL SELECTION - got attributes:", {personaName, personaStyle, personaDetailedStyle});
-                
                 // If we have persona data
                 if (personaName && personaStyle) {
                     // Store the selected persona in multiple places for redundancy
-                    const personaObj = {
+                    selectedPersona = {
                         name: personaName,
                         style: personaStyle,
                         detailedStyle: personaDetailedStyle
                     };
                     
-                    // Global variable - set directly
-                    selectedPersona = personaObj;
-                    
-                    // Global window variable
-                    window.selectedPersonaGlobal = personaObj;
+                    // Global variable
+                    window.selectedPersonaGlobal = selectedPersona;
                     
                     // Session storage
-                    sessionStorage.setItem('selectedPersona', JSON.stringify(personaObj));
+                    sessionStorage.setItem('selectedPersona', JSON.stringify(selectedPersona));
                     
                     // Local storage (temporary)
-                    localStorage.setItem('temp_selectedPersona', JSON.stringify(personaObj));
+                    localStorage.setItem('temp_selectedPersona', JSON.stringify(selectedPersona));
                     
-                    // Hidden input - update ALL hidden inputs with this name
-                    const allHiddenInputs = document.querySelectorAll('#selected-persona');
-                    allHiddenInputs.forEach(input => {
-                        input.value = personaName;
-                        input.setAttribute('data-style', personaStyle);
-                        input.setAttribute('data-detailed-style', personaDetailedStyle);
-                        console.log("Updated hidden input:", input.id, input.value);
-                    });
+                    // Hidden input
+                    const selectedPersonaInput = document.getElementById('selected-persona');
+                    if (selectedPersonaInput) {
+                        selectedPersonaInput.value = personaName;
+                        selectedPersonaInput.setAttribute('data-style', personaStyle);
+                        selectedPersonaInput.setAttribute('data-detailed-style', personaDetailedStyle);
+                    }
                     
-                    console.log('MODAL SELECTION - Stored persona data in all locations:', personaObj);
+                    console.log('Selected persona:', selectedPersona);
+                    
+                    // Sync with auth.js if possible
+                    if (typeof window.personaSelected !== 'undefined') {
+                        window.personaSelected = selectedPersona;
+                        console.log('Synced persona with auth.js');
+                    }
                     
                     // Ensure persona is selected properly
                     ensurePersonaSelected();
@@ -570,39 +570,22 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // If we found persona data, apply it
         if (personaData && personaData.name) {
-            console.log("ENSURING PERSONA: Found valid persona data:", personaData);
-            
-            // Set the global variables
+            // Set the global variable
             selectedPersona = personaData;
             window.selectedPersonaGlobal = personaData;
             
-            // Re-save to storage for redundancy
-            try {
-                sessionStorage.setItem('selectedPersona', JSON.stringify(personaData));
-                localStorage.setItem('temp_selectedPersona', JSON.stringify(personaData));
-            } catch (e) {
-                console.error("Failed to save to storage:", e);
+            // Update the hidden input
+            const selectedPersonaInput = document.getElementById('selected-persona');
+            if (selectedPersonaInput) {
+                selectedPersonaInput.value = personaData.name;
+                selectedPersonaInput.setAttribute('data-style', personaData.style || '');
+                selectedPersonaInput.setAttribute('data-detailed-style', personaData.detailedStyle || '');
             }
             
-            // Update ALL hidden inputs in the document
-            document.querySelectorAll('#selected-persona').forEach(input => {
-                input.value = personaData.name;
-                input.setAttribute('data-style', personaData.style || '');
-                input.setAttribute('data-detailed-style', personaData.detailedStyle || '');
-                console.log("ENSURING PERSONA: Updated hidden input:", input.value);
-            });
-            
-            // Mark the appropriate persona as selected - search all containers
-            document.querySelectorAll('.persona, .persona-card').forEach(persona => {
-                const personaStyle = persona.getAttribute('data-style') || '';
-                const personaName = persona.querySelector('h3') ? persona.querySelector('h3').textContent : '';
-                
-                console.log("ENSURING PERSONA: Checking persona element:", personaStyle, personaName);
-                
-                if (personaStyle === personaData.style || personaName === personaData.name) {
+            // Mark the appropriate persona as selected
+            document.querySelectorAll('.persona').forEach(persona => {
+                if (persona.getAttribute('data-style') === personaData.style) {
                     persona.classList.add('selected');
-                    console.log("ENSURING PERSONA: Added selected class to:", personaName);
-                    
                     const detailButton = persona.querySelector('.persona-details-button');
                     if (detailButton) {
                         detailButton.textContent = 'Selected';
@@ -805,137 +788,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check for persona selection when the form is visible
         setTimeout(ensurePersonaSelected, 1000);
         
-        // Add a direct fallback button for emergency persona selection
-        const personaFallbackDiv = document.createElement('div');
-        personaFallbackDiv.className = 'persona-fallback';
-        personaFallbackDiv.innerHTML = `
-            <p>Having trouble selecting a companion? Click below:</p>
-            <div class="fallback-buttons">
-                <button type="button" class="fallback-button" data-persona="passionate" data-name="Aria">Select Aria</button>
-                <button type="button" class="fallback-button" data-persona="playful" data-name="Zara">Select Zara</button>
-                <button type="button" class="fallback-button" data-persona="dominant" data-name="Demi">Select Demi</button>
-                <button type="button" class="fallback-button" data-persona="sensual" data-name="Luna">Select Luna</button>
-            </div>
-        `;
-        personaFallbackDiv.style.marginTop = '20px';
-        personaFallbackDiv.style.marginBottom = '20px';
-        personaFallbackDiv.style.padding = '10px';
-        personaFallbackDiv.style.border = '1px dashed rgba(128, 0, 32, 0.3)';
-        personaFallbackDiv.style.borderRadius = '8px';
-        personaFallbackDiv.style.display = 'none'; // Hide by default
-        
-        // Add styles for the fallback buttons
-        const fallbackStyle = document.createElement('style');
-        fallbackStyle.textContent = `
-            .fallback-buttons {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                margin-top: 10px;
-            }
-            .fallback-button {
-                background-color: rgba(128, 0, 32, 0.8);
-                color: white;
-                border: none;
-                padding: 8px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-            .fallback-button:hover {
-                background-color: rgba(128, 0, 32, 1);
-            }
-        `;
-        document.head.appendChild(fallbackStyle);
-        
-        // Add fallback button event handlers
-        personaFallbackDiv.querySelectorAll('.fallback-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const style = button.getAttribute('data-persona');
-                const name = button.getAttribute('data-name');
-                
-                // Find the detailed style from our persona library
-                let detailedStyle = '';
-                document.querySelectorAll('.persona').forEach(persona => {
-                    if (persona.getAttribute('data-style') === style) {
-                        const styleEl = persona.querySelector('.persona-style');
-                        if (styleEl) {
-                            detailedStyle = styleEl.value;
-                        }
-                    }
-                });
-                
-                // Create the persona object
-                const personaObj = {
-                    name: name,
-                    style: style,
-                    detailedStyle: detailedStyle
-                };
-                
-                // Store in all locations
-                selectedPersona = personaObj;
-                window.selectedPersonaGlobal = personaObj;
-                sessionStorage.setItem('selectedPersona', JSON.stringify(personaObj));
-                localStorage.setItem('temp_selectedPersona', JSON.stringify(personaObj));
-                
-                // Update UI
-                const selectedPersonaInput = document.getElementById('selected-persona');
-                if (selectedPersonaInput) {
-                    selectedPersonaInput.value = name;
-                    selectedPersonaInput.setAttribute('data-style', style);
-                    selectedPersonaInput.setAttribute('data-detailed-style', detailedStyle);
-                }
-                
-                // Update button states
-                personaFallbackDiv.querySelectorAll('.fallback-button').forEach(btn => {
-                    btn.style.opacity = '0.6';
-                });
-                button.style.opacity = '1';
-                button.style.fontWeight = 'bold';
-                button.style.boxShadow = '0 0 10px rgba(128, 0, 32, 0.5)';
-                button.textContent = `${name} Selected`;
-                
-                console.log('FALLBACK SELECTION:', personaObj);
-            });
-        });
-        
-        // Insert the fallback div before the form button
-        signupForm.insertBefore(personaFallbackDiv, signupForm.querySelector('.cta-button').parentNode);
-        
-        // Show fallback after 3 seconds, assuming user may be having trouble
-        setTimeout(() => {
-            personaFallbackDiv.style.display = 'block';
-        }, 3000);
-        
         const formButton = signupForm.querySelector('.cta-button');
         formButton.addEventListener('click', (e) => {
             e.preventDefault();
             
             // Force check for persona selection
             ensurePersonaSelected();
-            
-            // GUARANTEED PERSONA CHECK - force set persona if we have it in sessionStorage
-            try {
-                const forcedPersonaData = sessionStorage.getItem('selectedPersona');
-                if (forcedPersonaData) {
-                    const parsed = JSON.parse(forcedPersonaData);
-                    if (parsed && parsed.name) {
-                        console.log("USING FORCED PERSONA DATA:", parsed);
-                        selectedPersona = parsed;
-                        window.selectedPersonaGlobal = parsed;
-                        
-                        // FORCE update hidden input field
-                        const hiddenInput = document.getElementById('selected-persona');
-                        if (hiddenInput) {
-                            hiddenInput.value = parsed.name;
-                            hiddenInput.setAttribute('data-style', parsed.style || '');
-                            hiddenInput.setAttribute('data-detailed-style', parsed.detailedStyle || '');
-                            console.log("Hidden input updated:", hiddenInput.value);
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error("Error in forced persona check:", e);
-            }
             
             // Check for persona in multiple ways
             let personaData = selectedPersona;
@@ -999,23 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            // ABSOLUTE LAST RESORT FALLBACK - if we saw logs showing a selected persona, hardcode it
-            if (!personaData && console.logs && console.logs.includes("Selected persona:")) {
-                console.log("Using last resort fallback persona");
-                personaData = {
-                    name: "Demi", 
-                    style: "dominant", 
-                    detailedStyle: "Very commanding and authoritative with a motherly undertone. Uses pet names like 'kitten' and 'good boy/girl'. Sets clear expectations, provides firm guidance, and rewards obedience while punishing disobedience with gentle but firm discipline."
-                };
-            }
-            
-            // DEBUG - log all checks
-            console.log("PERSONA CHECK - Final personaData:", personaData);
-            console.log("PERSONA CHECK - selectedPersona:", selectedPersona);
-            console.log("PERSONA CHECK - window.selectedPersonaGlobal:", window.selectedPersonaGlobal);
-            console.log("PERSONA CHECK - sessionStorage:", sessionStorage.getItem('selectedPersona'));
-            console.log("PERSONA CHECK - localStorage:", localStorage.getItem('temp_selectedPersona'));
-            console.log("PERSONA CHECK - hidden input:", document.getElementById('selected-persona') ? document.getElementById('selected-persona').value : "not found");
+            console.log("Form submission persona data:", personaData);
             
             const name = document.getElementById('name').value;
             const age = document.getElementById('age').value;
