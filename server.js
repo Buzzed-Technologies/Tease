@@ -372,7 +372,8 @@ app.use((req, res, next) => {
     // Only process HTML responses
     if (typeof body === 'string' && this.getHeader('content-type')?.includes('text/html')) {
       // Replace placeholders with environment variables
-      body = body.replace(/%SUPABASE_ANON_KEY%/g, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
+      body = body.replace(/%NEXT_PUBLIC_SUPABASE_ANON_KEY%/g, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
+      body = body.replace(/%SUPABASE_ANON_KEY%/g, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''); // Backward compatibility
       body = body.replace(/%STRIPE_PUBLIC_KEY%/g, process.env.STRIPE_PUBLIC_KEY || '');
       
       // Log for debugging
