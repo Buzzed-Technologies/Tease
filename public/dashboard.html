@@ -712,11 +712,12 @@
                 
                 profilePersonality.textContent = personalities[modelData.name] || 'Custom';
                 
-                // Set companion image
+                // Set model image if available
                 if (modelData.pictures && modelData.pictures.length > 0) {
-                    companionImage.style.backgroundImage = `url(/images/models/${modelData.pictures[0]})`;
+                    const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${modelData.pictures[0]}`;
+                    companionImage.style.backgroundImage = `url(${imageUrl})`;
                 } else {
-                    companionImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
+                    companionImage.style.backgroundImage = 'url(/images/placeholder-model.jpg)';
                 }
             }
             

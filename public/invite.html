@@ -391,7 +391,9 @@
                 
                 // Set background image if available
                 if (data.pictures && data.pictures.length > 0) {
-                    modelImage.style.backgroundImage = `url(/images/models/${data.pictures[0]})`;
+                    const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${data.pictures[0]}`;
+                    console.log('Loading model image from:', imageUrl);
+                    modelImage.style.backgroundImage = `url(${imageUrl})`;
                 } else {
                     modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
                 }
