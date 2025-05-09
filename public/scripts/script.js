@@ -22,30 +22,52 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable scrolling when input fields are focused to prevent jumping to another section
     function setupInputFocusHandlers() {
         const formInputs = document.querySelectorAll('input, textarea, select');
+        const formSection = document.getElementById('cta');
         
         formInputs.forEach(input => {
+            // More aggressive focus prevention
             input.addEventListener('focus', (e) => {
                 // Set a flag to prevent scrolling while input is focused
                 isInputFocused = true;
-                // Store current section to prevent changing it
+                // Lock to current section
                 focusedSectionIndex = currentSection;
-            });
+                
+                // If we're in the form section, force it to stay visible
+                if (formSection && formSection.contains(input)) {
+                    document.body.style.overflow = 'hidden';
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
             
             input.addEventListener('blur', (e) => {
                 // Reset the flag when input loses focus
                 isInputFocused = false;
-            });
+                document.body.style.overflow = '';
+            }, true);
             
-            // Prevent scroll triggering when tapping in input field
-            input.addEventListener('touchstart', (e) => {
-                e.stopPropagation();
-            });
-            
-            // Prevent default scrolling behavior on mobile
-            input.addEventListener('touchmove', (e) => {
-                e.stopPropagation();
+            // Prevent events from bubbling up to parent elements
+            ['touchstart', 'touchmove', 'click', 'mousedown', 'mouseup', 'wheel'].forEach(eventType => {
+                input.addEventListener(eventType, (e) => {
+                    e.stopPropagation();
+                }, { passive: false, capture: true });
             });
         });
+        
+        // Add click handler to the entire form section to prevent scroll jumps
+        if (formSection) {
+            formSection.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'BUTTON' && !e.target.closest('a')) {
+                    e.stopPropagation();
+                }
+            }, true);
+            
+            formSection.addEventListener('touchstart', (e) => {
+                if (e.target.tagName !== 'BUTTON' && !e.target.closest('a')) {
+                    e.stopPropagation();
+                }
+            }, { passive: false, capture: true });
+        }
     }
     
     // Call the setup function after DOM is loaded
@@ -482,10 +504,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         detailedStyle: personaDetailedStyle
                     };
                     
-                    // Update hidden input with selected persona
+                    // Update hidden input with selected persona data
                     const selectedPersonaInput = document.getElementById('selected-persona');
                     if (selectedPersonaInput) {
-                        selectedPersonaInput.value = selectedPersona.name;
+                        selectedPersonaInput.value = JSON.stringify(selectedPersona);
                     }
                     
                     console.log('Selected persona:', selectedPersona);
@@ -662,8 +684,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
+            // Get selected persona from either the stored variable or the hidden field
+            let personaData = selectedPersona;
+            const selectedPersonaInput = document.getElementById('selected-persona');
+            
+            // If we don't have a selectedPersona variable but have a value in the input, try to parse it
+            if (!personaData && selectedPersonaInput && selectedPersonaInput.value) {
+                try {
+                    personaData = JSON.parse(selectedPersonaInput.value);
+                } catch (e) {
+                    // If it's not JSON, treat it as just the name
+                    if (selectedPersonaInput.value) {
+                        personaData = { name: selectedPersonaInput.value };
+                    }
+                }
+            }
+            
+            console.log('Persona data for submission:', personaData);
+            
             // If no persona was selected, show message
-            if (!selectedPersona) {
+            if (!personaData || !personaData.name) {
                 alert('Please select a companion first');
                 
                 // Scroll to personas section
@@ -691,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
             successMessage.innerHTML = `
                 <div class="success-icon"><i class="fas fa-check-circle"></i></div>
                 <h3>Welcome to Tease!</h3>
-                <p>You're all set to start your experience with ${selectedPersona.name}.</p>
+                <p>You're all set to start your experience with ${personaData.name}.</p>
             `;
             
             // Replace form with success message
@@ -704,8 +744,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 name,
                 age,
                 phone,
-                persona: selectedPersona.name,
-                style: selectedPersona.detailedStyle || 'Default style'
+                persona: personaData.name,
+                style: personaData.detailedStyle || personaData.style || 'Default style'
             };
             
             localStorage.setItem('tease_user', JSON.stringify(userData));
