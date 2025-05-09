@@ -4,11 +4,11 @@ let STRIPE_PUBLIC_KEY = '';
 let stripe;
 
 // Product and price IDs
-const PRODUCT_ID = 'prod_SHH0ETnX7ueUOc';
+const PRODUCT_ID = 'prod_SHHPNACUSKUDnA';
 const PRICE_IDS = {
-    yearly: 'price_1RMiTFB71e12H8w7mfD9dfc9',
-    quarterly: 'price_1RMiSnB71e12H8w7iJ73uN0u',
-    monthly: 'price_1RMiSBB71e12H8w7sPZau77s'
+    yearly: 'price_1RMiqJB71e12H8w7PDbXswUW',
+    quarterly: 'price_1RMiqJB71e12H8w7TJGQqdzJ',
+    monthly: 'price_1RMiqJB71e12H8w7o8ejsbK7'
 };
 
 // Initialize subscription system
