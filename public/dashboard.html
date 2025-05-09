@@ -29,12 +29,12 @@
                 <div class="logo">tease</div>
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="#account" class="active">Account</a></li>
-                        <li><a href="#subscription">Subscription</a></li>
+                        <li><a href="#account" class="active nav-link">Account</a></li>
+                        <li><a href="#subscription" class="nav-link">Subscription</a></li>
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button id="logout-btn" class="text-button"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Logout</span></button>
+                    <button id="logout-btn" class="text-button" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Logout</span></button>
                 </div>
             </div>
         </header>
@@ -90,7 +90,7 @@
                                 <i class="fas fa-check-circle"></i> Active
                             </div>
                             <div class="subscription-actions">
-                                <button id="manage-subscription" class="text-button"><i class="fas fa-cog"></i> <span class="btn-text">Manage Subscription</span></button>
+                                <button id="manage-subscription" class="text-button" aria-label="Manage Subscription"><i class="fas fa-cog"></i> <span class="btn-text">Manage Subscription</span></button>
                             </div>
                         </div>
                         
@@ -187,5 +187,32 @@
     <!-- Application scripts -->
     <script src="/scripts/auth.js"></script>
     <script src="/scripts/script.js"></script>
+    
+    <script>
+        // Add event listeners to nav links
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.dashboard-section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active class on nav links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show the correct section
+                    const targetId = this.getAttribute('href').substring(1);
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === targetId) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html> 
