@@ -511,15 +511,36 @@
     .persona-actions {
         flex-direction: column;
     }
+    
+    .dashboard-container {
+        padding: 5rem 5% 2rem;
+    }
+    
+    .dashboard-card {
+        padding: 1.5rem;
+    }
+    
+    .plan-card {
+        margin-bottom: 1rem;
+    }
+    
+    .user-avatar {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .user-avatar i {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width: 768px) {
     .dashboard-header {
-        padding: 1rem 5%;
+        padding: 0.8rem 5%;
     }
     
     .dashboard-container {
-        padding: 5rem 5% 2rem;
+        padding: 4.5rem 5% 1.5rem;
     }
     
     .main-nav ul {
@@ -539,6 +560,34 @@
     
     .personas-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    
+    .plan-features li {
+        font-size: 0.9rem;
+    }
+    
+    .subscription-badge {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .detail-label {
+        width: 100%;
+        margin-bottom: 0.2rem;
+    }
+    
+    /* Touch-optimized buttons */
+    .text-button, 
+    .cta-button, 
+    .subscribe-btn {
+        padding: 0.8rem 1rem;
     }
 }
 
@@ -546,7 +595,11 @@
     .header-content {
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
+        gap: 0.8rem;
+    }
+    
+    .logo {
+        font-size: 2rem;
     }
     
     .main-nav {
@@ -559,7 +612,8 @@
     }
     
     .dashboard-card {
-        padding: 1.5rem;
+        padding: 1.2rem;
+        border-radius: 10px;
     }
     
     .user-details {
@@ -570,5 +624,161 @@
     .user-avatar {
         margin-right: 0;
         margin-bottom: 1rem;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .user-avatar i {
+        font-size: 1.8rem;
+    }
+    
+    .user-info h3 {
+        font-size: 1.4rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-group input {
+        padding: 0.7rem;
+    }
+    
+    .plan-card {
+        padding: 1.2rem;
+    }
+    
+    .plan-price {
+        font-size: 1.7rem;
+    }
+    
+    .plan-features li {
+        margin-bottom: 0.6rem;
+    }
+    
+    .plan-tag {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.7rem;
+    }
+    
+    /* Fixed header improvements */
+    .dashboard-header {
+        padding: 0.6rem 4%;
+    }
+    
+    .header-content {
+        padding: 0.5rem 0;
+    }
+    
+    .header-actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 0.3rem;
+    }
+    
+    .dashboard-container {
+        padding-top: 7rem;
+    }
+    
+    /* Optimize for tap targets */
+    .text-button, .cta-button, .subscribe-btn {
+        min-height: 44px;
+    }
+    
+    .btn-text {
+        display: none;
+    }
+    
+    .text-button i {
+        font-size: 1.2rem;
+        margin-right: 0;
+    }
+    
+    .header-actions .text-button {
+        background-color: rgba(20, 20, 20, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+    
+    .main-nav ul {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .main-nav a {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* iOS Safari fix */
+@supports (-webkit-touch-callout: none) {
+    .dashboard-container {
+        min-height: -webkit-fill-available;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .select-persona-btn,
+    .text-button,
+    .cta-button,
+    .subscribe-btn {
+        min-height: 44px; /* Apple recommended touch target size */
+    }
+    
+    input, select, textarea, button {
+        font-size: 16px !important; /* Prevent zoom on form fields in iOS */
+    }
+    
+    /* Improve scrolling */
+    .personas-grid,
+    .subscription-plans {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Add to existing CSS for better mobile experience */
+.btn-text {
+    display: inline;
+}
+
+@media (max-width: 576px) {
+    .btn-text {
+        display: none;
+    }
+    
+    .text-button i {
+        font-size: 1.2rem;
+        margin-right: 0;
+    }
+    
+    .header-actions .text-button {
+        background-color: rgba(20, 20, 20, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+    
+    .main-nav ul {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .main-nav a {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
     }
 } 

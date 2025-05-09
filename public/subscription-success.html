@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
     <title>Subscription Successful | Tease AI Adult Companion</title>
     
     <!-- Supabase API Key -->
@@ -11,6 +12,7 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -114,6 +116,88 @@
         
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #continue-to-dashboard {
+            min-height: 44px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .success-content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .confirmation-message {
+                font-size: 1.5rem;
+            }
+            
+            .confirmation-icon {
+                font-size: 3.5rem;
+            }
+            
+            .subscription-details {
+                padding: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .success-container {
+                padding: 1.5rem 4%;
+            }
+            
+            .success-content {
+                padding: 1.5rem 1rem;
+                border-radius: 10px;
+            }
+            
+            .confirmation-message {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .confirmation-icon {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .confirmation-description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .subscription-details {
+                padding: 1rem;
+                margin: 1.5rem 0;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+                margin-bottom: 0.6rem;
+                padding-bottom: 0.6rem;
+            }
+            
+            .detail-label {
+                margin-bottom: 0.2rem;
+            }
+            
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        
+        /* iOS Safari fix */
+        @supports (-webkit-touch-callout: none) {
+            .success-container {
+                min-height: -webkit-fill-available;
+            }
         }
     </style>
 </head>

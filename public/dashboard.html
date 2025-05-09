@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
     <title>Dashboard | Tease AI Adult Companion</title>
     
     <!-- Supabase API Key -->
@@ -11,6 +12,7 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -32,7 +34,7 @@
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button id="logout-btn" class="text-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button id="logout-btn" class="text-button"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Logout</span></button>
                 </div>
             </div>
         </header>
@@ -55,15 +57,15 @@
                     <form id="update-account-form" class="dashboard-form">
                         <div class="form-group">
                             <label for="update-name">Name</label>
-                            <input type="text" id="update-name" placeholder="Your name">
+                            <input type="text" id="update-name" placeholder="Your name" autocomplete="name">
                         </div>
                         <div class="form-group">
                             <label for="update-email">Email (Optional)</label>
-                            <input type="email" id="update-email" placeholder="Your email">
+                            <input type="email" id="update-email" placeholder="Your email" autocomplete="email">
                         </div>
                         <div class="form-group">
                             <label for="update-password">New Password (leave blank to keep current)</label>
-                            <input type="password" id="update-password" placeholder="New password">
+                            <input type="password" id="update-password" placeholder="New password" autocomplete="new-password">
                         </div>
                         <div class="form-message" id="account-message"></div>
                         <button type="submit" class="cta-button">Update Account</button>
@@ -88,7 +90,7 @@
                                 <i class="fas fa-check-circle"></i> Active
                             </div>
                             <div class="subscription-actions">
-                                <button id="manage-subscription" class="text-button"><i class="fas fa-cog"></i> Manage Subscription</button>
+                                <button id="manage-subscription" class="text-button"><i class="fas fa-cog"></i> <span class="btn-text">Manage Subscription</span></button>
                             </div>
                         </div>
                         
@@ -167,9 +169,9 @@
                     <a href="#">About Our Mission</a>
                 </div>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-tiktok"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                 </div>
                 <div class="copyright">
                     &copy; 2025 Tease AI. All rights reserved.

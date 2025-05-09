@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
     <title>Choose Your Plan | Tease AI Adult Companion</title>
     
     <!-- Supabase API Key -->
@@ -14,6 +15,7 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -232,6 +234,88 @@
         .secure-badge i {
             color: #4CAF50;
             margin-right: 0.5rem;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .subscription-form {
+                padding: 1.5rem;
+            }
+            
+            .subscription-header {
+                margin-bottom: 2rem;
+            }
+            
+            .subscription-header h1 {
+                font-size: 2rem;
+            }
+            
+            .plan-option {
+                margin-bottom: 1rem;
+            }
+            
+            .plan-name {
+                font-size: 1.2rem;
+            }
+            
+            .plan-price {
+                font-size: 1.8rem;
+            }
+            
+            .plan-features li {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .subscription-container {
+                padding: 1.5rem 4%;
+            }
+            
+            .subscription-form {
+                padding: 1.2rem;
+                border-radius: 10px;
+            }
+            
+            .plans-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .popular-badge {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.8rem;
+                right: 1rem;
+            }
+            
+            .plan-features {
+                margin: 1rem 0;
+            }
+            
+            .plan-features li {
+                margin-bottom: 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .confirmation-message {
+                font-size: 1.3rem;
+            }
+            
+            .confirmation-description {
+                font-size: 0.9rem;
+            }
+            
+            /* Fix for better touch targets */
+            .primary-button {
+                min-height: 44px;
+                width: 100%;
+            }
+        }
+        
+        /* iOS Safari fix */
+        @supports (-webkit-touch-callout: none) {
+            .subscription-container {
+                min-height: -webkit-fill-available;
+            }
         }
     </style>
 </head>

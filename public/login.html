@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
     <title>Login | Tease AI Adult Companion</title>
     
     <!-- Supabase API Key -->
@@ -11,6 +12,7 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -34,12 +36,12 @@
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <div class="phone-input">
-                            <input type="tel" id="phone" placeholder="Enter your phone number" pattern="[0-9]*" inputmode="numeric" required>
+                            <input type="tel" id="phone" placeholder="Enter your phone number" pattern="[0-9]*" inputmode="numeric" autocomplete="tel" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
                     </div>
                     <div class="form-message" id="login-message"></div>
                     <button type="submit" class="cta-button large">Sign In</button>
@@ -61,9 +63,9 @@
                     <a href="#">About Our Mission</a>
                 </div>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-tiktok"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                 </div>
                 <div class="copyright">
                     &copy; 2025 Tease AI. All rights reserved.
