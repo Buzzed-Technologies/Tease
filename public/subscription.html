@@ -417,14 +417,8 @@
             // Prevent default to avoid any conflicts
             event.preventDefault();
             
-            // Create a fake event object that simulates the structure expected by handleSubscribeClick
-            const syntheticEvent = {
-                currentTarget: event.currentTarget || event.target,
-                target: event.target
-            };
-            
-            // Call the main subscribe handler
-            handleSubscribeClick(syntheticEvent);
+            // Call the main subscribe handler directly with the package and price data
+            handleSubscribeClick(event, packageId, priceId);
         };
         
         // Supabase client initialization
@@ -719,8 +713,17 @@
                 
                 console.log(`Package ${index}: id=${pkg.id}, name=${pkg.name}, price=${pkg.price}, stripePrice=${pkg.stripe_price_id}`);
                 
-                if (!pkg.stripe_price_id) {
-                    console.warn(`Warning: Package ${pkg.name} doesn't have a Stripe price ID`);
+                // Ensure price ID is valid - if not, use a fallback format
+                let priceId = pkg.stripe_price_id || '';
+                if (!priceId.startsWith('price_') || priceId.length < 15) {
+                    console.warn(`Warning: Invalid Stripe price ID format for ${pkg.name}: ${priceId}`);
+                    // Use a fallback price ID 
+                    if (pkg.name.toLowerCase().includes('premium')) {
+                        priceId = 'price_1RMiqJB71e12H8w7PDbXswUW'; // Premium package
+                    } else {
+                        priceId = 'price_1RMiqJB71e12H8w7o8ejsbK7'; // Regular package
+                    }
+                    console.log(`Using fallback price ID: ${priceId}`);
                 }
                 
                 const packageCard = document.createElement('div');
@@ -746,33 +749,13 @@
                     
                     <button class="package-button" 
                             data-package-id="${pkg.id}" 
-                            data-price-id="${pkg.stripe_price_id || ''}" 
-                            onclick="window.manualSubscribeClick(event, '${pkg.id}', '${pkg.stripe_price_id || ''}')">
+                            data-price-id="${priceId}" 
+                            onclick="window.manualSubscribeClick(event, '${pkg.id}', '${priceId}')">
                         Subscribe Now
                     </button>
                 `;
                 
                 packagesContainer.appendChild(packageCard);
-            });
-            
-            // Add event listeners to subscribe buttons
-            const subscribeButtons = document.querySelectorAll('.package-button');
-            subscribeButtons.forEach(button => {
-                const packageId = button.getAttribute('data-package-id');
-                const priceId = button.getAttribute('data-price-id');
-                console.log(`Button setup for package ${packageId} with price ID ${priceId}`);
-                
-                // Add a direct onclick attribute to ensure the click is being captured
-                button.setAttribute('onclick', 'console.log("Button clicked via onclick attribute")');
-                
-                // Remove any existing event listeners
-                button.removeEventListener('click', handleSubscribeClick);
-                
-                // Add the event listener
-                button.addEventListener('click', function(e) {
-                    console.log('Button clicked via addEventListener');
-                    handleSubscribeClick(e);
-                });
             });
         }
         
@@ -819,17 +802,22 @@
         }
         
         // Handle subscribe button click
-        async function handleSubscribeClick(e) {
-            console.log('Subscribe button clicked:', e.target);
+        async function handleSubscribeClick(e, packageId, priceId) {
+            console.log('Subscribe function called with event:', e);
+            console.log('Package ID:', packageId || 'Not provided directly');
+            console.log('Price ID:', priceId || 'Not provided directly');
             
             try {
-                const button = e.currentTarget; // Use currentTarget to ensure we get the button, not a child element
-                console.log('Button element:', button);
-                
-                const packageId = button.getAttribute('data-package-id');
-                const priceId = button.getAttribute('data-price-id');
-                
-                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}`);
+                // If we don't have direct package/price IDs, try to get them from the button element
+                if (!packageId || !priceId) {
+                    const button = e.currentTarget || e.target;
+                    console.log('Button element:', button);
+                    
+                    packageId = button.getAttribute('data-package-id');
+                    priceId = button.getAttribute('data-price-id');
+                    
+                    console.log(`Got from button attributes: packageId=${packageId}, priceId=${priceId}`);
+                }
                 
                 if (!packageId || !priceId) {
                     showError('Invalid package selection. Please try again.');
@@ -838,10 +826,20 @@
                 
                 console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
                 
+                // Find the button element
+                let button;
+                if (e.currentTarget) {
+                    button = e.currentTarget;
+                } else {
+                    button = document.querySelector(`button[data-package-id="${packageId}"]`);
+                }
+                
                 // Disable button and show loading state
-                const originalText = button.textContent;
-                button.disabled = true;
-                button.textContent = 'Processing...';
+                if (button) {
+                    const originalText = button.textContent;
+                    button.disabled = true;
+                    button.textContent = 'Processing...';
+                }
                 
                 // First create a customer if user doesn't have a Stripe ID
                 if (!userData.stripe_customer_id) {
