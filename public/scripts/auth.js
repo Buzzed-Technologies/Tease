@@ -377,28 +377,56 @@ async function handleLogin(e) {
         // Normalize phone number by removing all non-digit characters
         const normalizedPhone = phone.replace(/\D/g, '');
         
-        console.log('Attempting login with normalized phone:', normalizedPhone);
+        console.log('Attempting login with phone:', phone);
+        console.log('Normalized phone:', normalizedPhone);
         
-        // Query the sex_mode table for user with this phone & password
-        const { data, error } = await supabase
+        // For debugging - get all users to see phone formats
+        const allUsers = await supabase
             .from('sex_mode')
-            .select('*')
-            .or(`phone.eq.${normalizedPhone},phone.eq.${phone},phone.ilike.%${normalizedPhone}%`);
+            .select('phone')
+            .limit(5);
+        
+        console.log('Sample phone numbers in database:', allUsers.data);
+        
+        // Try a broader search to find the user
+        let { data, error } = await supabase
+            .from('sex_mode')
+            .select('*');
             
         if (error) {
             console.error('Database error:', error);
             throw new Error('Login failed. Please try again later.');
         }
         
-        // Check if user exists
-        if (!data || data.length === 0) {
-            throw new Error('User not found. Please check your phone number.');
+        console.log(`Found ${data.length} total users`);
+        
+        // Filter users manually to find phone number matches
+        let user = null;
+        
+        if (data && data.length > 0) {
+            // Try different phone formats
+            user = data.find(u => {
+                const dbPhone = u.phone || '';
+                const dbPhoneNormalized = dbPhone.replace(/\D/g, '');
+                
+                return (
+                    dbPhone === phone ||
+                    dbPhoneNormalized === normalizedPhone ||
+                    dbPhone.includes(normalizedPhone) ||
+                    normalizedPhone.includes(dbPhoneNormalized)
+                );
+            });
+            
+            if (user) {
+                console.log('Found matching user with phone:', user.phone);
+            }
         }
         
-        // Get the first user (should only be one with this phone number)
-        const user = data[0];
-        
-        console.log('Found user with phone:', user.phone);
+        // Check if user exists
+        if (!user) {
+            console.log('No matching user found for:', phone, 'or', normalizedPhone);
+            throw new Error('User not found. Please check your phone number.');
+        }
         
         // Verify password (in production, use secure auth methods)
         if (user.password_hash !== password) {
@@ -418,7 +446,7 @@ async function handleLogin(e) {
         await supabase
             .from('sex_mode')
             .update({ last_login_date: new Date() })
-            .eq('id', user.id);
+            .eq('phone', user.phone);
         
         // Redirect based on subscription status
         if (user.is_subscribed) {
