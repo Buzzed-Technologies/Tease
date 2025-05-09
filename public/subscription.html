@@ -141,6 +141,8 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         .package-card::before {
@@ -153,6 +155,8 @@
             background: radial-gradient(circle at center, transparent 30%, rgba(128, 0, 32, 0.05) 100%);
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
         }
         
         .package-card:hover {
@@ -222,12 +226,22 @@
             text-align: center;
             transition: background-color 0.3s ease;
             border: none;
-            cursor: pointer;
+            cursor: pointer !important;
             font-family: 'Montserrat', sans-serif;
+            position: relative;
+            z-index: 10;
+            pointer-events: auto !important;
         }
         
         .package-button:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .package-button:active {
+            background-color: #600019;
+            transform: translateY(0);
         }
         
         .package-popular {
@@ -342,6 +356,11 @@
         
         .hidden {
             display: none;
+        }
+        
+        /* Make sure the button is at the bottom of the card */
+        .package-card .package-button {
+            margin-top: auto;
         }
     </style>
 </head>
