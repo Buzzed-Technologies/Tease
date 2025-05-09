@@ -420,33 +420,41 @@
                 
                 const packageId = button.getAttribute('data-package-id');
                 const priceId = button.getAttribute('data-price-id');
+                const productId = 'prod_SHHPNACUSKUDnA'; // Hardcode the product ID for now
                 
-                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}`);
+                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}, productId=${productId}`);
                 
-                if (!packageId || !priceId) {
-                    showError('Invalid package selection. Please try again.');
+                if (!priceId) {
+                    showError('Invalid price selection. Please try again.');
                     return;
                 }
                 
                 console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
                 
-                // Disable button and show loading state
+                // Show a loading message
                 const originalText = button.textContent;
                 button.disabled = true;
                 button.textContent = 'Processing...';
                 
+                // Show payment processing status
+                const statusMessage = document.getElementById('subscription-message');
+                statusMessage.textContent = 'Preparing payment...';
+                statusMessage.className = 'subscription-message';
+                
                 // First create a customer if user doesn't have a Stripe ID
                 if (!userData.stripe_customer_id) {
                     console.log('Creating new Stripe customer...');
+                    statusMessage.textContent = 'Creating customer profile...';
+                    
                     const createCustomerResponse = await fetch('/api/create-customer', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            name: userData.name,
-                            email: `${userData.telegram}@example.com`, // Using telegram as placeholder email
-                            phone: userData.telegram // Using telegram as contactable info
+                            name: userData.name || 'User',
+                            email: userData.email || `${userData.telegram || 'user'}@example.com`,
+                            phone: userData.telegram || ''
                         })
                     });
                     
@@ -471,6 +479,8 @@
                 
                 // Create checkout session
                 console.log('Creating checkout session with customer ID:', userData.stripe_customer_id);
+                statusMessage.textContent = 'Creating checkout session...';
+                
                 const createSessionResponse = await fetch('/api/create-checkout-session', {
                     method: 'POST',
                     headers: {
@@ -478,10 +488,11 @@
                     },
                     body: JSON.stringify({
                         priceId: priceId,
+                        productId: productId, // Include product ID
                         customerId: userData.stripe_customer_id,
                         userId: userData.id,
-                        userPhone: userData.telegram,
-                        successUrl: window.location.origin + '/subscription.html?session_id={CHECKOUT_SESSION_ID}',
+                        userPhone: userData.telegram || '',
+                        successUrl: window.location.origin + '/subscription-success.html',
                         cancelUrl: window.location.origin + '/subscription.html'
                     })
                 });
@@ -493,15 +504,21 @@
                 
                 const session = await createSessionResponse.json();
                 console.log('Session created:', session);
+                statusMessage.textContent = 'Redirecting to checkout...';
                 
                 // Redirect to Stripe Checkout
                 if (session.url) {
-                    console.log('Redirecting to Stripe checkout:', session.url);
+                    console.log('Redirecting to Stripe checkout using URL:', session.url);
                     window.location.href = session.url;
+                    return;
                 } else if (session.sessionId) {
                     console.log('Redirecting to Stripe checkout using sessionId:', session.sessionId);
                     if (stripe) {
-                        stripe.redirectToCheckout({ sessionId: session.sessionId });
+                        const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+                        if (result.error) {
+                            throw new Error(result.error.message);
+                        }
+                        return;
                     } else {
                         throw new Error('Stripe is not initialized');
                     }
@@ -634,11 +651,7 @@
                 stripe = Stripe(stripePublicKey);
                 
                 // Test Stripe connection
-                const testResponse = await fetch('/api/stripe-test');
-                if (testResponse.ok) {
-                    const testData = await testResponse.json();
-                    console.log('Stripe test result:', testData);
-                }
+                testStripeConnection();
                 
             } catch (error) {
                 console.error('Error fetching Stripe config:', error);
@@ -647,6 +660,87 @@
                     stripePublicKey = 'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
                 }
                 stripe = Stripe(stripePublicKey);
+                
+                // Test Stripe connection even if we had an error
+                testStripeConnection();
+            }
+        }
+        
+        // Test Stripe connection
+        async function testStripeConnection() {
+            try {
+                console.log('Testing Stripe connection...');
+                // Call a simple endpoint that doesn't require authentication
+                const product_id = 'prod_SHHPNACUSKUDnA'; 
+                const price_id = 'price_1RMiqJB71e12H8w7o8ejsbK7'; // Monthly price ID
+                
+                // Log the product ID and price ID we're using
+                console.log(`Using product ID: ${product_id} and price ID: ${price_id}`);
+                
+                // Add a test button to the page temporarily (for debugging only)
+                const testButtonContainer = document.createElement('div');
+                testButtonContainer.style.padding = '20px';
+                testButtonContainer.style.marginTop = '20px';
+                testButtonContainer.style.background = 'rgba(0,0,0,0.2)';
+                testButtonContainer.style.borderRadius = '8px';
+                testButtonContainer.innerHTML = `
+                    <p>Debug: Test Stripe Connection</p>
+                    <button id="test-stripe-button" style="padding: 10px; background: #333; color: white; border: none; cursor: pointer; border-radius: 4px;">
+                        Test Stripe Checkout
+                    </button>
+                    <div id="test-result" style="margin-top: 10px; font-size: 14px;"></div>
+                `;
+                
+                // Append it below the packages container
+                packagesContainer.parentNode.insertBefore(testButtonContainer, packagesContainer.nextSibling);
+                
+                // Add event listener to the test button
+                document.getElementById('test-stripe-button').addEventListener('click', async function() {
+                    const resultEl = document.getElementById('test-result');
+                    resultEl.textContent = 'Testing Stripe checkout...';
+                    
+                    try {
+                        // Create a test checkout session directly
+                        const response = await fetch('/api/create-checkout-session', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                priceId: price_id,
+                                customerId: userData.stripe_customer_id || undefined,
+                                userId: userData.id,
+                                userPhone: userData.telegram || '',
+                                successUrl: window.location.origin + '/subscription-success.html',
+                                cancelUrl: window.location.origin + '/subscription.html'
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to create checkout session');
+                        }
+                        
+                        const data = await response.json();
+                        console.log('Test checkout session created:', data);
+                        resultEl.textContent = 'Session created! Redirecting...';
+                        
+                        // Redirect to Stripe checkout
+                        if (data.url) {
+                            window.location.href = data.url;
+                        } else if (data.sessionId) {
+                            stripe.redirectToCheckout({ sessionId: data.sessionId });
+                        } else {
+                            throw new Error('No URL or session ID returned');
+                        }
+                    } catch (error) {
+                        console.error('Test checkout error:', error);
+                        resultEl.textContent = `Error: ${error.message}`;
+                        resultEl.style.color = 'red';
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error testing Stripe:', error);
             }
         }
         
@@ -825,6 +919,13 @@
             
             console.log('Available packages:', packages);
             
+            // Define fallback price IDs if database prices don't work
+            const FALLBACK_PRICE_IDS = {
+                monthly: 'price_1RMiqJB71e12H8w7o8ejsbK7',
+                quarterly: 'price_1RMiqJB71e12H8w7TJGQqdzJ',
+                yearly: 'price_1RMiqJB71e12H8w7PDbXswUW'
+            };
+            
             // Find if there's a "premium" package to highlight
             const premiumPackage = packages.find(pkg => pkg.name.toLowerCase().includes('premium'));
             
@@ -832,11 +933,24 @@
             packages.forEach((pkg, index) => {
                 const isPremium = pkg.id === (premiumPackage?.id);
                 
-                console.log(`Package ${index}: id=${pkg.id}, name=${pkg.name}, price=${pkg.price}, stripePrice=${pkg.stripe_price_id}`);
+                // Determine which price ID to use - either from the database or fallback based on name
+                let priceId = pkg.stripe_price_id;
                 
-                if (!pkg.stripe_price_id) {
-                    console.warn(`Warning: Package ${pkg.name} doesn't have a Stripe price ID`);
+                // Fallback logic based on package name
+                if (!priceId || priceId.length < 10 || !priceId.startsWith('price_')) {
+                    if (pkg.name.toLowerCase().includes('monthly')) {
+                        priceId = FALLBACK_PRICE_IDS.monthly;
+                    } else if (pkg.name.toLowerCase().includes('quarterly')) {
+                        priceId = FALLBACK_PRICE_IDS.quarterly;
+                    } else if (pkg.name.toLowerCase().includes('yearly') || pkg.name.toLowerCase().includes('annual')) {
+                        priceId = FALLBACK_PRICE_IDS.yearly;
+                    } else {
+                        // Default to monthly if we can't determine
+                        priceId = FALLBACK_PRICE_IDS.monthly;
+                    }
                 }
+                
+                console.log(`Package ${index}: id=${pkg.id}, name=${pkg.name}, price=${pkg.price}, using priceId=${priceId}`);
                 
                 const packageCard = document.createElement('div');
                 packageCard.className = 'package-card';
@@ -861,7 +975,7 @@
                     
                     <button class="package-button" 
                             data-package-id="${pkg.id}" 
-                            data-price-id="${pkg.stripe_price_id || ''}">
+                            data-price-id="${priceId}">
                         Subscribe Now
                     </button>
                 `;
