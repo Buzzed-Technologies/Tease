@@ -202,29 +202,41 @@ async function handleSuccessfulSubscription(session) {
 // Helper function to handle subscription cancellation
 async function handleCanceledSubscription(subscription) {
   try {
+    console.log('Processing canceled subscription:', subscription.id);
+    
     // Find user with this subscription ID
     const { data, error } = await supabase
       .from('sex_mode')
       .select('phone')
-      .eq('stripe_subscription_id', subscription.id)
-      .single();
+      .eq('stripe_subscription_id', subscription.id);
     
-    if (error || !data) {
+    if (error) {
       console.error('Error finding user with subscription:', error);
       return;
     }
+    
+    if (!data || data.length === 0) {
+      console.log(`No user found with subscription ID: ${subscription.id}`);
+      return;
+    }
+    
+    const userPhone = data[0].phone;
+    console.log(`Found user with phone: ${userPhone}, updating subscription status`);
     
     // Update user subscription status
     const { error: updateError } = await supabase
       .from('sex_mode')
       .update({
         is_subscribed: false,
-        subscription_end: new Date().toISOString()
+        subscription_end: new Date().toISOString(),
+        subscription_status: 'canceled'
       })
-      .eq('phone', data.phone);
+      .eq('phone', userPhone);
     
     if (updateError) {
       console.error('Error updating user subscription status:', updateError);
+    } else {
+      console.log(`Successfully updated subscription status for user ${userPhone}`);
     }
   } catch (error) {
     console.error('Error handling canceled subscription:', error);
