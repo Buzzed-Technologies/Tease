@@ -204,42 +204,85 @@ async function handleCanceledSubscription(subscription) {
   try {
     console.log('Processing canceled subscription:', subscription.id);
     
-    // Find user with this subscription ID
+    // First do a broader query to see if the subscription exists in any form
+    const { data: allSubs, error: searchError } = await supabase
+      .from('sex_mode')
+      .select('phone, stripe_subscription_id');
+    
+    if (searchError) {
+      console.error('Error querying all subscriptions:', searchError);
+    } else {
+      console.log('All subscriptions in database:', allSubs.map(s => 
+        ({ phone: s.phone, subId: s.stripe_subscription_id })));
+      
+      // Check if any subscription IDs contain the target ID (case insensitive)
+      const matchingSubs = allSubs.filter(s => 
+        s.stripe_subscription_id && 
+        s.stripe_subscription_id.toLowerCase() === subscription.id.toLowerCase());
+      
+      if (matchingSubs.length > 0) {
+        console.log('Found matching subscriptions with different casing or format:', matchingSubs);
+      }
+    }
+    
+    // Try exact match first
     const { data, error } = await supabase
       .from('sex_mode')
       .select('phone')
       .eq('stripe_subscription_id', subscription.id);
     
     if (error) {
-      console.error('Error finding user with subscription:', error);
+      console.error('Error finding user with subscription (exact match):', error);
       return;
     }
     
     if (!data || data.length === 0) {
       console.log(`No user found with subscription ID: ${subscription.id}`);
-      return;
-    }
-    
-    const userPhone = data[0].phone;
-    console.log(`Found user with phone: ${userPhone}, updating subscription status`);
-    
-    // Update user subscription status
-    const { error: updateError } = await supabase
-      .from('sex_mode')
-      .update({
-        is_subscribed: false,
-        subscription_end: new Date().toISOString(),
-        subscription_status: 'canceled'
-      })
-      .eq('phone', userPhone);
-    
-    if (updateError) {
-      console.error('Error updating user subscription status:', updateError);
+      
+      // Try with case-insensitive match as fallback
+      const { data: iLikeData, error: iLikeError } = await supabase
+        .from('sex_mode')
+        .select('phone')
+        .ilike('stripe_subscription_id', subscription.id);
+      
+      if (iLikeError) {
+        console.error('Error finding user with case-insensitive match:', iLikeError);
+        return;
+      }
+      
+      if (!iLikeData || iLikeData.length === 0) {
+        console.log('No match found even with case-insensitive search');
+        return;
+      }
+      
+      console.log('Found match with case-insensitive search:', iLikeData);
+      const userPhone = iLikeData[0].phone;
+      updateSubscriptionStatus(userPhone);
     } else {
-      console.log(`Successfully updated subscription status for user ${userPhone}`);
+      const userPhone = data[0].phone;
+      console.log(`Found user with phone: ${userPhone}, updating subscription status`);
+      updateSubscriptionStatus(userPhone);
     }
   } catch (error) {
     console.error('Error handling canceled subscription:', error);
+  }
+}
+
+// Helper function to update subscription status
+async function updateSubscriptionStatus(userPhone) {
+  const { error: updateError } = await supabase
+    .from('sex_mode')
+    .update({
+      is_subscribed: false,
+      subscription_end: new Date().toISOString(),
+      subscription_status: 'canceled'
+    })
+    .eq('phone', userPhone);
+  
+  if (updateError) {
+    console.error('Error updating user subscription status:', updateError);
+  } else {
+    console.log(`Successfully updated subscription status for user ${userPhone}`);
   }
 }
 
