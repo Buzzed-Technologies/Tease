@@ -456,22 +456,67 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const sessionId = urlParams.get('session_id');
                 
-                if (sessionId) {
-                    // Handle successful subscription
-                    handleSuccessfulSubscription(sessionId);
-                } else {
-                    // Load model data and packages
-                    loadModelData();
-                }
+                // Fetch Stripe configuration from server
+                fetchStripeConfig().then(() => {
+                    if (sessionId) {
+                        // Handle successful subscription
+                        handleSuccessfulSubscription(sessionId);
+                    } else {
+                        // Load model data and packages
+                        loadModelData();
+                    }
+                });
             } else {
                 console.error('Supabase client library not loaded');
             }
         }
         
-        // Stripe initialization
-        const stripePublicKey = document.querySelector('meta[name="stripe-public-key"]')?.getAttribute('content') || 
-            'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
-        const stripe = Stripe(stripePublicKey);
+        // Stripe initialization - will be updated after fetching config
+        let stripe;
+        let stripePublicKey = document.querySelector('meta[name="stripe-public-key"]')?.getAttribute('content');
+        
+        // Fetch Stripe config from server
+        async function fetchStripeConfig() {
+            try {
+                console.log('Fetching Stripe configuration from server...');
+                const response = await fetch('/api/config');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch config from server');
+                }
+                
+                const config = await response.json();
+                console.log('Server config received:', config);
+                
+                // Only update if we got a real key (not placeholder or empty)
+                if (config.stripePublicKey && !config.stripePublicKey.includes('%STRIPE_PUBLIC_KEY%') && config.stripePublicKey !== stripePublicKey) {
+                    console.log('Using Stripe public key from server');
+                    stripePublicKey = config.stripePublicKey;
+                } else if (!stripePublicKey || stripePublicKey.includes('%STRIPE_PUBLIC_KEY%')) {
+                    console.log('Using hardcoded Stripe public key fallback');
+                    stripePublicKey = 'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
+                }
+                
+                // Initialize Stripe with the key
+                console.log('Initializing Stripe with key starting with:', stripePublicKey.substring(0, 10) + '...');
+                stripe = Stripe(stripePublicKey);
+                
+                // Test Stripe connection
+                const testResponse = await fetch('/api/stripe-test');
+                if (testResponse.ok) {
+                    const testData = await testResponse.json();
+                    console.log('Stripe test result:', testData);
+                }
+                
+            } catch (error) {
+                console.error('Error fetching Stripe config:', error);
+                // If we failed to get the key from the server, use the hardcoded one or the meta tag one
+                if (!stripePublicKey || stripePublicKey.includes('%STRIPE_PUBLIC_KEY%')) {
+                    stripePublicKey = 'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
+                }
+                stripe = Stripe(stripePublicKey);
+            }
+        }
         
         // DOM elements
         const modelImage = document.getElementById('model-image');
@@ -548,7 +593,9 @@
                 
                 // Set background image if available
                 if (modelData.pictures && modelData.pictures.length > 0) {
-                    modelImage.style.backgroundImage = `url(/images/models/${modelData.pictures[0]})`;
+                    const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images//${modelData.pictures[0].replace('.jpg', '.PNG')}`;
+                    console.log('Loading model image from:', imageUrl);
+                    modelImage.style.backgroundImage = `url(${imageUrl})`;
                 } else {
                     modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
                 }
@@ -582,12 +629,20 @@
                 return;
             }
             
+            console.log('Available packages:', packages);
+            
             // Find if there's a "premium" package to highlight
             const premiumPackage = packages.find(pkg => pkg.name.toLowerCase().includes('premium'));
             
             // Create a card for each package
             packages.forEach((pkg, index) => {
                 const isPremium = pkg.id === (premiumPackage?.id);
+                
+                console.log(`Package ${index}: id=${pkg.id}, name=${pkg.name}, price=${pkg.price}, stripePrice=${pkg.stripe_price_id}`);
+                
+                if (!pkg.stripe_price_id) {
+                    console.warn(`Warning: Package ${pkg.name} doesn't have a Stripe price ID`);
+                }
                 
                 const packageCard = document.createElement('div');
                 packageCard.className = 'package-card';
@@ -610,7 +665,7 @@
                         ${getFeaturesList(pkg)}
                     </div>
                     
-                    <button class="package-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id}">
+                    <button class="package-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id || ''}">
                         Subscribe Now
                     </button>
                 `;
@@ -621,6 +676,10 @@
             // Add event listeners to subscribe buttons
             const subscribeButtons = document.querySelectorAll('.package-button');
             subscribeButtons.forEach(button => {
+                const packageId = button.getAttribute('data-package-id');
+                const priceId = button.getAttribute('data-price-id');
+                console.log(`Button setup for package ${packageId} with price ID ${priceId}`);
+                
                 button.addEventListener('click', handleSubscribeClick);
             });
         }
@@ -678,6 +737,8 @@
                 return;
             }
             
+            console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
+            
             try {
                 // Disable button and show loading state
                 const originalText = button.textContent;
@@ -686,35 +747,41 @@
                 
                 // First create a customer if user doesn't have a Stripe ID
                 if (!userData.stripe_customer_id) {
-                    const { data: customer, error: customerError } = await fetch('/api/create-customer', {
+                    console.log('Creating new Stripe customer...');
+                    const createCustomerResponse = await fetch('/api/create-customer', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             name: userData.name,
-                            email: '', // We use telegram username instead
-                            telegram: userData.telegram
+                            email: `${userData.telegram}@example.com`, // Using telegram as placeholder email
+                            phone: userData.telegram // Using telegram as contactable info
                         })
-                    }).then(res => res.json());
+                    });
                     
-                    if (customerError) {
-                        throw new Error(customerError.message || 'Error creating customer');
+                    if (!createCustomerResponse.ok) {
+                        const errorData = await createCustomerResponse.json();
+                        throw new Error(errorData.error || 'Error creating customer');
                     }
                     
+                    const customer = await createCustomerResponse.json();
+                    console.log('Customer created:', customer);
+                    
                     // Store the customer ID
-                    userData.stripe_customer_id = customer.id;
+                    userData.stripe_customer_id = customer.customerId;
                     localStorage.setItem('tease_user', JSON.stringify(userData));
                     
                     // Update the customer ID in the database
                     await supabase
                         .from('profiles')
-                        .update({ stripe_customer_id: customer.id })
+                        .update({ stripe_customer_id: customer.customerId })
                         .eq('id', userData.id);
                 }
                 
                 // Create checkout session
-                const { data: session, error: sessionError } = await fetch('/api/create-checkout-session', {
+                console.log('Creating checkout session with customer ID:', userData.stripe_customer_id);
+                const createSessionResponse = await fetch('/api/create-checkout-session', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -723,18 +790,27 @@
                         priceId: priceId,
                         customerId: userData.stripe_customer_id,
                         userId: userData.id,
-                        packageId: packageId,
+                        userPhone: userData.telegram,
                         successUrl: window.location.origin + '/subscription.html?session_id={CHECKOUT_SESSION_ID}',
                         cancelUrl: window.location.origin + '/subscription.html'
                     })
-                }).then(res => res.json());
+                });
                 
-                if (sessionError) {
-                    throw new Error(sessionError.message || 'Error creating checkout session');
+                if (!createSessionResponse.ok) {
+                    const errorData = await createSessionResponse.json();
+                    throw new Error(errorData.error || 'Error creating checkout session');
                 }
                 
+                const session = await createSessionResponse.json();
+                console.log('Session created:', session);
+                
                 // Redirect to Stripe Checkout
-                stripe.redirectToCheckout({ sessionId: session.id });
+                if (session.url) {
+                    console.log('Redirecting to Stripe checkout:', session.url);
+                    window.location.href = session.url;
+                } else {
+                    stripe.redirectToCheckout({ sessionId: session.sessionId });
+                }
                 
             } catch (error) {
                 console.error('Subscription error:', error);

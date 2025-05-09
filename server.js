@@ -38,16 +38,52 @@ app.get('/api/config', (req, res) => {
     console.log('Key starts with:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0, 10) + '...');
   }
   
+  console.log('STRIPE_SECRET_KEY available:', !!process.env.STRIPE_SECRET_KEY);
+  console.log('STRIPE_PUBLIC_KEY available:', !!process.env.STRIPE_PUBLIC_KEY);
+  console.log('STRIPE_WEBHOOK_SECRET available:', !!process.env.STRIPE_WEBHOOK_SECRET);
+  
   res.json({
     supabaseUrl: 'https://kigcecwfxlonrdxjwsza.supabase.co',
     supabaseKey: supabaseKey,
+    stripePublicKey: process.env.STRIPE_PUBLIC_KEY || '',
     env: process.env.NODE_ENV,
     keysAvailable: {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      STRIPE_SECRET_KEY: !!process.env.STRIPE_SECRET_KEY,
       STRIPE_PUBLIC_KEY: !!process.env.STRIPE_PUBLIC_KEY,
+      STRIPE_WEBHOOK_SECRET: !!process.env.STRIPE_WEBHOOK_SECRET,
     },
     timestamp: new Date().toISOString()
   });
+});
+
+// Add Stripe test endpoint
+app.get('/api/stripe-test', async (req, res) => {
+  try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return res.status(500).json({ 
+        error: 'Stripe secret key not found',
+        configured: false
+      });
+    }
+    
+    // Try to make a simple API call to check if the key is valid
+    const products = await stripe.products.list({ limit: 1 });
+    
+    res.json({
+      configured: true,
+      stripeVersion: stripe.VERSION,
+      testMode: process.env.STRIPE_SECRET_KEY.startsWith('sk_test_'),
+      productsCount: products.data.length
+    });
+  } catch (error) {
+    console.error('Stripe connection test failed:', error);
+    res.status(500).json({ 
+      error: error.message,
+      configured: false,
+      details: 'Stripe connection test failed'
+    });
+  }
 });
 
 // Stripe API endpoints
@@ -238,6 +274,65 @@ app.post('/api/webhook', bodyParser.raw({type: 'application/json'}), async (req,
   }
 
   res.status(200).json({received: true});
+});
+
+// Endpoint to verify a checkout session
+app.post('/api/verify-session', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+    
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Session ID is required' });
+    }
+    
+    // Retrieve the session from Stripe
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    
+    // Check if the payment was successful
+    if (session.payment_status === 'paid' && session.status === 'complete') {
+      // Get the subscription and customer details
+      const subscriptionId = session.subscription;
+      const customerId = session.customer;
+      const userId = session.metadata?.userId;
+      
+      // Update subscription status in the database if not already done by webhook
+      if (userId) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('subscription_status')
+          .eq('id', userId)
+          .single();
+        
+        if (!error && !data.subscription_status) {
+          // If status is not yet updated (webhook might be delayed), update it now
+          await supabase
+            .from('profiles')
+            .update({ 
+              subscription_status: true,
+              stripe_customer_id: customerId,
+              stripe_subscription_id: subscriptionId,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', userId);
+        }
+      }
+      
+      return res.json({
+        success: true,
+        sessionId,
+        subscriptionId,
+        customerId
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: 'Payment not completed'
+      });
+    }
+  } catch (error) {
+    console.error('Error verifying session:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Helper function to handle successful subscription
