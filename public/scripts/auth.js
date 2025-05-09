@@ -3,49 +3,98 @@ const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
 
 // Try to get the API key from different sources
 let supabaseAnonKey;
+let supabase = null;
 
 // Function to initialize Supabase client
-function initSupabase() {
+async function initSupabase() {
     try {
-        // Create the client using the imported library
         console.log('Initializing Supabase client');
-        return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        
+        // Try fetching the API key from our server endpoint first
+        try {
+            console.log('Fetching API key from server...');
+            const response = await fetch('/api/config');
+            if (response.ok) {
+                const config = await response.json();
+                if (config.supabaseKey) {
+                    supabaseAnonKey = config.supabaseKey;
+                    console.log('Successfully fetched API key from server');
+                } else {
+                    console.warn('API key not found in server response');
+                }
+            } else {
+                console.warn('Failed to fetch API key from server:', response.status);
+            }
+        } catch (error) {
+            console.warn('Error fetching API key from server:', error);
+        }
+        
+        // If still no API key, try other methods
+        if (!supabaseAnonKey) {
+            // Try to get from meta tag
+            const metaKey = document.querySelector('meta[name="supabase-anon-key"]');
+            if (metaKey) {
+                supabaseAnonKey = metaKey.getAttribute('content');
+                console.log('Using Supabase key from meta tag');
+            }
+            // Use the hardcoded key as last resort
+            else {
+                supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                console.log('Using hardcoded Supabase key');
+            }
+        }
+        
+        // Initialize Supabase client
+        if (supabaseAnonKey) {
+            console.log(`Using API key (first 5 chars): ${supabaseAnonKey.substring(0, 5)}...`);
+            return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        } else {
+            throw new Error('No API key available');
+        }
     } catch (error) {
         console.error('Failed to initialize Supabase client:', error);
         return null;
     }
 }
 
-// Check for API key in various sources
-if (typeof window !== 'undefined') {
-    // Try to get from window.__env__ (sometimes used for client-side env vars)
-    if (window.__env__ && window.__env__.SUPABASE_ANON_KEY) {
-        supabaseAnonKey = window.__env__.SUPABASE_ANON_KEY;
-        console.log('Using Supabase key from window.__env__');
-    } 
-    // Try to get from a meta tag
-    else {
-        const metaKey = document.querySelector('meta[name="supabase-anon-key"]');
-        if (metaKey) {
-            supabaseAnonKey = metaKey.getAttribute('content');
-            console.log('Using Supabase key from meta tag');
-        }
-        // Use the hardcoded key as last resort
-        else {
-            supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-            console.log('Using hardcoded Supabase key');
-        }
-    }
-}
-
-// Initialize the Supabase client
-const supabase = initSupabase();
-
 // DOM Elements
 let loginForm, signupForm, personaButtons, personaSelected = null;
 
 // Track initialization status
 let isInitialized = false;
+
+// Initialize Supabase and Auth system
+async function initialize() {
+    // Initialize Supabase
+    supabase = await initSupabase();
+    
+    if (!supabase) {
+        console.error('Failed to initialize Supabase client. Auth functionality will not work.');
+        // Show error message to user
+        const errorMessage = document.createElement('div');
+        errorMessage.style.position = 'fixed';
+        errorMessage.style.top = '10px';
+        errorMessage.style.left = '50%';
+        errorMessage.style.transform = 'translateX(-50%)';
+        errorMessage.style.padding = '10px 20px';
+        errorMessage.style.backgroundColor = '#f44336';
+        errorMessage.style.color = 'white';
+        errorMessage.style.borderRadius = '4px';
+        errorMessage.style.zIndex = '9999';
+        errorMessage.textContent = 'Authentication system is currently unavailable. Please try again later.';
+        document.body.appendChild(errorMessage);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            errorMessage.remove();
+        }, 5000);
+        
+        return;
+    }
+    
+    // Initialize auth system
+    initAuth();
+}
 
 // Initialize the auth system
 function initAuth() {
@@ -583,6 +632,6 @@ onDocumentReady(function() {
         debugElement('signup-message');
     }
     
-    // Initialize auth system
-    initAuth();
+    // Initialize Supabase and auth system
+    initialize();
 }); 

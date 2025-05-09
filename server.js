@@ -1,9 +1,27 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Add this debug endpoint to help troubleshoot environment variable issues
+app.get('/api/config', (req, res) => {
+  // Send Supabase config to client
+  res.json({
+    supabaseUrl: 'https://kigcecwfxlonrdxjwsza.supabase.co',
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    env: process.env.NODE_ENV,
+    keysAvailable: {
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      // Don't include actual keys in response
+    }
+  });
+});
 
 // Middleware to inject environment variables into HTML files
 app.use((req, res, next) => {
@@ -58,4 +76,7 @@ app.get('/:page', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Supabase key available: ${!!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`);
+  if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.log(`Key starts with: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0, 5)}...`);
+  }
 }); 
