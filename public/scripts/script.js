@@ -638,6 +638,35 @@ async function updateSubscriptionStatus(userData) {
                 // Setup Stripe portal button
                 document.getElementById('manage-subscription').addEventListener('click', async () => {
                     try {
+                        // Check if we're in development/test mode
+                        if (window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.hostname.includes('vercel.app')) {
+                            // Show cancellation option directly in the app for dev environments
+                            if (confirm('Stripe Customer Portal may not be configured in test mode. Would you like to cancel your subscription directly?')) {
+                                const cancelResponse = await fetch('/api/cancel-subscription', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        subscriptionId: data.stripeSubscriptionId
+                                    })
+                                });
+                                
+                                if (cancelResponse.ok) {
+                                    alert('Your subscription has been cancelled. Your access will continue until the end of your billing period.');
+                                    // Refresh the page to show updated subscription status
+                                    window.location.reload();
+                                } else {
+                                    console.error('Error cancelling subscription:', await cancelResponse.text());
+                                    alert('Could not cancel subscription. Please try again later.');
+                                }
+                            }
+                            return;
+                        }
+                        
+                        // For production, try using the portal
                         const portalResponse = await fetch('/api/create-portal-session', {
                             method: 'POST',
                             headers: {
@@ -653,12 +682,34 @@ async function updateSubscriptionStatus(userData) {
                             const portalData = await portalResponse.json();
                             window.location.href = portalData.url;
                         } else {
-                            console.error('Error creating portal session:', await portalResponse.text());
-                            alert('Could not open subscription management. Please try again later.');
+                            const errorText = await portalResponse.text();
+                            console.error('Error creating portal session:', errorText);
+                            
+                            // If portal isn't configured, offer direct cancellation
+                            if (confirm('Unable to access subscription management. Would you like to cancel your subscription instead?')) {
+                                const cancelResponse = await fetch('/api/cancel-subscription', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        subscriptionId: data.stripeSubscriptionId
+                                    })
+                                });
+                                
+                                if (cancelResponse.ok) {
+                                    alert('Your subscription has been cancelled. Your access will continue until the end of your billing period.');
+                                    // Refresh the page to show updated subscription status
+                                    window.location.reload();
+                                } else {
+                                    console.error('Error cancelling subscription:', await cancelResponse.text());
+                                    alert('Could not cancel subscription. Please try again later.');
+                                }
+                            }
                         }
                     } catch (error) {
-                        console.error('Error creating portal session:', error);
-                        alert('Could not open subscription management. Please try again later.');
+                        console.error('Error managing subscription:', error);
+                        alert('Could not manage subscription. Please try again later.');
                     }
                 });
             } else {
