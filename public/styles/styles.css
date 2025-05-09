@@ -1053,4 +1053,22 @@ footer {
     font-size: 0.9rem;
     line-height: 1.5;
     margin-bottom: 0;
+}
+
+/* Add age field styles */
+.form-group .age-disclaimer {
+    color: #ff4757;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 } 

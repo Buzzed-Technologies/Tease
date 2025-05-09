@@ -234,6 +234,8 @@ function setupPersonaSelection() {
                 
                 const personaNameEl = persona.querySelector('h3');
                 const personaStyle = persona.getAttribute('data-style');
+                const personaDetailedStyle = persona.querySelector('.persona-style') ? 
+                    persona.querySelector('.persona-style').value : '';
                 
                 if (!personaNameEl || !personaStyle) return;
                 
@@ -242,40 +244,21 @@ function setupPersonaSelection() {
                 // Store the selected persona
                 personaSelected = {
                     name: personaName,
-                    style: personaStyle
+                    style: personaStyle,
+                    detailedStyle: personaDetailedStyle
                 };
                 
                 // Update hidden input with selected persona
                 const selectedPersonaInput = document.getElementById('selected-persona');
                 if (selectedPersonaInput) {
-                    selectedPersonaInput.value = personaStyle;
+                    selectedPersonaInput.value = personaName;
                 }
                 
-                // Remove selected class from all personas
-                document.querySelectorAll('.persona').forEach(p => {
-                    p.classList.remove('selected');
-                });
-                
-                // Add selected class to this persona
-                persona.classList.add('selected');
-                
-                // Update button text
-                button.textContent = 'Selected';
-                
-                // Scroll to signup section after a delay
-                const screens = document.querySelectorAll('.screen');
-                if (screens && screens.length) {
-                    const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
-                    if (ctaSectionIndex !== -1) {
-                        setTimeout(() => {
-                            window.dispatchEvent(new CustomEvent('scrollToSection', { 
-                                detail: { sectionIndex: ctaSectionIndex } 
-                            }));
-                        }, 500);
-                    }
-                }
+                console.log('Selected persona:', personaSelected);
             });
         });
+    } else {
+        console.warn('No persona buttons found on homepage');
     }
 }
 
@@ -463,124 +446,153 @@ async function handleLogin(e) {
 
 // Handle signup from homepage
 async function handleSignupFromHomepage() {
-    // These elements should now be guaranteed to exist because of the check in the click handler
-    const nameEl = document.getElementById('name');
-    const phoneEl = document.getElementById('phone');
-    const passwordEl = document.getElementById('password'); 
-    const confirmPasswordEl = document.getElementById('confirm-password');
-    const statusEl = document.getElementById('signup-message');
-    
-    const name = nameEl.value;
-    const phone = phoneEl.value;
-    const password = passwordEl.value;
-    const confirmPassword = confirmPasswordEl.value;
-    
     try {
-        // Get selected persona
-        let persona = '';
-        const selectedPersonaEl = document.getElementById('selected-persona');
+        // Get form elements
+        const name = document.getElementById('name').value.trim();
+        const age = document.getElementById('age') ? parseInt(document.getElementById('age').value) : 0;
+        const phone = document.getElementById('phone').value.trim().replace(/\s/g, '');
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const statusEl = document.getElementById('signup-message');
         
-        if (selectedPersonaEl) {
-            persona = selectedPersonaEl.value;
+        // Reset any previous messages
+        statusEl.textContent = '';
+        statusEl.className = 'form-message';
+        
+        // Basic validation
+        if (!name || !phone || !password) {
+            statusEl.textContent = 'Please fill in all required fields.';
+            statusEl.className = 'form-message error';
+            return;
         }
         
-        // If no persona was explicitly selected, use the first one that's marked as selected
-        if (!persona) {
-            const selectedPersonaEl = document.querySelector('.persona.selected');
-            if (selectedPersonaEl) {
-                persona = selectedPersonaEl.getAttribute('data-style');
-            } else {
-                throw new Error('Please select a companion first');
-            }
+        // Age validation
+        if (!age || age < 18) {
+            statusEl.textContent = 'You must be at least 18 years old to use Tease.';
+            statusEl.className = 'form-message error';
+            return;
         }
         
-        // Validation
-        if (!name || !phone || !password || !confirmPassword) {
-            throw new Error('All fields are required');
-        }
-        
+        // Password validation
         if (password !== confirmPassword) {
-            throw new Error('Passwords do not match');
+            statusEl.textContent = 'Passwords do not match.';
+            statusEl.className = 'form-message error';
+            return;
         }
         
-        statusEl.textContent = 'Creating account...';
-        statusEl.classList.remove('error');
+        if (password.length < 6) {
+            statusEl.textContent = 'Password must be at least 6 characters long.';
+            statusEl.className = 'form-message error';
+            return;
+        }
         
-        // Check if user already exists
-        const { data: existingUser } = await supabase
+        // Check if persona was selected
+        if (!personaSelected) {
+            statusEl.textContent = 'Please select a companion persona first.';
+            statusEl.className = 'form-message error';
+            
+            // Scroll to personas section if possible
+            if (typeof updateSection === 'function') {
+                const screens = document.querySelectorAll('.screen');
+                const personasSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'personas');
+                if (personasSectionIndex !== -1) {
+                    updateSection(personasSectionIndex);
+                }
+            }
+            return;
+        }
+        
+        // Show loading state
+        statusEl.textContent = 'Creating your account...';
+        statusEl.className = 'form-message';
+        
+        // Check if supabase client is available
+        if (!supabase) {
+            statusEl.textContent = 'Authentication service is currently unavailable. Please try again later.';
+            statusEl.className = 'form-message error';
+            return;
+        }
+        
+        // First check if user already exists
+        const { data: existingUser, error: checkError } = await supabase
             .from('sex_mode')
             .select('phone')
             .eq('phone', phone)
             .single();
-            
+        
         if (existingUser) {
-            throw new Error('An account with this phone number already exists');
+            statusEl.textContent = 'An account with this phone number already exists. Please log in.';
+            statusEl.className = 'form-message error';
+            return;
         }
         
-        // Insert new user
+        // Sign up the user in the database
         const { data, error } = await supabase
             .from('sex_mode')
             .insert([
                 { 
-                    phone, 
-                    name, 
-                    password_hash: password, 
-                    persona,
-                    is_subscribed: false,
-                    created_at: new Date()
+                    name: name,
+                    phone: phone,
+                    age: age,
+                    password_hash: await hashPassword(password),
+                    persona: personaSelected.name,
+                    style: personaSelected.detailedStyle || '',
+                    created_at: new Date().toISOString()
                 }
             ])
-            .select()
-            .single();
-            
-        if (error) throw error;
+            .select();
+        
+        if (error) {
+            console.error('Signup error:', error);
+            statusEl.textContent = 'Error creating account. Please try again later.';
+            statusEl.className = 'form-message error';
+            return;
+        }
+        
+        console.log('User created successfully:', data);
         
         // Store user in local storage
-        localStorage.setItem('tease_user', JSON.stringify({
-            id: data.id,
-            phone: data.phone,
-            name: data.name,
-            persona: data.persona,
-            isSubscribed: false
-        }));
+        const user = {
+            id: data[0].id,
+            name: name,
+            phone: phone,
+            age: age,
+            persona: personaSelected.name,
+            style: personaSelected.detailedStyle || '',
+            created_at: data[0].created_at
+        };
         
-        // Show success message
+        localStorage.setItem('tease_user', JSON.stringify(user));
+        
+        // Show success UI
+        const signupSuccess = document.getElementById('signup-success');
         const signupForm = document.getElementById('signup-form');
-        const successMessage = document.getElementById('signup-success');
+        const successMessage = document.getElementById('success-message');
         
-        if (signupForm && successMessage) {
+        if (signupSuccess && signupForm && successMessage) {
             signupForm.style.display = 'none';
-            successMessage.style.display = 'block';
+            signupSuccess.style.display = 'block';
+            successMessage.textContent = `You're all set to start your experience with ${personaSelected.name}.`;
             
-            // Set selected persona name in success message
-            const successMessageEl = document.getElementById('success-message');
-            if (successMessageEl) {
-                // Find persona name - safely handling if element doesn't exist
-                let personaName = persona; // Default to the style as name
-                const personaEl = document.querySelector(`.persona[data-style="${persona}"] h3`);
-                if (personaEl) {
-                    personaName = personaEl.textContent;
-                }
-                
-                successMessageEl.textContent = 
-                    `You're all set to start your experience with ${personaName}.`;
-            }
-                
-            // Setup continue button
+            // Set up continue button
             const continueButton = document.getElementById('continue-button');
             if (continueButton) {
-                continueButton.addEventListener('click', () => {
-                    window.location.href = '/subscription.html';
+                continueButton.addEventListener('click', function() {
+                    window.location.href = '/dashboard.html';
                 });
             }
         } else {
-            // If we can't find the success message elements, just redirect
-            window.location.href = '/subscription.html';
+            // Fallback if DOM elements not found
+            window.location.href = '/dashboard.html';
         }
+        
     } catch (error) {
-        console.error('Signup error:', error);
-        statusEl.textContent = error.message;
-        statusEl.classList.add('error');
+        console.error('Error in signup process:', error);
+        const statusEl = document.getElementById('signup-message');
+        if (statusEl) {
+            statusEl.textContent = 'An unexpected error occurred. Please try again later.';
+            statusEl.className = 'form-message error';
+        }
     }
 }
 
@@ -681,4 +693,27 @@ onDocumentReady(function() {
     
     // Initialize Supabase and auth system
     initialize();
-}); 
+});
+
+// Simple password hashing function for client-side
+// In a production environment, you should hash on the server side for security
+async function hashPassword(password) {
+    try {
+        // Convert the password string to an array buffer
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        
+        // Hash the data using SHA-256
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        
+        // Convert the hash to a hexadecimal string
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        return hashHex;
+    } catch (error) {
+        console.error('Error hashing password:', error);
+        // Fallback for browsers that don't support crypto.subtle
+        return password; // Not secure, but prevents errors
+    }
+} 

@@ -271,11 +271,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const persona = button.closest('.persona');
             const personaName = persona.querySelector('h3').textContent;
             const personaStyle = persona.getAttribute('data-style');
+            const personaDetailedStyle = persona.querySelector('.persona-style') ? 
+                                        persona.querySelector('.persona-style').value : '';
             
             // Store the selected persona
             selectedPersona = {
                 name: personaName,
-                style: personaStyle
+                style: personaStyle,
+                detailedStyle: personaDetailedStyle
             };
             
             // Remove selected class from all personas
@@ -422,11 +425,18 @@ document.addEventListener('DOMContentLoaded', () => {
         formButton.addEventListener('click', (e) => {
             e.preventDefault();
             const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
             
+            // Age validation
+            if (parseInt(age) < 18) {
+                alert('You must be at least 18 years old to use Tease');
+                return;
+            }
+            
             // Simple validation
-            if (!name || !phone || !password) {
+            if (!name || !age || !phone || !password) {
                 alert('Please fill out all fields');
                 return;
             }
@@ -468,8 +478,19 @@ document.addEventListener('DOMContentLoaded', () => {
             signupForm.appendChild(successMessage);
             signupForm.classList.add('success');
             
+            // Store user data in local storage
+            const userData = {
+                name,
+                age,
+                phone,
+                persona: selectedPersona.name,
+                style: selectedPersona.detailedStyle || 'Default style'
+            };
+            
+            localStorage.setItem('tease_user', JSON.stringify(userData));
+            
             // Normally you would send this data to a server
-            console.log('Sign up:', { name, phone, persona: selectedPersona });
+            console.log('Sign up:', userData);
         });
     }
     
