@@ -11,6 +11,22 @@ const PRICE_IDS = {
     monthly: 'price_1RMiqJB71e12H8w7o8ejsbK7'
 };
 
+// Plan price mapping
+const PLAN_PRICES = {
+    yearly: {
+        monthly: '$16.67',
+        total: '$199.99'
+    },
+    quarterly: {
+        monthly: '$18.66',
+        total: '$55.99'
+    },
+    monthly: {
+        monthly: '$19.99',
+        total: '$19.99'
+    }
+};
+
 // Initialize subscription system
 function initSubscription() {
     // Check if user is logged in
