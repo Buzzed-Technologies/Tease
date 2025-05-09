@@ -154,7 +154,7 @@
                     </div>
                 </div>
                 
-                <button id="continue-to-chat" class="primary-button">Continue to Chat</button>
+                <button id="continue-to-dashboard" class="primary-button">Go to Dashboard</button>
             </div>
         </div>
     </div>
@@ -166,6 +166,11 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Redirect to dashboard automatically after a brief delay
+            setTimeout(() => {
+                window.location.href = '/dashboard.html';
+            }, 3000);
+            
             // Show success state after a brief loading period
             // In a real implementation, this would check the session status
             setTimeout(() => {
@@ -188,8 +193,8 @@
                 }
                 
                 // Setup continue button
-                document.getElementById('continue-to-chat').addEventListener('click', () => {
-                    window.location.href = '/chat.html';
+                document.getElementById('continue-to-dashboard').addEventListener('click', () => {
+                    window.location.href = '/dashboard.html';
                 });
             }, 2000);
         });

@@ -197,55 +197,49 @@
                         </div>
                         
                         <div class="persona-actions">
-                            <a href="/chat.html" class="cta-button"><i class="fas fa-comment-alt"></i> Start Conversation</a>
-                            <button id="change-persona" class="outline-button"><i class="fas fa-exchange-alt"></i> Change Companion</button>
+                            <p>Your conversation with your AI companion is available in a separate application.</p>
                         </div>
-                    </div>
-                    
-                    <div id="select-persona" class="persona-selection" style="display: none;">
-                        <h3>Choose a New Companion</h3>
-                        <p>Select from our collection of AI companions, each with a unique personality and style.</p>
                         
-                        <div class="personas-grid">
-                            <div class="persona-card" data-persona="aria" data-style="passionate">
-                                <div class="persona-card-image"></div>
-                                <h4>Aria</h4>
-                                <span class="persona-tag">The Passionate</span>
-                                <p>Intense, seductive, and emotionally expressive.</p>
-                                <button class="select-persona-btn">Select</button>
-                            </div>
-                            
-                            <div class="persona-card" data-persona="zara" data-style="playful">
-                                <div class="persona-card-image"></div>
-                                <h4>Zara</h4>
-                                <span class="persona-tag">The Playful</span>
-                                <p>Adventurous, flirtatious, and spontaneous.</p>
-                                <button class="select-persona-btn">Select</button>
-                            </div>
-                            
-                            <div class="persona-card" data-persona="demi" data-style="dominant">
-                                <div class="persona-card-image"></div>
-                                <h4>Demi</h4>
-                                <span class="persona-tag">The Dominant</span>
-                                <p>Confident, assertive, and commanding.</p>
-                                <button class="select-persona-btn">Select</button>
-                            </div>
-                            
-                            <div class="persona-card" data-persona="luna" data-style="sensual">
-                                <div class="persona-card-image"></div>
-                                <h4>Luna</h4>
-                                <span class="persona-tag">The Sensual</span>
-                                <p>Intuitive, seductive, and attentive.</p>
-                                <button class="select-persona-btn">Select</button>
-                            </div>
-                            
-                            <div class="persona-card" data-persona="thea" data-style="intellectual">
-                                <div class="persona-card-image"></div>
-                                <h4>Thea</h4>
-                                <span class="persona-tag">The Intellectual</span>
-                                <p>Thoughtful, witty, and articulate.</p>
-                                <button class="select-persona-btn">Select</button>
-                            </div>
+                        <div class="persona-preferences">
+                            <h3>Companion Preferences</h3>
+                            <form id="persona-preferences-form">
+                                <div class="form-group">
+                                    <label for="persona-nickname">Nickname for your companion</label>
+                                    <input type="text" id="persona-nickname" placeholder="Enter a nickname">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Allowed Topics</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="topic-romantic" checked>
+                                            <span class="checkbox-text">Romantic</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="topic-explicit" checked>
+                                            <span class="checkbox-text">Explicit</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="topic-fantasy" checked>
+                                            <span class="checkbox-text">Fantasy</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="interaction-style">Interaction Style</label>
+                                    <select id="interaction-style">
+                                        <option value="playful">Playful & Teasing</option>
+                                        <option value="passionate" selected>Passionate & Intense</option>
+                                        <option value="gentle">Gentle & Romantic</option>
+                                        <option value="dominant">Dominant & Assertive</option>
+                                        <option value="submissive">Submissive & Eager to Please</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-message" id="persona-preferences-message"></div>
+                                <button type="submit" class="cta-button">Save Preferences</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -279,6 +273,6 @@
     
     <!-- Application scripts -->
     <script src="/scripts/auth.js"></script>
-    <script src="/scripts/dashboard.js"></script>
+    <script src="/scripts/script.js"></script>
 </body>
 </html> 

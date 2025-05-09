@@ -76,7 +76,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
         },
       ],
       mode: 'subscription',
-      success_url: successUrl || `${req.headers.origin}/subscription-success.html?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: successUrl || `${req.headers.origin}/dashboard.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || `${req.headers.origin}/subscription.html`,
       metadata: {
         userId: userId,
