@@ -379,12 +379,19 @@ async function handleLogin(e) {
             .from('sex_mode')
             .select('*')
             .eq('phone', phone)
-            .single();
+            .single()
+            .headers({
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            });
             
-        if (error) throw error;
+        if (error) {
+            console.error('Database error:', error);
+            throw new Error('Login failed. Please try again later.');
+        }
         
         if (!data) {
-            throw new Error('User not found');
+            throw new Error('User not found. Please check your phone number.');
         }
         
         // Verify password (in production, use secure auth methods)
@@ -400,6 +407,16 @@ async function handleLogin(e) {
             persona: data.persona,
             isSubscribed: data.is_subscribed
         }));
+        
+        // Update last login date
+        await supabase
+            .from('sex_mode')
+            .update({ last_login_date: new Date() })
+            .eq('phone', phone)
+            .headers({
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            });
         
         // Redirect based on subscription status
         if (data.is_subscribed) {
