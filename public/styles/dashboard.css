@@ -83,11 +83,16 @@
 .dashboard-container {
     padding: 2rem 10% 2rem;
     min-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .dashboard-section {
     display: none;
     padding: 2rem 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2rem;
 }
 
 .dashboard-section.active {
@@ -236,10 +241,11 @@
 
 /* Plan cards for subscription */
 .subscription-plans {
-    display: flex;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.5rem;
     margin-top: 2rem;
-    flex-wrap: wrap;
 }
 
 .plan-card {
@@ -695,7 +701,7 @@
     }
     
     .btn-text {
-        display: none;
+        display: none !important;
     }
     
     .text-button i {
@@ -768,17 +774,11 @@
 }
 
 .subscription-plans {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+    max-height: none;
+    overflow-y: visible;
 }
 
-@media (max-width: 768px) {
-    .subscription-plans {
-        grid-template-columns: 1fr;
-    }
-    
-    .inactive-subscription .plan-card {
-        margin-bottom: 1.5rem;
-    }
+/* Reset conflicting styles */
+.btn-text {
+    display: inline;
 } 

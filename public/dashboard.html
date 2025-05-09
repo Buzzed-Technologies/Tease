@@ -34,7 +34,10 @@
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button id="logout-btn" class="text-button" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Logout</span></button>
+                    <button id="logout-btn" class="text-button" aria-label="Logout">
+                        <i class="fas fa-sign-out-alt"></i> 
+                        <span class="btn-text">Logout</span>
+                    </button>
                 </div>
             </div>
         </header>
@@ -90,7 +93,10 @@
                                 <i class="fas fa-check-circle"></i> Active
                             </div>
                             <div class="subscription-actions">
-                                <button id="manage-subscription" class="text-button" aria-label="Manage Subscription"><i class="fas fa-cog"></i> <span class="btn-text">Manage Subscription</span></button>
+                                <button id="manage-subscription" class="text-button" aria-label="Manage Subscription">
+                                    <i class="fas fa-cog"></i> 
+                                    <span class="btn-text">Manage Subscription</span>
+                                </button>
                             </div>
                         </div>
                         
@@ -208,6 +214,11 @@
                         section.classList.remove('active');
                         if (section.id === targetId) {
                             section.classList.add('active');
+                            
+                            // Scroll to top of section on mobile
+                            if (window.innerWidth <= 576) {
+                                window.scrollTo(0, 0);
+                            }
                         }
                     });
                 });
