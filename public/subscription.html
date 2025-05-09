@@ -669,9 +669,6 @@
                 console.log('Initializing Stripe with key starting with:', stripePublicKey.substring(0, 10) + '...');
                 stripe = Stripe(stripePublicKey);
                 
-                // Test Stripe connection
-                testStripeConnection();
-                
             } catch (error) {
                 console.error('Error fetching Stripe config:', error);
                 // If we failed to get the key from the server, use the hardcoded one or the meta tag one
@@ -679,87 +676,6 @@
                     stripePublicKey = 'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
                 }
                 stripe = Stripe(stripePublicKey);
-                
-                // Test Stripe connection even if we had an error
-                testStripeConnection();
-            }
-        }
-        
-        // Test Stripe connection
-        async function testStripeConnection() {
-            try {
-                console.log('Testing Stripe connection...');
-                // Call a simple endpoint that doesn't require authentication
-                const product_id = 'prod_SHHPNACUSKUDnA'; 
-                const price_id = 'price_1RMiqJB71e12H8w7o8ejsbK7'; // Monthly price ID
-                
-                // Log the product ID and price ID we're using
-                console.log(`Using product ID: ${product_id} and price ID: ${price_id}`);
-                
-                // Add a test button to the page temporarily (for debugging only)
-                const testButtonContainer = document.createElement('div');
-                testButtonContainer.style.padding = '20px';
-                testButtonContainer.style.marginTop = '20px';
-                testButtonContainer.style.background = 'rgba(0,0,0,0.2)';
-                testButtonContainer.style.borderRadius = '8px';
-                testButtonContainer.innerHTML = `
-                    <p>Debug: Test Stripe Connection</p>
-                    <button id="test-stripe-button" style="padding: 10px; background: #333; color: white; border: none; cursor: pointer; border-radius: 4px;">
-                        Test Stripe Checkout
-                    </button>
-                    <div id="test-result" style="margin-top: 10px; font-size: 14px;"></div>
-                `;
-                
-                // Append it below the packages container
-                packagesContainer.parentNode.insertBefore(testButtonContainer, packagesContainer.nextSibling);
-                
-                // Add event listener to the test button
-                document.getElementById('test-stripe-button').addEventListener('click', async function() {
-                    const resultEl = document.getElementById('test-result');
-                    resultEl.textContent = 'Testing Stripe checkout...';
-                    
-                    try {
-                        // Create a test checkout session directly
-                        const response = await fetch('/api/create-checkout-session', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                priceId: price_id,
-                                customerId: userData.stripe_customer_id || undefined,
-                                userId: userData.id,
-                                userPhone: userData.telegram || '',
-                                successUrl: window.location.origin + '/subscription-success.html',
-                                cancelUrl: window.location.origin + '/subscription.html'
-                            })
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error('Failed to create checkout session');
-                        }
-                        
-                        const data = await response.json();
-                        console.log('Test checkout session created:', data);
-                        resultEl.textContent = 'Session created! Redirecting...';
-                        
-                        // Redirect to Stripe checkout
-                        if (data.url) {
-                            window.location.href = data.url;
-                        } else if (data.sessionId) {
-                            stripe.redirectToCheckout({ sessionId: data.sessionId });
-                        } else {
-                            throw new Error('No URL or session ID returned');
-                        }
-                    } catch (error) {
-                        console.error('Test checkout error:', error);
-                        resultEl.textContent = `Error: ${error.message}`;
-                        resultEl.style.color = 'red';
-                    }
-                });
-                
-            } catch (error) {
-                console.error('Error testing Stripe:', error);
             }
         }
         
