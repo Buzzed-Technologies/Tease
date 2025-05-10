@@ -64,14 +64,14 @@ function updatePageWithModel(model) {
   if (model.pictures && model.pictures.length > 0) {
     modelImageElements.forEach(element => {
       element.src = `/images/models/${model.pictures[0]}`;
-      element.alt = `${model.name} - Creator Profile`;
+      element.alt = `${model.name} - AI Companion`;
     });
   }
   
   // Update model bio
   const modelBioElements = document.querySelectorAll('.model-bio');
   modelBioElements.forEach(element => {
-    element.textContent = model.bio || 'Join this creator\'s platform for exclusive content and updates.';
+    element.textContent = model.bio || '';
   });
   
   // Update page title
@@ -143,7 +143,7 @@ async function initInvitePage() {
         loadingElement.innerHTML = `
           <div class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
-            <p>Sorry, we couldn't find the creator profile you're looking for.</p>
+            <p>Sorry, we couldn't find the companion you're looking for.</p>
             <a href="/" class="action-button">Go to Homepage</a>
           </div>
         `;

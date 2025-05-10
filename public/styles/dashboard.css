@@ -96,8 +96,8 @@
 .dashboard-container {
     padding: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
-    color: var(--darker);
+    background-color: var(--primary);
+    color: var(--dark);
 }
 
 .dashboard-content {
@@ -154,7 +154,7 @@
 
 .user-info h3 {
     margin: 0 0 0.5rem;
-    color: var(--darker);
+    color: var(--dark);
 }
 
 .user-info p {
@@ -175,7 +175,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: var(--darker);
+    color: var(--dark);
     font-size: 0.9rem;
 }
 
@@ -185,7 +185,7 @@
     border-radius: 8px;
     background-color: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--darker);
+    color: var(--dark);
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -279,12 +279,39 @@
 
 .tab-button:hover {
     background: rgba(211, 209, 218, 0.2);
-    color: var(--darker);
+    color: var(--dark);
 }
 
 .tab-button.active {
     background: var(--accent);
     color: var(--darker);
+}
+
+/* Logout button styles */
+.logout-button {
+    background-color: var(--accent);
+    color: var(--darker);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logout-button:hover {
+    background-color: #a3b1ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button i {
+    font-size: 1rem;
 }
 
 /* Content sections */
@@ -303,7 +330,7 @@
 }
 
 .section-header h2 {
-    color: var(--darker);
+    color: var(--dark);
     margin-bottom: 0.5rem;
     font-size: 1.6rem;
 }
@@ -339,7 +366,7 @@
 .user-name-large {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--darker);
+    color: var(--dark);
     margin-bottom: 0.5rem;
 }
 
@@ -394,7 +421,7 @@
 
 .models-section h3 {
     font-size: 1.3rem;
-    color: var(--darker);
+    color: var(--dark);
     margin-bottom: 1rem;
 }
 
@@ -440,7 +467,7 @@
 .model-name {
     font-weight: 600;
     font-size: 1.3rem;
-    color: var(--darker);
+    color: var(--dark);
     margin-bottom: 0.5rem;
 }
 
@@ -482,7 +509,7 @@
 
 .no-subscription-message h3 {
     margin-bottom: 1rem;
-    color: var(--darker);
+    color: var(--dark);
 }
 
 .no-subscription-message p {
@@ -550,7 +577,7 @@
 .popup-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.3rem;
-    color: var(--darker);
+    color: var(--dark);
 }
 
 .popup-close {
@@ -595,7 +622,7 @@
 
 .model-detail-info h3 {
     font-size: 1.3rem;
-    color: var(--darker);
+    color: var(--dark);
     margin-bottom: 0.5rem;
 }
 
@@ -607,7 +634,7 @@
 
 .subscription-details-container h4 {
     font-size: 1.1rem;
-    color: var(--darker);
+    color: var(--dark);
     margin-bottom: 1rem;
 }
 
@@ -629,7 +656,7 @@
 }
 
 .subscription-detail-value {
-    color: var(--darker);
+    color: var(--dark);
     font-weight: 500;
     font-size: 0.9rem;
 }
@@ -747,6 +774,15 @@
     .model-arrow {
         display: none;
     }
+
+    .logout-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-text {
+        display: none;
+    }
 }
 
 /* iOS Safari fix */
@@ -760,7 +796,8 @@
 @media (hover: none) and (pointer: coarse) {
     .tab-button,
     .action-button,
-    .form-input {
+    .form-input,
+    .logout-button {
         min-height: 44px; /* Apple recommended touch target size */
     }
     
@@ -771,7 +808,8 @@
     /* Improve tap targets */
     .tab-button, 
     .popup-close, 
-    .action-button {
+    .action-button,
+    .logout-button {
         padding: 0.8rem 1rem;
     }
     
@@ -784,7 +822,7 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .dashboard-container {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        background-color: var(--darker);
         color: #e0e0e0;
     }
     
@@ -849,5 +887,14 @@
     .popup-footer,
     .model-detail-header {
         border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .logout-button {
+        background-color: var(--accent);
+        color: var(--darker);
+    }
+
+    .logout-button:hover {
+        background-color: #a3b1ff;
     }
 } 
