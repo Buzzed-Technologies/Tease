@@ -428,40 +428,73 @@ app.get('/:page', (req, res) => {
 async function ensureProfileExists(userId, userName = null, userEmail = null) {
   console.log('Ensuring profile exists for user:', userId);
   
-  // Check if profile already exists
+  // Check if profile already exists by id OR auth_id
   const { data, error } = await supabase
     .from('profiles')
-    .select('id')
-    .eq('id', userId)
-    .single();
+    .select('*')
+    .or(`id.eq.${userId},auth_id.eq.${userId}`)
+    .maybeSingle();
     
   if (error) {
-    console.log('Profile not found, creating new profile');
-    
-    // Create a simple profile directly
-    const { error: insertError } = await supabase
-      .from('profiles')
-      .insert({
-        id: userId,
-        auth_id: userId,
-        name: userName || 'User',
-        telegram_username: '',
-        password_hash: '',
-        subscription_count: 0,
-        has_active_subscription: false,
-        subscription_status: false
-      });
-      
-    if (insertError) {
-      console.error('Error creating profile:', insertError);
-      return false;
-    }
-    
-    return true;
+    console.log('Error checking for profile:', error);
   }
   
-  console.log('Profile already exists');
-  return true;
+  // If a profile was found
+  if (data) {
+    console.log('Profile already exists:', data.id);
+    
+    // If the profile exists but with a different ID, update the subscription to use the correct profile ID
+    if (data.id !== userId && data.auth_id === userId) {
+      console.log(`Profile found with different ID (${data.id}) but matching auth_id. Using this profile.`);
+      return data.id; // Return the actual profile ID to use for subscriptions
+    }
+    
+    return userId; // The profile ID matches the user ID
+  }
+  
+  // No profile found, create a new one
+  console.log('Profile not found, creating new profile');
+  
+  // Create a simple profile directly with a unique telegram username
+  const { error: insertError } = await supabase
+    .from('profiles')
+    .insert({
+      id: userId,
+      auth_id: userId,
+      name: userName || 'User',
+      telegram_username: `user_${userId.substring(0, 8)}_${Date.now()}`, // Make unique
+      password_hash: 'placeholder',
+      subscription_count: 0,
+      has_active_subscription: false,
+      subscription_status: false
+    });
+    
+  if (insertError) {
+    console.error('Error creating profile:', insertError);
+    // Try a more direct approach if necessary
+    try {
+      await supabase.rpc('create_minimal_profile', { user_uuid: userId });
+      return userId;
+    } catch (e) {
+      console.error('All profile creation attempts failed:', e);
+      
+      // As a last resort, check if a profile exists with the auth_id
+      const { data: authData } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_id', userId)
+        .maybeSingle();
+        
+      if (authData && authData.id) {
+        console.log(`Found existing profile with ID ${authData.id} for auth_id ${userId}`);
+        return authData.id;
+      }
+      
+      return false;
+    }
+  }
+  
+  return userId;
 }
 
 // Handle successful checkout - simplified
@@ -477,8 +510,14 @@ async function handleSuccessfulCheckout(session) {
       return;
     }
     
-    // 1. Create a profile for the user if it doesn't exist
-    await ensureProfileExists(userId);
+    // 1. Create a profile for the user if it doesn't exist, and get the correct profile ID
+    const profileId = await ensureProfileExists(userId);
+    if (!profileId) {
+      console.error('Failed to create or find profile for user:', userId);
+      return;
+    }
+    
+    console.log(`Using profile ID: ${profileId} for user: ${userId}`);
     
     // 2. Retrieve subscription details
     console.log('Retrieving subscription details for:', session.subscription);
@@ -486,54 +525,62 @@ async function handleSuccessfulCheckout(session) {
     console.log('Subscription status:', subscription.status);
     
     // 3. Create the subscription record directly
-    const { error: insertError } = await supabase
-      .from('user_model_subscriptions')
-      .insert({
-        user_id: userId,
-        model_id: modelId,
-        package_id: packageId || null,
-        stripe_subscription_id: subscription.id,
-        stripe_customer_id: session.customer,
-        status: subscription.status,
-        subscription_plan: 'monthly',
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        is_active: true,
-        cancel_at_period_end: subscription.cancel_at_period_end
-      });
-    
-    if (insertError) {
-      // If insert failed, check if it's because the subscription already exists
-      if (insertError.code === '23505') { // Unique violation
-        console.log('Subscription already exists, updating instead');
-        
-        // Update the existing subscription
-        await supabase
-          .from('user_model_subscriptions')
-          .update({
-            status: subscription.status,
-            is_active: true,
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .eq('stripe_subscription_id', subscription.id);
-      } else {
+    try {
+      const { error: insertError } = await supabase
+        .from('user_model_subscriptions')
+        .insert({
+          user_id: profileId, // Use the correct profile ID
+          model_id: modelId, // Ensure this is never null
+          package_id: packageId,
+          stripe_subscription_id: subscription.id,
+          stripe_customer_id: session.customer,
+          status: subscription.status,
+          subscription_plan: 'monthly',
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          is_active: true,
+          cancel_at_period_end: subscription.cancel_at_period_end
+        });
+      
+      if (insertError) {
         console.error('Error creating subscription record:', insertError);
+        
+        // If insert failed, check if it's because the subscription already exists
+        if (insertError.code === '23505') { // Unique violation
+          console.log('Subscription already exists, updating instead');
+          
+          // Update the existing subscription
+          await supabase
+            .from('user_model_subscriptions')
+            .update({
+              status: subscription.status,
+              is_active: true,
+              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('stripe_subscription_id', subscription.id);
+        }
       }
+    } catch (e) {
+      console.error('Exception during subscription creation:', e);
     }
     
     // 4. Directly update the profile's subscription status
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        subscription_count: 1,
-        has_active_subscription: true,
-        subscription_status: true,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', userId);
-    
-    if (profileError) {
-      console.error('Error updating profile:', profileError);
+    try {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          subscription_count: 1,
+          has_active_subscription: true,
+          subscription_status: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', profileId); // Use correct profile ID
+      
+      if (profileError) {
+        console.error('Error updating profile:', profileError);
+      }
+    } catch (e) {
+      console.error('Exception during profile update:', e);
     }
     
     console.log('Subscription processed successfully');

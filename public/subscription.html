@@ -127,10 +127,13 @@
         }
         
         .packages-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
             gap: 2.5rem;
             margin-bottom: 3rem;
+            overflow-x: auto;
+            padding: 1rem 0;
         }
         
         .package-card {
@@ -146,6 +149,8 @@
             flex-direction: column;
             box-shadow: 0 8px 25px rgba(198, 210, 255, 0.15);
             min-height: 500px;
+            flex: 0 0 350px;
+            width: 350px;
         }
         
         .package-card::before {
