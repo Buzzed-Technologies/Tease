@@ -1,18 +1,18 @@
 :root {
-    --primary: #e8e0d5;  /* Soft cream velvet */
-    --primary-dark: #d5cbbe;  /* Darker cream */
-    --primary-light: #f5f0e8;  /* Lighter cream */
-    --accent: #D3D1DA;  /* Text accent color */
-    --dark: #f9f7f4;    /* Almost white */
-    --darker: #ffffff;  /* Pure white */
-    --light: #34302a;   /* Dark brown for text */
+    --primary: #7F0024;  /* Soft cream velvet */
+    --primary-dark: #600019;  /* Darker cream */
+    --primary-light: #A33D57;  /* Lighter cream */
+    --accent: #C6D2FF;  /* Updated accent color */
+    --dark: #141414;    /* Almost white */
+    --darker: #050505;  /* Pure white */
+    --light: #1E1E1E;   /* Dark brown for text */
     --gray: #ccc0b3;    /* Light gray */
-    --light-gray: #8a8075; /* Medium gray for secondary text */
+    --light-gray: #D3D1DA; /* Medium gray for secondary text */
     
     /* Persona Theme Colors */
-    --passionate: #ebd9d0; /* Soft pink */
-    --playful: #e2dcc9; /* Soft yellow */
-    --dominant: #d3d1db; /* Soft purple */
+    --passionate: #E6D2CB; /* Soft pink */
+    --playful: #E2DCC9; /* Soft yellow */
+    --dominant: #D3D1DA; /* Soft purple */
     --sensual: #e6d2cb; /* Soft rose */
     --intellectual: #d2dade; /* Soft blue */
 }

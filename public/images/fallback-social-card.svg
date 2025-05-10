@@ -10,10 +10,17 @@
     <rect width="1200" height="630" fill="url(#grad)"/>
     
     <!-- Logo -->
-    <text x="600" y="230" font-family="'Playfair Display', serif" font-size="72" text-anchor="middle" fill="#ffffff" font-weight="bold">ThreadPay</text>
+    <text x="600" y="230" font-family="'Playfair Display', serif" font-size="72" text-anchor="middle" fill="#C6D2FF" font-weight="bold">ThreadPay</text>
     
     <!-- Tagline -->
-    <text x="600" y="280" font-family="sans-serif" font-size="24" text-anchor="middle" fill="#f8c1e0" letter-spacing="3" style="text-transform: uppercase;">secure payment platform</text>
+    <text x="600" y="280" font-family="sans-serif" font-size="24" text-anchor="middle" fill="#ffffff">secure creator payments</text>
+    
+    <!-- Visual elements -->
+    <g opacity="0.1">
+        <circle cx="300" cy="400" r="50" fill="#C6D2FF" />
+        <circle cx="900" cy="400" r="50" fill="#C6D2FF" />
+        <rect x="500" y="380" width="200" height="40" rx="20" fill="#C6D2FF" />
+    </g>
     
     <!-- Invitation text -->
     <text x="600" y="380" font-family="sans-serif" font-size="28" text-anchor="middle" fill="rgba(255,255,255,0.8)">You've been invited to connect with</text>

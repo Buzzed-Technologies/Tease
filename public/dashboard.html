@@ -50,7 +50,13 @@
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 1.8rem;
-            color: var(--light);
+            color: #C6D2FF;
+        }
+        
+        .tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: var(--light-gray);
         }
         
         .header-controls {
@@ -730,7 +736,10 @@
 <body>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <div class="logo">ThreadPay</div>
+            <a href="/">
+                <div class="logo">ThreadPay</div>
+                <div class="tagline">secure creator payments</div>
+            </a>
             
             <div class="header-controls">
                 <div class="user-info">
@@ -759,7 +768,7 @@
             <section id="account-section" class="content-section active">
                 <div class="section-header">
                     <h2>Account</h2>
-                    <p class="section-description">Your account information and AI companion subscription.</p>
+                    <p class="section-description">Your account information and creator payment settings.</p>
                 </div>
                 
                 <div class="account-container">
@@ -781,7 +790,7 @@
                     </div>
                     
                     <div class="models-section">
-                        <h3>Your AI Companion</h3>
+                        <h3>Your Creator Profile</h3>
                         
                         <!-- Shown when user has a subscription -->
                         <div id="subscribed-model-container" style="display: none;">
@@ -794,8 +803,8 @@
                         <div id="no-subscription-container" style="display: none;">
                             <div class="no-subscription-message">
                                 <h3>No Active Subscription</h3>
-                                <p>You don't have an active subscription to any AI companion. Subscribe to unlock the full experience.</p>
-                                <button class="action-button" id="view-models-button">View Available Models</button>
+                                <p>You don't have an active subscription plan. Subscribe to unlock the full creator experience.</p>
+                                <button class="action-button" id="view-models-button">View Available Plans</button>
                             </div>
                         </div>
                     </div>
@@ -843,7 +852,7 @@
     <div class="popup-overlay" id="model-popup">
         <div class="popup-content">
             <div class="popup-header">
-                <div class="popup-title">Model Subscription</div>
+                <div class="popup-title">Subscription Details</div>
                 <button class="popup-close" id="popup-close">
                     <i class="fas fa-times"></i>
                 </button>

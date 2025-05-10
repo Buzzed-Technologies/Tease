@@ -175,7 +175,7 @@
         <div class="logo-container">
             <a href="/">
                 <div class="logo">ThreadPay</div>
-                <div class="tagline">ai adult companion</div>
+                <div class="tagline">secure creator payments</div>
             </a>
         </div>
         
@@ -183,13 +183,13 @@
             <div class="login-form-container">
                 <div class="login-header">
                     <h1>Welcome Back</h1>
-                    <p class="login-description">Log in to continue your personal AI experience.</p>
+                    <p class="login-description">Log in to manage your creator account and payments.</p>
                 </div>
                 
                 <form id="login-form">
                     <div class="form-group">
-                        <label for="telegram" class="form-label">Telegram Username</label>
-                        <input type="text" id="telegram" name="telegram" class="form-input" placeholder="Your Telegram username" required>
+                        <label for="telegram" class="form-label">Username</label>
+                        <input type="text" id="telegram" name="telegram" class="form-input" placeholder="Your username" required>
                     </div>
                     
                     <div class="form-group">
@@ -202,7 +202,7 @@
                     <div id="login-message" class="login-message"></div>
                 </form>
                 
-                <p class="signup-link">Don't have an account? <a href="/">Get an invitation</a></p>
+                <p class="signup-link">Don't have an account? <a href="/">Create an account</a></p>
             </div>
         </div>
     </div>
@@ -318,7 +318,7 @@
                         .single();
                     
                     if (error) {
-                        showError('User not found. Please check your Telegram username.');
+                        showError('User not found. Please check your username.');
                         submitBtn.disabled = false;
                         submitBtn.textContent = originalText;
                         return;
