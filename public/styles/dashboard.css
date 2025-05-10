@@ -1,25 +1,25 @@
 /* Selection styles */
 ::selection {
     background-color: var(--accent);
-    color: #D3D1D9;
+    color: #FFFFFF;
 }
 
 ::-moz-selection {
     background-color: var(--accent);
-    color: #D3D1D9;
+    color: #FFFFFF;
 }
 
 /* Dashboard Styles */
 .dashboard-header {
     background-color: var(--darker);
-    padding: 1rem 10%;
-    border-bottom: 1px solid rgba(211, 209, 218, 0.3);
+    padding: 1rem 5%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 100;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .header-content {
@@ -34,6 +34,8 @@
     display: flex;
     list-style: none;
     gap: 2rem;
+    margin: 0;
+    padding: 0;
 }
 
 .main-nav a {
@@ -92,18 +94,27 @@
 }
 
 .dashboard-container {
-    padding: 2rem 10% 2rem;
-    min-height: calc(100vh - 6rem);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
+    color: var(--darker);
+}
+
+.dashboard-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 5%;
 }
 
 .dashboard-section {
     display: none;
-    padding: 2rem 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2rem;
+    padding: 1.5rem 0;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .dashboard-section.active {
@@ -111,12 +122,11 @@
 }
 
 .dashboard-card {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #FFFFFF;
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
     border: 1px solid rgba(232, 224, 213, 0.3);
 }
 
@@ -139,20 +149,64 @@
 
 .user-avatar i {
     font-size: 2.5rem;
-    color: var(--light);
+    color: #FFFFFF;
 }
 
 .user-info h3 {
     margin: 0 0 0.5rem;
+    color: var(--darker);
 }
 
 .user-info p {
     margin: 0;
-    color: var(--light-gray);
+    color: var(--dark-gray);
 }
 
+/* Form styles */
 .dashboard-form {
     max-width: 600px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--darker);
+    font-size: 0.9rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--darker);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(180, 193, 255, 0.3);
+}
+
+/* Fix placeholder color for better visibility */
+.form-input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+}
+
+.input-note {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--dark-gray);
 }
 
 .form-message {
@@ -170,571 +224,528 @@
     color: #e74c3c;
 }
 
-/* Subscription styles */
-.subscription-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 0;
+/* Message area styles */
+.message-area {
+    display: none;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    text-align: center;
+    font-size: 0.9rem;
 }
 
-.subscription-loading i {
-    font-size: 2rem;
-    color: var(--primary);
+.message-area.success {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    display: block;
+}
+
+.message-area.error {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    display: block;
+}
+
+/* Tab navigation */
+.tab-navigation {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: #FFFFFF;
+    padding: 0.8rem;
+    border-radius: 12px;
+    position: sticky;
+    top: 4rem;
+    z-index: 5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tab-button {
+    padding: 0.8rem 1.2rem;
+    background: transparent;
+    border: none;
+    color: var(--dark-gray);
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.tab-button:hover {
+    background: rgba(211, 209, 218, 0.2);
+    color: var(--darker);
+}
+
+.tab-button.active {
+    background: var(--accent);
+    color: var(--darker);
+}
+
+/* Content sections */
+.content-section {
+    display: none;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.content-section.active {
+    display: block;
+}
+
+.section-header h2 {
+    color: var(--darker);
+    margin-bottom: 0.5rem;
+    font-size: 1.6rem;
+}
+
+.section-description {
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+}
+
+/* Account info */
+.account-container {
+    margin-bottom: 2rem;
+}
+
+.account-info {
+    padding: 1.5rem;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.account-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.user-name-large {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--darker);
+    margin-bottom: 0.5rem;
+}
+
+.account-email {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+.account-created {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+}
+
+.account-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.account-label {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+/* Action button */
+.action-button {
+    background-color: var(--accent);
+    color: var(--darker);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+}
+
+.action-button:hover {
+    background-color: #a3b1ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Models section */
+.models-section {
+    margin-top: 2rem;
+}
+
+.models-section h3 {
+    font-size: 1.3rem;
+    color: var(--darker);
     margin-bottom: 1rem;
 }
 
-.subscription-header {
+.subscribed-model-card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.subscribed-model-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.model-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(249, 247, 244, 0.8);
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.model-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.model-info {
+    flex-grow: 1;
+}
+
+.model-name {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--darker);
+    margin-bottom: 0.5rem;
+}
+
+.model-description {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+}
+
+.model-subscription-status {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.model-subscription-status.active {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.model-subscription-status.inactive {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.no-subscription-message {
+    padding: 2rem;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.no-subscription-message h3 {
+    margin-bottom: 1rem;
+    color: var(--darker);
+}
+
+.no-subscription-message p {
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.model-arrow {
+    color: var(--dark-gray);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* Popup styles */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.popup-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup-content {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.popup-overlay.active .popup-content {
+    transform: translateY(0);
+}
+
+.popup-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
 }
 
-.subscription-badge {
-    background-color: rgba(46, 204, 113, 0.1);
-    color: #2ecc71;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.popup-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--darker);
 }
 
-.subscription-badge.inactive {
-    background-color: rgba(231, 76, 60, 0.2);
+.popup-close {
+    background: none;
+    border: none;
+    color: var(--dark-gray);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.popup-close:hover {
     color: #e74c3c;
 }
 
-.subscription-details {
-    margin-bottom: 2rem;
-}
-
-.detail-item {
-    display: flex;
-    margin-bottom: 0.8rem;
-}
-
-.detail-label {
-    width: 150px;
-    color: var(--light-gray);
-}
-
-.payment-method {
-    margin-bottom: 2rem;
-}
-
-.payment-method h4 {
-    margin-bottom: 1rem;
-}
-
-.card-info {
-    background-color: rgba(249, 247, 244, 0.8);
-    padding: 1rem;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.card-info i {
-    font-size: 1.5rem;
-}
-
-.card-info button {
-    margin-left: auto;
-}
-
-.billing-history h4 {
-    margin-bottom: 1rem;
-}
-
-/* Plan cards for subscription */
-.subscription-plans {
-    overflow: visible;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.plan-card {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
+.popup-body {
     padding: 1.5rem;
-    border: 1px solid rgba(232, 224, 213, 0.3);
-    flex: 1;
-    min-width: 240px;
-    position: relative;
-    transition: all 0.3s ease;
 }
 
-.plan-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary);
-    box-shadow: 0 10px 20px rgba(232, 224, 213, 0.2);
-}
-
-.plan-card.featured {
-    border-color: var(--primary-dark);
-    box-shadow: 0 10px 20px rgba(232, 224, 213, 0.2);
-}
-
-.plan-tag {
-    position: absolute;
-    top: -10px;
-    right: 10px;
-    background-color: var(--primary-dark);
-    color: var(--darker);
-    font-size: 0.7rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 50px;
-    font-weight: 600;
-}
-
-.plan-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(232, 224, 213, 0.3);
-}
-
-.plan-price {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--light);
-    margin: 0.5rem 0;
-}
-
-.plan-price span {
-    font-size: 0.9rem;
-    font-weight: 400;
-    color: var(--light-gray);
-}
-
-.plan-saving {
-    display: inline-block;
-    background-color: rgba(46, 204, 113, 0.1);
-    color: #2ecc71;
-    padding: 0.3rem 0.8rem;
-    border-radius: 50px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-top: 0.5rem;
-}
-
-.plan-features {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    margin-bottom: 1.5rem;
-}
-
-.plan-features li {
-    margin-bottom: 0.8rem;
+.model-detail-header {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.plan-features i {
-    color: #2ecc71;
+.model-detail-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(249, 247, 244, 0.8);
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
-.subscribe-btn {
+.model-detail-image img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* Persona section */
-.persona-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 0;
+.model-detail-info h3 {
+    font-size: 1.3rem;
+    color: var(--darker);
+    margin-bottom: 0.5rem;
 }
 
-.persona-loading i {
-    font-size: 2rem;
-    color: var(--primary);
+.model-detail-description {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.subscription-details-container h4 {
+    font-size: 1.1rem;
+    color: var(--darker);
     margin-bottom: 1rem;
 }
 
-.persona-header {
+.subscription-detail-item {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
-    margin-bottom: 2rem;
+    justify-content: space-between;
 }
 
-.persona-image {
-    width: 120px;
-    height: 120px;
-    background-color: var(--primary-light);
-    border-radius: 50%;
-    margin-right: 1.5rem;
-    background-image: linear-gradient(to bottom, var(--passionate), var(--primary-light));
-    position: relative;
+.subscription-detail-item:last-child {
+    border-bottom: none;
 }
 
-.persona-image:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise' x='0%25' y='0%25' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
-    opacity: 0.25;
-    border-radius: 50%;
+.subscription-detail-label {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
 }
 
-.persona-info {
-    flex: 1;
+.subscription-detail-value {
+    color: var(--darker);
+    font-weight: 500;
+    font-size: 0.9rem;
 }
 
-.persona-tag {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--light-gray);
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.persona-actions {
+.popup-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    justify-content: center;
 }
 
-.outline-button {
-    background: transparent;
-    color: var(--light);
-    border: 2px solid var(--primary-dark);
-    padding: 0.8rem 1.5rem;
-    border-radius: 50px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.outline-button:hover {
-    background-color: var(--primary);
-    color: var(--light);
-}
-
-.persona-selection h3 {
-    margin-bottom: 0.5rem;
-}
-
-.personas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.persona-card {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(232, 224, 213, 0.3);
-    transition: all 0.3s ease;
-}
-
-.persona-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary);
-    box-shadow: 0 10px 20px rgba(232, 224, 213, 0.2);
-}
-
-.persona-card[data-style="passionate"] .persona-card-image {
-    background: linear-gradient(to bottom, var(--passionate), var(--primary-light));
-}
-
-.persona-card[data-style="playful"] .persona-card-image {
-    background: linear-gradient(to bottom, var(--playful), var(--primary-light));
-}
-
-.persona-card[data-style="dominant"] .persona-card-image {
-    background: linear-gradient(to bottom, var(--dominant), var(--primary-light));
-}
-
-.persona-card[data-style="sensual"] .persona-card-image {
-    background: linear-gradient(to bottom, var(--sensual), var(--primary-light));
-}
-
-.persona-card[data-style="intellectual"] .persona-card-image {
-    background: linear-gradient(to bottom, var(--intellectual), var(--primary-light));
-}
-
-.persona-card-image {
-    height: 100px;
-    position: relative;
-}
-
-.persona-card-image:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise' x='0%25' y='0%25' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
-    opacity: 0.25;
-}
-
-.persona-card h4 {
-    margin: 1rem 1rem 0.2rem;
-}
-
-.persona-card p {
-    font-size: 0.8rem;
-    margin: 0.5rem 1rem 1rem;
-    color: var(--light-gray);
-}
-
-.persona-card .persona-tag {
-    margin: 0 1rem;
-    font-size: 0.7rem;
-}
-
-.select-persona-btn {
-    width: 100%;
-    background-color: transparent;
-    color: var(--light);
-    border: none;
-    border-top: 1px solid rgba(232, 224, 213, 0.3);
-    padding: 0.8rem 0;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.select-persona-btn:hover {
-    background-color: var(--primary);
-    color: var(--light);
-}
-
-/* Responsive Styles */
-@media (max-width: 992px) {
-    .subscription-plans {
-        flex-direction: column;
+/* Responsive styles */
+@media (min-width: 768px) {
+    .dashboard-header {
+        padding: 1rem 5%;
     }
     
-    .persona-actions {
-        flex-direction: column;
+    .dashboard-content {
+        padding: 2rem 5%;
     }
     
-    .dashboard-container {
-        padding: 2rem 5% 2rem;
+    .account-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
     }
     
-    .dashboard-card {
-        padding: 1.5rem;
+    .account-details {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1.5rem;
     }
     
-    .plan-card {
-        margin-bottom: 1rem;
+    .tab-navigation {
+        justify-content: flex-start;
+        padding: 0.8rem 1.5rem;
     }
     
-    .user-avatar {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .user-avatar i {
-        font-size: 2rem;
+    .content-section {
+        padding: 2rem;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .dashboard-header {
         padding: 0.8rem 5%;
     }
     
-    .dashboard-container {
-        padding: 1.5rem 5% 1.5rem;
-    }
-    
-    .main-nav ul {
-        gap: 1rem;
-    }
-    
-    .persona-header {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    
-    .persona-image {
-        margin-right: 0;
-        margin-bottom: 1.5rem;
-    }
-    
-    .personas-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1rem;
-    }
-    
-    .plan-features li {
-        font-size: 0.9rem;
-    }
-    
-    .subscription-badge {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
-    }
-    
-    .detail-item {
-        flex-direction: column;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-    }
-    
-    .detail-label {
-        width: 100%;
-        margin-bottom: 0.2rem;
-    }
-    
-    /* Touch-optimized buttons */
-    .text-button, 
-    .cta-button, 
-    .subscribe-btn {
-        padding: 0.8rem 1rem;
-    }
-    
-    /* Improve subscription view */
-    .subscription-plans {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .plan-card {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-}
-
-@media (max-width: 576px) {
     .header-content {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: 0;
     }
     
-    .logo {
-        font-size: 1.8rem;
+    .dashboard-content {
+        padding: 1.5rem 5%;
     }
     
-    .main-nav {
-        position: static;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .main-nav ul {
-        justify-content: center;
+    .tab-navigation {
+        overflow-x: auto;
+        padding: 0.8rem;
+        justify-content: flex-start;
         gap: 0.5rem;
     }
     
-    .dashboard-card {
-        padding: 1.2rem;
-        border-radius: 10px;
+    .tab-button {
+        padding: 0.7rem 1rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    .content-section {
+        padding: 1.5rem;
     }
     
     .user-details {
         flex-direction: column;
+        align-items: center;
         text-align: center;
     }
     
     .user-avatar {
         margin-right: 0;
         margin-bottom: 1rem;
-        width: 60px;
-        height: 60px;
     }
     
-    .user-avatar i {
-        font-size: 1.8rem;
+    .subscription-detail-item {
+        flex-direction: column;
+        gap: 0.3rem;
     }
     
-    .user-info h3 {
-        font-size: 1.4rem;
-    }
-    
-    .form-group label {
-        font-size: 0.9rem;
-    }
-    
-    .form-group input {
-        padding: 0.7rem;
-    }
-    
-    .plan-card {
-        padding: 1.2rem;
-    }
-    
-    .plan-price {
-        font-size: 1.7rem;
-    }
-    
-    .plan-features li {
-        margin-bottom: 0.6rem;
-    }
-    
-    .plan-tag {
-        font-size: 0.6rem;
-        padding: 0.2rem 0.7rem;
-    }
-    
-    /* Fixed header improvements */
-    .dashboard-header {
-        padding: 0.6rem 4%;
-    }
-    
-    .header-actions {
-        margin: 0;
-    }
-    
-    .dashboard-container {
-        padding-top: 1.5rem;
-    }
-    
-    /* Optimize for tap targets */
-    .text-button, .cta-button, .subscribe-btn {
-        min-height: 44px;
-    }
-    
-    .btn-text {
-        display: none !important;
-    }
-    
-    .text-button i {
-        font-size: 1.2rem;
-        margin-right: 0;
-    }
-    
-    .header-actions .text-button {
-        background-color: rgba(20, 20, 20, 0.5);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
+    .model-detail-header {
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 0;
+        text-align: center;
     }
     
-    .main-nav a {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.9rem;
-        display: inline-block;
+    .model-detail-image {
+        margin-bottom: 1rem;
+    }
+    
+    .subscribed-model-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+    
+    .model-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .model-arrow {
+        display: none;
     }
 }
 
@@ -747,10 +758,9 @@
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-    .select-persona-btn,
-    .text-button,
-    .cta-button,
-    .subscribe-btn {
+    .tab-button,
+    .action-button,
+    .form-input {
         min-height: 44px; /* Apple recommended touch target size */
     }
     
@@ -758,38 +768,86 @@
         font-size: 16px !important; /* Prevent zoom on form fields in iOS */
     }
     
-    /* Improve scrolling */
-    .personas-grid,
-    .subscription-plans {
-        -webkit-overflow-scrolling: touch;
+    /* Improve tap targets */
+    .tab-button, 
+    .popup-close, 
+    .action-button {
+        padding: 0.8rem 1rem;
+    }
+    
+    /* Add some spacing for better touching */
+    .form-group {
+        margin-bottom: 1.8rem;
     }
 }
 
-/* Add to existing CSS for better mobile experience */
-.btn-text {
-    display: inline;
-}
-
-.subscription-inactive p {
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-}
-
-.plan-card .plan-features {
-    margin-bottom: 1.5rem;
-}
-
-.inactive-subscription .plan-card {
-    margin-bottom: 1rem;
-    width: 100%;
-}
-
-.subscription-plans {
-    max-height: none;
-    overflow-y: visible;
-}
-
-/* Reset conflicting styles */
-.btn-text {
-    display: inline;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .dashboard-container {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        color: #e0e0e0;
+    }
+    
+    .dashboard-card,
+    .content-section,
+    .account-info,
+    .tab-navigation,
+    .subscribed-model-card,
+    .popup-content,
+    .no-subscription-message {
+        background-color: #2a2a2a;
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .section-header h2,
+    .user-name-large,
+    .form-label,
+    .popup-title,
+    .model-name,
+    .model-detail-info h3,
+    .subscription-details-container h4,
+    .subscription-detail-value {
+        color: #e0e0e0;
+    }
+    
+    .section-description,
+    .account-email,
+    .account-created,
+    .account-label,
+    .model-description,
+    .model-detail-description,
+    .subscription-detail-label {
+        color: #b0b0b0;
+    }
+    
+    .form-input {
+        background-color: #3a3a3a;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+    }
+    
+    .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .tab-button {
+        color: #b0b0b0;
+    }
+    
+    .tab-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+    }
+    
+    .popup-close:hover {
+        color: #ff6b6b;
+    }
+    
+    .account-header,
+    .subscription-detail-item,
+    .popup-header,
+    .popup-footer,
+    .model-detail-header {
+        border-color: rgba(255, 255, 255, 0.05);
+    }
 } 
