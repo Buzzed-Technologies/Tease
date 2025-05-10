@@ -157,7 +157,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -165,6 +166,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
         }
         
         .modal-overlay.active {
@@ -174,15 +176,15 @@
         
         .modal-content {
             background-color: var(--light);
-            border-radius: 12px;
-            width: 90%;
+            border-radius: 16px;
+            width: 100%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
             transform: translateY(20px);
             transition: transform 0.3s ease;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
         
         .modal-overlay.active .modal-content {
@@ -195,6 +197,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--light);
+            z-index: 5;
+            border-radius: 16px 16px 0 0;
         }
         
         .modal-title {
@@ -209,39 +216,29 @@
             font-size: 1.5rem;
             color: var(--dark);
             cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(211, 209, 218, 0.2);
         }
         
         .modal-body {
-            padding: 1.5rem;
+            padding: 0 1.5rem 1.5rem;
         }
         
-        .modal-model-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .modal-model-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border: 3px solid var(--primary-light);
-        }
-        
-        .modal-model-name {
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .modal-model-bio {
+        .modal-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
             color: var(--dark);
-            margin-bottom: 2rem;
-            line-height: 1.6;
             text-align: center;
         }
         
@@ -254,29 +251,48 @@
         
         .package-item {
             background-color: var(--lighter);
-            border-radius: 8px;
-            padding: 1.2rem;
+            border-radius: 12px;
+            padding: 1.5rem;
             border: 1px solid rgba(211, 209, 218, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .package-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         .package-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--dark);
+            font-size: 1.1rem;
         }
         
         .package-price {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .package-price span {
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-left: 4px;
+            color: var(--dark-gray);
         }
         
         .package-description {
             font-size: 0.9rem;
             color: var(--dark);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             line-height: 1.5;
+            flex-grow: 1;
         }
         
         .subscribe-btn {
@@ -284,15 +300,21 @@
             background-color: var(--accent);
             color: var(--darker);
             border: none;
-            border-radius: 6px;
-            padding: 0.7rem 0;
+            border-radius: 8px;
+            padding: 0.9rem 0;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
         
         .subscribe-btn:hover {
             background-color: #B4C1FF;
+            transform: translateY(-2px);
+        }
+        
+        .subscribe-btn:active {
+            transform: translateY(0);
         }
         
         .subscribe-btn.subscribed {
@@ -413,11 +435,34 @@
             
             .package-list {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
             .modal-content {
                 width: 95%;
                 max-height: 85vh;
+                border-radius: 12px;
+            }
+            
+            .modal-header {
+                padding: 1.2rem;
+                border-radius: 12px 12px 0 0;
+            }
+            
+            .modal-body {
+                padding: 0 1.2rem 1.2rem;
+            }
+            
+            .package-item {
+                padding: 1.2rem;
+            }
+            
+            .package-name {
+                font-size: 1rem;
+            }
+            
+            .package-price {
+                font-size: 1.3rem;
             }
             
             .model-image {
@@ -493,9 +538,57 @@
                 width: 100%;
             }
             
-            .modal-model-image {
-                width: 120px;
-                height: 120px;
+            .modal-overlay {
+                padding: 0.5rem;
+                align-items: flex-end;
+            }
+            
+            .modal-content {
+                width: 100%;
+                max-height: 90vh;
+                border-radius: 16px 16px 0 0;
+            }
+            
+            .modal-header {
+                padding: 1rem;
+            }
+            
+            .modal-body {
+                padding: 0 1rem 1.5rem;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+            }
+            
+            .modal-section-title {
+                font-size: 1.1rem;
+                margin-top: 0.5rem;
+            }
+            
+            .package-item {
+                padding: 1rem;
+                border-radius: 10px;
+                margin-bottom: 0.5rem;
+            }
+            
+            .package-name {
+                font-size: 1rem;
+            }
+            
+            .package-price {
+                font-size: 1.2rem;
+            }
+            
+            .package-description {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+            
+            .subscribe-btn {
+                padding: 0.8rem 0;
+                font-size: 0.9rem;
+                border-radius: 6px;
             }
             
             .notification {
@@ -874,7 +967,7 @@
                     <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
                 </div>
                 
-                <h3>Select a Subscription Package</h3>
+                <h3 class="modal-section-title">Select a Subscription Package</h3>
                 <div id="package-list" class="package-list">
                     <div class="loading-spinner"></div>
                 </div>
@@ -904,7 +997,7 @@
                 if (error) throw error;
                 
                 if (!packages || packages.length === 0) {
-                    packageList.innerHTML = '<p>No subscription packages available for this creator.</p>';
+                    packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
                     return;
                 }
                 
@@ -928,7 +1021,7 @@
                                 data-package-id="${pkg.id}" 
                                 data-price-id="${pkg.stripe_price_id}" 
                                 data-model-id="${pkg.model_id}">
-                            Subscribe
+                            Subscribe Now
                         </button>
                     `;
                     
@@ -941,7 +1034,7 @@
             } catch (error) {
                 console.error('Error loading packages:', error);
                 document.getElementById('package-list').innerHTML = 
-                    '<p>Failed to load subscription packages. Please try again later.</p>';
+                    '<p class="no-packages">Failed to load subscription packages. Please try again later.</p>';
             }
         }
         
