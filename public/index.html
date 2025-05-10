@@ -62,10 +62,38 @@
             font-weight: 500;
         }
         
-        .cta-hint {
-            color: var(--dark); /* Darker color for better visibility */
-            font-weight: 500;
-            font-size: 0.9rem;
+        /* Hero section styles */
+        #hero {
+            position: relative;
+            padding-top: 30px;
+        }
+        
+        .hero-content {
+            text-align: left;
+            margin-top: 30px;
+        }
+        
+        .logo-container {
+            text-align: center;
+            width: 100%;
+            position: absolute;
+            top: 30px;
+            left: 0;
+        }
+        
+        /* Shorter about section */
+        #about {
+            padding-top: 50px;
+            padding-bottom: 50px;
+            min-height: auto;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
         
         .scroll-indicator {
@@ -81,9 +109,13 @@
         /* Improved mobile visibility */
         @media (max-width: 768px) {
             .screen {
-                min-height: 100vh;
-                height: auto;
+                min-height: auto;
                 padding: 60px 20px;
+            }
+            
+            #hero {
+                min-height: 100vh;
+                padding-top: 80px;
             }
             
             h1 {
@@ -92,13 +124,10 @@
             
             .logo {
                 font-size: 2.2rem; /* Even smaller on mobile */
-                margin-bottom: 5px;
             }
             
             .feature-grid {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
+                grid-template-columns: 1fr;
             }
             
             .cta-options {
@@ -118,6 +147,8 @@
         #login-signup {
             background: linear-gradient(135deg, var(--darker) 0%, var(--primary-dark) 100%);
             text-align: center;
+            min-height: auto;
+            padding: 60px 20px;
         }
         
         .cta-options {
@@ -182,16 +213,18 @@
             <!-- HERO SECTION -->
             <section class="screen" id="hero">
                 <div class="animated-bg"></div>
-                <div class="content">
-                    <div class="logo-container">
-                        <div class="logo">ThreadPay</div>
-                        <div class="tagline">curated creator platform</div>
-                    </div>
+                
+                <!-- Logo at the top -->
+                <div class="logo-container">
+                    <div class="logo">ThreadPay</div>
+                    <div class="tagline">curated creator platform</div>
+                </div>
+                
+                <div class="content hero-content">
                     <h1>Support <span class="highlight">Exceptional</span><br>Creators</h1>
                     <p class="intro-text">ThreadPay connects you with hand-picked, thoroughly trained creators.<br>Your new destination for quality content.</p>
                     <div class="cta-wrapper">
                         <a href="#login-signup" class="cta-button">Support a Creator</a>
-                        <div class="cta-hint">All creators are thoroughly vetted</div>
                     </div>
                     <div class="pulse-circle"></div>
                 </div>
@@ -205,18 +238,13 @@
             <section class="screen" id="about">
                 <div class="content">
                     <h2>Why <span class="highlight">ThreadPay</span></h2>
-                    <p>ThreadPay is a management and payment platform connecting discerning supporters with exceptional creators. Unlike other platforms, we personally select and train every creator.</p>
+                    <p>ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
                     
                     <div class="feature-grid">
                         <div class="feature">
                             <i class="fas fa-medal"></i>
                             <h3>Curated Quality</h3>
-                            <p>Every creator is hand-selected for exceptional talent and unique perspective</p>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-graduation-cap"></i>
-                            <h3>Trained Excellence</h3>
-                            <p>Creators undergo thorough training to ensure professional quality content</p>
+                            <p>Every creator is hand-selected for exceptional talent</p>
                         </div>
                         <div class="feature">
                             <i class="fas fa-lock"></i>
@@ -226,15 +254,7 @@
                         <div class="feature">
                             <i class="fas fa-heart"></i>
                             <h3>Direct Support</h3>
-                            <p>Your contributions directly enable creators to focus on quality content</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mission-content">
-                        <div class="mission-item">
-                            <i class="fas fa-user-check"></i>
-                            <h3>Our Selection Process</h3>
-                            <p>We meticulously evaluate potential creators based on talent, uniqueness, and dedication. Only the top 2% are invited to join our platform, ensuring you're supporting exceptional quality.</p>
+                            <p>Your contributions enable creators to focus on quality</p>
                         </div>
                     </div>
                 </div>
