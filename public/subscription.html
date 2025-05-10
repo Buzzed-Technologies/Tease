@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscribe | ThreadPay Creator Support Platform</title>
+    <title>Subscribe | ThreadPay Secure Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -39,12 +39,12 @@
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
-            color: #C6D2FF;
+            color: var(--light);
             text-align: center;
         }
         
         .tagline {
-            color: #ffffff;
+            color: var(--accent);
             font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -377,141 +377,6 @@
             border-radius: 0 12px 0 12px;
             z-index: 2;
         }
-        
-        /* Mobile responsiveness improvements */
-        @media (max-width: 768px) {
-            .subscription-container {
-                padding: 1.5rem 3%;
-            }
-            
-            .subscription-header h1 {
-                font-size: 2rem;
-                margin-bottom: 0.8rem;
-            }
-            
-            .subscription-description {
-                font-size: 0.95rem;
-            }
-            
-            .model-highlight {
-                flex-direction: column;
-                text-align: center;
-                padding: 1.5rem;
-                gap: 1rem;
-            }
-            
-            .model-image {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .model-name {
-                font-size: 1.7rem;
-            }
-            
-            .model-message {
-                font-size: 0.95rem;
-            }
-            
-            .packages-container {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .package-card {
-                padding: 1.5rem;
-            }
-            
-            .package-name {
-                font-size: 1.5rem;
-            }
-            
-            .package-price {
-                font-size: 2rem;
-            }
-            
-            .package-button {
-                padding: 1rem;
-                font-size: 1rem;
-                /* Improve touch target for mobile */
-                min-height: 48px;
-            }
-            
-            .guarantee {
-                flex-direction: column;
-                text-align: center;
-                padding: 1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .subscription-container {
-                padding: 1rem 2%;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .tagline {
-                font-size: 0.8rem;
-                letter-spacing: 2px;
-            }
-            
-            .subscription-header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .subscription-header {
-                margin-bottom: 2rem;
-            }
-            
-            .model-image {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .model-name {
-                font-size: 1.5rem;
-            }
-            
-            .package-card {
-                padding: 1.2rem;
-            }
-            
-            .package-header {
-                margin-bottom: 1rem;
-                padding-bottom: 1rem;
-            }
-            
-            .package-features {
-                margin-bottom: 1.5rem;
-            }
-            
-            .feature-item {
-                margin-bottom: 0.7rem;
-            }
-            
-            .feature-text {
-                font-size: 0.9rem;
-            }
-            
-            .package-popular {
-                font-size: 0.7rem;
-                padding: 0.4rem 2rem;
-                right: -25px;
-                top: 10px;
-            }
-            
-            .subscription-message {
-                padding: 0.8rem;
-            }
-            
-            /* Fix for iOS Safari */
-            .subscription-container {
-                min-height: -webkit-fill-available;
-            }
-        }
     </style>
 </head>
 <body>
@@ -519,7 +384,7 @@
         <div class="logo-container">
             <a href="/">
                 <div class="logo">ThreadPay</div>
-                <div class="tagline">secure creator payments</div>
+                <div class="tagline">ai adult companion</div>
             </a>
         </div>
         
@@ -527,8 +392,8 @@
             <!-- Subscription selection view -->
             <div id="subscription-view">
                 <div class="subscription-header">
-                    <h1>Choose Your <span>Plan</span></h1>
-                    <p class="subscription-description">Select a subscription package to start monetizing your creative work.</p>
+                    <h1>Choose Your <span>Experience</span></h1>
+                    <p class="subscription-description">Select a subscription package to start your personal AI experience with your companion.</p>
                 </div>
                 
                 <div class="model-highlight" id="model-highlight">
@@ -567,7 +432,7 @@
                     <i class="fas fa-check-circle"></i>
                     </div>
                     <h1 class="success-title">Subscription Activated!</h1>
-                    <p class="success-message" id="success-message">Thank you for subscribing. Your support for <span id="model-name-success"></span> is now active.</p>
+                    <p class="success-message" id="success-message">Thank you for subscribing. Your premium experience with <span id="model-name-success"></span> is now active.</p>
                     <a href="/dashboard.html" class="action-button">Go to Dashboard</a>
                 </div>
             </div>
@@ -870,7 +735,7 @@
         async function loadModelData() {
             try {
                 if (!userData.model_id) {
-                    showError('No creator information found. Please contact support.');
+                    showError('No AI companion found. Please contact support.');
                     return;
                 }
                 
@@ -884,19 +749,19 @@
                 if (modelError) throw modelError;
                 
                 if (!modelData) {
-                    showError('Creator information not found. Please contact support.');
+                    showError('AI companion information not found. Please contact support.');
                     return;
                 }
                 
                 // Update the UI with model data
                 modelName.textContent = modelData.name;
                 
-                // Set custom greeting message based on creator
+                // Set custom greeting message based on model
                 const greetings = [
-                    `"Thank you for supporting my work. Choose a subscription tier that works for you and gain access to my exclusive content."`,
-                    `"I'm excited to share my content with you. Select a subscription that fits your budget, and let's get started."`,
-                    `"Your support means everything to me. Pick a subscription package, and I'll deliver amazing content just for you."`,
-                    `"Ready to join my community? Choose your subscription level, and let's create something special together."`,
+                    `"I've been waiting for you. Choose a package that fits your desires, and let's begin our intimate journey together."`,
+                    `"I'm so excited to get to know you better. Select a subscription that works for you, and we can start exploring right away."`,
+                    `"I can't wait to share my thoughts with you. Pick a package that suits you, and let's create something special."`,
+                    `"I'm ready to be your personal companion. Choose your subscription, and I'll be all yours."`,
                 ];
                 
                 // Choose a random greeting or use a default
@@ -905,7 +770,7 @@
                 // Set background image if available
                 if (modelData.pictures && modelData.pictures.length > 0) {
                     const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images//${modelData.pictures[0].replace('.jpg', '.PNG')}`;
-                    console.log('Loading creator image from:', imageUrl);
+                    console.log('Loading model image from:', imageUrl);
                     modelImage.style.backgroundImage = `url(${imageUrl})`;
                 } else {
                     modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
@@ -917,7 +782,7 @@
                         id: 'basic-monthly',
                         name: 'Basic',
                         price: 9.99,
-                        description: 'Basic access to exclusive creator content',
+                        description: 'Basic access to your AI companion',
                         stripe_price_id: 'price_1RgvH8B71e12H8w7O2DhtXTD',
                         model_id: modelData.id
                     },
@@ -925,7 +790,7 @@
                         id: 'premium-monthly',
                         name: 'Premium',
                         price: 19.99,
-                        description: 'Full access to all content, Direct message access, Early access to new releases',
+                        description: 'Enhanced interaction with your AI companion, Faster response times, More personalization options',
                         stripe_price_id: 'price_1RgvHiB71e12H8w7K0L6yFEb',
                         model_id: modelData.id
                     },
@@ -933,15 +798,15 @@
                         id: 'vip-monthly',
                         name: 'VIP Experience',
                         price: 29.99,
-                        description: 'Everything in Premium plus personalized content, Priority support, Exclusive community access',
+                        description: 'Full access to all premium features, Priority support, Exclusive content',
                         stripe_price_id: 'price_1RgvHxB71e12H8w7jPiVMYY6',
                         model_id: modelData.id
                     }
                 ];
                 
-                // Fetch packages for this creator
+                // Fetch packages for this model
                 try {
-                    console.log(`Fetching packages for creator ID: ${userData.model_id}`);
+                    console.log(`Fetching packages for model ID: ${userData.model_id}`);
                     const { data: packagesData, error: packagesError } = await supabase
                         .from('packages')
                         .select('*')
@@ -986,8 +851,8 @@
                 }
                 
             } catch (error) {
-                console.error('Error loading creator data:', error);
-                showError('Unable to load creator information. Please try again later.');
+                console.error('Error loading model data:', error);
+                showError('Unable to load AI companion information. Please try again later.');
             }
         }
         
@@ -1116,19 +981,19 @@
         // Get features list based on package
         function getFeaturesList(pkg) {
             const basicFeatures = [
-                'Support your favorite creator',
-                'Exclusive content access',
-                'Regular updates',
-                'Community access',
-                'Cancel anytime'
+                'Personal AI companion',
+                'Unlimited conversations',
+                'Personalized responses',
+                '24/7 availability',
+                'Private and secure'
             ];
             
             const premiumFeatures = [
-                'Priority content access',
-                'Direct message with creator',
-                'Early access to new releases',
-                'Personalized experiences',
-                'Exclusive member events'
+                'Priority access',
+                'Faster response times',
+                'Enhanced personalization',
+                'Extended conversation history',
+                'Premium content'
             ];
             
             // Determine if this is a premium package
@@ -1189,10 +1054,10 @@
                 subscriptionView.classList.add('hidden');
                 successView.classList.remove('hidden');
                 
-                // Update success message with creator name
+                // Update success message with model name
                 if (userData.model_name) {
                     modelNameSuccess.textContent = userData.model_name;
-                    successMessage.innerHTML = `Thank you for subscribing. Your support for <strong>${userData.model_name}</strong> is now active.`;
+                    successMessage.innerHTML = `Thank you for subscribing. Your premium experience with <strong>${userData.model_name}</strong> is now active.`;
                 }
                 
                 // Clean up the URL to remove the session ID parameter
