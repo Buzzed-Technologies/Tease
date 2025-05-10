@@ -1337,4 +1337,15 @@ input[type=number] {
     .persona-detail-body p {
         font-size: 0.95rem;
     }
+}
+
+/* Selection styles */
+::selection {
+    background-color: var(--accent);
+    color: #D3D1D9;
+}
+
+::-moz-selection {
+    background-color: var(--accent);
+    color: #D3D1D9;
 } 

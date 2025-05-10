@@ -1,3 +1,14 @@
+/* Selection styles */
+::selection {
+    background-color: var(--accent);
+    color: #D3D1D9;
+}
+
+::-moz-selection {
+    background-color: var(--accent);
+    color: #D3D1D9;
+}
+
 /* Dashboard Styles */
 .dashboard-header {
     background-color: var(--darker);

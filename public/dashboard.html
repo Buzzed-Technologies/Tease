@@ -222,38 +222,33 @@
             margin-bottom: 1rem;
         }
         
-        .model-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .model-card {
-            background-color: rgba(20, 20, 20, 0.6);
+        .subscribed-model-card {
+            background-color: rgba(249, 247, 244, 0.9);
             border-radius: 12px;
-            padding: 1.2rem;
-            border: 1px solid rgba(128, 0, 32, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
+            padding: 1.5rem;
+            border: 1px solid rgba(211, 209, 218, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
-            gap: 1rem;
-            position: relative;
+            gap: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         
-        .model-card:hover {
+        .subscribed-model-card:hover {
             transform: translateY(-2px);
-            border-color: var(--primary);
-            box-shadow: 0 5px 15px rgba(128, 0, 32, 0.2);
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         .model-image {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background-color: rgba(128, 0, 32, 0.3);
+            background-color: rgba(249, 247, 244, 0.8);
             overflow: hidden;
             flex-shrink: 0;
+            border: 1px solid rgba(211, 209, 218, 0.3);
         }
         
         .model-image img {
@@ -268,43 +263,60 @@
         
         .model-name {
             font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--light);
-            margin-bottom: 0.3rem;
+            font-size: 1.3rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
         }
         
         .model-description {
-            color: var(--light-gray);
+            color: var(--dark-gray);
             font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
         }
         
         .model-subscription-status {
             display: inline-block;
-            padding: 0.2rem 0.6rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 50px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         
         .model-subscription-status.active {
-            background-color: rgba(46, 204, 113, 0.2);
+            background-color: rgba(46, 204, 113, 0.1);
             color: #2ecc71;
             border: 1px solid rgba(46, 204, 113, 0.3);
         }
         
         .model-subscription-status.inactive {
-            background-color: rgba(231, 76, 60, 0.2);
+            background-color: rgba(231, 76, 60, 0.1);
             color: #e74c3c;
             border: 1px solid rgba(231, 76, 60, 0.3);
         }
         
+        .no-subscription-message {
+            padding: 2rem;
+            background-color: rgba(249, 247, 244, 0.9);
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(211, 209, 218, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .no-subscription-message h3 {
+            margin-bottom: 1rem;
+            color: var(--darker);
+        }
+        
+        .no-subscription-message p {
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
         .model-arrow {
-            color: var(--light-gray);
+            color: var(--dark-gray);
             font-size: 1.2rem;
             flex-shrink: 0;
         }
@@ -688,12 +700,6 @@
                 gap: 1.5rem;
             }
             
-            .model-cards {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 1.5rem;
-            }
-            
             .action-button {
                 width: auto;
                 display: inline-block;
@@ -753,7 +759,7 @@
             <section id="account-section" class="content-section active">
                 <div class="section-header">
                     <h2>Account</h2>
-                    <p class="section-description">Your account information and subscribed models.</p>
+                    <p class="section-description">Your account information and AI companion subscription.</p>
                 </div>
                 
                 <div class="account-container">
@@ -775,9 +781,22 @@
                     </div>
                     
                     <div class="models-section">
-                        <h3>Your AI Models</h3>
-                        <div class="model-cards" id="model-cards-container">
-                            <!-- Model cards will be inserted here -->
+                        <h3>Your AI Companion</h3>
+                        
+                        <!-- Shown when user has a subscription -->
+                        <div id="subscribed-model-container" style="display: none;">
+                            <div class="subscribed-model-card" id="subscribed-model-card">
+                                <!-- Model content will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Shown when user has no subscription -->
+                        <div id="no-subscription-container" style="display: none;">
+                            <div class="no-subscription-message">
+                                <h3>No Active Subscription</h3>
+                                <p>You don't have an active subscription to any AI companion. Subscribe to unlock the full experience.</p>
+                                <button class="action-button" id="view-models-button">View Available Models</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -896,7 +915,10 @@
         const accountEmail = document.getElementById('account-email');
         const accountCreated = document.getElementById('account-created');
         const accountSubscriptionStatus = document.getElementById('account-subscription-status');
-        const modelCardsContainer = document.getElementById('model-cards-container');
+        const subscribedModelContainer = document.getElementById('subscribed-model-container');
+        const subscribedModelCard = document.getElementById('subscribed-model-card');
+        const noSubscriptionContainer = document.getElementById('no-subscription-container');
+        const viewModelsButton = document.getElementById('view-models-button');
         const logoutButton = document.getElementById('logout-button');
         const settingsForm = document.getElementById('settings-form');
         const settingsName = document.getElementById('settings-name');
@@ -937,15 +959,24 @@
                 // Update the UI with user data
                 updateUserInterface(profile);
                 
-                // Fetch available models
-                const { data: models, error: modelsError } = await supabase
-                    .from('models')
-                    .select('*');
-                
-                if (modelsError) throw modelsError;
-                
-                // Display models
-                displayModels(models, profile.model_id);
+                // Check if user has a subscribed model
+                if (profile.model_id) {
+                    // Fetch the subscribed model
+                    const { data: model, error: modelError } = await supabase
+                        .from('models')
+                        .select('*')
+                        .eq('id', profile.model_id)
+                        .single();
+                    
+                    if (modelError) throw modelError;
+                    
+                    // Display the subscribed model
+                    displaySubscribedModel(model, true);
+                } else {
+                    // Show no subscription message
+                    subscribedModelContainer.style.display = 'none';
+                    noSubscriptionContainer.style.display = 'block';
+                }
                 
             } catch (error) {
                 console.error('Error initializing dashboard:', error);
@@ -976,47 +1007,43 @@
             }
         }
         
-        // Display models
-        function displayModels(models, subscribedModelId) {
-            modelCardsContainer.innerHTML = '';
+        // Display subscribed model
+        function displaySubscribedModel(model, isSubscribed) {
+            // Show the subscribed model container
+            subscribedModelContainer.style.display = 'block';
+            noSubscriptionContainer.style.display = 'none';
             
-            models.forEach(model => {
-                const isSubscribed = model.id === subscribedModelId;
-                
-                const modelCard = document.createElement('div');
-                modelCard.className = 'model-card';
-                modelCard.setAttribute('data-model-id', model.id);
-                
-                // Build image path
-                let imagePath;
-                if (model.pictures && model.pictures.length > 0) {
-                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-                } else {
-                    imagePath = '/images/placeholder-model.jpg';
-                }
-                
-                modelCard.innerHTML = `
-                    <div class="model-image">
-                        <img src="${imagePath}" alt="${model.name}">
-                    </div>
-                    <div class="model-info">
-                        <div class="model-name">${model.name}</div>
-                        <div class="model-description">${model.bio || 'AI Companion Model'}</div>
-                        <div class="model-subscription-status ${isSubscribed ? 'active' : 'inactive'}">
-                            ${isSubscribed ? 'Subscribed' : 'Not Subscribed'}
-                        </div>
-                    </div>
-                    <div class="model-arrow">
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                `;
-                
-                // Add click event listener to open popup
-                modelCard.addEventListener('click', () => openModelPopup(model, isSubscribed));
-                
-                modelCardsContainer.appendChild(modelCard);
-            });
+            // Build image path
+            let imagePath;
+            if (model.pictures && model.pictures.length > 0) {
+                imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+            } else {
+                imagePath = '/images/placeholder-model.jpg';
+            }
+            
+            // Populate model card
+            subscribedModelCard.innerHTML = `
+                <div class="model-image">
+                    <img src="${imagePath}" alt="${model.name}">
+                </div>
+                <div class="model-info">
+                    <div class="model-name">${model.name}</div>
+                    <div class="model-description">${model.bio || 'Your AI companion ready to chat with you'}</div>
+                    <div class="model-subscription-status active">Subscribed</div>
+                </div>
+                <div class="model-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            `;
+            
+            // Add click event listener to open popup
+            subscribedModelCard.addEventListener('click', () => openModelPopup(model, isSubscribed));
         }
+        
+        // View available models button event
+        viewModelsButton.addEventListener('click', function() {
+            alert('This would redirect to a page with available models in a real implementation.');
+        });
         
         // Open model subscription popup
         function openModelPopup(model, isSubscribed) {

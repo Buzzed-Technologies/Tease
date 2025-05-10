@@ -1,3 +1,14 @@
+/* Selection styles */
+::selection {
+    background-color: var(--accent);
+    color: #D3D1D9;
+}
+
+::-moz-selection {
+    background-color: var(--accent);
+    color: #D3D1D9;
+}
+
 /* Chat Styles */
 :root {
     --message-user-bg: rgba(211, 209, 218, 0.3);
