@@ -518,8 +518,11 @@
                 document.querySelector('.model-column').style.display = 'none';
                 document.querySelector('.signup-column').style.flex = '1';
                 document.querySelector('.signup-description').textContent = 'Create your account to get started.';
+                showError('No model ID found. Please use a valid invite link.');
                 return;
             }
+            
+            console.log('Attempting to load model with ID:', modelId);
             
             try {
                 const { data, error } = await supabase
@@ -527,6 +530,8 @@
                     .select('*')
                     .eq('id', modelId)
                     .single();
+                
+                console.log('Model data fetch result:', data ? 'Found' : 'Not found', error ? `Error: ${error.message}` : 'No error');
                     
                 if (error) throw error;
                 
@@ -539,15 +544,23 @@
                     
                     // Update model image if available
                     if (data.pictures && data.pictures.length > 0) {
-                        document.getElementById('model-image').style.backgroundImage = `url(/images/models/${data.pictures[0]})`;
+                        // Use Supabase bucket URL for images
+                        const imageUrl = `${supabaseUrl}/storage/v1/object/public/models/${data.pictures[0]}`;
+                        document.getElementById('model-image').style.backgroundImage = `url(${imageUrl})`;
+                        console.log('Loading image from:', imageUrl);
                     }
                     
                     // Store the model ID in a hidden field for later use during signup
-                    const modelIdField = document.createElement('input');
-                    modelIdField.type = 'hidden';
-                    modelIdField.id = 'model-id';
-                    modelIdField.value = modelId;
-                    document.getElementById('signup-form').appendChild(modelIdField);
+                    const modelIdInput = document.getElementById('model-id');
+                    if (modelIdInput) {
+                        modelIdInput.value = modelId;
+                    } else {
+                        const modelIdField = document.createElement('input');
+                        modelIdField.type = 'hidden';
+                        modelIdField.id = 'model-id';
+                        modelIdField.value = modelId;
+                        document.getElementById('signup-form').appendChild(modelIdField);
+                    }
                 }
             } catch (error) {
                 console.error('Error loading model:', error);
@@ -566,7 +579,13 @@
                 const telegram = document.getElementById('telegram').value.trim().replace('@', '');
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirm-password').value;
-                const modelId = document.getElementById('model-id').value;
+                
+                // Get model ID with fallback - use the global modelId if the form field is empty
+                let modelIdValue = document.getElementById('model-id')?.value;
+                if (!modelIdValue && modelId) {
+                    modelIdValue = modelId;
+                    console.log('Using global modelId value:', modelIdValue);
+                }
                 
                 // Validate input
                 if (!name || !telegram || !password || isNaN(age)) {
@@ -589,8 +608,30 @@
                     return;
                 }
                 
-                if (!modelId) {
+                if (!modelIdValue) {
                     showError('Invalid model selection. Please refresh the page and try again.');
+                    return;
+                }
+                
+                // Verify the model exists before creating an account
+                try {
+                    console.log('Verifying model exists with ID:', modelIdValue);
+                    const { data: modelCheck, error: modelCheckError } = await supabase
+                        .from('models')
+                        .select('id, name')
+                        .eq('id', modelIdValue)
+                        .single();
+                        
+                    if (modelCheckError || !modelCheck) {
+                        console.error('Model validation failed:', modelCheckError || 'Model not found');
+                        showError('Invalid model. Please try again with a valid invite link.');
+                        return;
+                    }
+                    
+                    console.log('Model validated successfully:', modelCheck.name);
+                } catch (error) {
+                    console.error('Error validating model:', error);
+                    showError('Error validating model. Please try again.');
                     return;
                 }
                 
@@ -622,21 +663,10 @@
                         email: data.user.email,
                         name: name,
                         username: telegram,
-                        model_id: modelId,
+                        model_id: modelIdValue,
                     };
                     
                     localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                    
-                    // Verify the model exists
-                    const { data: modelData, error: modelError } = await supabase
-                        .from('models')
-                        .select('id')
-                        .eq('id', modelId)
-                        .single();
-                        
-                    if (modelError || !modelData) {
-                        throw new Error('Invalid model selected. Please refresh and try again.');
-                    }
                     
                     // Create profile entry
                     const { error: profileError } = await supabase
@@ -646,7 +676,7 @@
                                 auth_id: data.user.id,
                                 name: name,
                                 telegram_username: telegram,
-                                model_id: modelId, // Save the initial model ID
+                                model_id: modelIdValue, // Save the initial model ID
                                 password_hash: 'placeholder' // In a real app, don't store passwords like this
                             }
                         ]);
@@ -657,7 +687,7 @@
                     
                     // Redirect to subscription page after a short delay
                     setTimeout(() => {
-                        window.location.href = `/subscription.html?model=${modelId}`;
+                        window.location.href = `/subscription.html?model=${modelIdValue}`;
                     }, 2000);
                     
                 } catch (error) {
