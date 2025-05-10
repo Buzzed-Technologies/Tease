@@ -37,6 +37,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
         
         .model-card:hover {
@@ -44,15 +46,29 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         
+        .model-image-container {
+            padding: 2rem 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
         .model-image {
-            height: 250px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
             background-size: cover;
             background-position: center;
             background-color: rgba(211, 209, 218, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
         }
         
         .model-details {
             padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .model-name {
@@ -60,6 +76,7 @@
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: var(--dark);
+            text-align: center;
         }
         
         .model-bio {
@@ -73,12 +90,15 @@
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
+            text-align: center;
+            flex-grow: 1;
         }
         
         .model-card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: auto;
         }
         
         .model-subscription-status {
@@ -195,19 +215,34 @@
             padding: 1.5rem;
         }
         
+        .modal-model-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
         .modal-model-image {
-            width: 100%;
-            height: 250px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
             background-size: cover;
             background-position: center;
-            border-radius: 8px;
             margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
+        }
+        
+        .modal-model-name {
+            text-align: center;
+            margin-bottom: 0.5rem;
         }
         
         .modal-model-bio {
             color: var(--dark);
             margin-bottom: 2rem;
             line-height: 1.6;
+            text-align: center;
         }
         
         .package-list {
@@ -371,8 +406,9 @@
         
         @media (max-width: 768px) {
             .model-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
                 gap: 1.5rem;
+                padding: 0 0.5rem;
             }
             
             .package-list {
@@ -384,12 +420,9 @@
                 max-height: 85vh;
             }
             
-            .modal-model-image {
-                height: 200px;
-            }
-            
             .model-image {
-                height: 200px;
+                width: 160px;
+                height: 160px;
             }
             
             .dashboard-header {
@@ -410,12 +443,28 @@
         }
         
         @media (max-width: 480px) {
+            .model-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+            
             .model-card {
-                border-radius: 8px;
+                border-radius: 10px;
+                max-width: 320px;
+                margin: 0 auto;
+            }
+            
+            .model-image-container {
+                padding: 1.5rem 1.5rem 0.5rem;
             }
             
             .model-image {
-                height: 180px;
+                width: 130px;
+                height: 130px;
+            }
+            
+            .model-details {
+                padding: 1rem 1.5rem 1.5rem;
             }
             
             .model-name {
@@ -432,7 +481,12 @@
             .model-card-footer {
                 flex-direction: column;
                 gap: 0.8rem;
-                align-items: flex-start;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .model-subscription-status {
+                font-size: 0.7rem;
             }
             
             .view-button {
@@ -440,7 +494,8 @@
             }
             
             .modal-model-image {
-                height: 180px;
+                width: 120px;
+                height: 120px;
             }
             
             .notification {
@@ -451,6 +506,15 @@
             
             .notification.active {
                 transform: translateX(-50%) translateY(0);
+            }
+            
+            .header-controls .dashboard-link,
+            .header-controls .logout-button {
+                padding: 0.5rem;
+            }
+            
+            .btn-text {
+                display: none;
             }
         }
     </style>
@@ -724,6 +788,10 @@
                     modelCard.appendChild(badge);
                 }
                 
+                // Add container for the image
+                const modelImageContainer = document.createElement('div');
+                modelImageContainer.className = 'model-image-container';
+                
                 const modelImage = document.createElement('div');
                 modelImage.className = 'model-image';
                 
@@ -743,6 +811,7 @@
                 }
                 
                 modelImage.style.backgroundImage = `url(${imagePath})`;
+                modelImageContainer.appendChild(modelImage);
                 
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
@@ -760,7 +829,7 @@
                     </div>
                 `;
                 
-                modelCard.appendChild(modelImage);
+                modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
                 
@@ -799,9 +868,11 @@
 
             // Set modal content
             modalBody.innerHTML = `
-                <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
-                <h3 class="modal-model-name">${model.name}</h3>
-                <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                <div class="modal-model-container">
+                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                    <h3 class="modal-model-name">${model.name}</h3>
+                    <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                </div>
                 
                 <h3>Select a Subscription Package</h3>
                 <div id="package-list" class="package-list">
