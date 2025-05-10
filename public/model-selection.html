@@ -378,6 +378,80 @@
             .package-list {
                 grid-template-columns: 1fr;
             }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 85vh;
+            }
+            
+            .modal-model-image {
+                height: 200px;
+            }
+            
+            .model-image {
+                height: 200px;
+            }
+            
+            .dashboard-header {
+                padding: 0.8rem 2%;
+            }
+            
+            .dashboard-content {
+                padding: 1.5rem 2%;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .section-description {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .model-card {
+                border-radius: 8px;
+            }
+            
+            .model-image {
+                height: 180px;
+            }
+            
+            .model-name {
+                font-size: 1.3rem;
+            }
+            
+            .model-bio {
+                font-size: 0.85rem;
+                -webkit-line-clamp: 2;
+                max-height: 3em;
+                margin-bottom: 1rem;
+            }
+            
+            .model-card-footer {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: flex-start;
+            }
+            
+            .view-button {
+                width: 100%;
+            }
+            
+            .modal-model-image {
+                height: 180px;
+            }
+            
+            .notification {
+                width: 90%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px);
+            }
+            
+            .notification.active {
+                transform: translateX(-50%) translateY(0);
+            }
         }
     </style>
 </head>
@@ -653,12 +727,22 @@
                 const modelImage = document.createElement('div');
                 modelImage.className = 'model-image';
                 
-                // Set background image if available
-                if (model.pictures && model.pictures.main) {
-                    modelImage.style.backgroundImage = `url(${model.pictures.main})`;
+                // Build the correct image path using Supabase bucket
+                let imagePath;
+                if (model.pictures) {
+                    // Handle both object format (model.pictures.main) and array format (model.pictures[0])
+                    if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                    } else if (model.pictures.main) {
+                        imagePath = model.pictures.main;
+                    } else {
+                        imagePath = '/images/placeholder-model.png';
+                    }
                 } else {
-                    modelImage.style.backgroundImage = 'url(/images/placeholder-model.jpg)';
+                    imagePath = '/images/placeholder-model.png';
                 }
+                
+                modelImage.style.backgroundImage = `url(${imagePath})`;
                 
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
@@ -698,9 +782,24 @@
         
         // Open the subscription modal for a model
         function openSubscriptionModal(model) {
+            // Build the correct image path using Supabase bucket
+            let imagePath;
+            if (model.pictures) {
+                // Handle both object format (model.pictures.main) and array format (model.pictures[0])
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else if (model.pictures.main) {
+                    imagePath = model.pictures.main;
+                } else {
+                    imagePath = '/images/placeholder-model.png';
+                }
+            } else {
+                imagePath = '/images/placeholder-model.png';
+            }
+
             // Set modal content
             modalBody.innerHTML = `
-                <div class="modal-model-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
+                <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
                 <h3 class="modal-model-name">${model.name}</h3>
                 <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
                 
