@@ -822,8 +822,12 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .dashboard-container {
-        background-color: var(--darker);
+        background-color: #2a2a2a;
         color: #e0e0e0;
+    }
+    
+    .dashboard-header {
+        background-color: #1a1a1a;
     }
     
     .dashboard-card,
@@ -833,7 +837,7 @@
     .subscribed-model-card,
     .popup-content,
     .no-subscription-message {
-        background-color: #2a2a2a;
+        background-color: #333333;
         border-color: rgba(255, 255, 255, 0.05);
     }
     
@@ -859,7 +863,7 @@
     }
     
     .form-input {
-        background-color: #3a3a3a;
+        background-color: #444444;
         border-color: rgba(255, 255, 255, 0.1);
         color: #e0e0e0;
     }
