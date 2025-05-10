@@ -42,6 +42,42 @@
             --light: #FFFFFF;
         }
         
+        /* Fix logo and improve visibility for light text */
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem; /* Smaller base size */
+            line-height: 1.1;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            word-wrap: break-word;
+        }
+        
+        .tagline {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--dark); /* Darker color for better visibility */
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        
+        .cta-hint {
+            color: var(--dark); /* Darker color for better visibility */
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .scroll-indicator {
+            color: var(--dark); /* Darker color for better visibility */
+            font-weight: 500;
+        }
+        
+        .scroll-indicator span {
+            display: block; /* Ensure text is on its own line */
+            margin-top: 5px;
+        }
+        
         /* Improved mobile visibility */
         @media (max-width: 768px) {
             .screen {
@@ -52,6 +88,11 @@
             
             h1 {
                 font-size: 2.5rem;
+            }
+            
+            .logo {
+                font-size: 2.2rem; /* Even smaller on mobile */
+                margin-bottom: 5px;
             }
             
             .feature-grid {
@@ -68,6 +109,8 @@
             
             .intro-text {
                 font-size: 1.1rem;
+                color: var(--dark); /* Ensure good contrast */
+                font-weight: 400; /* More visible weight */
             }
         }
         
