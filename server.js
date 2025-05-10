@@ -27,6 +27,55 @@ app.use((req, res, next) => {
   }
 });
 
+// Special middleware for the Stripe webhook
+app.post('/api/webhook', 
+  express.raw({type: 'application/json'}), 
+  async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          await handleSuccessfulCheckout(session);
+          break;
+        case 'customer.subscription.created':
+          const subscription = event.data.object;
+          await handleSubscriptionCreated(subscription);
+          break;
+        case 'customer.subscription.updated':
+          const updatedSubscription = event.data.object;
+          await handleSubscriptionUpdated(updatedSubscription);
+          break;
+        case 'customer.subscription.deleted':
+          const deletedSubscription = event.data.object;
+          await handleSubscriptionCanceled(deletedSubscription);
+          break;
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      res.status(200).json({received: true});
+    } catch (error) {
+      console.error(`Error handling webhook event ${event.type}:`, error);
+      res.status(500).json({error: error.message});
+    }
+  }
+);
+
 // Add this debug endpoint to help troubleshoot environment variable issues
 app.get('/api/config', (req, res) => {
   // Send Supabase config to client with detailed info
@@ -107,7 +156,16 @@ app.post('/api/create-customer', async (req, res) => {
 
 app.post('/api/create-checkout-session', async (req, res) => {
   try {
-    const { customerId, priceId, userId, userPhone, successUrl, cancelUrl } = req.body;
+    const { 
+      customerId, 
+      priceId, 
+      userId, 
+      userPhone, 
+      packageId,
+      modelId,
+      successUrl, 
+      cancelUrl 
+    } = req.body;
     
     // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -124,7 +182,9 @@ app.post('/api/create-checkout-session', async (req, res) => {
       cancel_url: cancelUrl || `${req.headers.origin}/subscription.html`,
       metadata: {
         userId: userId,
-        userPhone: userPhone
+        userPhone: userPhone,
+        packageId: packageId,
+        modelId: modelId
       }
     });
     
@@ -154,11 +214,50 @@ app.post('/api/create-portal-session', async (req, res) => {
 
 app.post('/api/cancel-subscription', async (req, res) => {
   try {
-    const { subscriptionId } = req.body;
+    const { subscriptionId, userId } = req.body;
     
-    const subscription = await stripe.subscriptions.cancel(subscriptionId);
+    if (!subscriptionId) {
+      return res.status(400).json({ error: 'Subscription ID is required' });
+    }
     
-    res.json({ status: subscription.status });
+    // First get the subscription from the database
+    const { data, error } = await supabase
+      .from('user_model_subscriptions')
+      .select('stripe_subscription_id')
+      .eq('id', subscriptionId)
+      .eq('user_id', userId)
+      .single();
+      
+    if (error) {
+      console.error('Error finding subscription:', error);
+      return res.status(404).json({ error: 'Subscription not found' });
+    }
+    
+    const stripeSubId = data.stripe_subscription_id;
+    
+    // Cancel the subscription at period end in Stripe
+    const subscription = await stripe.subscriptions.update(stripeSubId, {
+      cancel_at_period_end: true
+    });
+    
+    // Update the subscription in our database
+    const { error: updateError } = await supabase
+      .from('user_model_subscriptions')
+      .update({
+        cancel_at_period_end: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', subscriptionId);
+      
+    if (updateError) {
+      console.error('Error updating subscription:', updateError);
+      return res.status(500).json({ error: 'Failed to update subscription' });
+    }
+    
+    res.json({ 
+      status: subscription.status,
+      cancel_at_period_end: subscription.cancel_at_period_end
+    });
   } catch (error) {
     console.error('Error canceling subscription:', error);
     res.status(400).json({ error: error.message });
@@ -243,229 +342,32 @@ app.post('/api/check-subscription', async (req, res) => {
   }
 });
 
-// Webhook handler for Stripe events
-app.post('/api/webhook', bodyParser.raw({type: 'application/json'}), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  
-  let event;
-
+// Get session details for client-side validation
+app.get('/api/stripe-session', async (req, res) => {
   try {
-    // Use the raw body for signature verification
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-  } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed':
-      const session = event.data.object;
-      // Fulfill the order
-      await handleSuccessfulSubscription(session);
-      break;
-    case 'customer.subscription.deleted':
-      const subscription = event.data.object;
-      await handleCanceledSubscription(subscription);
-      break;
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
-
-  res.status(200).json({received: true});
-});
-
-// Endpoint to verify a checkout session
-app.post('/api/verify-session', async (req, res) => {
-  try {
-    const { sessionId } = req.body;
+    const { session_id } = req.query;
     
-    if (!sessionId) {
+    if (!session_id) {
       return res.status(400).json({ error: 'Session ID is required' });
     }
     
-    // Retrieve the session from Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    // Retrieve the session
+    const session = await stripe.checkout.sessions.retrieve(session_id, {
+      expand: ['subscription']
+    });
     
-    // Check if the payment was successful
-    if (session.payment_status === 'paid' && session.status === 'complete') {
-      // Get the subscription and customer details
-      const subscriptionId = session.subscription;
-      const customerId = session.customer;
-      const userId = session.metadata?.userId;
-      
-      // Update subscription status in the database if not already done by webhook
-      if (userId) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('subscription_status')
-          .eq('id', userId)
-          .single();
-        
-        if (!error && !data.subscription_status) {
-          // If status is not yet updated (webhook might be delayed), update it now
-          await supabase
-            .from('profiles')
-            .update({ 
-              subscription_status: true,
-              stripe_customer_id: customerId,
-              stripe_subscription_id: subscriptionId,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', userId);
-        }
-      }
-      
-      return res.json({
-        success: true,
-        sessionId,
-        subscriptionId,
-        customerId
-      });
-    } else {
-      return res.json({
-        success: false,
-        message: 'Payment not completed'
-      });
-    }
+    // Return relevant data
+    res.json({
+      customer_id: session.customer,
+      subscription_id: session.subscription?.id,
+      status: session.status,
+      metadata: session.metadata
+    });
   } catch (error) {
-    console.error('Error verifying session:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error retrieving session:', error);
+    res.status(400).json({ error: error.message });
   }
 });
-
-// Helper function to handle successful subscription
-async function handleSuccessfulSubscription(session) {
-  try {
-    // Get customer and subscription details
-    const subscriptionId = session.subscription;
-    const customerId = session.customer;
-    const userId = session.metadata?.userId;
-    const userPhone = session.metadata?.userPhone;
-    
-    if (!userPhone) {
-      console.error('No user phone in session metadata');
-      return;
-    }
-    
-    // Get subscription details to determine plan
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const priceId = subscription.items.data[0].price.id;
-    let plan = 'monthly';
-    
-    if (priceId === 'price_1RMiTFB71e12H8w7mfD9dfc9') {
-      plan = 'yearly';
-    } else if (priceId === 'price_1RMiSnB71e12H8w7iJ73uN0u') {
-      plan = 'quarterly';
-    }
-    
-    // Update user in database
-    const { error } = await supabase
-      .from('sex_mode')
-      .update({
-        is_subscribed: true,
-        subscription_plan: plan,
-        subscription_start: new Date().toISOString(),
-        stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId
-      })
-      .eq('phone', userPhone);
-    
-    if (error) {
-      console.error('Error updating user subscription:', error);
-    }
-  } catch (error) {
-    console.error('Error handling successful subscription:', error);
-  }
-}
-
-// Helper function to handle subscription cancellation
-async function handleCanceledSubscription(subscription) {
-  try {
-    console.log('Processing canceled subscription:', subscription.id);
-    
-    // First do a broader query to see if the subscription exists in any form
-    const { data: allSubs, error: searchError } = await supabase
-      .from('sex_mode')
-      .select('phone, stripe_subscription_id');
-    
-    if (searchError) {
-      console.error('Error querying all subscriptions:', searchError);
-    } else {
-      console.log('All subscriptions in database:', allSubs.map(s => 
-        ({ phone: s.phone, subId: s.stripe_subscription_id })));
-      
-      // Check if any subscription IDs contain the target ID (case insensitive)
-      const matchingSubs = allSubs.filter(s => 
-        s.stripe_subscription_id && 
-        s.stripe_subscription_id.toLowerCase() === subscription.id.toLowerCase());
-      
-      if (matchingSubs.length > 0) {
-        console.log('Found matching subscriptions with different casing or format:', matchingSubs);
-      }
-    }
-    
-    // Try exact match first
-    const { data, error } = await supabase
-      .from('sex_mode')
-      .select('phone')
-      .eq('stripe_subscription_id', subscription.id);
-    
-    if (error) {
-      console.error('Error finding user with subscription (exact match):', error);
-      return;
-    }
-    
-    if (!data || data.length === 0) {
-      console.log(`No user found with subscription ID: ${subscription.id}`);
-      
-      // Try with case-insensitive match as fallback
-      const { data: iLikeData, error: iLikeError } = await supabase
-        .from('sex_mode')
-        .select('phone')
-        .ilike('stripe_subscription_id', subscription.id);
-      
-      if (iLikeError) {
-        console.error('Error finding user with case-insensitive match:', iLikeError);
-        return;
-      }
-      
-      if (!iLikeData || iLikeData.length === 0) {
-        console.log('No match found even with case-insensitive search');
-        return;
-      }
-      
-      console.log('Found match with case-insensitive search:', iLikeData);
-      const userPhone = iLikeData[0].phone;
-      updateSubscriptionStatus(userPhone);
-    } else {
-      const userPhone = data[0].phone;
-      console.log(`Found user with phone: ${userPhone}, updating subscription status`);
-      updateSubscriptionStatus(userPhone);
-    }
-  } catch (error) {
-    console.error('Error handling canceled subscription:', error);
-  }
-}
-
-// Helper function to update subscription status
-async function updateSubscriptionStatus(userPhone) {
-  const { error: updateError } = await supabase
-    .from('sex_mode')
-    .update({
-      is_subscribed: false,
-      subscription_end: new Date().toISOString(),
-      subscription_status: 'canceled'
-    })
-    .eq('phone', userPhone);
-  
-  if (updateError) {
-    console.error('Error updating user subscription status:', updateError);
-  } else {
-    console.log(`Successfully updated subscription status for user ${userPhone}`);
-  }
-}
 
 // Middleware to inject environment variables into HTML files
 app.use((req, res, next) => {
@@ -519,6 +421,228 @@ app.get('/:page', (req, res) => {
     res.sendFile(filePath);
   } else {
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+  }
+});
+
+// Handle successful checkout
+async function handleSuccessfulCheckout(session) {
+  console.log('Processing successful checkout session:', session.id);
+  
+  try {
+    const { userId, modelId, packageId } = session.metadata;
+    
+    if (!userId || !modelId) {
+      console.error('Missing required metadata in checkout session');
+      return;
+    }
+    
+    // Retrieve subscription details
+    const subscription = await stripe.subscriptions.retrieve(session.subscription);
+    
+    // Create or update user_model_subscriptions record
+    const { data, error } = await supabase
+      .from('user_model_subscriptions')
+      .insert([{
+        user_id: userId,
+        model_id: modelId,
+        package_id: packageId || null,
+        stripe_subscription_id: subscription.id,
+        stripe_customer_id: session.customer,
+        status: subscription.status,
+        subscription_plan: 'monthly',
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        is_active: true,
+        cancel_at_period_end: subscription.cancel_at_period_end
+      }]);
+      
+    if (error) {
+      console.error('Error inserting subscription record:', error);
+      return;
+    }
+    
+    // Update the subscription count in the profiles table
+    const { error: updateError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
+    
+    if (updateError) {
+      console.error('Error updating subscription count:', updateError);
+    }
+    
+    console.log('Subscription record created successfully');
+  } catch (error) {
+    console.error('Error handling successful checkout:', error);
+  }
+}
+
+// Handle subscription created event
+async function handleSubscriptionCreated(subscription) {
+  console.log('Processing new subscription:', subscription.id);
+  
+  // For new subscriptions, the checkout.session.completed webhook should handle it
+  // This is just a backup in case that webhook fails
+}
+
+// Handle subscription updated event
+async function handleSubscriptionUpdated(subscription) {
+  console.log('Processing subscription update:', subscription.id);
+  
+  try {
+    // Update the subscription record
+    const { error } = await supabase
+      .from('user_model_subscriptions')
+      .update({
+        status: subscription.status,
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        updated_at: new Date().toISOString()
+      })
+      .eq('stripe_subscription_id', subscription.id);
+      
+    if (error) {
+      console.error('Error updating subscription record:', error);
+    }
+  } catch (error) {
+    console.error('Error handling subscription update:', error);
+  }
+}
+
+// Handle subscription canceled event
+async function handleSubscriptionCanceled(subscription) {
+  console.log('Processing subscription cancellation:', subscription.id);
+  
+  try {
+    // Update the subscription record to inactive
+    const { error } = await supabase
+      .from('user_model_subscriptions')
+      .update({
+        status: subscription.status,
+        is_active: false,
+        updated_at: new Date().toISOString()
+      })
+      .eq('stripe_subscription_id', subscription.id);
+      
+    if (error) {
+      console.error('Error updating canceled subscription record:', error);
+      return;
+    }
+    
+    // Get the user ID for this subscription
+    const { data, error: fetchError } = await supabase
+      .from('user_model_subscriptions')
+      .select('user_id')
+      .eq('stripe_subscription_id', subscription.id)
+      .single();
+      
+    if (fetchError) {
+      console.error('Error fetching user for subscription:', fetchError);
+      return;
+    }
+    
+    if (data && data.user_id) {
+      // Decrement the subscription count
+      const { error: updateError } = await supabase.rpc('decrement_subscription_count', { user_id: data.user_id });
+      
+      if (updateError) {
+        console.error('Error updating subscription count:', updateError);
+      }
+    }
+  } catch (error) {
+    console.error('Error handling subscription cancellation:', error);
+  }
+}
+
+// Get user subscriptions
+app.get('/api/user-subscriptions/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    // Get all active subscriptions for the user
+    const { data, error } = await supabase
+      .from('user_model_subscriptions')
+      .select(`
+        *,
+        models:model_id (*),
+        packages:package_id (*)
+      `)
+      .eq('user_id', userId)
+      .eq('is_active', true);
+      
+    if (error) {
+      console.error('Error fetching user subscriptions:', error);
+      return res.status(500).json({ error: 'Failed to fetch subscriptions' });
+    }
+    
+    res.json({ subscriptions: data || [] });
+  } catch (error) {
+    console.error('Error fetching user subscriptions:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Get model details with packages
+app.get('/api/model/:modelId', async (req, res) => {
+  try {
+    const { modelId } = req.params;
+    
+    if (!modelId) {
+      return res.status(400).json({ error: 'Model ID is required' });
+    }
+    
+    // Get model details
+    const { data: model, error: modelError } = await supabase
+      .from('models')
+      .select('*')
+      .eq('id', modelId)
+      .single();
+      
+    if (modelError) {
+      console.error('Error fetching model:', modelError);
+      return res.status(404).json({ error: 'Model not found' });
+    }
+    
+    // Get packages for this model
+    const { data: packages, error: packagesError } = await supabase
+      .from('packages')
+      .select('*')
+      .eq('model_id', modelId)
+      .order('price', { ascending: true });
+      
+    if (packagesError) {
+      console.error('Error fetching packages:', packagesError);
+      return res.status(500).json({ error: 'Failed to fetch packages' });
+    }
+    
+    res.json({ 
+      model,
+      packages: packages || []
+    });
+  } catch (error) {
+    console.error('Error fetching model details:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Get all available models
+app.get('/api/models', async (req, res) => {
+  try {
+    // Get all active models
+    const { data, error } = await supabase
+      .from('models')
+      .select('*')
+      .eq('active', true);
+      
+    if (error) {
+      console.error('Error fetching models:', error);
+      return res.status(500).json({ error: 'Failed to fetch models' });
+    }
+    
+    res.json({ models: data || [] });
+  } catch (error) {
+    console.error('Error fetching models:', error);
+    res.status(400).json({ error: error.message });
   }
 });
 
