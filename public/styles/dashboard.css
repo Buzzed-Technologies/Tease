@@ -822,12 +822,8 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .dashboard-container {
-        background-color: #2a2a2a;
-        color: #e0e0e0;
-    }
-    
-    .dashboard-header {
-        background-color: #1a1a1a;
+        background-color: var(--primary);
+        color: var(--dark);
     }
     
     .dashboard-card,
@@ -837,8 +833,8 @@
     .subscribed-model-card,
     .popup-content,
     .no-subscription-message {
-        background-color: #333333;
-        border-color: rgba(255, 255, 255, 0.05);
+        background-color: var(--primary-light);
+        border-color: rgba(0, 0, 0, 0.05);
     }
     
     .section-header h2,
@@ -849,7 +845,7 @@
     .model-detail-info h3,
     .subscription-details-container h4,
     .subscription-detail-value {
-        color: #e0e0e0;
+        color: var(--dark);
     }
     
     .section-description,
@@ -859,30 +855,30 @@
     .model-description,
     .model-detail-description,
     .subscription-detail-label {
-        color: #b0b0b0;
+        color: var(--dark-gray);
     }
     
     .form-input {
-        background-color: #444444;
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #e0e0e0;
+        background-color: #FFFFFF;
+        border-color: rgba(0, 0, 0, 0.1);
+        color: var(--dark);
     }
     
     .form-input::placeholder {
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(0, 0, 0, 0.4);
     }
     
     .tab-button {
-        color: #b0b0b0;
+        color: var(--dark-gray);
     }
     
     .tab-button:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #e0e0e0;
+        background: rgba(211, 209, 218, 0.2);
+        color: var(--dark);
     }
     
     .popup-close:hover {
-        color: #ff6b6b;
+        color: #e74c3c;
     }
     
     .account-header,
@@ -890,7 +886,7 @@
     .popup-header,
     .popup-footer,
     .model-detail-header {
-        border-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(0, 0, 0, 0.05);
     }
 
     .logout-button {
