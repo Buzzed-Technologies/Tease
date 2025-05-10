@@ -424,6 +424,92 @@ app.get('/:page', (req, res) => {
   }
 });
 
+// Helper function to ensure profile exists
+async function ensureProfileExists(userId, userName = null, userEmail = null) {
+  console.log('Ensuring profile exists for user:', userId);
+  
+  // Check if profile already exists
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', userId)
+    .single();
+    
+  if (error) {
+    console.log('Profile not found, creating new profile');
+    
+    // Try to get user data from auth.users if needed
+    let name = userName;
+    let email = userEmail;
+    
+    if (!name || !email) {
+      // Need to use raw SQL for auth schema access
+      const { data: userData, error: userError } = await supabase.rpc('get_user_details', { 
+        user_uuid: userId 
+      });
+        
+      if (!userError && userData) {
+        // Use returned data from the function
+        name = userData.name || userData.email;
+        email = userData.email;
+      }
+    }
+    
+    // Create new profile
+    const { error: insertError } = await supabase
+      .from('profiles')
+      .insert({
+        id: userId,
+        auth_id: userId,
+        name: name || 'User',
+        subscription_count: 0,
+        has_active_subscription: false,
+        subscription_status: false,
+        // Default values for non-nullable fields
+        telegram_username: '',
+        password_hash: ''
+      });
+      
+    if (insertError) {
+      console.error('Error creating profile:', insertError);
+      
+      // Try with minimal fields if there are column constraints we don't know about
+      const { error: minimalInsertError } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          auth_id: userId,
+          telegram_username: '',
+          password_hash: ''
+        });
+        
+      if (minimalInsertError) {
+        console.error('Error creating minimal profile:', minimalInsertError);
+        
+        // Try a direct SQL approach as last resort
+        try {
+          const { error: sqlError } = await supabase.rpc('create_minimal_profile', {
+            user_uuid: userId
+          });
+          
+          if (sqlError) {
+            console.error('Error creating profile via SQL function:', sqlError);
+            return false;
+          }
+        } catch (e) {
+          console.error('Exception in create_minimal_profile:', e);
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+  
+  console.log('Profile already exists');
+  return true;
+}
+
 // Handle successful checkout
 async function handleSuccessfulCheckout(session) {
   console.log('Processing successful checkout session:', session.id);
@@ -435,6 +521,13 @@ async function handleSuccessfulCheckout(session) {
     if (!userId || !modelId) {
       console.error('Missing required metadata in checkout session:', session.metadata);
       return;
+    }
+    
+    // Ensure profile exists before proceeding
+    const profileExists = await ensureProfileExists(userId);
+    if (!profileExists) {
+      console.error('Failed to create profile for user:', userId);
+      // Continue anyway to try to create the subscription
     }
     
     // First ensure the profile exists and has correct initial values
@@ -456,72 +549,88 @@ async function handleSuccessfulCheckout(session) {
     const subscription = await stripe.subscriptions.retrieve(session.subscription);
     console.log('Subscription status:', subscription.status);
     
-    // Create or update user_model_subscriptions record
-    const { data, error } = await supabase
-      .from('user_model_subscriptions')
-      .insert([{
-        user_id: userId,
-        model_id: modelId,
-        package_id: packageId || null,
-        stripe_subscription_id: subscription.id,
-        stripe_customer_id: session.customer,
-        status: subscription.status,
-        subscription_plan: 'monthly',
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        is_active: true,
-        cancel_at_period_end: subscription.cancel_at_period_end
-      }]);
+    // Create subscription using the database function to avoid column ambiguity
+    console.log('Creating subscription using RPC function...');
+    const { error: createError } = await supabase.rpc('create_user_subscription', {
+      p_user_id: userId,
+      p_model_id: modelId,
+      p_package_id: packageId || null,
+      p_stripe_subscription_id: subscription.id,
+      p_stripe_customer_id: session.customer,
+      p_status: subscription.status,
+      p_subscription_plan: 'monthly',
+      p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      p_is_active: true,
+      p_cancel_at_period_end: subscription.cancel_at_period_end
+    });
+    
+    if (createError) {
+      console.error('Error creating subscription via RPC:', createError);
       
-    if (error) {
-      console.error('Error inserting subscription record:', error);
-      
-      // Check if record already exists
-      const { data: existingData, error: checkError } = await supabase
-        .from('user_model_subscriptions')
-        .select('id')
-        .eq('stripe_subscription_id', subscription.id)
-        .single();
-        
-      if (!checkError && existingData) {
-        console.log('Record already exists for this subscription, continuing...');
-      } else {
-        return; // Don't continue if we can't create or find the subscription
+      // Fall back to direct insert
+      console.log('Falling back to direct insert...');
+      try {
+        const { error } = await supabase
+          .from('user_model_subscriptions')
+          .insert({
+            user_id: userId,
+            model_id: modelId,
+            package_id: packageId || null,
+            stripe_subscription_id: subscription.id,
+            stripe_customer_id: session.customer,
+            status: subscription.status,
+            subscription_plan: 'monthly',
+            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            is_active: true,
+            cancel_at_period_end: subscription.cancel_at_period_end
+          });
+          
+        if (error) {
+          console.error('Error with direct insert:', error);
+          return;
+        }
+      } catch (e) {
+        console.error('Exception during direct insert:', e);
+        return;
       }
     } else {
-      console.log('Created new subscription record successfully');
+      console.log('Subscription created successfully via RPC');
     }
     
-    // Update the subscription count in the profiles table
-    console.log('Incrementing subscription count for user:', userId);
-    const { error: updateError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
+    // Fix user subscription status using dedicated function
+    console.log('Fixing subscription status for user:', userId);
+    const { data: fixResult, error: fixError } = await supabase.rpc('fix_user_subscription_status', {
+      p_user_id: userId
+    });
     
-    if (updateError) {
-      console.error('Error updating subscription count:', updateError);
+    if (fixError) {
+      console.error('Error fixing subscription status via RPC:', fixError);
       
-      // If RPC fails, try direct update
-      console.log('Trying direct profile update...');
-    }
-    
-    // Directly update the profile to ensure subscription status is set
-    // This is a fallback in case the RPC call fails
-    console.log('Directly updating profile fields for user:', userId);
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        subscription_count: 1, 
-        has_active_subscription: true,
-        subscription_status: true
-      })
-      .eq('id', userId);
+      // Fall back to direct updates
+      console.log('Falling back to direct profile updates...');
       
-    if (profileError) {
-      console.error('Error directly updating profile subscription fields:', profileError);
+      // Update the subscription count in the profiles table
+      const { error: updateError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
       
-      // As a last resort, try to update the fields one by one
-      console.log('Attempting to update individual fields...');
-      await supabase.from('profiles').update({ subscription_count: 1 }).eq('id', userId);
-      await supabase.from('profiles').update({ has_active_subscription: true }).eq('id', userId);
-      await supabase.from('profiles').update({ subscription_status: true }).eq('id', userId);
+      if (updateError) {
+        console.error('Error updating subscription count:', updateError);
+      }
+      
+      // Directly update the profile as last resort
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          subscription_count: 1, 
+          has_active_subscription: true,
+          subscription_status: true
+        })
+        .eq('id', userId);
+        
+      if (profileError) {
+        console.error('Error directly updating profile subscription fields:', profileError);
+      }
+    } else {
+      console.log('Subscription status fixed successfully:', fixResult);
     }
     
     // Verify the profile was updated correctly
@@ -552,7 +661,57 @@ async function handleSubscriptionCreated(subscription) {
     // This is just a backup in case that webhook fails
     
     // Get the user ID for this subscription from metadata
-    if (!subscription.metadata || !subscription.metadata.userId) {
+    if (subscription.metadata && subscription.metadata.userId) {
+      const userId = subscription.metadata.userId;
+      console.log('Found userId directly in subscription metadata:', userId);
+      
+      // Ensure profile exists
+      const profileExists = await ensureProfileExists(userId);
+      if (!profileExists) {
+        console.error('Failed to create profile for user:', userId);
+      }
+      
+      // Update the subscription record
+      const { error: updateError } = await supabase
+        .from('user_model_subscriptions')
+        .insert({
+          user_id: userId,
+          model_id: subscription.metadata.modelId || null,
+          package_id: subscription.metadata.packageId || null,
+          stripe_subscription_id: subscription.id,
+          stripe_customer_id: subscription.customer,
+          status: subscription.status,
+          subscription_plan: 'monthly',
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          is_active: subscription.status === 'active',
+          cancel_at_period_end: subscription.cancel_at_period_end
+        });
+        
+      if (updateError) {
+        console.error('Error creating subscription record from metadata:', updateError);
+      } else {
+        // Update the subscription count in the profiles table
+        const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
+        
+        if (countError) {
+          console.error('Error updating subscription count:', countError);
+          
+          // Directly update profile as fallback
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
+              subscription_count: 1,
+              has_active_subscription: true,
+              subscription_status: true
+            })
+            .eq('id', userId);
+            
+          if (profileError) {
+            console.error('Error directly updating profile subscription fields:', profileError);
+          }
+        }
+      }
+    } else {
       // If we don't have metadata, try to get the user from existing subscriptions
       const { data, error } = await supabase
         .from('user_model_subscriptions')
@@ -562,7 +721,87 @@ async function handleSubscriptionCreated(subscription) {
         
       if (error || !data) {
         console.error('Error finding user for subscription:', error || 'No subscription found');
+        
+        // Try to find from recent sessions
+        try {
+          // Retrieve recent checkout sessions for this customer
+          const sessions = await stripe.checkout.sessions.list({
+            customer: subscription.customer,
+            limit: 5
+          });
+          
+          // Look for a session that matches this subscription ID
+          const matchingSession = sessions.data.find(session => 
+            session.subscription === subscription.id
+          );
+          
+          if (matchingSession && matchingSession.metadata && matchingSession.metadata.userId) {
+            console.log('Found user from checkout session metadata:', matchingSession.metadata.userId);
+            const userId = matchingSession.metadata.userId;
+            
+            // Ensure profile exists
+            const profileExists = await ensureProfileExists(userId);
+            if (!profileExists) {
+              console.error('Failed to create profile for user:', userId);
+            }
+            
+            // Create the subscription record
+            const { error: insertError } = await supabase
+              .from('user_model_subscriptions')
+              .insert({
+                user_id: userId,
+                model_id: matchingSession.metadata.modelId || null,
+                package_id: matchingSession.metadata.packageId || null,
+                stripe_subscription_id: subscription.id,
+                stripe_customer_id: subscription.customer,
+                status: subscription.status,
+                subscription_plan: 'monthly',
+                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                is_active: subscription.status === 'active',
+                cancel_at_period_end: subscription.cancel_at_period_end
+              });
+              
+            if (insertError) {
+              console.error('Error creating subscription record from session:', insertError);
+              return;
+            }
+            
+            // Update the subscription count in the profiles table
+            const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
+            
+            if (countError) {
+              console.error('Error updating subscription count:', countError);
+              
+              // Directly update profile as fallback
+              const { error: profileError } = await supabase
+                .from('profiles')
+                .update({
+                  subscription_count: 1,
+                  has_active_subscription: true,
+                  subscription_status: true
+                })
+                .eq('id', userId);
+                
+              if (profileError) {
+                console.error('Error directly updating profile subscription fields:', profileError);
+              }
+            }
+          } else {
+            console.error('Could not find user ID for subscription:', subscription.id);
+            return;
+          }
+        } catch (stripeError) {
+          console.error('Error retrieving sessions from Stripe:', stripeError);
+          return;
+        }
+        
         return;
+      }
+      
+      // Ensure profile exists
+      const profileExists = await ensureProfileExists(data.user_id);
+      if (!profileExists) {
+        console.error('Failed to create profile for user:', data.user_id);
       }
       
       // Update the subscription record
@@ -586,20 +825,20 @@ async function handleSubscriptionCreated(subscription) {
       
       if (countError) {
         console.error('Error updating subscription count:', countError);
-      }
-      
-      // Directly update the profile to ensure subscription status is set
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          subscription_count: 1,
-          has_active_subscription: true,
-          subscription_status: true
-        })
-        .eq('id', data.user_id);
         
-      if (profileError) {
-        console.error('Error directly updating profile subscription fields:', profileError);
+        // Directly update profile as fallback
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_count: 1,
+            has_active_subscription: true,
+            subscription_status: true
+          })
+          .eq('id', data.user_id);
+          
+        if (profileError) {
+          console.error('Error directly updating profile subscription fields:', profileError);
+        }
       }
     }
   } catch (error) {
@@ -619,6 +858,8 @@ async function handleSubscriptionUpdated(subscription) {
       .eq('stripe_subscription_id', subscription.id)
       .single();
       
+    let userId = null;
+      
     // If we can't find the subscription record, check if we have metadata on the subscription
     if (fetchError || !data) {
       console.log('Subscription not found in database, trying to use metadata...');
@@ -626,27 +867,7 @@ async function handleSubscriptionUpdated(subscription) {
       if (subscription.metadata && subscription.metadata.userId) {
         // We have the user ID in metadata, so we can use it directly
         console.log('Using userId from subscription metadata:', subscription.metadata.userId);
-        data = { user_id: subscription.metadata.userId };
-        
-        // Create the subscription record if it doesn't exist
-        const { error: insertError } = await supabase
-          .from('user_model_subscriptions')
-          .insert([{
-            user_id: subscription.metadata.userId,
-            model_id: subscription.metadata.modelId || null,
-            package_id: subscription.metadata.packageId || null,
-            stripe_subscription_id: subscription.id,
-            stripe_customer_id: subscription.customer,
-            status: subscription.status,
-            subscription_plan: 'monthly',
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-            is_active: subscription.status === 'active',
-            cancel_at_period_end: subscription.cancel_at_period_end
-          }]);
-          
-        if (insertError) {
-          console.error('Error creating missing subscription record:', insertError);
-        }
+        userId = subscription.metadata.userId;
       } else {
         // Try retrieving the session that created this subscription
         try {
@@ -663,27 +884,7 @@ async function handleSubscriptionUpdated(subscription) {
           
           if (matchingSession && matchingSession.metadata && matchingSession.metadata.userId) {
             console.log('Found user from checkout session metadata:', matchingSession.metadata.userId);
-            data = { user_id: matchingSession.metadata.userId };
-            
-            // Create the subscription record if it doesn't exist
-            const { error: insertError } = await supabase
-              .from('user_model_subscriptions')
-              .insert([{
-                user_id: matchingSession.metadata.userId,
-                model_id: matchingSession.metadata.modelId || null,
-                package_id: matchingSession.metadata.packageId || null,
-                stripe_subscription_id: subscription.id,
-                stripe_customer_id: subscription.customer,
-                status: subscription.status,
-                subscription_plan: 'monthly',
-                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-                is_active: subscription.status === 'active',
-                cancel_at_period_end: subscription.cancel_at_period_end
-              }]);
-              
-            if (insertError) {
-              console.error('Error creating missing subscription record:', insertError);
-            }
+            userId = matchingSession.metadata.userId;
           } else {
             console.error('Could not find user ID for subscription:', subscription.id);
             return;
@@ -693,46 +894,105 @@ async function handleSubscriptionUpdated(subscription) {
           return;
         }
       }
-    }
-    
-    // Now update the subscription record
-    const { error } = await supabase
-      .from('user_model_subscriptions')
-      .update({
-        status: subscription.status,
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        cancel_at_period_end: subscription.cancel_at_period_end,
-        is_active: subscription.status === 'active',
-        updated_at: new Date().toISOString()
-      })
-      .eq('stripe_subscription_id', subscription.id);
       
-    if (error) {
-      console.error('Error updating subscription record:', error);
+      // Ensure profile exists
+      const profileExists = await ensureProfileExists(userId);
+      if (!profileExists) {
+        console.error('Failed to create profile for user:', userId);
+      }
+    } else {
+      userId = data.user_id;
     }
     
-    if (data && data.user_id) {
-      // If the subscription is no longer active, decrement the count
-      if (subscription.status !== 'active') {
-        const { error: updateError } = await supabase.rpc('decrement_subscription_count', { user_id: data.user_id });
+    // Create/update the subscription using our RPC function
+    console.log('Updating subscription using RPC function...');
+    const { error: createError } = await supabase.rpc('create_user_subscription', {
+      p_user_id: userId,
+      p_model_id: subscription.metadata?.modelId || null,
+      p_package_id: subscription.metadata?.packageId || null,
+      p_stripe_subscription_id: subscription.id,
+      p_stripe_customer_id: subscription.customer,
+      p_status: subscription.status,
+      p_subscription_plan: 'monthly',
+      p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      p_is_active: subscription.status === 'active',
+      p_cancel_at_period_end: subscription.cancel_at_period_end
+    });
+    
+    if (createError) {
+      console.error('Error updating subscription via RPC:', createError);
+      
+      // Fall back to direct update
+      console.log('Falling back to direct update...');
+      try {
+        const { error } = await supabase
+          .from('user_model_subscriptions')
+          .update({
+            status: subscription.status,
+            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            cancel_at_period_end: subscription.cancel_at_period_end,
+            is_active: subscription.status === 'active',
+            updated_at: new Date().toISOString()
+          })
+          .eq('stripe_subscription_id', subscription.id);
+          
+        if (error) {
+          console.error('Error with direct update:', error);
+        }
+      } catch (e) {
+        console.error('Exception during direct update:', e);
+      }
+    } else {
+      console.log('Subscription updated successfully via RPC');
+    }
+    
+    // Fix user subscription status
+    if (userId) {
+      console.log('Fixing subscription status for user:', userId);
+      const { data: fixResult, error: fixError } = await supabase.rpc('fix_user_subscription_status', {
+        p_user_id: userId
+      });
+      
+      if (fixError) {
+        console.error('Error fixing subscription status via RPC:', fixError);
         
-        if (updateError) {
-          console.error('Error updating subscription count:', updateError);
+        // If the subscription is no longer active, decrement the count
+        if (subscription.status !== 'active') {
+          const { error: updateError } = await supabase.rpc('decrement_subscription_count', { user_id: userId });
+          
+          if (updateError) {
+            console.error('Error updating subscription count:', updateError);
+          }
+        } else {
+          // Always update the profile subscription status for active subscriptions
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
+              subscription_count: 1,
+              subscription_status: true,
+              has_active_subscription: true
+            })
+            .eq('id', userId);
+            
+          if (profileError) {
+            console.error('Error updating profile subscription status:', profileError);
+          }
         }
       } else {
-        // Always update the profile subscription status for active subscriptions
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            subscription_count: 1,
-            subscription_status: true,
-            has_active_subscription: true
-          })
-          .eq('id', data.user_id);
-          
-        if (profileError) {
-          console.error('Error updating profile subscription status:', profileError);
-        }
+        console.log('Subscription status fixed successfully:', fixResult);
+      }
+      
+      // Verify the profile was updated correctly
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('profiles')
+        .select('subscription_count, has_active_subscription, subscription_status')
+        .eq('id', userId)
+        .single();
+        
+      if (verifyError) {
+        console.error('Error verifying profile update:', verifyError);
+      } else {
+        console.log('Profile subscription fields after update:', verifyData);
       }
     }
   } catch (error) {

@@ -825,20 +825,39 @@
             
             // Update model image if available
             const modelImage = document.getElementById('model-image');
-            if (model.pictures && model.pictures.main) {
-                // Check if it's a full URL or a Supabase storage path
-                if (model.pictures.main.startsWith('http')) {
-                    modelImage.style.backgroundImage = `url(${model.pictures.main})`;
-                } else {
-                    // Assume it's a storage path and construct the URL
-                    const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/${model.pictures.main}`;
-                    modelImage.style.backgroundImage = `url(${imageUrl})`;
+            
+            // Check if pictures exists and it's either an array or an object
+            if (model.pictures) {
+                let imagePath = null;
+                
+                // Handle array of images - use the first image
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imagePath = model.pictures[0]; // Use first image in array
+                } 
+                // Handle object with main property
+                else if (model.pictures.main) {
+                    imagePath = model.pictures.main;
                 }
-            } else {
-                // Use a placeholder from Supabase storage instead of a local path
-                const placeholderUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/placeholder-model.jpg`;
-                modelImage.style.backgroundImage = `url(${placeholderUrl})`;
+                
+                // If we found an image path, set it
+                if (imagePath) {
+                    // Check if it's a full URL or a Supabase storage path
+                    if (imagePath.startsWith('http')) {
+                        modelImage.style.backgroundImage = `url(${imagePath})`;
+                    } else {
+                        // Assume it's a storage path and construct the URL
+                        const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/${imagePath}`;
+                        modelImage.style.backgroundImage = `url(${imageUrl})`;
+                        console.log('Setting model image:', imageUrl);
+                    }
+                    return; // Exit if we set an image
+                }
             }
+            
+            // Fallback to placeholder if no valid image was found
+            const placeholderUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/placeholder-model.jpg`;
+            modelImage.style.backgroundImage = `url(${placeholderUrl})`;
+            console.log('Using placeholder image:', placeholderUrl);
         }
         
         // Load packages for the model
