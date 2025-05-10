@@ -53,15 +53,6 @@
             word-wrap: break-word;
         }
         
-        .tagline {
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--dark); /* Darker color for better visibility */
-            margin-top: 5px;
-            font-weight: 500;
-        }
-        
         /* Hero section styles */
         #hero {
             position: relative;
@@ -94,6 +85,20 @@
             gap: 15px;
             margin-top: 30px;
             margin-bottom: 30px;
+        }
+        
+        /* Feature styles with improved readability */
+        .feature i {
+            color: var(--accent); /* Blue icons */
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: var(--dark); /* Darker color for better readability */
+            font-weight: 400;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         
         .scroll-indicator {
@@ -217,7 +222,6 @@
                 <!-- Logo at the top -->
                 <div class="logo-container">
                     <div class="logo">ThreadPay</div>
-                    <div class="tagline">curated creator platform</div>
                 </div>
                 
                 <div class="content hero-content">
