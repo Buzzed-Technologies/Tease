@@ -27,13 +27,8 @@
         <header class="dashboard-header">
             <a href="/">
                 <div class="logo">ThreadPay</div>
-                <div class="tagline">secure creator payments</div>
             </a>
-            
             <div class="header-controls">
-                <div class="user-info">
-                    <span class="user-name" id="user-display-name">User Name</span>
-                </div>
                 <button id="logout-button" class="logout-button">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="btn-text">Logout</span>
@@ -59,7 +54,6 @@
                     <h2>Account</h2>
                     <p class="section-description">Your account information and creator payment settings.</p>
                 </div>
-                
                 <div class="account-container">
                     <div class="account-info">
                         <div class="account-header">
@@ -69,7 +63,6 @@
                                 <div class="account-created" id="account-created">Member since January 1, 2025</div>
                             </div>
                         </div>
-                        
                         <div class="account-details">
                             <div>
                                 <div class="account-label">Subscription Status</div>
@@ -77,24 +70,22 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="models-section">
-                        <h3>Your Creator Profile</h3>
-                        
-                        <!-- Shown when user has a subscription -->
-                        <div id="subscribed-model-container" style="display: none;">
-                            <div class="subscribed-model-card" id="subscribed-model-card">
-                                <!-- Model content will be inserted here -->
-                            </div>
+                </div>
+                <!-- Move models-section outside of account-info card -->
+                <div class="models-section">
+                    <h3>Your Creator Profile</h3>
+                    <!-- Shown when user has a subscription -->
+                    <div id="subscribed-model-container" style="display: none;">
+                        <div class="subscribed-model-card" id="subscribed-model-card">
+                            <!-- Model content will be inserted here -->
                         </div>
-                        
-                        <!-- Shown when user has no subscription -->
-                        <div id="no-subscription-container" style="display: none;">
-                            <div class="no-subscription-message">
-                                <h3>No Active Subscription</h3>
-                                <p>You don't have an active subscription plan. Subscribe to unlock the full creator experience.</p>
-                                <button class="action-button" id="view-models-button">View Available Plans</button>
-                            </div>
+                    </div>
+                    <!-- Shown when user has no subscription -->
+                    <div id="no-subscription-container" style="display: none;">
+                        <div class="no-subscription-message">
+                            <h3>No Active Subscription</h3>
+                            <p>You don't have an active subscription plan. Subscribe to unlock the full creator experience.</p>
+                            <button class="action-button" id="view-models-button">View Available Plans</button>
                         </div>
                     </div>
                 </div>
@@ -243,7 +234,7 @@
         async function initDashboard() {
             try {
                 // Update user display name
-                userDisplayName.textContent = userData.name || 'User';
+                // userDisplayName.textContent = userData.name || 'User';
                 
                 // Fetch the latest user data
                 const { data: profile, error: profileError } = await supabase
@@ -467,7 +458,7 @@
                 localStorage.setItem('threadpay_user', JSON.stringify(userData));
                 
                 // Update UI
-                userDisplayName.textContent = name || 'User';
+                // userDisplayName.textContent = name || 'User';
                 accountName.textContent = name || 'User';
                 
                 // Clear password fields
