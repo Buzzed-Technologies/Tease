@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscribe | Tease AI Adult Companion</title>
+    <title>Subscribe | ThreadPay Secure Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -383,7 +383,7 @@
     <div class="subscription-container">
         <div class="logo-container">
             <a href="/">
-                <div class="logo">tease</div>
+                <div class="logo">ThreadPay</div>
                 <div class="tagline">ai adult companion</div>
             </a>
         </div>
@@ -502,7 +502,7 @@
                     
                     // Store the customer ID
                     userData.stripe_customer_id = customer.customerId;
-                    localStorage.setItem('tease_user', JSON.stringify(userData));
+                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
                     
                     // Update the customer ID in the database
                     await supabase
@@ -706,7 +706,7 @@
         const successView = document.getElementById('success-view');
         
         // Get user data from local storage
-        const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+        const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
         
         // Check if user is logged in
         if (!userData.id) {
@@ -1048,7 +1048,7 @@
                 
                 // Update local user data
                 userData.subscribed = true;
-                localStorage.setItem('tease_user', JSON.stringify(userData));
+                localStorage.setItem('threadpay_user', JSON.stringify(userData));
                 
                 // Show success view
                 subscriptionView.classList.add('hidden');

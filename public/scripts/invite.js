@@ -75,7 +75,7 @@ function updatePageWithModel(model) {
   });
   
   // Update page title
-  document.title = `Join ${model.name} | Tease AI Adult Companion`;
+  document.title = `Join ${model.name} | ThreadPay Secure Payment Platform`;
 }
 
 // Check for default model if none is specified
@@ -100,7 +100,7 @@ async function getDefaultModel() {
 async function initInvitePage() {
   try {
     // Check if user is already logged in
-    const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+    const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
     if (userData.id) {
       // If user has subscription, go to dashboard
       if (userData.subscription_status) {
@@ -167,7 +167,7 @@ async function initInvitePage() {
 }
 
 // Export functions for use in other scripts
-window.teaseInvite = {
+window.threadPayInvite = {
   getModelFromUrl,
   getModelByName,
   updatePageWithModel,

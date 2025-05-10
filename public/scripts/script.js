@@ -866,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Age validation
             if (parseInt(age) < 18) {
-                alert('You must be at least 18 years old to use Tease');
+                alert('You must be at least 18 years old to use ThreadPay');
                 return;
             }
             
@@ -898,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
             successMessage.classList.add('success-message');
             successMessage.innerHTML = `
                 <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-                <h3>Welcome to Tease!</h3>
+                <h3>Welcome to ThreadPay!</h3>
                 <p>You're all set to start your experience with ${personaData.name}.</p>
             `;
             
@@ -916,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 style: personaData.detailedStyle || 'Default style'
             };
             
-            localStorage.setItem('tease_user', JSON.stringify(userData));
+            localStorage.setItem('threadpay_user', JSON.stringify(userData));
             
             // Clear session storage after successful signup
             sessionStorage.removeItem('selectedPersona');
@@ -1037,7 +1037,7 @@ function initDashboard() {
 }
 
 async function checkAuthStatus() {
-    const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+    const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
     
     if (!userData.phone) {
         // Not logged in, redirect to login
@@ -1278,7 +1278,7 @@ function setupFormHandlers(userData) {
             // For demo, just update local storage
             if (accountData.name) userData.name = accountData.name;
             if (accountData.email) userData.email = accountData.email;
-            localStorage.setItem('tease_user', JSON.stringify(userData));
+            localStorage.setItem('threadpay_user', JSON.stringify(userData));
             
             // Update display
             document.getElementById('user-name').textContent = userData.name || 'User';

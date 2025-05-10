@@ -153,6 +153,6 @@ function simulateWebhook(eventType, data) {
 }
 
 // Export functions for use in other scripts
-window.teaseWebhooks = {
+window.threadPayWebhooks = {
   simulateWebhook
 }; 

@@ -1,6 +1,6 @@
-# Tease - AI Adult Companion Service
+# ThreadPay - Secure Payment and Discovery Platform for Creators
 
-A modern web application for Tease, an AI adult companion service.
+A modern web application for ThreadPay, a secure payment and discovery platform for creators.
 
 ## Deployment
 
@@ -50,4 +50,4 @@ npx serve public
 
 ## License
 
-© 2025 Tease AI. All rights reserved. 
+© 2025 ThreadPay. All rights reserved. 

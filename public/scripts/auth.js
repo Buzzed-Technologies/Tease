@@ -310,7 +310,7 @@ function setupPersonaSelection() {
 
 // Get current user from local storage
 function getCurrentUser() {
-    const userData = localStorage.getItem('tease_user');
+    const userData = localStorage.getItem('threadpay_user');
     return userData ? JSON.parse(userData) : null;
 }
 
@@ -443,7 +443,7 @@ async function handleLogin(telegramUsername, password) {
         model_id: data.model_id
       };
       
-      localStorage.setItem('tease_user', JSON.stringify(userData));
+      localStorage.setItem('threadpay_user', JSON.stringify(userData));
       
       // Redirect based on subscription status
       if (data.subscription_status) {
@@ -494,7 +494,7 @@ async function handleSignupFromHomepage() {
         
         // Age validation
         if (!age || age < 18) {
-            statusEl.textContent = 'You must be at least 18 years old to use Tease.';
+            statusEl.textContent = 'You must be at least 18 years old to use ThreadPay.';
             statusEl.className = 'form-message error';
             return;
         }
@@ -649,7 +649,7 @@ async function handleSignupFromHomepage() {
             created_at: data[0].created_at
         };
         
-        localStorage.setItem('tease_user', JSON.stringify(user));
+        localStorage.setItem('threadpay_user', JSON.stringify(user));
         
         // Show success UI
         const signupSuccess = document.getElementById('signup-success');
@@ -685,7 +685,7 @@ async function handleSignupFromHomepage() {
 
 // Handle logout
 function handleLogout() {
-    localStorage.removeItem('tease_user');
+    localStorage.removeItem('threadpay_user');
     window.location.href = '/index.html';
 }
 
@@ -806,7 +806,7 @@ async function hashPassword(password) {
 }
 
 // Export functions for use in other scripts
-window.teaseAuth = {
+window.threadPayAuth = {
   handleLogin,
   handleSignupFromHomepage,
   handleLogout,

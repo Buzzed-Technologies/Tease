@@ -56,7 +56,7 @@ function initSubscription() {
         }
         
         if (headerDesc) {
-            headerDesc.innerHTML = `Welcome ${user.name || 'there'}! You're just one step away from experiencing ${user.persona} and unlocking the full potential of Tease.`;
+            headerDesc.innerHTML = `Welcome ${user.name || 'there'}! You're just one step away from experiencing ${user.persona} and unlocking the full potential of ThreadPay.`;
         }
         
         // Also update button text
@@ -125,7 +125,7 @@ function initSubscription() {
 
 // Get current user from local storage
 function getCurrentUser() {
-    const userData = localStorage.getItem('tease_user');
+    const userData = localStorage.getItem('threadpay_user');
     return userData ? JSON.parse(userData) : null;
 }
 
@@ -178,7 +178,7 @@ async function handleSubscription(e) {
         
         // Store customer ID in user data
         user.stripeCustomerId = customerId;
-        localStorage.setItem('tease_user', JSON.stringify(user));
+        localStorage.setItem('threadpay_user', JSON.stringify(user));
         
         // Create Stripe checkout session
         statusEl.textContent = 'Redirecting to payment...';
@@ -250,7 +250,7 @@ function showSubscriptionConfirmation() {
     if (messageEl && user) {
         if (isNewUser) {
             // Custom message for new users
-            messageEl.textContent = `Welcome to Tease, ${user.name}!`;
+            messageEl.textContent = `Welcome to ThreadPay, ${user.name}!`;
         } else {
             // Standard message for returning users
             messageEl.textContent = `Thank you, ${user.name}! Your subscription is now active.`;
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Subscription handler
 document.addEventListener('DOMContentLoaded', function() {
     // Get user data
-    const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+    const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
     const isNewUser = userData.created_at && 
                       (new Date() - new Date(userData.created_at) < 1000 * 60 * 30); // 30 minutes
     
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     userData.subscriptionDate = new Date().toISOString();
                     
                     // Save updated user data
-                    localStorage.setItem('tease_user', JSON.stringify(userData));
+                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
                     
                     // Show success state or redirect
                     window.location.href = '/subscription-success.html';
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isNewUser) {
             const confirmationMessage = document.querySelector('.confirmation-message');
             if (confirmationMessage) {
-                confirmationMessage.textContent = "Welcome to Tease!";
+                confirmationMessage.textContent = "Welcome to ThreadPay!";
             }
             
             const confirmationDescription = document.querySelector('.confirmation-description');
@@ -467,7 +467,7 @@ async function checkSubscriptionStatus() {
     
     // Update local storage with latest status
     userData.subscription_status = data.subscription_status;
-    localStorage.setItem('tease_user', JSON.stringify(userData));
+    localStorage.setItem('threadpay_user', JSON.stringify(userData));
     
     return { 
       subscribed: data.subscription_status,
@@ -571,7 +571,7 @@ async function simulateSuccessfulSubscription(userId, packageData) {
     // Update local storage
     const userData = getCurrentUser();
     userData.subscription_status = true;
-    localStorage.setItem('tease_user', JSON.stringify(userData));
+    localStorage.setItem('threadpay_user', JSON.stringify(userData));
     
     // Simulate checkout completion after a delay
     setTimeout(() => {
@@ -637,7 +637,7 @@ async function cancelSubscription() {
     
     // Update local storage
     userData.subscription_status = false;
-    localStorage.setItem('tease_user', JSON.stringify(userData));
+    localStorage.setItem('threadpay_user', JSON.stringify(userData));
     
     return { success: true, message: 'Subscription canceled successfully' };
   } catch (error) {
@@ -764,7 +764,7 @@ function initDashboardSubscription() {
 }
 
 // Export functions for use in other scripts
-window.teaseSubscription = {
+window.threadPaySubscription = {
   checkSubscriptionStatus,
   getPackagesForModel,
   startCheckout,

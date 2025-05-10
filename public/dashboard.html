@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#050505">
-    <title>Dashboard | Tease AI Adult Companion</title>
+    <title>Dashboard | ThreadPay Secure Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -730,7 +730,7 @@
 <body>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <div class="logo">tease</div>
+            <div class="logo">ThreadPay</div>
             
             <div class="header-controls">
                 <div class="user-info">
@@ -934,7 +934,7 @@
         const manageSubscriptionButton = document.getElementById('manage-subscription');
         
         // Get user data from local storage
-        const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
+        const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
         
         // Check if user is logged in
         if (!userData.id) {
@@ -1166,7 +1166,7 @@
                 
                 // Update local storage
                 userData.name = name;
-                localStorage.setItem('tease_user', JSON.stringify(userData));
+                localStorage.setItem('threadpay_user', JSON.stringify(userData));
                 
                 // Update UI
                 userDisplayName.textContent = name || 'User';
@@ -1187,7 +1187,7 @@
         
         // Handle logout
         logoutButton.addEventListener('click', function() {
-            localStorage.removeItem('tease_user');
+            localStorage.removeItem('threadpay_user');
             window.location.href = '/login.html';
         });
         

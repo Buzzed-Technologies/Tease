@@ -1,5 +1,5 @@
 {
-  "name": "tease-ai-companion",
+  "name": "threadpay-platform",
   "version": "1.0.0",
   "description": "AI adult companion service with subscription management",
   "main": "server.js",
@@ -17,7 +17,7 @@
     "adult",
     "companion"
   ],
-  "author": "Tease AI",
+  "author": "ThreadPay",
   "license": "UNLICENSED",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.6",
