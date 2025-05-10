@@ -567,7 +567,7 @@
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('auth_id', userData.id)
+                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
                     .single();
                     
                 if (profileError) throw profileError;
