@@ -477,8 +477,50 @@ async function handleSuccessfulCheckout(session) {
 async function handleSubscriptionCreated(subscription) {
   console.log('Processing new subscription:', subscription.id);
   
-  // For new subscriptions, the checkout.session.completed webhook should handle it
-  // This is just a backup in case that webhook fails
+  try {
+    // For new subscriptions, the checkout.session.completed webhook should handle it
+    // This is just a backup in case that webhook fails
+    
+    // Get the user ID for this subscription from metadata
+    if (!subscription.metadata || !subscription.metadata.userId) {
+      // If we don't have metadata, try to get the user from existing subscriptions
+      const { data, error } = await supabase
+        .from('user_model_subscriptions')
+        .select('user_id, model_id, package_id')
+        .eq('stripe_subscription_id', subscription.id)
+        .single();
+        
+      if (error || !data) {
+        console.error('Error finding user for subscription:', error || 'No subscription found');
+        return;
+      }
+      
+      // Update the subscription record
+      const { error: updateError } = await supabase
+        .from('user_model_subscriptions')
+        .update({
+          status: subscription.status,
+          is_active: subscription.status === 'active',
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('stripe_subscription_id', subscription.id);
+        
+      if (updateError) {
+        console.error('Error updating subscription record:', updateError);
+        return;
+      }
+      
+      // Update the subscription count in the profiles table
+      const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: data.user_id });
+      
+      if (countError) {
+        console.error('Error updating subscription count:', countError);
+      }
+    }
+  } catch (error) {
+    console.error('Error handling subscription creation:', error);
+  }
 }
 
 // Handle subscription updated event
@@ -493,12 +535,50 @@ async function handleSubscriptionUpdated(subscription) {
         status: subscription.status,
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
         cancel_at_period_end: subscription.cancel_at_period_end,
+        is_active: subscription.status === 'active',
         updated_at: new Date().toISOString()
       })
       .eq('stripe_subscription_id', subscription.id);
       
     if (error) {
       console.error('Error updating subscription record:', error);
+      return;
+    }
+    
+    // Get the user ID for this subscription
+    const { data, error: fetchError } = await supabase
+      .from('user_model_subscriptions')
+      .select('user_id')
+      .eq('stripe_subscription_id', subscription.id)
+      .single();
+      
+    if (fetchError) {
+      console.error('Error fetching user for subscription:', fetchError);
+      return;
+    }
+    
+    if (data && data.user_id) {
+      // If the subscription is no longer active, decrement the count
+      if (subscription.status !== 'active') {
+        const { error: updateError } = await supabase.rpc('decrement_subscription_count', { user_id: data.user_id });
+        
+        if (updateError) {
+          console.error('Error updating subscription count:', updateError);
+        }
+      } else {
+        // Make sure profile has the correct subscription status
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_status: true,
+            has_active_subscription: true
+          })
+          .eq('id', data.user_id);
+          
+        if (profileError) {
+          console.error('Error updating profile subscription status:', profileError);
+        }
+      }
     }
   } catch (error) {
     console.error('Error handling subscription update:', error);
