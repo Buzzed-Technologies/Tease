@@ -826,7 +826,14 @@
             // Update model image if available
             const modelImage = document.getElementById('model-image');
             if (model.pictures && model.pictures.main) {
-                modelImage.style.backgroundImage = `url(${model.pictures.main})`;
+                // Check if it's a full URL or a Supabase storage path
+                if (model.pictures.main.startsWith('http')) {
+                    modelImage.style.backgroundImage = `url(${model.pictures.main})`;
+                } else {
+                    // Assume it's a storage path and construct the URL
+                    const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/${model.pictures.main}`;
+                    modelImage.style.backgroundImage = `url(${imageUrl})`;
+                }
             } else {
                 modelImage.style.backgroundImage = 'url(/images/placeholder-model.jpg)';
             }
@@ -872,25 +879,58 @@
                 const card = document.createElement('div');
                 card.className = 'package-card';
                 
+                // Mark the best value package if it has a flag
+                if (pkg.is_popular) {
+                    const popularBadge = document.createElement('div');
+                    popularBadge.className = 'package-popular';
+                    popularBadge.textContent = 'BEST VALUE';
+                    card.appendChild(popularBadge);
+                }
+                
                 const priceFormatted = new Intl.NumberFormat('en-US', {
                     style: 'currency',
                     currency: 'USD',
                     minimumFractionDigits: 2
                 }).format(pkg.price);
                 
+                // Create the package features list
+                let featuresHTML = '';
+                if (pkg.features && pkg.features.length > 0) {
+                    featuresHTML = `<div class="package-features">
+                        ${pkg.features.map(feature => `
+                            <div class="feature-item">
+                                <div class="feature-icon"><i class="fas fa-check"></i></div>
+                                <div class="feature-text">${feature}</div>
+                            </div>
+                        `).join('')}
+                    </div>`;
+                } else {
+                    // Default features if none are specified
+                    featuresHTML = `<div class="package-features">
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fas fa-check"></i></div>
+                            <div class="feature-text">Exclusive content access</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fas fa-check"></i></div>
+                            <div class="feature-text">Direct messaging with creator</div>
+                        </div>
+                    </div>`;
+                }
+                
                 card.innerHTML = `
                     <div class="package-header">
                         <h3 class="package-name">${pkg.name}</h3>
-                        <div class="package-price">${priceFormatted}<span>/month</span></div>
+                        <div class="package-price">${priceFormatted}<span class="price-period">/month</span></div>
                     </div>
-                    <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
-                    <button class="subscribe-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id}">Subscribe Now</button>
+                    ${featuresHTML}
+                    <button class="package-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id}">Subscribe Now</button>
                 `;
                 
                 packagesContainer.appendChild(card);
                 
                 // Add event listener for subscribe button
-                const subscribeButton = card.querySelector('.subscribe-button');
+                const subscribeButton = card.querySelector('.package-button');
                 subscribeButton.addEventListener('click', handleSubscribeClick);
             });
         }

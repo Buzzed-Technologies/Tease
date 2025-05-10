@@ -467,6 +467,20 @@ async function handleSuccessfulCheckout(session) {
       console.error('Error updating subscription count:', updateError);
     }
     
+    // Directly update the profile to ensure subscription status is set
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        subscription_count: 1, 
+        has_active_subscription: true,
+        subscription_status: true
+      })
+      .eq('id', userId);
+      
+    if (profileError) {
+      console.error('Error directly updating profile subscription fields:', profileError);
+    }
+    
     console.log('Subscription record created successfully');
   } catch (error) {
     console.error('Error handling successful checkout:', error);
@@ -516,6 +530,20 @@ async function handleSubscriptionCreated(subscription) {
       
       if (countError) {
         console.error('Error updating subscription count:', countError);
+      }
+      
+      // Directly update the profile to ensure subscription status is set
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          subscription_count: 1,
+          has_active_subscription: true,
+          subscription_status: true
+        })
+        .eq('id', data.user_id);
+        
+      if (profileError) {
+        console.error('Error directly updating profile subscription fields:', profileError);
       }
     }
   } catch (error) {
@@ -722,6 +750,58 @@ app.get('/api/models', async (req, res) => {
     res.json({ models: data || [] });
   } catch (error) {
     console.error('Error fetching models:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Debug endpoint to fix subscription status
+app.post('/api/debug/fix-subscription', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    // Count active subscriptions for this user
+    const { data: subscriptions, error: countError } = await supabase
+      .from('user_model_subscriptions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .eq('status', 'active');
+      
+    if (countError) {
+      console.error('Error counting user subscriptions:', countError);
+      return res.status(500).json({ error: 'Failed to count subscriptions' });
+    }
+    
+    const subscriptionCount = subscriptions ? subscriptions.length : 0;
+    const hasActiveSubscription = subscriptionCount > 0;
+    
+    // Update the profile directly
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        subscription_count: subscriptionCount,
+        has_active_subscription: hasActiveSubscription,
+        subscription_status: hasActiveSubscription
+      })
+      .eq('id', userId);
+      
+    if (updateError) {
+      console.error('Error updating profile subscription status:', updateError);
+      return res.status(500).json({ error: 'Failed to update profile' });
+    }
+    
+    res.json({ 
+      success: true, 
+      userId,
+      subscriptionCount,
+      hasActiveSubscription
+    });
+  } catch (error) {
+    console.error('Error fixing subscription status:', error);
     res.status(400).json({ error: error.message });
   }
 });
