@@ -425,76 +425,109 @@ app.get('/:page', (req, res) => {
 });
 
 // Helper function to ensure profile exists
-async function ensureProfileExists(userId, userName = null, userEmail = null) {
+async function ensureProfileExists(userId, userName = null, userEmail = null, telegramUsername = null, password = null) {
   console.log('Ensuring profile exists for user:', userId);
   
-  // Check if profile already exists by id or auth_id
-  const { data, error } = await supabase
+  // First check if a profile with this auth_id exists (regardless of id)
+  const { data: profileByAuthId, error: authIdError } = await supabase
     .from('profiles')
     .select('id')
-    .or(`id.eq.${userId},auth_id.eq.${userId}`)
-    .single();
+    .eq('auth_id', userId)
+    .maybeSingle();
     
-  if (error) {
-    console.log('Profile not found, creating new profile');
-    
-    // Try to get user data from auth.users if needed
-    let name = userName;
-    let email = userEmail;
-    
-    if (!name || !email) {
-      // Need to use raw SQL for auth schema access
-      const { data: userData, error: userError } = await supabase.rpc('get_user_details', { 
-        user_uuid: userId 
-      });
-        
-      if (!userError && userData) {
-        // Use returned data from the function
-        name = userData.name || userData.email;
-        email = userData.email;
-      }
-    }
-    
-    // Try to use the RPC function first (most reliable method)
-    try {
-      const { error: rpcError } = await supabase.rpc('create_minimal_profile', {
-        user_uuid: userId
-      });
-      
-      if (rpcError) {
-        console.error('Error creating profile via RPC function:', rpcError);
-        
-        // Fall back to direct insert if RPC fails
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            id: userId,
-            auth_id: userId,
-            name: name || 'User',
-            subscription_count: 0,
-            has_active_subscription: false,
-            subscription_status: false,
-            // Default values for non-nullable fields
-            telegram_username: '',
-            password_hash: ''
-          })
-          .select();
-          
-        if (insertError) {
-          console.error('Error creating profile:', insertError);
-          return false;
-        }
-      }
-    } catch (e) {
-      console.error('Exception in create_minimal_profile:', e);
-      return false;
-    }
-    
-    return true;
+  if (!authIdError && profileByAuthId) {
+    console.log('Profile already exists with auth_id:', userId);
+    // Return the existing profile ID
+    return { success: true, profileId: profileByAuthId.id };
   }
   
-  console.log('Profile already exists');
-  return true;
+  // If not found by auth_id, check if profile exists by id
+  const { data: profileById, error: idError } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', userId)
+    .maybeSingle();
+    
+  if (!idError && profileById) {
+    console.log('Profile already exists with id:', userId);
+    return { success: true, profileId: profileById.id };
+  }
+  
+  // If we have a telegram username, check if a profile with this username exists
+  if (telegramUsername) {
+    const { data: profileByUsername, error: usernameError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('telegram_username', telegramUsername)
+      .maybeSingle();
+      
+    if (!usernameError && profileByUsername) {
+      console.log('Profile already exists with telegram_username:', telegramUsername);
+      
+      // Update the auth_id to match if needed
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ auth_id: userId })
+        .eq('id', profileByUsername.id);
+        
+      if (updateError) {
+        console.error('Error updating auth_id on existing profile:', updateError);
+      }
+      
+      return { success: true, profileId: profileByUsername.id };
+    }
+  }
+  
+  console.log('Profile not found, creating new profile');
+  
+  // Try to get user data from auth.users if needed
+  let name = userName;
+  let email = userEmail;
+  
+  if (!name || !email) {
+    // Need to use raw SQL for auth schema access
+    const { data: userData, error: userError } = await supabase.rpc('get_user_details', { 
+      user_uuid: userId 
+    });
+      
+    if (!userError && userData) {
+      // Use returned data from the function
+      name = userData.name || userData.email;
+      email = userData.email;
+    }
+  }
+  
+  // Create new profile
+  try {
+    // Generate a profile with proper values
+    const profileData = {
+      id: userId,
+      auth_id: userId,
+      name: name || 'User',
+      telegram_username: telegramUsername || '',
+      password_hash: password || '',
+      subscription_count: 0,
+      has_active_subscription: false,
+      subscription_status: false
+    };
+    
+    const { data: newProfile, error: insertError } = await supabase
+      .from('profiles')
+      .insert(profileData)
+      .select()
+      .single();
+      
+    if (insertError) {
+      console.error('Error creating profile:', insertError);
+      return { success: false, error: insertError };
+    }
+    
+    console.log('Profile created successfully:', newProfile.id);
+    return { success: true, profileId: newProfile.id };
+  } catch (e) {
+    console.error('Exception creating profile:', e);
+    return { success: false, error: e };
+  }
 }
 
 // Handle successful checkout
@@ -503,18 +536,27 @@ async function handleSuccessfulCheckout(session) {
   console.log('Session metadata:', JSON.stringify(session.metadata));
   
   try {
-    const { userId, modelId, packageId, userPhone } = session.metadata;
+    const { userId, modelId, packageId, userPhone, telegramUsername, password } = session.metadata;
     
     if (!userId || !modelId) {
       console.error('Missing required metadata in checkout session:', session.metadata);
       return;
     }
     
-    // Ensure profile exists before proceeding
-    const profileExists = await ensureProfileExists(userId, null, null);
-    if (!profileExists) {
-      console.error('Failed to create profile for user:', userId);
+    // Ensure profile exists before proceeding - pass telegram username and password if available
+    const profileResult = await ensureProfileExists(
+      userId, 
+      session.metadata.userName || null, 
+      null, // userEmail
+      telegramUsername || userPhone || null, // use phone as fallback for telegram
+      password || null
+    );
+    
+    if (!profileResult.success) {
+      console.error('Failed to create/find profile for user:', userId, profileResult.error);
       // Continue anyway to try to create the subscription
+    } else {
+      console.log('Profile ensured with ID:', profileResult.profileId);
     }
     
     // Retrieve subscription details
@@ -672,10 +714,19 @@ async function handleSubscriptionCreated(subscription) {
       const userId = subscription.metadata.userId;
       console.log('Found userId directly in subscription metadata:', userId);
       
-      // Ensure profile exists
-      const profileExists = await ensureProfileExists(userId);
-      if (!profileExists) {
-        console.error('Failed to create profile for user:', userId);
+      // Ensure profile exists with telegram username and password if available
+      const profileResult = await ensureProfileExists(
+        userId,
+        subscription.metadata.userName || null,
+        null, // userEmail
+        subscription.metadata.telegramUsername || subscription.metadata.userPhone || null,
+        subscription.metadata.password || null
+      );
+      
+      if (!profileResult.success) {
+        console.error('Failed to create profile for user:', userId, profileResult.error);
+      } else {
+        console.log('Profile ensured with ID:', profileResult.profileId);
       }
       
       // Update the subscription record
@@ -697,11 +748,13 @@ async function handleSubscriptionCreated(subscription) {
       if (updateError) {
         console.error('Error creating subscription record from metadata:', updateError);
       } else {
-        // Update the subscription count in the profiles table
-        const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
+        // Fix user subscription status
+        const { error: fixError } = await supabase.rpc('fix_user_subscription_status', {
+          p_user_id: userId
+        });
         
-        if (countError) {
-          console.error('Error updating subscription count:', countError);
+        if (fixError) {
+          console.error('Error fixing subscription status:', fixError);
           
           // Directly update profile as fallback
           const { error: profileError } = await supabase
@@ -747,9 +800,18 @@ async function handleSubscriptionCreated(subscription) {
             const userId = matchingSession.metadata.userId;
             
             // Ensure profile exists
-            const profileExists = await ensureProfileExists(userId);
-            if (!profileExists) {
-              console.error('Failed to create profile for user:', userId);
+            const profileResult = await ensureProfileExists(
+              userId,
+              matchingSession.metadata.userName || null,
+              null, // userEmail
+              matchingSession.metadata.telegramUsername || matchingSession.metadata.userPhone || null,
+              matchingSession.metadata.password || null
+            );
+            
+            if (!profileResult.success) {
+              console.error('Failed to create profile for user:', userId, profileResult.error);
+            } else {
+              console.log('Profile ensured with ID:', profileResult.profileId);
             }
             
             // Create the subscription record
@@ -773,11 +835,13 @@ async function handleSubscriptionCreated(subscription) {
               return;
             }
             
-            // Update the subscription count in the profiles table
-            const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
+            // Fix user subscription status
+            const { error: fixError } = await supabase.rpc('fix_user_subscription_status', {
+              p_user_id: userId
+            });
             
-            if (countError) {
-              console.error('Error updating subscription count:', countError);
+            if (fixError) {
+              console.error('Error fixing subscription status:', fixError);
               
               // Directly update profile as fallback
               const { error: profileError } = await supabase
@@ -806,9 +870,11 @@ async function handleSubscriptionCreated(subscription) {
       }
       
       // Ensure profile exists
-      const profileExists = await ensureProfileExists(data.user_id);
-      if (!profileExists) {
-        console.error('Failed to create profile for user:', data.user_id);
+      const profileResult = await ensureProfileExists(data.user_id);
+      if (!profileResult.success) {
+        console.error('Failed to create profile for user:', data.user_id, profileResult.error);
+      } else {
+        console.log('Profile ensured with ID:', profileResult.profileId);
       }
       
       // Update the subscription record
@@ -828,10 +894,12 @@ async function handleSubscriptionCreated(subscription) {
       }
       
       // Update the subscription count in the profiles table
-      const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: data.user_id });
+      const { error: fixError } = await supabase.rpc('fix_user_subscription_status', {
+        p_user_id: data.user_id
+      });
       
-      if (countError) {
-        console.error('Error updating subscription count:', countError);
+      if (fixError) {
+        console.error('Error fixing subscription status:', fixError);
         
         // Directly update profile as fallback
         const { error: profileError } = await supabase
