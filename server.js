@@ -428,73 +428,75 @@ app.get('/:page', (req, res) => {
 async function ensureProfileExists(userId, userName = null, userEmail = null) {
   console.log('Ensuring profile exists for user:', userId);
   
-  // Check if profile already exists by id OR auth_id
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .or(`id.eq.${userId},auth_id.eq.${userId}`)
-    .maybeSingle();
-    
-  if (error) {
-    console.log('Error checking for profile:', error);
-  }
-  
-  // If a profile was found
-  if (data) {
-    console.log('Profile already exists:', data.id);
-    
-    // If the profile exists but with a different ID, update the subscription to use the correct profile ID
-    if (data.id !== userId && data.auth_id === userId) {
-      console.log(`Profile found with different ID (${data.id}) but matching auth_id. Using this profile.`);
-      return data.id; // Return the actual profile ID to use for subscriptions
+  try {
+    // Check if profile already exists by id OR auth_id - using proper SQL syntax
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .or(`id.eq.${userId},auth_id.eq.${userId}`)
+      .maybeSingle();
+      
+    if (profileError) {
+      console.log('Error checking for profile:', profileError);
+      throw profileError;
     }
     
-    return userId; // The profile ID matches the user ID
-  }
-  
-  // No profile found, create a new one
-  console.log('Profile not found, creating new profile');
-  
-  // Create a simple profile directly with a unique telegram username
-  const { error: insertError } = await supabase
-    .from('profiles')
-    .insert({
-      id: userId,
-      auth_id: userId,
-      name: userName || 'User',
-      telegram_username: `user_${userId.substring(0, 8)}_${Date.now()}`, // Make unique
-      password_hash: 'placeholder',
-      subscription_count: 0,
-      has_active_subscription: false,
-      subscription_status: false
-    });
-    
-  if (insertError) {
-    console.error('Error creating profile:', insertError);
-    // Try a more direct approach if necessary
-    try {
-      await supabase.rpc('create_minimal_profile', { user_uuid: userId });
-      return userId;
-    } catch (e) {
-      console.error('All profile creation attempts failed:', e);
+    // If a profile was found
+    if (profileData) {
+      console.log('Profile found:', profileData.id);
       
-      // As a last resort, check if a profile exists with the auth_id
-      const { data: authData } = await supabase
+      // If the profile exists but with a different ID than auth_id, update the references in local storage
+      if (profileData.id !== userId && profileData.auth_id === userId) {
+        console.log(`Profile found with different ID (${profileData.id}) but matching auth_id (${userId}).`);
+        return profileData.id; // Return the actual profile ID to use for subscriptions
+      }
+      
+      return profileData.id; // Return the actual profile ID, not just userId
+    }
+    
+    // No profile found, create a new one
+    console.log('Profile not found, creating new profile');
+    
+    // Create a profile with both id and auth_id to ensure consistent access
+    const { data: newProfile, error: insertError } = await supabase
+      .from('profiles')
+      .insert({
+        id: userId,
+        auth_id: userId,
+        name: userName || 'User',
+        telegram_username: `user_${userId.substring(0, 8)}_${Date.now()}`, // Make unique
+        password_hash: 'placeholder',
+        subscription_count: 0,
+        has_active_subscription: false,
+        subscription_status: false
+      })
+      .select()
+      .single();
+      
+    if (insertError) {
+      console.error('Error creating profile:', insertError);
+      
+      // As a fallback, check if a profile exists with this auth_id
+      const { data: existingProfile } = await supabase
         .from('profiles')
         .select('id')
         .eq('auth_id', userId)
         .maybeSingle();
         
-      if (authData && authData.id) {
-        console.log(`Found existing profile with ID ${authData.id} for auth_id ${userId}`);
-        return authData.id;
+      if (existingProfile && existingProfile.id) {
+        console.log(`Found existing profile with ID ${existingProfile.id} for auth_id ${userId}`);
+        return existingProfile.id;
       }
       
-      return false;
+      throw insertError;
     }
+    
+    console.log('New profile created with ID:', newProfile.id);
+    return newProfile.id;
+  } catch (err) {
+    console.error('Error in ensureProfileExists:', err);
+    return userId; // Return the original userId as a fallback
   }
-  
-  return userId;
 }
 
 // Handle successful checkout - simplified

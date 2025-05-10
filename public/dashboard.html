@@ -211,10 +211,9 @@
         const accountEmail = document.getElementById('account-email');
         const accountCreated = document.getElementById('account-created');
         const accountSubscriptionStatus = document.getElementById('account-subscription-status');
-        const subscribedModelContainer = document.getElementById('subscribed-model-container');
-        const subscribedModelCard = document.getElementById('subscribed-model-card');
+        const subscribedModelsContainer = document.getElementById('subscribed-models-container');
         const noSubscriptionContainer = document.getElementById('no-subscription-container');
-        const viewModelsButton = document.getElementById('view-models-button');
+        const exploreMoreContainer = document.getElementById('explore-more-container');
         const logoutButton = document.getElementById('logout-button');
         const settingsForm = document.getElementById('settings-form');
         const settingsName = document.getElementById('settings-name');
@@ -243,11 +242,11 @@
                 // Update user display name
                 // userDisplayName.textContent = userData.name || 'User';
                 
-                // Fetch the latest user data
+                // Fetch the latest user data - using or condition to match either id or auth_id
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('id', userData.id)
+                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
                     .single();
                 
                 if (profileError) throw profileError;
@@ -270,7 +269,7 @@
                     displaySubscribedModel(model, true);
                 } else {
                     // Show no subscription message
-                    subscribedModelContainer.style.display = 'none';
+                    subscribedModelsContainer.style.display = 'none';
                     noSubscriptionContainer.style.display = 'block';
                 }
                 
@@ -305,8 +304,8 @@
         
         // Display subscribed model
         function displaySubscribedModel(model, isSubscribed) {
-            // Show the subscribed model container
-            subscribedModelContainer.style.display = 'block';
+            // Show the subscribed models container
+            subscribedModelsContainer.style.display = 'block';
             noSubscriptionContainer.style.display = 'none';
             
             // Build image path
@@ -317,8 +316,10 @@
                 imagePath = '/images/placeholder-model.jpg';
             }
             
-            // Populate model card
-            subscribedModelCard.innerHTML = `
+            // Create a new model card
+            const modelCard = document.createElement('div');
+            modelCard.className = 'model-card';
+            modelCard.innerHTML = `
                 <div class="model-image">
                     <img src="${imagePath}" alt="${model.name}">
                 </div>
@@ -332,13 +333,22 @@
                 </div>
             `;
             
+            // Clear any existing cards and add this one
+            subscribedModelsContainer.innerHTML = '';
+            subscribedModelsContainer.appendChild(modelCard);
+            
+            // Show the explore more container since we have at least one subscription
+            if (exploreMoreContainer) {
+                exploreMoreContainer.style.display = 'block';
+            }
+            
             // Add click event listener to open popup
-            subscribedModelCard.addEventListener('click', () => openModelPopup(model, isSubscribed));
+            modelCard.addEventListener('click', () => openModelPopup(model, isSubscribed));
         }
         
         // View available models button event
-        viewModelsButton.addEventListener('click', function() {
-            alert('This would redirect to a page with available models in a real implementation.');
+        document.getElementById('explore-models-button')?.addEventListener('click', function() {
+            window.location.href = '/subscription.html';
         });
         
         // Open model subscription popup
@@ -482,27 +492,29 @@
         });
         
         // Handle logout
-        logoutButton.addEventListener('click', function() {
+        logoutButton.addEventListener('click', async function() {
+            // Clear local storage
             localStorage.removeItem('threadpay_user');
+            
+            // Redirect to login page
             window.location.href = '/login.html';
         });
         
-        // Tab navigation
+        // Set up tab navigation
         tabButtons.forEach(button => {
             button.addEventListener('click', function() {
-                const tabId = this.getAttribute('data-tab');
-                
-                // Update active tab
+                // Remove active class from all buttons and sections
                 tabButtons.forEach(btn => btn.classList.remove('active'));
+                contentSections.forEach(section => section.classList.remove('active'));
+                
+                // Add active class to clicked button
                 this.classList.add('active');
                 
-                // Show corresponding section
-                contentSections.forEach(section => {
-                    section.classList.remove('active');
-                    if (section.id === tabId) {
-                        section.classList.add('active');
-                    }
-                });
+                // Show the corresponding section
+                const targetSection = document.getElementById(this.dataset.tab);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
             });
         });
         
