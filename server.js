@@ -428,11 +428,11 @@ app.get('/:page', (req, res) => {
 async function ensureProfileExists(userId, userName = null, userEmail = null) {
   console.log('Ensuring profile exists for user:', userId);
   
-  // Check if profile already exists
+  // Check if profile already exists by id or auth_id
   const { data, error } = await supabase
     .from('profiles')
     .select('id')
-    .eq('id', userId)
+    .or(`id.eq.${userId},auth_id.eq.${userId}`)
     .single();
     
   if (error) {
@@ -455,52 +455,39 @@ async function ensureProfileExists(userId, userName = null, userEmail = null) {
       }
     }
     
-    // Create new profile
-    const { error: insertError } = await supabase
-      .from('profiles')
-      .insert({
-        id: userId,
-        auth_id: userId,
-        name: name || 'User',
-        subscription_count: 0,
-        has_active_subscription: false,
-        subscription_status: false,
-        // Default values for non-nullable fields
-        telegram_username: '',
-        password_hash: ''
+    // Try to use the RPC function first (most reliable method)
+    try {
+      const { error: rpcError } = await supabase.rpc('create_minimal_profile', {
+        user_uuid: userId
       });
       
-    if (insertError) {
-      console.error('Error creating profile:', insertError);
-      
-      // Try with minimal fields if there are column constraints we don't know about
-      const { error: minimalInsertError } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          auth_id: userId,
-          telegram_username: '',
-          password_hash: ''
-        });
+      if (rpcError) {
+        console.error('Error creating profile via RPC function:', rpcError);
         
-      if (minimalInsertError) {
-        console.error('Error creating minimal profile:', minimalInsertError);
-        
-        // Try a direct SQL approach as last resort
-        try {
-          const { error: sqlError } = await supabase.rpc('create_minimal_profile', {
-            user_uuid: userId
-          });
+        // Fall back to direct insert if RPC fails
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userId,
+            auth_id: userId,
+            name: name || 'User',
+            subscription_count: 0,
+            has_active_subscription: false,
+            subscription_status: false,
+            // Default values for non-nullable fields
+            telegram_username: '',
+            password_hash: ''
+          })
+          .select();
           
-          if (sqlError) {
-            console.error('Error creating profile via SQL function:', sqlError);
-            return false;
-          }
-        } catch (e) {
-          console.error('Exception in create_minimal_profile:', e);
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
           return false;
         }
       }
+    } catch (e) {
+      console.error('Exception in create_minimal_profile:', e);
+      return false;
     }
     
     return true;
@@ -516,7 +503,7 @@ async function handleSuccessfulCheckout(session) {
   console.log('Session metadata:', JSON.stringify(session.metadata));
   
   try {
-    const { userId, modelId, packageId } = session.metadata;
+    const { userId, modelId, packageId, userPhone } = session.metadata;
     
     if (!userId || !modelId) {
       console.error('Missing required metadata in checkout session:', session.metadata);
@@ -524,24 +511,10 @@ async function handleSuccessfulCheckout(session) {
     }
     
     // Ensure profile exists before proceeding
-    const profileExists = await ensureProfileExists(userId);
+    const profileExists = await ensureProfileExists(userId, null, null);
     if (!profileExists) {
       console.error('Failed to create profile for user:', userId);
       // Continue anyway to try to create the subscription
-    }
-    
-    // First ensure the profile exists and has correct initial values
-    const { data: profileData, error: profileCheckError } = await supabase
-      .from('profiles')
-      .select('id, subscription_count, has_active_subscription, subscription_status')
-      .eq('id', userId)
-      .single();
-      
-    if (profileCheckError) {
-      console.error('Error checking profile:', profileCheckError);
-      // If profile doesn't exist, we might need to create it, but that should have happened at signup
-    } else {
-      console.log('Found profile for checkout:', profileData);
     }
     
     // Retrieve subscription details
@@ -549,30 +522,54 @@ async function handleSuccessfulCheckout(session) {
     const subscription = await stripe.subscriptions.retrieve(session.subscription);
     console.log('Subscription status:', subscription.status);
     
-    // Create subscription using the database function to avoid column ambiguity
+    // Create subscription using the database function with the unique constraint
     console.log('Creating subscription using RPC function...');
-    const { error: createError } = await supabase.rpc('create_user_subscription', {
-      p_user_id: userId,
-      p_model_id: modelId,
-      p_package_id: packageId || null,
-      p_stripe_subscription_id: subscription.id,
-      p_stripe_customer_id: session.customer,
-      p_status: subscription.status,
-      p_subscription_plan: 'monthly',
-      p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-      p_is_active: true,
-      p_cancel_at_period_end: subscription.cancel_at_period_end
-    });
-    
-    if (createError) {
-      console.error('Error creating subscription via RPC:', createError);
+    try {
+      const { error: createError } = await supabase.rpc('create_user_subscription', {
+        p_user_id: userId,
+        p_model_id: modelId,
+        p_package_id: packageId || null,
+        p_stripe_subscription_id: subscription.id,
+        p_stripe_customer_id: session.customer,
+        p_status: subscription.status,
+        p_subscription_plan: 'monthly',
+        p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        p_is_active: true,
+        p_cancel_at_period_end: subscription.cancel_at_period_end
+      });
       
-      // Fall back to direct insert
-      console.log('Falling back to direct insert...');
-      try {
-        const { error } = await supabase
+      if (createError) {
+        console.error('Error creating subscription via RPC:', createError);
+        
+        // Check if the subscription already exists before trying insert
+        const { data: existingData, error: checkError } = await supabase
           .from('user_model_subscriptions')
-          .insert({
+          .select('id')
+          .eq('stripe_subscription_id', subscription.id)
+          .maybeSingle();
+          
+        if (!checkError && existingData) {
+          console.log('Subscription with ID already exists, updating instead:', subscription.id);
+          
+          // Update existing subscription
+          const { error: updateError } = await supabase
+            .from('user_model_subscriptions')
+            .update({
+              status: subscription.status,
+              is_active: true,
+              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              cancel_at_period_end: subscription.cancel_at_period_end,
+              updated_at: new Date().toISOString()
+            })
+            .eq('stripe_subscription_id', subscription.id);
+            
+          if (updateError) {
+            console.error('Error updating existing subscription:', updateError);
+          }
+        } else {
+          // Fall back to direct insert with explicit parameters to avoid ambiguity
+          console.log('Falling back to direct insert...');
+          const { error: insertError } = await supabase.from('user_model_subscriptions').insert({
             user_id: userId,
             model_id: modelId,
             package_id: packageId || null,
@@ -585,58 +582,68 @@ async function handleSuccessfulCheckout(session) {
             cancel_at_period_end: subscription.cancel_at_period_end
           });
           
-        if (error) {
-          console.error('Error with direct insert:', error);
-          return;
+          if (insertError) {
+            console.error('Error with direct insert:', insertError);
+            return;
+          }
         }
-      } catch (e) {
-        console.error('Exception during direct insert:', e);
-        return;
+      } else {
+        console.log('Subscription created successfully via RPC');
       }
-    } else {
-      console.log('Subscription created successfully via RPC');
+    } catch (e) {
+      console.error('Exception during subscription creation:', e);
+      return;
     }
     
     // Fix user subscription status using dedicated function
     console.log('Fixing subscription status for user:', userId);
-    const { data: fixResult, error: fixError } = await supabase.rpc('fix_user_subscription_status', {
-      p_user_id: userId
-    });
-    
-    if (fixError) {
-      console.error('Error fixing subscription status via RPC:', fixError);
+    try {
+      const { data: fixResult, error: fixError } = await supabase.rpc('fix_user_subscription_status', {
+        p_user_id: userId
+      });
       
-      // Fall back to direct updates
-      console.log('Falling back to direct profile updates...');
-      
-      // Update the subscription count in the profiles table
-      const { error: updateError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
-      
-      if (updateError) {
-        console.error('Error updating subscription count:', updateError);
-      }
-      
-      // Directly update the profile as last resort
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          subscription_count: 1, 
-          has_active_subscription: true,
-          subscription_status: true
-        })
-        .eq('id', userId);
+      if (fixError) {
+        console.error('Error fixing subscription status via RPC:', fixError);
         
-      if (profileError) {
-        console.error('Error directly updating profile subscription fields:', profileError);
+        // Fall back to direct updates with explicit queries to avoid ambiguity
+        console.log('Falling back to direct profile updates...');
+        
+        // Get the count of active subscriptions
+        const { data: activeSubsData, error: countError } = await supabase
+          .from('user_model_subscriptions')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('is_active', true)
+          .eq('status', 'active');
+          
+        if (!countError) {
+          const activeCount = activeSubsData.length;
+          
+          // Directly update the profile
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
+              subscription_count: activeCount, 
+              has_active_subscription: activeCount > 0,
+              subscription_status: activeCount > 0
+            })
+            .eq('id', userId);
+            
+          if (profileError) {
+            console.error('Error directly updating profile subscription fields:', profileError);
+          }
+        }
+      } else {
+        console.log('Subscription status fixed successfully:', fixResult);
       }
-    } else {
-      console.log('Subscription status fixed successfully:', fixResult);
+    } catch (e) {
+      console.error('Exception during status fix:', e);
     }
     
     // Verify the profile was updated correctly
     const { data: verifyData, error: verifyError } = await supabase
       .from('profiles')
-      .select('subscription_count, has_active_subscription, subscription_status')
+      .select('id, subscription_count, has_active_subscription, subscription_status')
       .eq('id', userId)
       .single();
       

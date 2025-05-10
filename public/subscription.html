@@ -846,7 +846,7 @@
                         modelImage.style.backgroundImage = `url(${imagePath})`;
                     } else {
                         // Assume it's a storage path and construct the URL
-                        const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/${imagePath}`;
+                        const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${imagePath}`;
                         modelImage.style.backgroundImage = `url(${imageUrl})`;
                         console.log('Setting model image:', imageUrl);
                     }
@@ -855,7 +855,7 @@
             }
             
             // Fallback to placeholder if no valid image was found
-            const placeholderUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/placeholder-model.jpg`;
+            const placeholderUrl = `${supabaseUrl}/storage/v1/object/public/model-images/placeholder-model.jpg`;
             modelImage.style.backgroundImage = `url(${placeholderUrl})`;
             console.log('Using placeholder image:', placeholderUrl);
         }
