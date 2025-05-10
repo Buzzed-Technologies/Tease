@@ -128,23 +128,24 @@
         
         .packages-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
             margin-bottom: 3rem;
         }
         
         .package-card {
             background-color: var(--light);
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: 16px;
+            padding: 2.5rem;
             backdrop-filter: blur(10px);
             border: 1px solid var(--primary-dark);
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 5px 15px rgba(198, 210, 255, 0.1);
+            box-shadow: 0 8px 25px rgba(198, 210, 255, 0.15);
+            min-height: 500px;
         }
         
         .package-card::before {
@@ -162,8 +163,8 @@
         }
         
         .package-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(198, 210, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(198, 210, 255, 0.4);
         }
         
         .package-card:hover::before {
@@ -172,27 +173,28 @@
         
         .package-header {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             padding-bottom: 1.5rem;
             border-bottom: 1px solid rgba(211, 209, 218, 0.3);
         }
         
         .package-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
             color: var(--dark);
         }
         
         .package-price {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 600;
             color: var(--dark);
         }
         
         .price-period {
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: var(--dark);
+            opacity: 0.8;
         }
         
         .package-price span {
@@ -206,45 +208,63 @@
         
         .feature-item {
             display: flex;
-            align-items: flex-start;
-            margin-bottom: 1rem;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            background-color: rgba(159, 180, 255, 0.15);
+            border-radius: 50px;
+            padding: 0.7rem 1.2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(159, 180, 255, 0.3);
+        }
+        
+        .feature-item:hover {
+            background-color: rgba(159, 180, 255, 0.25);
+            transform: translateX(5px);
         }
         
         .feature-icon {
             color: var(--accent);
             margin-right: 1rem;
             flex-shrink: 0;
-            margin-top: 0.2rem;
+            font-size: 1.1rem;
         }
         
         .feature-text {
             color: var(--dark);
+            font-weight: 500;
             line-height: 1.5;
         }
         
         .package-button {
             width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 1.2rem;
+            border-radius: 12px;
             background-color: var(--accent);
             color: var(--darker);
             font-weight: 600;
+            font-size: 1.1rem;
             text-align: center;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer !important;
             font-family: 'Montserrat', sans-serif;
             position: relative;
             z-index: 10;
             pointer-events: auto !important;
+            margin-top: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(159, 180, 255, 0.3);
         }
         
         .package-button:hover {
             background-color: #B4C1FF;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(159, 180, 255, 0.5);
         }
         
         .package-button:active {
-            background-color: #600019;
+            background-color: #8496DE;
             transform: translateY(0);
         }
         
@@ -914,7 +934,7 @@
                     minimumFractionDigits: 2
                 }).format(pkg.price);
                 
-                // Create the package features list
+                // Create the package features list with enhanced features
                 let featuresHTML = '';
                 if (pkg.features && pkg.features.length > 0) {
                     featuresHTML = `<div class="package-features">
@@ -926,15 +946,27 @@
                         `).join('')}
                     </div>`;
                 } else {
-                    // Default features if none are specified
+                    // Default features with more attractive options if none are specified
                     featuresHTML = `<div class="package-features">
                         <div class="feature-item">
                             <div class="feature-icon"><i class="fas fa-check"></i></div>
-                            <div class="feature-text">Exclusive content access</div>
+                            <div class="feature-text">Exclusive premium content</div>
                         </div>
                         <div class="feature-item">
-                            <div class="feature-icon"><i class="fas fa-check"></i></div>
-                            <div class="feature-text">Direct messaging with creator</div>
+                            <div class="feature-icon"><i class="fas fa-comment"></i></div>
+                            <div class="feature-text">Priority direct messaging</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                            <div class="feature-text">New content notifications</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fas fa-image"></i></div>
+                            <div class="feature-text">Full-resolution media</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fas fa-heart"></i></div>
+                            <div class="feature-text">Personalized experience</div>
                         </div>
                     </div>`;
                 }

@@ -424,278 +424,119 @@ app.get('/:page', (req, res) => {
   }
 });
 
-// Helper function to ensure profile exists
-async function ensureProfileExists(userId, userName = null, userEmail = null, telegramUsername = null, password = null) {
+// Helper function to ensure profile exists - simplified
+async function ensureProfileExists(userId, userName = null, userEmail = null) {
   console.log('Ensuring profile exists for user:', userId);
   
-  // First check if a profile with this auth_id exists (regardless of id)
-  const { data: profileByAuthId, error: authIdError } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('auth_id', userId)
-    .maybeSingle();
-    
-  if (!authIdError && profileByAuthId) {
-    console.log('Profile already exists with auth_id:', userId);
-    // Return the existing profile ID
-    return { success: true, profileId: profileByAuthId.id };
-  }
-  
-  // If not found by auth_id, check if profile exists by id
-  const { data: profileById, error: idError } = await supabase
+  // Check if profile already exists
+  const { data, error } = await supabase
     .from('profiles')
     .select('id')
     .eq('id', userId)
-    .maybeSingle();
+    .single();
     
-  if (!idError && profileById) {
-    console.log('Profile already exists with id:', userId);
-    return { success: true, profileId: profileById.id };
-  }
-  
-  // If we have a telegram username, check if a profile with this username exists
-  if (telegramUsername) {
-    const { data: profileByUsername, error: usernameError } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('telegram_username', telegramUsername)
-      .maybeSingle();
-      
-    if (!usernameError && profileByUsername) {
-      console.log('Profile already exists with telegram_username:', telegramUsername);
-      
-      // Update the auth_id to match if needed
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ auth_id: userId })
-        .eq('id', profileByUsername.id);
-        
-      if (updateError) {
-        console.error('Error updating auth_id on existing profile:', updateError);
-      }
-      
-      return { success: true, profileId: profileByUsername.id };
-    }
-  }
-  
-  console.log('Profile not found, creating new profile');
-  
-  // Try to get user data from auth.users if needed
-  let name = userName;
-  let email = userEmail;
-  
-  if (!name || !email) {
-    // Need to use raw SQL for auth schema access
-    const { data: userData, error: userError } = await supabase.rpc('get_user_details', { 
-      user_uuid: userId 
-    });
-      
-    if (!userError && userData) {
-      // Use returned data from the function
-      name = userData.name || userData.email;
-      email = userData.email;
-    }
-  }
-  
-  // Create new profile
-  try {
-    // Generate a profile with proper values
-    const profileData = {
-      id: userId,
-      auth_id: userId,
-      name: name || 'User',
-      telegram_username: telegramUsername || '',
-      password_hash: password || '',
-      subscription_count: 0,
-      has_active_subscription: false,
-      subscription_status: false
-    };
+  if (error) {
+    console.log('Profile not found, creating new profile');
     
-    const { data: newProfile, error: insertError } = await supabase
+    // Create a simple profile directly
+    const { error: insertError } = await supabase
       .from('profiles')
-      .insert(profileData)
-      .select()
-      .single();
+      .insert({
+        id: userId,
+        auth_id: userId,
+        name: userName || 'User',
+        telegram_username: '',
+        password_hash: '',
+        subscription_count: 0,
+        has_active_subscription: false,
+        subscription_status: false
+      });
       
     if (insertError) {
       console.error('Error creating profile:', insertError);
-      return { success: false, error: insertError };
+      return false;
     }
     
-    console.log('Profile created successfully:', newProfile.id);
-    return { success: true, profileId: newProfile.id };
-  } catch (e) {
-    console.error('Exception creating profile:', e);
-    return { success: false, error: e };
+    return true;
   }
+  
+  console.log('Profile already exists');
+  return true;
 }
 
-// Handle successful checkout
+// Handle successful checkout - simplified
 async function handleSuccessfulCheckout(session) {
   console.log('Processing successful checkout session:', session.id);
   console.log('Session metadata:', JSON.stringify(session.metadata));
   
   try {
-    const { userId, modelId, packageId, userPhone, telegramUsername, password } = session.metadata;
+    const { userId, modelId, packageId, userPhone } = session.metadata;
     
     if (!userId || !modelId) {
       console.error('Missing required metadata in checkout session:', session.metadata);
       return;
     }
     
-    // Ensure profile exists before proceeding - pass telegram username and password if available
-    const profileResult = await ensureProfileExists(
-      userId, 
-      session.metadata.userName || null, 
-      null, // userEmail
-      telegramUsername || userPhone || null, // use phone as fallback for telegram
-      password || null
-    );
+    // 1. Create a profile for the user if it doesn't exist
+    await ensureProfileExists(userId);
     
-    if (!profileResult.success) {
-      console.error('Failed to create/find profile for user:', userId, profileResult.error);
-      // Continue anyway to try to create the subscription
-    } else {
-      console.log('Profile ensured with ID:', profileResult.profileId);
-    }
-    
-    // Retrieve subscription details
+    // 2. Retrieve subscription details
     console.log('Retrieving subscription details for:', session.subscription);
     const subscription = await stripe.subscriptions.retrieve(session.subscription);
     console.log('Subscription status:', subscription.status);
     
-    // Create subscription using the database function with the unique constraint
-    console.log('Creating subscription using RPC function...');
-    try {
-      const { error: createError } = await supabase.rpc('create_user_subscription', {
-        p_user_id: userId,
-        p_model_id: modelId,
-        p_package_id: packageId || null,
-        p_stripe_subscription_id: subscription.id,
-        p_stripe_customer_id: session.customer,
-        p_status: subscription.status,
-        p_subscription_plan: 'monthly',
-        p_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-        p_is_active: true,
-        p_cancel_at_period_end: subscription.cancel_at_period_end
+    // 3. Create the subscription record directly
+    const { error: insertError } = await supabase
+      .from('user_model_subscriptions')
+      .insert({
+        user_id: userId,
+        model_id: modelId,
+        package_id: packageId || null,
+        stripe_subscription_id: subscription.id,
+        stripe_customer_id: session.customer,
+        status: subscription.status,
+        subscription_plan: 'monthly',
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        is_active: true,
+        cancel_at_period_end: subscription.cancel_at_period_end
       });
-      
-      if (createError) {
-        console.error('Error creating subscription via RPC:', createError);
+    
+    if (insertError) {
+      // If insert failed, check if it's because the subscription already exists
+      if (insertError.code === '23505') { // Unique violation
+        console.log('Subscription already exists, updating instead');
         
-        // Check if the subscription already exists before trying insert
-        const { data: existingData, error: checkError } = await supabase
+        // Update the existing subscription
+        await supabase
           .from('user_model_subscriptions')
-          .select('id')
-          .eq('stripe_subscription_id', subscription.id)
-          .maybeSingle();
-          
-        if (!checkError && existingData) {
-          console.log('Subscription with ID already exists, updating instead:', subscription.id);
-          
-          // Update existing subscription
-          const { error: updateError } = await supabase
-            .from('user_model_subscriptions')
-            .update({
-              status: subscription.status,
-              is_active: true,
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-              cancel_at_period_end: subscription.cancel_at_period_end,
-              updated_at: new Date().toISOString()
-            })
-            .eq('stripe_subscription_id', subscription.id);
-            
-          if (updateError) {
-            console.error('Error updating existing subscription:', updateError);
-          }
-        } else {
-          // Fall back to direct insert with explicit parameters to avoid ambiguity
-          console.log('Falling back to direct insert...');
-          const { error: insertError } = await supabase.from('user_model_subscriptions').insert({
-            user_id: userId,
-            model_id: modelId,
-            package_id: packageId || null,
-            stripe_subscription_id: subscription.id,
-            stripe_customer_id: session.customer,
+          .update({
             status: subscription.status,
-            subscription_plan: 'monthly',
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
             is_active: true,
-            cancel_at_period_end: subscription.cancel_at_period_end
-          });
-          
-          if (insertError) {
-            console.error('Error with direct insert:', insertError);
-            return;
-          }
-        }
+            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('stripe_subscription_id', subscription.id);
       } else {
-        console.log('Subscription created successfully via RPC');
+        console.error('Error creating subscription record:', insertError);
       }
-    } catch (e) {
-      console.error('Exception during subscription creation:', e);
-      return;
     }
     
-    // Fix user subscription status using dedicated function
-    console.log('Fixing subscription status for user:', userId);
-    try {
-      const { data: fixResult, error: fixError } = await supabase.rpc('fix_user_subscription_status', {
-        p_user_id: userId
-      });
-      
-      if (fixError) {
-        console.error('Error fixing subscription status via RPC:', fixError);
-        
-        // Fall back to direct updates with explicit queries to avoid ambiguity
-        console.log('Falling back to direct profile updates...');
-        
-        // Get the count of active subscriptions
-        const { data: activeSubsData, error: countError } = await supabase
-          .from('user_model_subscriptions')
-          .select('id')
-          .eq('user_id', userId)
-          .eq('is_active', true)
-          .eq('status', 'active');
-          
-        if (!countError) {
-          const activeCount = activeSubsData.length;
-          
-          // Directly update the profile
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .update({
-              subscription_count: activeCount, 
-              has_active_subscription: activeCount > 0,
-              subscription_status: activeCount > 0
-            })
-            .eq('id', userId);
-            
-          if (profileError) {
-            console.error('Error directly updating profile subscription fields:', profileError);
-          }
-        }
-      } else {
-        console.log('Subscription status fixed successfully:', fixResult);
-      }
-    } catch (e) {
-      console.error('Exception during status fix:', e);
-    }
-    
-    // Verify the profile was updated correctly
-    const { data: verifyData, error: verifyError } = await supabase
+    // 4. Directly update the profile's subscription status
+    const { error: profileError } = await supabase
       .from('profiles')
-      .select('id, subscription_count, has_active_subscription, subscription_status')
-      .eq('id', userId)
-      .single();
-      
-    if (verifyError) {
-      console.error('Error verifying profile update:', verifyError);
-    } else {
-      console.log('Profile subscription fields after update:', verifyData);
+      .update({
+        subscription_count: 1,
+        has_active_subscription: true,
+        subscription_status: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+    
+    if (profileError) {
+      console.error('Error updating profile:', profileError);
     }
     
-    console.log('Subscription record created successfully');
+    console.log('Subscription processed successfully');
   } catch (error) {
     console.error('Error handling successful checkout:', error);
   }
@@ -714,19 +555,10 @@ async function handleSubscriptionCreated(subscription) {
       const userId = subscription.metadata.userId;
       console.log('Found userId directly in subscription metadata:', userId);
       
-      // Ensure profile exists with telegram username and password if available
-      const profileResult = await ensureProfileExists(
-        userId,
-        subscription.metadata.userName || null,
-        null, // userEmail
-        subscription.metadata.telegramUsername || subscription.metadata.userPhone || null,
-        subscription.metadata.password || null
-      );
-      
-      if (!profileResult.success) {
-        console.error('Failed to create profile for user:', userId, profileResult.error);
-      } else {
-        console.log('Profile ensured with ID:', profileResult.profileId);
+      // Ensure profile exists
+      const profileExists = await ensureProfileExists(userId);
+      if (!profileExists) {
+        console.error('Failed to create profile for user:', userId);
       }
       
       // Update the subscription record
@@ -748,13 +580,11 @@ async function handleSubscriptionCreated(subscription) {
       if (updateError) {
         console.error('Error creating subscription record from metadata:', updateError);
       } else {
-        // Fix user subscription status
-        const { error: fixError } = await supabase.rpc('fix_user_subscription_status', {
-          p_user_id: userId
-        });
+        // Update the subscription count in the profiles table
+        const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
         
-        if (fixError) {
-          console.error('Error fixing subscription status:', fixError);
+        if (countError) {
+          console.error('Error updating subscription count:', countError);
           
           // Directly update profile as fallback
           const { error: profileError } = await supabase
@@ -800,18 +630,9 @@ async function handleSubscriptionCreated(subscription) {
             const userId = matchingSession.metadata.userId;
             
             // Ensure profile exists
-            const profileResult = await ensureProfileExists(
-              userId,
-              matchingSession.metadata.userName || null,
-              null, // userEmail
-              matchingSession.metadata.telegramUsername || matchingSession.metadata.userPhone || null,
-              matchingSession.metadata.password || null
-            );
-            
-            if (!profileResult.success) {
-              console.error('Failed to create profile for user:', userId, profileResult.error);
-            } else {
-              console.log('Profile ensured with ID:', profileResult.profileId);
+            const profileExists = await ensureProfileExists(userId);
+            if (!profileExists) {
+              console.error('Failed to create profile for user:', userId);
             }
             
             // Create the subscription record
@@ -835,13 +656,11 @@ async function handleSubscriptionCreated(subscription) {
               return;
             }
             
-            // Fix user subscription status
-            const { error: fixError } = await supabase.rpc('fix_user_subscription_status', {
-              p_user_id: userId
-            });
+            // Update the subscription count in the profiles table
+            const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: userId });
             
-            if (fixError) {
-              console.error('Error fixing subscription status:', fixError);
+            if (countError) {
+              console.error('Error updating subscription count:', countError);
               
               // Directly update profile as fallback
               const { error: profileError } = await supabase
@@ -870,11 +689,9 @@ async function handleSubscriptionCreated(subscription) {
       }
       
       // Ensure profile exists
-      const profileResult = await ensureProfileExists(data.user_id);
-      if (!profileResult.success) {
-        console.error('Failed to create profile for user:', data.user_id, profileResult.error);
-      } else {
-        console.log('Profile ensured with ID:', profileResult.profileId);
+      const profileExists = await ensureProfileExists(data.user_id);
+      if (!profileExists) {
+        console.error('Failed to create profile for user:', data.user_id);
       }
       
       // Update the subscription record
@@ -894,12 +711,10 @@ async function handleSubscriptionCreated(subscription) {
       }
       
       // Update the subscription count in the profiles table
-      const { error: fixError } = await supabase.rpc('fix_user_subscription_status', {
-        p_user_id: data.user_id
-      });
+      const { error: countError } = await supabase.rpc('increment_subscription_count', { user_id: data.user_id });
       
-      if (fixError) {
-        console.error('Error fixing subscription status:', fixError);
+      if (countError) {
+        console.error('Error updating subscription count:', countError);
         
         // Directly update profile as fallback
         const { error: profileError } = await supabase
