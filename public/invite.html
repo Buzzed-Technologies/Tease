@@ -447,32 +447,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     
     <script>
-        // Add query parameter handling for model
-        const urlParams = new URLSearchParams(window.location.search);
-        const modelId = urlParams.get('model') || getModelIdFromPathname();
-        let currentModel = null;
+        let supabase = null;
+        let supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        let supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         
-        // Function to extract model ID from URL path (/invite/modelId format)
-        function getModelIdFromPathname() {
-            const path = window.location.pathname;
-            if (path.startsWith('/invite/')) {
-                return path.split('/invite/')[1];
-            }
-            return null;
+        // Extract model ID from the URL
+        const urlPath = window.location.pathname;
+        const invitePattern = /\/invite\/([a-fA-F0-9-]+)/;
+        const match = urlPath.match(invitePattern);
+        let modelId = match ? match[1] : null;
+        
+        console.log('Model ID from URL:', modelId);
+        
+        // Validate UUID format
+        function isValidUUID(uuid) {
+            const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            return uuidPattern.test(uuid);
         }
         
-        // Supabase client initialization
-        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        let supabase;
+        if (modelId && !isValidUUID(modelId)) {
+            console.error('Invalid UUID format for model ID:', modelId);
+            modelId = null;
+        }
         
-        // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-        let supabaseKey = null;
+        let currentModel = null;
         
         // Check if the key is a real key or just the placeholder
-        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+        if (supabaseKey && !supabaseKey.includes('%NEXT_PUBLIC')) {
             console.log('Using API key from meta tag');
-            supabaseKey = metaKey;
             initSupabase();
         } else {
             // Fetch API key from server config endpoint
@@ -536,8 +538,8 @@
                     document.getElementById('model-bio').textContent = data.bio || 'Creator on ThreadPay';
                     
                     // Update model image if available
-                    if (data.pictures && data.pictures.main) {
-                        document.getElementById('model-image').style.backgroundImage = `url(${data.pictures.main})`;
+                    if (data.pictures && data.pictures.length > 0) {
+                        document.getElementById('model-image').style.backgroundImage = `url(/images/models/${data.pictures[0]})`;
                     }
                     
                     // Store the model ID in a hidden field for later use during signup
@@ -624,6 +626,17 @@
                     };
                     
                     localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                    
+                    // Verify the model exists
+                    const { data: modelData, error: modelError } = await supabase
+                        .from('models')
+                        .select('id')
+                        .eq('id', modelId)
+                        .single();
+                        
+                    if (modelError || !modelData) {
+                        throw new Error('Invalid model selected. Please refresh and try again.');
+                    }
                     
                     // Create profile entry
                     const { error: profileError } = await supabase

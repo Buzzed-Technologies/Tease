@@ -32,185 +32,199 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        .hero {
+        /* Improved color contrast */
+        :root {
+            --primary: #F5F0E8;
+            --primary-dark: #E8E0D5;
+            --primary-light: #FFF9F0;
+            --accent: #7F92FC;  /* Darker accent for better contrast */
+            --dark: #222222;
+            --darker: #111111;
+            --light: #FFFFFF;
+            --text-color: #333333; /* Darker text color for better readability */
+        }
+        
+        body {
+            color: var(--text-color);
+            background-color: var(--light);
+        }
+        
+        #hero {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            padding-top: 2rem;
+            padding-bottom: 2rem;
             min-height: 100vh;
-            background-color: var(--primary);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 2rem;
         }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 1rem;
+        
+        #about, #get-started {
+            padding: 4rem 5%;
+            background-color: var(--light);
         }
-
-        .subtitle {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 2rem;
-            max-width: 700px;
+        
+        .intro-text {
+            color: var(--text-color);
+            margin: 1rem auto;
+            max-width: 600px;
         }
-
-        .feature-section {
-            padding: 5rem 2rem;
+        
+        .cta-button {
+            background-color: var(--accent);
+            color: var(--light);
+            font-weight: 600;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 1rem 0;
+            text-decoration: none;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .cta-button:hover {
+            background-color: #6A7FF6;
+            transform: translateY(-2px);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
             background-color: var(--primary-light);
-            text-align: center;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        .feature-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
+        
+        .feature h3 {
+            margin: 1rem 0;
             color: var(--dark);
-            margin-bottom: 3rem;
         }
-
-        .features {
+        
+        .feature p {
+            color: var(--text-color);
+        }
+        
+        .personas-container {
+            margin: 2rem 0;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .personas-scroll {
+            display: flex;
+            overflow-x: auto;
+            padding: 1rem 0;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+        
+        .persona {
+            flex: 0 0 auto;
+            width: 280px;
+            margin-right: 20px;
+            background-color: var(--primary-light);
+            border-radius: 10px;
+            overflow: hidden;
+            scroll-snap-align: start;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .persona-content {
+            padding: 1.5rem;
+        }
+        
+        .persona-content h3 {
+            color: var(--dark);
+        }
+        
+        .persona-content p {
+            color: var(--text-color);
+            margin: 0.5rem 0 1rem;
+        }
+        
+        .cta-options {
             display: flex;
             flex-wrap: wrap;
+            gap: 1.5rem;
             justify-content: center;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 2rem 0;
         }
-
-        .feature-card {
-            background-color: var(--light);
-            border-radius: 12px;
+        
+        .cta-card {
+            background-color: var(--primary-light);
+            border-radius: 10px;
             padding: 2rem;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 5px 15px rgba(198, 210, 255, 0.1);
-            border: 1px solid var(--primary-dark);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(198, 210, 255, 0.2);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-
-        .feature-card p {
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background-color: var(--accent);
-            color: var(--darker);
-            border: none;
-            border-radius: 50px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-top: 2.5rem;
-            box-shadow: 0 5px 15px rgba(198, 210, 255, 0.3);
-        }
-
-        .cta-button:hover {
-            background-color: #B4C1FF;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(198, 210, 255, 0.4);
-        }
-
-        .testimonial-section {
-            padding: 5rem 2rem;
-            background-color: var(--primary);
             text-align: center;
+            flex: 1 1 300px;
+            max-width: 400px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        .testimonial-card {
-            background-color: var(--light);
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            box-shadow: 0 5px 15px rgba(198, 210, 255, 0.1);
-            border: 1px solid var(--primary-dark);
-        }
-
-        .testimonial-text {
-            font-size: 1.2rem;
-            color: var(--dark);
-            font-style: italic;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .testimonial-author {
-            font-weight: 600;
-            color: var(--dark);
-        }
-
+        
         footer {
             background-color: var(--primary-dark);
-            padding: 3rem 2rem;
+            padding: 3rem 5%;
             text-align: center;
-            color: var(--dark);
         }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-links a {
-            color: var(--dark);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-        }
-
-        .copyright {
-            font-size: 0.9rem;
-            color: var(--dark);
-            opacity: 0.8;
-        }
-
+        
         @media (max-width: 768px) {
-            .logo {
-                font-size: 3rem;
+            h1 {
+                font-size: 2.5rem;
             }
-
-            .subtitle {
-                font-size: 1.2rem;
-            }
-
-            .feature-title {
+            
+            h2 {
                 font-size: 2rem;
             }
-
-            .feature-card {
-                max-width: 100%;
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-card {
+                flex: 1 1 100%;
+            }
+            
+            #hero, #about, #get-started {
+                padding: 3rem 1rem;
+            }
+            
+            .intro-text br {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .personas-scroll {
+                padding-bottom: 1.5rem;
+            }
+            
+            .persona {
+                width: 260px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
             }
         }
     </style>
@@ -219,29 +233,23 @@
     <div class="app-container">
         <main>
             <!-- HERO SECTION -->
-            <section class="screen" id="hero">
-                <div class="animated-bg"></div>
+            <section id="hero">
                 <div class="content">
                     <div class="logo-container">
                         <div class="logo">ThreadPay</div>
                         <div class="tagline">curated creator platform</div>
                     </div>
-                    <h1>Support <span class="highlight">Exceptional</span><br>Creators</h1>
-                    <p class="intro-text">ThreadPay connects you with hand-picked, thoroughly trained creators.<br>Your new destination for quality content.</p>
+                    <h1>Support <span class="highlight">Exceptional</span> Creators</h1>
+                    <p class="intro-text">ThreadPay connects you with hand-picked, thoroughly trained creators. Your new destination for quality content.</p>
                     <div class="cta-wrapper">
                         <a href="#get-started" class="cta-button">Support a Creator</a>
                         <div class="cta-hint">All creators are thoroughly vetted</div>
                     </div>
-                    <div class="pulse-circle"></div>
-                </div>
-                <div class="scroll-indicator">
-                    <i class="fas fa-chevron-down"></i>
-                    <span>Learn More</span>
                 </div>
             </section>
 
             <!-- ABOUT SECTION -->
-            <section class="screen" id="about">
+            <section id="about">
                 <div class="content">
                     <h2>Why <span class="highlight">ThreadPay</span></h2>
                     <p>ThreadPay is a management and payment platform connecting discerning supporters with exceptional creators. Unlike other platforms, we personally select and train every creator.</p>
@@ -269,78 +277,66 @@
                         </div>
                     </div>
                     
-                    <div class="mission-content">
-                        <div class="mission-item">
-                            <i class="fas fa-user-check"></i>
-                            <h3>Our Selection Process</h3>
-                            <p>We meticulously evaluate potential creators based on talent, uniqueness, and dedication. Only the top 2% are invited to join our platform, ensuring you're supporting exceptional quality.</p>
-                        </div>
+                    <div class="feature">
+                        <i class="fas fa-user-check"></i>
+                        <h3>Our Selection Process</h3>
+                        <p>We meticulously evaluate potential creators based on talent, uniqueness, and dedication. Only the top 2% are invited to join our platform, ensuring you're supporting exceptional quality.</p>
                     </div>
                 </div>
             </section>
 
             <!-- GET STARTED SECTION -->
-            <section class="screen" id="get-started">
+            <section id="get-started">
                 <div class="content">
                     <h2>Discover <span class="highlight">Creators</span></h2>
                     <p>Browse our selection of exceptional creators and begin supporting their work today.</p>
                     
                     <div class="personas-container">
                         <div class="personas-scroll">
-                            <div class="persona" data-style="dominant">
-                                <div class="persona-image"></div>
+                            <div class="persona">
                                 <div class="persona-content">
                                     <h3>Visual Artists</h3>
                                     <span class="persona-tag">Digital & Traditional</span>
                                     <p>Discover exceptional illustrators, painters, and graphic designers creating stunning visual artwork.</p>
-                                    <a href="/explore/visual-artists" class="persona-details-button">Explore Artists</a>
+                                    <a href="/explore/visual-artists" class="cta-button">Explore Artists</a>
                                 </div>
                             </div>
                             
-                            <div class="persona" data-style="playful">
-                                <div class="persona-image"></div>
+                            <div class="persona">
                                 <div class="persona-content">
                                     <h3>Writers</h3>
                                     <span class="persona-tag">Content & Fiction</span>
                                     <p>Support outstanding authors, journalists, and storytellers producing captivating written works.</p>
-                                    <a href="/explore/writers" class="persona-details-button">Explore Writers</a>
+                                    <a href="/explore/writers" class="cta-button">Explore Writers</a>
                                 </div>
                             </div>
                             
-                            <div class="persona" data-style="intellectual">
-                                <div class="persona-image"></div>
+                            <div class="persona">
                                 <div class="persona-content">
                                     <h3>Educators</h3>
                                     <span class="persona-tag">Courses & Knowledge</span>
                                     <p>Learn from expert teachers, coaches, and thought leaders sharing valuable knowledge and insights.</p>
-                                    <a href="/explore/educators" class="persona-details-button">Explore Educators</a>
+                                    <a href="/explore/educators" class="cta-button">Explore Educators</a>
                                 </div>
                             </div>
                             
-                            <div class="persona" data-style="nurturing">
-                                <div class="persona-image"></div>
+                            <div class="persona">
                                 <div class="persona-content">
                                     <h3>Performers</h3>
                                     <span class="persona-tag">Music & Entertainment</span>
                                     <p>Experience talented musicians, actors, and entertainers delivering exceptional performances.</p>
-                                    <a href="/explore/performers" class="persona-details-button">Explore Performers</a>
+                                    <a href="/explore/performers" class="cta-button">Explore Performers</a>
                                 </div>
                             </div>
                             
-                            <div class="persona" data-style="quirky">
-                                <div class="persona-image"></div>
+                            <div class="persona">
                                 <div class="persona-content">
                                     <h3>Podcasters</h3>
                                     <span class="persona-tag">Audio Content</span>
                                     <p>Listen to engaging podcast creators producing thought-provoking audio content and discussions.</p>
-                                    <a href="/explore/podcasters" class="persona-details-button">Explore Podcasters</a>
+                                    <a href="/explore/podcasters" class="cta-button">Explore Podcasters</a>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="scroll-hint">
-                            <i class="fas fa-arrow-right"></i>
-                            <span>Swipe to explore</span>
                         </div>
                     </div>
                     
