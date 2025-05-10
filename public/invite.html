@@ -145,11 +145,14 @@
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(211, 209, 218, 0.3);
-            color: #333333;
+            background-color: #ffffff !important;
+            border: 1px solid rgba(211, 209, 218, 0.5) !important;
+            color: #333333 !important;
             font-family: 'Montserrat', sans-serif;
             transition: border-color 0.3s ease;
+            -webkit-text-fill-color: #333333 !important;
+            opacity: 1 !important;
+            caret-color: #333333 !important;
         }
         
         .form-input::placeholder {
@@ -545,37 +548,14 @@
                     // Update model image if available
                     if (data.pictures && data.pictures.length > 0) {
                         try {
-                            // Try alternative ways to load the image
+                            // Use the correct Supabase URL for model images
                             const imageName = data.pictures[0];
                             
-                            // Method 1: Use the CDN format
-                            const cdnUrl = `https://kigcecwfxlonrdxjwsza.supabase.in/storage/v1/object/public/models/${imageName}`;
+                            // Use the provided URL format
+                            const correctUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${imageName}`;
+                            console.log('Loading image from correct URL:', correctUrl);
                             
-                            // Method 2: Fallback to direct path
-                            const directUrl = `/images/${imageName}`;
-                            
-                            // Set image with CDN URL first, and add an error handler
-                            const imgElement = document.createElement('img');
-                            imgElement.style.display = 'none';
-                            imgElement.src = cdnUrl;
-                            
-                            imgElement.onload = () => {
-                                // If CDN load successful, use it
-                                document.getElementById('model-image').style.backgroundImage = `url(${cdnUrl})`;
-                                console.log('Image loaded successfully from CDN:', cdnUrl);
-                            };
-                            
-                            imgElement.onerror = () => {
-                                // If CDN fails, try direct path
-                                console.log('CDN image failed, trying direct path:', directUrl);
-                                document.getElementById('model-image').style.backgroundImage = `url(${directUrl})`;
-                            };
-                            
-                            document.body.appendChild(imgElement);
-                            setTimeout(() => imgElement.remove(), 2000); // Clean up after 2 seconds
-                            
-                            // Initially set to direct path while we check CDN
-                            document.getElementById('model-image').style.backgroundImage = `url(${directUrl})`;
+                            document.getElementById('model-image').style.backgroundImage = `url(${correctUrl})`;
                         } catch (err) {
                             console.error('Error setting image:', err);
                         }
