@@ -960,7 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .particle {
             position: absolute;
-            background-color: rgba(128, 0, 32, 0.3);
+            background-color: rgba(211, 209, 218, 0.3);
             border-radius: 50%;
             opacity: 0;
             animation: float linear forwards;
@@ -968,8 +968,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .persona.selected {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(128, 0, 32, 0.5);
-            border: 1px solid var(--primary);
+            box-shadow: 0 15px 30px rgba(211, 209, 218, 0.5);
+            border: 1px solid var(--accent);
         }
         
         .persona.selected .persona-button {
@@ -984,7 +984,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .success-icon {
             font-size: 4rem;
-            color: #28a745;
+            color: var(--accent);
             margin-bottom: 1rem;
         }
         

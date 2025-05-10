@@ -24,7 +24,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(135deg, #170811 0%, #0a0a0a 100%);
+            background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
             padding: 2rem 5%;
         }
         
@@ -41,7 +41,7 @@
         }
         
         .tagline {
-            color: var(--primary);
+            color: var(--accent);
             font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -57,13 +57,14 @@
         }
         
         .login-form-container {
-            background: rgba(20, 20, 20, 0.5);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 12px;
             padding: 2.5rem;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(128, 0, 32, 0.2);
+            border: 1px solid rgba(211, 209, 218, 0.3);
             max-width: 450px;
             width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         .login-header {
@@ -98,8 +99,8 @@
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 8px;
-            background-color: rgba(15, 15, 15, 0.7);
-            border: 1px solid rgba(128, 0, 32, 0.2);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(211, 209, 218, 0.3);
             color: var(--light);
             font-family: 'Montserrat', sans-serif;
             transition: border-color 0.3s ease;
@@ -107,7 +108,7 @@
         
         .form-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--accent);
         }
         
         .login-btn {
@@ -159,7 +160,7 @@
         }
         
         .signup-link a {
-            color: var(--primary);
+            color: var(--accent);
             text-decoration: none;
             font-weight: 600;
         }

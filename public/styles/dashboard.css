@@ -2,7 +2,7 @@
 .dashboard-header {
     background-color: var(--darker);
     padding: 1rem 10%;
-    border-bottom: 1px solid rgba(232, 224, 213, 0.3);
+    border-bottom: 1px solid rgba(211, 209, 218, 0.3);
     position: sticky;
     top: 0;
     left: 0;
@@ -44,7 +44,7 @@
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--primary-dark);
+    background-color: var(--accent);
     transition: width 0.3s ease;
 }
 

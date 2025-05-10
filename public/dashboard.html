@@ -32,13 +32,13 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(135deg, #170811 0%, #0a0a0a 100%);
+            background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
         }
         
         .dashboard-header {
-            background-color: rgba(10, 10, 10, 0.95);
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 1rem 5%;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -66,8 +66,8 @@
         .logout-button {
             padding: 0.5rem 1rem;
             background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
+            border: 1px solid var(--accent);
+            color: var(--accent);
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -75,8 +75,8 @@
         }
         
         .logout-button:hover {
-            background-color: var(--primary);
-            color: var(--light);
+            background-color: var(--accent);
+            color: var(--darker);
         }
         
         .dashboard-content {
@@ -91,12 +91,13 @@
             justify-content: center;
             gap: 1rem;
             margin-bottom: 1.5rem;
-            background: rgba(10, 10, 10, 0.5);
+            background: rgba(255, 255, 255, 0.9);
             padding: 0.8rem;
             border-radius: 8px;
             position: sticky;
             top: 4rem;
             z-index: 5;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
         
         .tab-button {
@@ -115,17 +116,18 @@
         }
         
         .tab-button.active {
-            background: rgba(128, 0, 32, 0.2);
-            color: var(--primary);
+            background: rgba(211, 209, 218, 0.3);
+            color: var(--accent);
         }
         
         .content-section {
             display: none;
-            background-color: rgba(15, 15, 15, 0.7);
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             animation: fadeIn 0.3s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
         
         @keyframes fadeIn {
@@ -139,7 +141,7 @@
         
         .section-header {
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(128, 0, 32, 0.2);
+            border-bottom: 1px solid rgba(211, 209, 218, 0.3);
             padding-bottom: 1rem;
         }
         
@@ -153,6 +155,301 @@
         .section-description {
             color: var(--light-gray);
             font-size: 0.9rem;
+        }
+        
+        /* Account section styles */
+        .account-container {
+            margin-bottom: 2rem;
+        }
+        
+        .account-info {
+            padding: 1.2rem;
+            background-color: rgba(249, 247, 244, 0.9);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(211, 209, 218, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .account-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.3);
+        }
+        
+        .user-name-large {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-email {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        .account-created {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--light-gray);
+        }
+        
+        .account-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .account-label {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        
+        /* Model card styles */
+        .models-section {
+            margin-top: 2rem;
+        }
+        
+        .models-section h3 {
+            font-size: 1.2rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+        
+        .model-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .model-card {
+            background-color: rgba(20, 20, 20, 0.6);
+            border-radius: 12px;
+            padding: 1.2rem;
+            border: 1px solid rgba(128, 0, 32, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .model-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(128, 0, 32, 0.2);
+        }
+        
+        .model-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(128, 0, 32, 0.3);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .model-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .model-info {
+            flex-grow: 1;
+        }
+        
+        .model-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--light);
+            margin-bottom: 0.3rem;
+        }
+        
+        .model-description {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .model-subscription-status {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .model-subscription-status.active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .model-subscription-status.inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .model-arrow {
+            color: var(--light-gray);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        /* Popup styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .popup-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .popup-content {
+            background-color: rgba(20, 20, 20, 0.95);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(128, 0, 32, 0.3);
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+        }
+        
+        .popup-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(128, 0, 32, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .popup-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--light);
+        }
+        
+        .popup-close {
+            background: none;
+            border: none;
+            color: var(--light-gray);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .popup-close:hover {
+            color: var(--primary);
+        }
+        
+        .popup-body {
+            padding: 1.5rem;
+        }
+        
+        .model-detail-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(128, 0, 32, 0.2);
+        }
+        
+        .model-detail-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(128, 0, 32, 0.3);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .model-detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .model-detail-info h3 {
+            font-size: 1.3rem;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .model-detail-description {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .subscription-details-container h4 {
+            font-size: 1.1rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+        
+        .subscription-detail-item {
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(128, 0, 32, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .subscription-detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .subscription-detail-label {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        .subscription-detail-value {
+            color: var(--light);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .popup-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(128, 0, 32, 0.2);
+            display: flex;
+            justify-content: center;
         }
         
         /* Subscription styles - mobile optimized */
@@ -379,22 +676,19 @@
                 font-size: 1.8rem;
             }
             
-            .subscription-info {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
+            .account-header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
             }
             
-            .subscription-info .item {
-                flex-direction: column;
-                align-items: flex-start;
+            .account-details {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 1.5rem;
             }
             
-            .subscription-info .label {
-                margin-bottom: 0.5rem;
-            }
-            
-            .plan-cards {
+            .model-cards {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
                 gap: 1.5rem;
@@ -445,9 +739,9 @@
         
         <div class="dashboard-content">
             <div class="tab-navigation">
-                <button class="tab-button active" data-tab="subscription-section">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Subscription</span>
+                <button class="tab-button active" data-tab="account-section">
+                    <i class="fas fa-user"></i>
+                    <span>Account</span>
                 </button>
                 <button class="tab-button" data-tab="settings-section">
                     <i class="fas fa-cog"></i>
@@ -455,88 +749,35 @@
                 </button>
             </div>
             
-            <!-- Subscription Section -->
-            <section id="subscription-section" class="content-section active">
+            <!-- Account Section (formerly Subscription) -->
+            <section id="account-section" class="content-section active">
                 <div class="section-header">
-                    <h2>Subscription</h2>
-                    <p class="section-description">Manage your subscription plan and payment details.</p>
+                    <h2>Account</h2>
+                    <p class="section-description">Your account information and subscribed models.</p>
                 </div>
                 
-                <div id="subscription-active" class="subscription-details">
-                    <div class="subscription-status active">Active</div>
-                    
-                    <div class="subscription-info">
-                        <div class="item">
-                            <div class="label">Plan</div>
-                            <div class="value" id="plan-name">Premium</div>
+                <div class="account-container">
+                    <div class="account-info">
+                        <div class="account-header">
+                            <div>
+                                <div class="user-name-large" id="account-name">User Name</div>
+                                <div class="account-email" id="account-email">user@example.com</div>
+                                <div class="account-created" id="account-created">Member since January 1, 2025</div>
+                            </div>
                         </div>
                         
-                        <div class="item">
-                            <div class="label">Price</div>
-                            <div class="value" id="plan-price">$19.99/month</div>
-                        </div>
-                        
-                        <div class="item">
-                            <div class="label">Next Billing</div>
-                            <div class="value" id="next-billing-date">May 15, 2025</div>
+                        <div class="account-details">
+                            <div>
+                                <div class="account-label">Subscription Status</div>
+                                <div class="model-subscription-status active" id="account-subscription-status">Active</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <button id="manage-subscription" class="action-button">Manage Subscription</button>
-                </div>
-                
-                <div id="subscription-inactive" class="subscription-details" style="display: none;">
-                    <div class="subscription-status inactive">Inactive</div>
-                    
-                    <p>You don't have an active subscription. Choose a subscription plan to access all features.</p>
-                    
-                    <div class="plan-cards">
-                        <div class="plan-card">
-                            <div class="plan-header">
-                                <div class="plan-name">Basic</div>
-                                <div class="plan-price">$9.99/mo</div>
-                            </div>
-                            <div class="plan-features">
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Unlimited messaging</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Basic personalization</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Standard response time</span>
-                                </div>
-                            </div>
-                            <button class="action-button select-plan-btn" data-plan="basic">Subscribe Now</button>
-                        </div>
-                        
-                        <div class="plan-card">
-                            <div class="plan-header">
-                                <div class="plan-name">Premium</div>
-                                <div class="plan-price">$19.99/mo</div>
-                            </div>
-                            <div class="plan-features">
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>All Basic features</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Advanced personalization</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Priority responses</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check"></i>
-                                    <span>Exclusive content</span>
-                                </div>
-                            </div>
-                            <button class="action-button select-plan-btn" data-plan="premium">Subscribe Now</button>
+                    <div class="models-section">
+                        <h3>Your AI Models</h3>
+                        <div class="model-cards" id="model-cards-container">
+                            <!-- Model cards will be inserted here -->
                         </div>
                     </div>
                 </div>
@@ -576,6 +817,24 @@
                     <div id="settings-message" class="message-area"></div>
                 </form>
             </section>
+        </div>
+    </div>
+    
+    <!-- Subscription Details Popup -->
+    <div class="popup-overlay" id="model-popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <div class="popup-title">Model Subscription</div>
+                <button class="popup-close" id="popup-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="popup-body" id="popup-body">
+                <!-- Popup content will be dynamically inserted here -->
+            </div>
+            <div class="popup-footer">
+                <button class="action-button" id="manage-subscription">Manage Subscription</button>
+            </div>
         </div>
     </div>
 
@@ -633,13 +892,12 @@
         
         // DOM elements
         const userDisplayName = document.getElementById('user-display-name');
+        const accountName = document.getElementById('account-name');
+        const accountEmail = document.getElementById('account-email');
+        const accountCreated = document.getElementById('account-created');
+        const accountSubscriptionStatus = document.getElementById('account-subscription-status');
+        const modelCardsContainer = document.getElementById('model-cards-container');
         const logoutButton = document.getElementById('logout-button');
-        const subscriptionActive = document.getElementById('subscription-active');
-        const subscriptionInactive = document.getElementById('subscription-inactive');
-        const planName = document.getElementById('plan-name');
-        const planPrice = document.getElementById('plan-price');
-        const nextBillingDate = document.getElementById('next-billing-date');
-        const manageSubscriptionButton = document.getElementById('manage-subscription');
         const settingsForm = document.getElementById('settings-form');
         const settingsName = document.getElementById('settings-name');
         const settingsEmail = document.getElementById('settings-email');
@@ -648,6 +906,10 @@
         const settingsMessage = document.getElementById('settings-message');
         const tabButtons = document.querySelectorAll('.tab-button');
         const contentSections = document.querySelectorAll('.content-section');
+        const modelPopup = document.getElementById('model-popup');
+        const popupBody = document.getElementById('popup-body');
+        const popupClose = document.getElementById('popup-close');
+        const manageSubscriptionButton = document.getElementById('manage-subscription');
         
         // Get user data from local storage
         const userData = JSON.parse(localStorage.getItem('tease_user') || '{}');
@@ -675,19 +937,15 @@
                 // Update the UI with user data
                 updateUserInterface(profile);
                 
-                // Load subscription details
-                if (profile.subscription_status) {
-                    subscriptionActive.style.display = 'block';
-                    subscriptionInactive.style.display = 'none';
-                    
-                    // If there's a stripe_customer_id, fetch subscription details
-                    if (profile.stripe_customer_id) {
-                        fetchSubscriptionDetails(profile.stripe_customer_id);
-                    }
-                } else {
-                    subscriptionActive.style.display = 'none';
-                    subscriptionInactive.style.display = 'block';
-                }
+                // Fetch available models
+                const { data: models, error: modelsError } = await supabase
+                    .from('models')
+                    .select('*');
+                
+                if (modelsError) throw modelsError;
+                
+                // Display models
+                displayModels(models, profile.model_id);
                 
             } catch (error) {
                 console.error('Error initializing dashboard:', error);
@@ -696,37 +954,155 @@
         
         // Update user interface with data
         function updateUserInterface(profile) {
-            // Update settings form
+            // Update settings form and account info
             settingsName.value = profile.name || '';
             settingsEmail.value = profile.email || '';
-        }
-        
-        // Fetch subscription details
-        async function fetchSubscriptionDetails(customerId) {
-            try {
-                // In a real implementation, this would call an API endpoint
-                // For now, we'll use placeholder data
-                
-                // Simulate fetching subscription data
-                const subscriptionData = {
-                    planName: 'Premium VIP',
-                    price: '$19.99/month',
-                    nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    })
-                };
-                
-                // Update UI with subscription data
-                planName.textContent = subscriptionData.planName;
-                planPrice.textContent = subscriptionData.price;
-                nextBillingDate.textContent = subscriptionData.nextBillingDate;
-                
-            } catch (error) {
-                console.error('Error fetching subscription details:', error);
+            
+            accountName.textContent = profile.name || 'User';
+            accountEmail.textContent = profile.email || 'Not provided';
+            accountCreated.textContent = `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })}`;
+            
+            // Set subscription status
+            if (profile.subscription_status) {
+                accountSubscriptionStatus.textContent = 'Active';
+                accountSubscriptionStatus.className = 'model-subscription-status active';
+            } else {
+                accountSubscriptionStatus.textContent = 'Inactive';
+                accountSubscriptionStatus.className = 'model-subscription-status inactive';
             }
         }
+        
+        // Display models
+        function displayModels(models, subscribedModelId) {
+            modelCardsContainer.innerHTML = '';
+            
+            models.forEach(model => {
+                const isSubscribed = model.id === subscribedModelId;
+                
+                const modelCard = document.createElement('div');
+                modelCard.className = 'model-card';
+                modelCard.setAttribute('data-model-id', model.id);
+                
+                // Build image path
+                let imagePath;
+                if (model.pictures && model.pictures.length > 0) {
+                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else {
+                    imagePath = '/images/placeholder-model.jpg';
+                }
+                
+                modelCard.innerHTML = `
+                    <div class="model-image">
+                        <img src="${imagePath}" alt="${model.name}">
+                    </div>
+                    <div class="model-info">
+                        <div class="model-name">${model.name}</div>
+                        <div class="model-description">${model.bio || 'AI Companion Model'}</div>
+                        <div class="model-subscription-status ${isSubscribed ? 'active' : 'inactive'}">
+                            ${isSubscribed ? 'Subscribed' : 'Not Subscribed'}
+                        </div>
+                    </div>
+                    <div class="model-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                `;
+                
+                // Add click event listener to open popup
+                modelCard.addEventListener('click', () => openModelPopup(model, isSubscribed));
+                
+                modelCardsContainer.appendChild(modelCard);
+            });
+        }
+        
+        // Open model subscription popup
+        function openModelPopup(model, isSubscribed) {
+            // Populate popup content
+            popupBody.innerHTML = `
+                <div class="model-detail-header">
+                    <div class="model-detail-image">
+                        <img src="${model.pictures && model.pictures.length > 0 
+                            ? `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}` 
+                            : '/images/placeholder-model.jpg'}" alt="${model.name}">
+                    </div>
+                    <div class="model-detail-info">
+                        <h3>${model.name}</h3>
+                        <div class="model-detail-description">${model.bio || 'AI Companion Model'}</div>
+                    </div>
+                </div>
+                
+                <div class="subscription-details-container">
+                    <h4>Subscription Details</h4>
+                    
+                    ${isSubscribed ? `
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Status</div>
+                            <div class="subscription-detail-value">Active</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Plan</div>
+                            <div class="subscription-detail-value">Premium</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Price</div>
+                            <div class="subscription-detail-value">$19.99/month</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Next Billing Date</div>
+                            <div class="subscription-detail-value">${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}</div>
+                        </div>
+                    ` : `
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Status</div>
+                            <div class="subscription-detail-value">Not Subscribed</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Available Plans</div>
+                            <div class="subscription-detail-value">Basic: $9.99/month, Premium: $19.99/month</div>
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            // Update manage subscription button text based on subscription status
+            manageSubscriptionButton.textContent = isSubscribed ? 'Manage Subscription' : 'Subscribe Now';
+            
+            // Show popup
+            modelPopup.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+        
+        // Close popup
+        popupClose.addEventListener('click', () => {
+            modelPopup.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        });
+        
+        // Close popup when clicking outside
+        modelPopup.addEventListener('click', (e) => {
+            if (e.target === modelPopup) {
+                modelPopup.classList.remove('active');
+                document.body.style.overflow = ''; // Re-enable scrolling
+            }
+        });
+        
+        // Handle manage subscription button
+        manageSubscriptionButton.addEventListener('click', () => {
+            const isSubscribed = manageSubscriptionButton.textContent === 'Manage Subscription';
+            
+            if (isSubscribed) {
+                alert('This would redirect to Stripe Customer Portal in a real implementation.');
+            } else {
+                alert('This would redirect to a payment page for this model in a real implementation.');
+            }
+        });
         
         // Handle settings form submission
         settingsForm.addEventListener('submit', async function(e) {
@@ -767,6 +1143,7 @@
                 
                 // Update UI
                 userDisplayName.textContent = name || 'User';
+                accountName.textContent = name || 'User';
                 
                 // Clear password fields
                 settingsPassword.value = '';
@@ -785,21 +1162,6 @@
         logoutButton.addEventListener('click', function() {
             localStorage.removeItem('tease_user');
             window.location.href = '/login.html';
-        });
-        
-        // Handle subscription management
-        manageSubscriptionButton.addEventListener('click', async function() {
-            // In a real implementation, this would redirect to Stripe Customer Portal
-            // For now, we'll just show a message
-            alert('This would redirect to Stripe Customer Portal in a real implementation.');
-        });
-        
-        // Handle plan selection
-        document.querySelectorAll('.select-plan-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const plan = this.getAttribute('data-plan');
-                alert(`You selected the ${plan} plan. In a real implementation, this would redirect to a payment page.`);
-            });
         });
         
         // Tab navigation

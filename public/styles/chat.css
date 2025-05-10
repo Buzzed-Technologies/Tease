@@ -1,6 +1,6 @@
 /* Chat Styles */
 :root {
-    --message-user-bg: rgba(232, 224, 213, 0.3);
+    --message-user-bg: rgba(211, 209, 218, 0.3);
     --message-ai-bg: rgba(255, 255, 255, 0.9);
     --message-system-bg: rgba(249, 247, 244, 0.7);
 }
@@ -8,7 +8,7 @@
 .chat-header {
     background-color: var(--darker);
     padding: 1rem 5%;
-    border-bottom: 1px solid rgba(232, 224, 213, 0.3);
+    border-bottom: 1px solid rgba(211, 209, 218, 0.3);
     position: fixed;
     top: 0;
     left: 0;
@@ -233,7 +233,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--primary-dark);
+    background-color: var(--accent);
     margin-right: 4px;
     animation: bounce 1.5s infinite ease-in-out;
 }
@@ -269,7 +269,7 @@
     width: 100%;
     background-color: var(--darker);
     padding: 1rem 5%;
-    border-top: 1px solid rgba(232, 224, 213, 0.3);
+    border-top: 1px solid rgba(211, 209, 218, 0.3);
     z-index: 100;
 }
 
