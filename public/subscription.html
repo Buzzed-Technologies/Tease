@@ -437,13 +437,14 @@
             }
             
             .packages-container {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                gap: 0.75rem;
+                gap: 1rem;
                 margin-bottom: 1.5rem;
             }
             
             .package-card {
-                padding: 0.75rem;
+                min-width: 160px;
+                max-width: 100%;
+                margin: 0 auto;
             }
             
             .package-header {
@@ -545,12 +546,13 @@
             }
             
             .packages-container {
-                grid-template-columns: repeat(3, 1fr);
                 gap: 0.5rem;
             }
             
             .package-card {
-                padding: 0.6rem;
+                min-width: 160px;
+                max-width: 100%;
+                margin: 0 auto;
             }
             
             .package-header {
@@ -1095,6 +1097,18 @@
             // Clear loading indicator
             packagesContainer.innerHTML = '';
             
+            // Dynamically set grid columns based on number of packages (max 2 on mobile)
+            let columns = 1;
+            if (packages.length === 2) columns = 2;
+            else if (packages.length >= 3) columns = 2;
+            // Default to 1 column for 1 package
+            // Set grid columns for mobile
+            if (window.innerWidth <= 768) {
+                packagesContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            } else {
+                packagesContainer.style.gridTemplateColumns = '';
+            }
+            
             // Check if there are packages
             if (!packages || packages.length === 0) {
                 packagesContainer.innerHTML = '<p class="no-packages">No subscription packages available at this time. Please check back later.</p>';
@@ -1302,6 +1316,20 @@
                 showError('There was an issue verifying your subscription. Please check your account status or contact support.');
             }
         }
+        
+        // Also update grid columns on window resize
+        window.addEventListener('resize', function() {
+            const packageCards = document.querySelectorAll('.package-card');
+            if (!packageCards.length) return;
+            let columns = 1;
+            if (packageCards.length === 2) columns = 2;
+            else if (packageCards.length >= 3) columns = 2;
+            if (window.innerWidth <= 768) {
+                packagesContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            } else {
+                packagesContainer.style.gridTemplateColumns = '';
+            }
+        });
     </script>
 </body>
 </html> 
