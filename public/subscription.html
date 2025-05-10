@@ -680,154 +680,17 @@
     <script src="https://js.stripe.com/v3/"></script>
     
     <script>
-        // Global handler for subscribe button clicks
-        window.handleSubscribeClick = async function(e) {
-            console.log('Subscribe button clicked:', e.target);
-            
-            try {
-                const button = e.currentTarget || e.target; // Use currentTarget to ensure we get the button, not a child element
-                console.log('Button element:', button);
-                
-                const packageId = button.getAttribute('data-package-id');
-                const priceId = button.getAttribute('data-price-id');
-                const productId = 'prod_SHHPNACUSKUDnA'; // Hardcode the product ID for now
-                
-                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}, productId=${productId}`);
-                
-                if (!priceId) {
-                    showError('Invalid price selection. Please try again.');
-                    return;
-                }
-                
-                console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
-                
-                // Show a loading message
-                const originalText = button.textContent;
-                button.disabled = true;
-                button.textContent = 'Processing...';
-                
-                // Show payment processing status
-                const statusMessage = document.getElementById('subscription-message');
-                statusMessage.textContent = 'Preparing payment...';
-                statusMessage.className = 'subscription-message';
-                
-                // First create a customer if user doesn't have a Stripe ID
-                if (!userData.stripe_customer_id) {
-                    console.log('Creating new Stripe customer...');
-                    statusMessage.textContent = 'Creating customer profile...';
-                    
-                    const createCustomerResponse = await fetch('/api/create-customer', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: userData.name || 'User',
-                            email: userData.email || `${userData.telegram || 'user'}@example.com`,
-                            phone: userData.telegram || ''
-                        })
-                    });
-                    
-                    if (!createCustomerResponse.ok) {
-                        const errorData = await createCustomerResponse.json();
-                        throw new Error(errorData.error || 'Error creating customer');
-                    }
-                    
-                    const customer = await createCustomerResponse.json();
-                    console.log('Customer created:', customer);
-                    
-                    // Store the customer ID
-                    userData.stripe_customer_id = customer.customerId;
-                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                    
-                    // Update the customer ID in the database
-                    await supabase
-                        .from('profiles')
-                        .update({ stripe_customer_id: customer.customerId })
-                        .eq('id', userData.id);
-                }
-                
-                // Create checkout session
-                console.log('Creating checkout session with customer ID:', userData.stripe_customer_id);
-                statusMessage.textContent = 'Creating checkout session...';
-                
-                const createSessionResponse = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        priceId: priceId,
-                        productId: productId, // Include product ID
-                        customerId: userData.stripe_customer_id,
-                        userId: userData.id,
-                        userPhone: userData.telegram || '',
-                        successUrl: window.location.origin + '/subscription-success.html',
-                        cancelUrl: window.location.origin + '/subscription.html'
-                    })
-                });
-                
-                if (!createSessionResponse.ok) {
-                    const errorData = await createSessionResponse.json();
-                    throw new Error(errorData.error || 'Error creating checkout session');
-                }
-                
-                const session = await createSessionResponse.json();
-                console.log('Session created:', session);
-                statusMessage.textContent = 'Redirecting to checkout...';
-                
-                // Redirect to Stripe Checkout
-                if (session.url) {
-                    console.log('Redirecting to Stripe checkout using URL:', session.url);
-                    window.location.href = session.url;
-                    return;
-                } else if (session.sessionId) {
-                    console.log('Redirecting to Stripe checkout using sessionId:', session.sessionId);
-                    if (stripe) {
-                        const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
-                        if (result.error) {
-                            throw new Error(result.error.message);
-                        }
-                        return;
-                    } else {
-                        throw new Error('Stripe is not initialized');
-                    }
-                } else {
-                    throw new Error('No URL or session ID returned from server');
-                }
-            } catch (error) {
-                console.error('Subscription error:', error);
-                showError(error.message || 'An error occurred. Please try again later.');
-                
-                // Try to re-enable the button if we can
-                try {
-                    if (e && e.currentTarget) {
-                        const button = e.currentTarget;
-                        button.disabled = false;
-                        button.textContent = 'Subscribe Now';
-                    }
-                } catch (buttonError) {
-                    console.error('Error resetting button:', buttonError);
-                }
-            }
-        };
+        // Global variables
+        let stripe;
+        let userData = null;
+        let modelData = null;
         
-        // Update the manual click handler to use the global function
-        window.manualSubscribeClick = function(event, packageId, priceId) {
-            console.log('Manual subscribe button clicked for package:', packageId, 'with price:', priceId);
-            
-            // Prevent default to avoid any conflicts
-            event.preventDefault();
-            
-            // Create a fake event object that simulates the structure expected by handleSubscribeClick
-            const syntheticEvent = {
-                currentTarget: event.currentTarget || event.target,
-                target: event.target
-            };
-            
-            // Call the main subscribe handler
-            window.handleSubscribeClick(syntheticEvent);
-        };
+        // Parse query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelId = urlParams.get('model');
+        
+        // Check for session ID (redirected from Stripe)
+        const sessionId = urlParams.get('session_id');
         
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
@@ -867,469 +730,381 @@
                 });
         }
         
+        // Initialize Stripe
+        function initStripe() {
+            // Check if stripe.js is loaded
+            if (window.Stripe) {
+                stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
+                console.log('Stripe initialized');
+            } else {
+                console.error('Stripe.js not loaded');
+            }
+        }
+        
         function initSupabase() {
             if (window.supabase) {
                 supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                
-                // Check if session ID is present (processed after Supabase init)
-                const urlParams = new URLSearchParams(window.location.search);
-                const sessionId = urlParams.get('session_id');
-                
-                // Fetch Stripe configuration from server
-                fetchStripeConfig().then(() => {
-                    if (sessionId) {
-                        // Handle successful subscription
-                        handleSuccessfulSubscription(sessionId);
-                    } else {
-                        // Load model data and packages
-                        loadCreatorData();
-                    }
-                });
+                initStripe();
+                loadUser();
             } else {
                 console.error('Supabase client library not loaded');
             }
         }
         
-        // Stripe initialization - will be updated after fetching config
-        let stripe;
-        let stripePublicKey = document.querySelector('meta[name="stripe-public-key"]')?.getAttribute('content');
-        
-        // Fetch Stripe config from server
-        async function fetchStripeConfig() {
-            try {
-                console.log('Fetching Stripe configuration from server...');
-                const response = await fetch('/api/config');
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch config from server');
+        // Load user data
+        async function loadUser() {
+            // Try to get user from localStorage
+            const storedUser = localStorage.getItem('threadpay_user');
+            
+            if (storedUser) {
+                try {
+                    userData = JSON.parse(storedUser);
+                    console.log('User loaded from localStorage:', userData);
+                    
+                    // If we have a session ID from Stripe callback, process the successful subscription
+                    if (sessionId) {
+                        handleSuccessfulSubscription(sessionId);
+                        return;
+                    }
+                    
+                    // Load model data and packages
+                    await loadModelData();
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    redirectToLogin();
                 }
-                
-                const config = await response.json();
-                console.log('Server config received:', config);
-                
-                // Only update if we got a real key (not placeholder or empty)
-                if (config.stripePublicKey && !config.stripePublicKey.includes('%STRIPE_PUBLIC_KEY%') && config.stripePublicKey !== stripePublicKey) {
-                    console.log('Using Stripe public key from server');
-                    stripePublicKey = config.stripePublicKey;
-                } else if (!stripePublicKey || stripePublicKey.includes('%STRIPE_PUBLIC_KEY%')) {
-                    console.log('Using hardcoded Stripe public key fallback');
-                    stripePublicKey = 'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
-                }
-                
-                // Initialize Stripe with the key
-                console.log('Initializing Stripe with key starting with:', stripePublicKey.substring(0, 10) + '...');
-                stripe = Stripe(stripePublicKey);
-                
-            } catch (error) {
-                console.error('Error fetching Stripe config:', error);
-                // If we failed to get the key from the server, use the hardcoded one or the meta tag one
-                if (!stripePublicKey || stripePublicKey.includes('%STRIPE_PUBLIC_KEY%')) {
-                    stripePublicKey = 'pk_test_51RgvGFB71e12H8w7RLp5Eh2jJ4aZsVKaLtFEfIxZhLWqcueCMkRYXmHzCcHfIeXMxLvDuNhz5yCzrJfFzTbqYuzh00cHnOMrj0';
-                }
-                stripe = Stripe(stripePublicKey);
+            } else {
+                console.log('No user found in localStorage');
+                redirectToLogin();
             }
         }
         
-        // DOM elements
-        const modelImage = document.getElementById('model-image');
-        const modelName = document.getElementById('model-name');
-        const modelMessage = document.getElementById('model-message');
-        const packagesContainer = document.getElementById('packages-container');
-        const subscriptionMessage = document.getElementById('subscription-message');
-        const modelNameSuccess = document.getElementById('model-name-success');
-        const successMessage = document.getElementById('success-message');
-        const subscriptionView = document.getElementById('subscription-view');
-        const successView = document.getElementById('success-view');
-        
-        // Get user data from local storage
-        const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
-        
-        // Check if user is logged in
-        if (!userData.id) {
-            window.location.href = '/login.html';
-        }
-        
-        // Check if already subscribed
-        if (userData.subscribed) {
-            // If already subscribed, redirect to dashboard
-            window.location.href = '/dashboard.html';
-        }
-        
-        // Show error message
-        function showError(message) {
-            subscriptionMessage.textContent = message;
-            subscriptionMessage.className = 'subscription-message error';
-        }
-        
-        // Show success message
-        function showSuccess(message) {
-            subscriptionMessage.textContent = message;
-            subscriptionMessage.className = 'subscription-message success';
-        }
-        
-        // Load creator data and packages
-        async function loadCreatorData() {
+        // Load model data
+        async function loadModelData() {
             try {
-                if (!userData.model_id) {
-                    showError('Creator information not found. Please contact support.');
+                // If modelId is provided in URL, use that
+                const targetModelId = modelId || userData.model_id;
+                
+                if (!targetModelId) {
+                    showError('No model specified. Please try again or contact support.');
                     return;
                 }
                 
-                // Fetch creator data (still using models table for compatibility)
-                const { data: creatorData, error: creatorError } = await supabase
+                // Load model data
+                const { data: model, error: modelError } = await supabase
                     .from('models')
                     .select('*')
-                    .eq('id', userData.model_id)
+                    .eq('id', targetModelId)
                     .single();
+                    
+                if (modelError) throw modelError;
                 
-                if (creatorError) throw creatorError;
-                
-                if (!creatorData) {
-                    showError('Creator information not found. Please contact support.');
+                if (!model) {
+                    showError('Model not found. Please try again or contact support.');
                     return;
                 }
                 
-                // Update the UI with creator data
-                modelName.textContent = creatorData.name;
+                modelData = model;
+                console.log('Model data loaded:', modelData);
                 
-                // Set custom greeting message based on creator
-                const greetings = [
-                    `"Thank you for your interest in my content! By subscribing, you'll get access to exclusive updates and creations."`,
-                    `"I'm excited to share my content with you. Choose a subscription that works for your budget, and let's get started!"`,
-                    `"Your support means everything to me as a creator. Select a subscription and join my community today."`,
-                    `"Ready to explore my exclusive content? Choose a subscription tier that fits your needs."`,
-                ];
+                // Update UI with model data
+                updateModelDisplay(model);
                 
-                // Choose a random greeting or use a default
-                modelMessage.textContent = greetings[Math.floor(Math.random() * greetings.length)];
-                
-                // Set background image if available
-                if (creatorData.pictures && creatorData.pictures.length > 0) {
-                    const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images//${creatorData.pictures[0].replace('.jpg', '.PNG')}`;
-                    console.log('Loading creator image from:', imageUrl);
-                    modelImage.style.backgroundImage = `url(${imageUrl})`;
-                } else {
-                    modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
-                }
-                
-                // For testing, let's create some hardcoded package data until the database is set up
-                const fallbackPackages = [
-                    {
-                        id: 'basic-monthly',
-                        name: 'Basic',
-                        price: 9.99,
-                        description: 'Basic access to creator content',
-                        stripe_price_id: 'price_1RgvH8B71e12H8w7O2DhtXTD',
-                        model_id: creatorData.id
-                    },
-                    {
-                        id: 'premium-monthly',
-                        name: 'Premium',
-                        price: 19.99,
-                        description: 'Enhanced access to exclusive content, Faster responses, More personalized interaction',
-                        stripe_price_id: 'price_1RgvHiB71e12H8w7K0L6yFEb',
-                        model_id: creatorData.id
-                    },
-                    {
-                        id: 'vip-monthly',
-                        name: 'VIP Experience',
-                        price: 29.99,
-                        description: 'Full access to all premium content, Priority support, Exclusive behind-the-scenes',
-                        stripe_price_id: 'price_1RgvHxB71e12H8w7jPiVMYY6',
-                        model_id: creatorData.id
-                    }
-                ];
-                
-                // Fetch packages for this creator
-                try {
-                    console.log(`Fetching packages for creator ID: ${userData.model_id}`);
-                    const { data: packagesData, error: packagesError } = await supabase
-                        .from('packages')
-                        .select('*')
-                        .eq('model_id', userData.model_id)
-                        .order('price', { ascending: true });
-                    
-                    if (packagesError) {
-                        console.error('Error fetching packages:', packagesError);
-                        throw packagesError;
-                    }
-                    
-                    if (!packagesData || packagesData.length === 0) {
-                        console.log('No packages found in database, using fallback packages');
-                        // Display the fallback packages if none found in database
-                        displayPackages(fallbackPackages, creatorData.name);
-                    } else {
-                        console.log('Packages found in database:', packagesData);
-                        
-                        // Check if the packages have valid Stripe price IDs
-                        const hasValidPriceIds = packagesData.every(pkg => {
-                            const isValid = pkg.stripe_price_id && 
-                                           pkg.stripe_price_id.startsWith('price_') && 
-                                           pkg.stripe_price_id.length > 15;
-                            if (!isValid) {
-                                console.warn(`Package ${pkg.name} has invalid Stripe price ID: ${pkg.stripe_price_id}`);
-                            }
-                            return isValid;
-                        });
-                        
-                        if (hasValidPriceIds) {
-                            console.log('Using packages from database');
-                            displayPackages(packagesData, creatorData.name);
-                        } else {
-                            console.log('Database packages have invalid Stripe price IDs, using fallback packages');
-                            displayPackages(fallbackPackages, creatorData.name);
-                        }
-                    }
-                } catch (packageError) {
-                    console.error('Error in package query:', packageError);
-                    // Use fallback packages if there's an error
-                    displayPackages(fallbackPackages, creatorData.name);
-                }
+                // Load packages for this model
+                await loadPackages(targetModelId);
                 
             } catch (error) {
-                console.error('Error loading creator data:', error);
-                showError('Unable to load creator information. Please try again later.');
+                console.error('Error loading model data:', error);
+                showError('Error loading creator data. Please try again later.');
+            }
+        }
+        
+        // Update the model display
+        function updateModelDisplay(model) {
+            document.getElementById('model-name').textContent = model.name;
+            
+            // Update model image if available
+            const modelImage = document.getElementById('model-image');
+            if (model.pictures && model.pictures.main) {
+                modelImage.style.backgroundImage = `url(${model.pictures.main})`;
+            } else {
+                modelImage.style.backgroundImage = 'url(/images/placeholder-model.jpg)';
+            }
+        }
+        
+        // Load packages for the model
+        async function loadPackages(modelId) {
+            try {
+                const { data: packages, error } = await supabase
+                    .from('packages')
+                    .select('*')
+                    .eq('model_id', modelId)
+                    .order('price', { ascending: true });
+                    
+                if (error) throw error;
+                
+                if (!packages || packages.length === 0) {
+                    showError('No subscription packages available for this creator.');
+                    return;
+                }
+                
+                // Display packages
+                displayPackages(packages);
+                
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                showError('Error loading subscription packages. Please try again later.');
             }
         }
         
         // Display packages
-        function displayPackages(packages, creatorName) {
-            // Clear loading indicator
+        function displayPackages(packages) {
+            const packagesContainer = document.getElementById('packages-container');
             packagesContainer.innerHTML = '';
             
-            // Dynamically set grid columns based on number of packages (max 2 on mobile)
-            let columns = 1;
-            if (packages.length === 2) columns = 2;
-            else if (packages.length >= 3) columns = 2;
-            // Default to 1 column for 1 package
-            // Set grid columns for mobile
-            if (window.innerWidth <= 768) {
-                packagesContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-            } else {
-                packagesContainer.style.gridTemplateColumns = '';
-            }
-            
-            // Check if there are packages
-            if (!packages || packages.length === 0) {
+            if (packages.length === 0) {
                 packagesContainer.innerHTML = '<p class="no-packages">No subscription packages available at this time. Please check back later.</p>';
                 return;
             }
             
-            console.log('Available packages:', packages);
-            
-            // Define fallback price IDs if database prices don't work
-            const FALLBACK_PRICE_IDS = {
-                monthly: 'price_1RMiqJB71e12H8w7o8ejsbK7',
-                quarterly: 'price_1RMiqJB71e12H8w7TJGQqdzJ',
-                yearly: 'price_1RMiqJB71e12H8w7PDbXswUW'
-            };
-            
-            // Find if there's a "premium" package to highlight
-            const premiumPackage = packages.find(pkg => pkg.name.toLowerCase().includes('premium'));
-            
             // Create a card for each package
-            packages.forEach((pkg, index) => {
-                const isPremium = pkg.id === (premiumPackage?.id);
+            packages.forEach(pkg => {
+                const card = document.createElement('div');
+                card.className = 'package-card';
                 
-                // Determine which price ID to use - either from the database or fallback based on name
-                let priceId = pkg.stripe_price_id;
+                const priceFormatted = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 2
+                }).format(pkg.price);
                 
-                // Fallback logic based on package name
-                if (!priceId || priceId.length < 10 || !priceId.startsWith('price_')) {
-                    if (pkg.name.toLowerCase().includes('monthly')) {
-                        priceId = FALLBACK_PRICE_IDS.monthly;
-                    } else if (pkg.name.toLowerCase().includes('quarterly')) {
-                        priceId = FALLBACK_PRICE_IDS.quarterly;
-                    } else if (pkg.name.toLowerCase().includes('yearly') || pkg.name.toLowerCase().includes('annual')) {
-                        priceId = FALLBACK_PRICE_IDS.yearly;
-                    } else {
-                        // Default to monthly if we can't determine
-                        priceId = FALLBACK_PRICE_IDS.monthly;
-                    }
-                }
-                
-                console.log(`Package ${index}: id=${pkg.id}, name=${pkg.name}, price=${pkg.price}, using priceId=${priceId}`);
-                
-                const packageCard = document.createElement('div');
-                packageCard.className = 'package-card';
-                
-                // Add "Popular" badge for premium package
-                if (isPremium) {
-                    const popularBadge = document.createElement('div');
-                    popularBadge.className = 'package-popular';
-                    popularBadge.textContent = 'POPULAR';
-                    packageCard.appendChild(popularBadge);
-                }
-                
-                packageCard.innerHTML = `
+                card.innerHTML = `
                     <div class="package-header">
                         <h3 class="package-name">${pkg.name}</h3>
-                        <div class="package-price">$${pkg.price.toFixed(2)}<span class="price-period">/month</span></div>
+                        <div class="package-price">${priceFormatted}<span>/month</span></div>
                     </div>
-                    
-                    <div class="package-features">
-                        ${getFeaturesList(pkg, creatorName)}
-                    </div>
-                    
-                    <button class="package-button" 
-                            data-package-id="${pkg.id}" 
-                            data-price-id="${priceId}"
-                            onclick="window.handleSubscribeClick(event)"
-                            type="button"
-                            style="cursor: pointer;">
-                        Subscribe Now
-                    </button>
+                    <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
+                    <button class="subscribe-button" data-package-id="${pkg.id}" data-price-id="${pkg.stripe_price_id}">Subscribe Now</button>
                 `;
                 
-                packagesContainer.appendChild(packageCard);
+                packagesContainer.appendChild(card);
                 
-                // Add direct click handler to the newly created button
-                const button = packageCard.querySelector('.package-button');
-                if (button) {
-                    // Make sure button is enabled and styled properly
-                    button.disabled = false;
-                    button.style.cursor = 'pointer';
-                    button.style.pointerEvents = 'auto';
-                    
-                    // Remove and reattach the event listener
-                    button.removeEventListener('click', window.handleSubscribeClick);
-                    button.addEventListener('click', function(e) {
-                        console.log('Button clicked!', e);
-                        window.handleSubscribeClick(e);
-                    });
-                    
-                    // Also listen for mousedown event for better responsiveness
-                    button.addEventListener('mousedown', function(e) {
-                        console.log('Button mousedown!', e);
-                    });
-                }
-            });
-            
-            // Add event listeners to subscribe buttons as a backup (redundant approach for reliability)
-            const subscribeButtons = document.querySelectorAll('.package-button');
-            subscribeButtons.forEach(button => {
-                const packageId = button.getAttribute('data-package-id');
-                const priceId = button.getAttribute('data-price-id');
-                console.log(`Button setup for package ${packageId} with price ID ${priceId}`);
-                
-                // Remove any existing event listeners (just in case)
-                button.replaceWith(button.cloneNode(true));
-                
-                // Get the fresh button reference
-                const freshButton = document.querySelector(`.package-button[data-package-id="${packageId}"]`);
-                
-                // Add the event listener directly to the global function
-                freshButton.addEventListener('click', function(e) {
-                    console.log('Button clicked via addEventListener');
-                    window.handleSubscribeClick(e);
-                });
+                // Add event listener for subscribe button
+                const subscribeButton = card.querySelector('.subscribe-button');
+                subscribeButton.addEventListener('click', handleSubscribeClick);
             });
         }
         
-        // Get features list based on package
-        function getFeaturesList(pkg, creatorName) {
-            const basicFeatures = [
-                `Support ${creatorName}'s work`,
-                'Access to subscriber-only content',
-                'Regular content updates',
-                'Secure payment processing',
-                'Cancel anytime'
-            ];
-            
-            const premiumFeatures = [
-                'Priority access to new content',
-                'Exclusive behind-the-scenes',
-                'Enhanced content quality',
-                'Extended content library',
-                'Premium supporter recognition'
-            ];
-            
-            // Determine if this is a premium package
-            const isPremium = pkg.name.toLowerCase().includes('premium');
-            const features = isPremium ? [...basicFeatures, ...premiumFeatures] : basicFeatures;
-            
-            // Additional features from the package description
-            if (pkg.description) {
-                // Parse description as additional features if it contains a comma or period
-                const additionalFeatures = pkg.description
-                    .split(/[.,]/)
-                    .map(f => f.trim())
-                    .filter(f => f.length > 0);
-                
-                features.push(...additionalFeatures);
-            }
-            
-            // Create HTML for features list
-            return features.map(feature => `
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-check"></i></div>
-                    <div class="feature-text">${feature}</div>
-                </div>
-            `).join('');
+        // Redirect to login
+        function redirectToLogin() {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
         }
         
         // Handle successful subscription after redirect from Stripe
         async function handleSuccessfulSubscription(sessionId) {
+            console.log('Processing successful subscription with session ID:', sessionId);
+            
             try {
-                // Verify the session
-                const { data: sessionData, error: sessionError } = await fetch('/api/verify-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ sessionId })
-                }).then(res => res.json());
+                // Show processing state
+                document.getElementById('subscription-view').classList.add('hidden');
+                document.getElementById('success-view').classList.remove('hidden');
+                document.getElementById('success-message').textContent = 'Finalizing your subscription...';
                 
-                if (sessionError) {
-                    throw new Error(sessionError.message || 'Error verifying session');
+                // Fetch session details from Stripe
+                const response = await fetch(`/api/stripe-session?session_id=${sessionId}`);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error validating subscription');
                 }
                 
-                // Update subscription status in database
-                // Note: This should also happen via webhook, but we update it here for instant feedback
-                await supabase
+                const sessionData = await response.json();
+                console.log('Session data:', sessionData);
+                
+                // Update user_model_subscriptions table
+                const { error: subscriptionError } = await supabase
+                    .from('user_model_subscriptions')
+                    .insert([{
+                        user_id: userData.id,
+                        model_id: modelData.id,
+                        package_id: sessionData.metadata.package_id || null,
+                        stripe_subscription_id: sessionData.subscription_id,
+                        stripe_customer_id: sessionData.customer_id,
+                        status: 'active',
+                        subscription_plan: 'monthly',
+                        is_active: true
+                    }]);
+                    
+                if (subscriptionError) throw subscriptionError;
+                
+                // Update profiles table to increment subscription count
+                const { error: profileError } = await supabase
                     .from('profiles')
-                    .update({ 
-                        subscription_status: true,
-                        updated_at: new Date().toISOString()
+                    .update({
+                        subscription_count: supabase.rpc('increment', { x: 1 })
                     })
                     .eq('id', userData.id);
+                    
+                if (profileError) throw profileError;
                 
-                // Update local user data
-                userData.subscribed = true;
-                localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                // Update success view
+                document.getElementById('model-name-success').textContent = modelData.name || 'the creator';
+                document.getElementById('success-message').textContent = 
+                    `Thank you for subscribing! Your payment has been processed successfully, and your access to ${modelData.name}'s content is now active.`;
                 
-                // Show success view
-                subscriptionView.classList.add('hidden');
-                successView.classList.remove('hidden');
-                
-                // Update success message with creator name
-                if (userData.model_name) {
-                    modelNameSuccess.textContent = userData.model_name;
-                    successMessage.innerHTML = `Thank you for subscribing. Your premium access to <strong>${userData.model_name}</strong>'s content is now active.`;
-                }
-                
-                // Clean up the URL to remove the session ID parameter
+                // Update URL to remove query parameters
                 window.history.replaceState({}, document.title, '/subscription.html');
                 
+                // Redirect to dashboard after a delay
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 3000);
             } catch (error) {
                 console.error('Error processing successful subscription:', error);
                 showError('There was an issue verifying your subscription. Please check your account status or contact support.');
             }
         }
         
-        // Also update grid columns on window resize
-        window.addEventListener('resize', function() {
-            const packageCards = document.querySelectorAll('.package-card');
-            if (!packageCards.length) return;
-            let columns = 1;
-            if (packageCards.length === 2) columns = 2;
-            else if (packageCards.length >= 3) columns = 2;
-            if (window.innerWidth <= 768) {
-                packagesContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-            } else {
-                packagesContainer.style.gridTemplateColumns = '';
+        // Global handler for subscribe button clicks
+        async function handleSubscribeClick(e) {
+            console.log('Subscribe button clicked:', e.target);
+            
+            try {
+                const button = e.currentTarget || e.target; // Use currentTarget to ensure we get the button, not a child element
+                console.log('Button element:', button);
+                
+                const packageId = button.getAttribute('data-package-id');
+                const priceId = button.getAttribute('data-price-id');
+                
+                console.log(`Clicked button with packageId=${packageId}, priceId=${priceId}`);
+                
+                if (!priceId) {
+                    showError('Invalid price selection. Please try again.');
+                    return;
+                }
+                
+                console.log('Subscribing to package:', packageId, 'with Stripe price ID:', priceId);
+                
+                // Show a loading message
+                const originalText = button.textContent;
+                button.disabled = true;
+                button.textContent = 'Processing...';
+                
+                // Show payment processing status
+                const statusMessage = document.getElementById('subscription-message');
+                statusMessage.textContent = 'Preparing payment...';
+                statusMessage.className = 'subscription-message';
+                
+                // First create a customer if user doesn't have a Stripe ID
+                if (!userData.stripe_customer_id) {
+                    console.log('Creating new Stripe customer...');
+                    statusMessage.textContent = 'Creating customer profile...';
+                    
+                    const createCustomerResponse = await fetch('/api/create-customer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: userData.name || 'User',
+                            email: userData.email || `${userData.username || 'user'}@example.com`,
+                            phone: userData.username || ''
+                        })
+                    });
+                    
+                    if (!createCustomerResponse.ok) {
+                        const errorData = await createCustomerResponse.json();
+                        throw new Error(errorData.error || 'Error creating customer');
+                    }
+                    
+                    const customer = await createCustomerResponse.json();
+                    console.log('Customer created:', customer);
+                    
+                    // Store the customer ID
+                    userData.stripe_customer_id = customer.customerId;
+                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                    
+                    // Update the customer ID in the database
+                    await supabase
+                        .from('profiles')
+                        .update({ stripe_customer_id: customer.customerId })
+                        .eq('id', userData.id);
+                }
+                
+                // Create checkout session
+                console.log('Creating checkout session with customer ID:', userData.stripe_customer_id);
+                statusMessage.textContent = 'Creating checkout session...';
+                
+                const createSessionResponse = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        priceId: priceId,
+                        customerId: userData.stripe_customer_id,
+                        userId: userData.id,
+                        userPhone: userData.username || '',
+                        packageId: packageId,
+                        modelId: modelData.id,
+                        successUrl: window.location.origin + `/subscription.html?model=${modelData.id}&success=true&session_id={CHECKOUT_SESSION_ID}`,
+                        cancelUrl: window.location.origin + `/subscription.html?model=${modelData.id}&canceled=true`
+                    })
+                });
+                
+                if (!createSessionResponse.ok) {
+                    const errorData = await createSessionResponse.json();
+                    throw new Error(errorData.error || 'Error creating checkout session');
+                }
+                
+                const session = await createSessionResponse.json();
+                console.log('Session created:', session);
+                statusMessage.textContent = 'Redirecting to checkout...';
+                
+                // Redirect to Stripe Checkout
+                if (session.url) {
+                    console.log('Redirecting to Stripe checkout using URL:', session.url);
+                    window.location.href = session.url;
+                    return;
+                } else if (session.sessionId) {
+                    console.log('Redirecting to Stripe checkout using sessionId:', session.sessionId);
+                    if (stripe) {
+                        const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+                        if (result.error) {
+                            throw new Error(result.error.message);
+                        }
+                        return;
+                    } else {
+                        throw new Error('Stripe is not initialized');
+                    }
+                } else {
+                    throw new Error('No URL or session ID returned from server');
+                }
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showError(error.message || 'There was an error processing your request. Please try again.');
+                
+                // Reset button state
+                if (e.target) {
+                    e.target.disabled = false;
+                    e.target.textContent = 'Subscribe Now';
+                }
             }
-        });
+        }
+        
+        // Helper function to show error messages
+        function showError(message) {
+            const subscriptionMessage = document.getElementById('subscription-message');
+            subscriptionMessage.textContent = message;
+            subscriptionMessage.className = 'subscription-message error';
+        }
+        
+        // Helper function to show success messages
+        function showSuccess(message) {
+            const subscriptionMessage = document.getElementById('subscription-message');
+            subscriptionMessage.textContent = message;
+            subscriptionMessage.className = 'subscription-message success';
+        }
     </script>
 </body>
 </html> 
