@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#050505">
-    <title>Subscription Successful | ThreadPay Secure Payment Platform</title>
+    <title>Subscription Successful | ThreadPay Creator Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%SUPABASE_ANON_KEY%">
@@ -225,13 +225,13 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h1 class="confirmation-message">Subscription Successful!</h1>
-                <p class="confirmation-description">Thank you for subscribing to ThreadPay. Your payment has been processed successfully, and your creator subscription is now active.</p>
+                <p class="confirmation-description">Thank you for subscribing through ThreadPay. Your payment has been processed successfully, and your creator subscription is now active.</p>
                 
                 <div class="subscription-details">
                     <h3>Subscription Details</h3>
                     <div class="detail-item">
                         <span class="detail-label">Plan:</span>
-                        <span class="detail-value" id="plan-name">Annual Plan</span>
+                        <span class="detail-value" id="plan-name">Monthly Plan</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Status:</span>
@@ -261,7 +261,7 @@
                               (new Date() - new Date(userData.created_at) < 1000 * 60 * 30); // 30 minutes
             
             // Customize content for new users
-            if (isNewUser && userData.persona) {
+            if (isNewUser && userData.model_name) {
                 const confirmationMessage = document.querySelector('.confirmation-message');
                 if (confirmationMessage) {
                     confirmationMessage.textContent = "Welcome to ThreadPay!";
@@ -270,13 +270,13 @@
                 const confirmationDescription = document.querySelector('.confirmation-description');
                 if (confirmationDescription) {
                     confirmationDescription.textContent = 
-                        `Your subscription is active and you're all set to start your experience with ${userData.persona}. Get ready for an intimate adventure tailored to your desires.`;
+                        `Your subscription is active and you're all set to access exclusive content from ${userData.model_name}. Thank you for supporting this creator.`;
                 }
                 
                 // Change button text
                 const dashboardButton = document.getElementById('continue-to-dashboard');
                 if (dashboardButton) {
-                    dashboardButton.textContent = 'Start Chatting with ' + userData.persona;
+                    dashboardButton.textContent = 'View Creator Content';
                 }
             }
             
@@ -302,7 +302,7 @@
             
             // Setup continue button
             document.getElementById('continue-to-dashboard').addEventListener('click', () => {
-                window.location.href = isNewUser && userData.persona ? '/chat.html' : '/dashboard.html';
+                window.location.href = isNewUser && userData.model_name ? '/dashboard.html' : '/dashboard.html';
             });
         });
     </script>

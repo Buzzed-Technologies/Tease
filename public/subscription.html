@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscribe | ThreadPay Secure Payment Platform</title>
+    <title>Subscribe | ThreadPay Creator Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -27,7 +27,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
+            background-color: var(--primary);
             padding: 2rem 5%;
         }
         
@@ -39,12 +39,12 @@
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
-            color: var(--light);
+            color: var(--accent);
             text-align: center;
         }
         
         .tagline {
-            color: var(--accent);
+            color: var(--dark);
             font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -68,7 +68,7 @@
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--light);
+            color: var(--dark);
         }
         
         .subscription-header span {
@@ -76,7 +76,7 @@
         }
         
         .subscription-description {
-            color: var(--light-gray);
+            color: var(--dark);
             line-height: 1.6;
             max-width: 700px;
             margin: 0 auto;
@@ -88,11 +88,11 @@
             justify-content: center;
             gap: 2rem;
             margin-bottom: 3rem;
-            background: rgba(255, 255, 255, 0.9);
+            background-color: var(--primary-light);
             padding: 2rem;
             border-radius: 12px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(211, 209, 218, 0.3);
+            border: 1px solid var(--primary-dark);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
@@ -116,11 +116,11 @@
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
             margin-bottom: 0.5rem;
-            color: var(--light);
+            color: var(--dark);
         }
         
         .model-message {
-            color: var(--light-gray);
+            color: var(--dark);
             font-style: italic;
             margin-bottom: 0;
             line-height: 1.6;
@@ -134,17 +134,17 @@
         }
         
         .package-card {
-            background: rgba(255, 255, 255, 0.9);
+            background-color: var(--light);
             border-radius: 12px;
             padding: 2rem;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(211, 209, 218, 0.3);
+            border: 1px solid var(--primary-dark);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(198, 210, 255, 0.1);
         }
         
         .package-card::before {
@@ -163,8 +163,7 @@
         
         .package-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(211, 209, 218, 0.6);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(198, 210, 255, 0.3);
         }
         
         .package-card:hover::before {
@@ -182,18 +181,23 @@
             font-family: 'Playfair Display', serif;
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
-            color: var(--light);
+            color: var(--dark);
         }
         
         .package-price {
             font-size: 2.5rem;
             font-weight: 600;
-            color: var(--accent);
+            color: var(--dark);
         }
         
         .price-period {
             font-size: 1rem;
-            color: var(--light-gray);
+            color: var(--dark);
+        }
+        
+        .package-price span {
+            color: var(--dark);
+            opacity: 0.7;
         }
         
         .package-features {
@@ -214,7 +218,7 @@
         }
         
         .feature-text {
-            color: var(--light-gray);
+            color: var(--dark);
             line-height: 1.5;
         }
         
@@ -222,8 +226,8 @@
             width: 100%;
             padding: 1rem;
             border-radius: 8px;
-            background-color: var(--primary);
-            color: var(--light);
+            background-color: var(--accent);
+            color: var(--darker);
             font-weight: 600;
             text-align: center;
             transition: background-color 0.3s ease;
@@ -236,9 +240,7 @@
         }
         
         .package-button:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background-color: #B4C1FF;
         }
         
         .package-button:active {
@@ -250,8 +252,8 @@
             position: absolute;
             top: 12px;
             right: -30px;
-            background: var(--primary);
-            color: var(--light);
+            background-color: var(--accent);
+            color: var(--darker);
             padding: 0.5rem 3rem;
             transform: rotate(45deg);
             font-size: 0.8rem;
@@ -286,7 +288,7 @@
             text-align: center;
             max-width: 700px;
             margin: 0 auto;
-            color: var(--light-gray);
+            color: var(--dark);
             line-height: 1.6;
         }
         
@@ -297,13 +299,18 @@
             gap: 1rem;
             margin-top: 2rem;
             padding: 1rem;
-            background: rgba(20, 20, 20, 0.3);
+            background-color: var(--primary-light);
             border-radius: 8px;
+            border: 1px solid var(--primary-dark);
         }
         
         .guarantee-icon {
             font-size: 2rem;
             color: var(--primary);
+        }
+        
+        .guarantee-text {
+            color: var(--dark);
         }
         
         /* Success page styles */
@@ -328,21 +335,21 @@
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--light);
+            color: var(--dark);
         }
         
         .success-message {
-            color: var(--light-gray);
+            color: var(--dark);
             line-height: 1.6;
-                margin-bottom: 2rem;
-            }
+            margin-bottom: 2rem;
+        }
             
         .action-button {
             display: inline-block;
             padding: 1rem 2rem;
             border-radius: 8px;
             background-color: var(--primary);
-            color: var(--light);
+            color: var(--dark);
             font-weight: 600;
             text-align: center;
             transition: background-color 0.3s ease;
@@ -377,6 +384,147 @@
             border-radius: 0 12px 0 12px;
             z-index: 2;
         }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .subscription-container {
+                padding: 1.5rem 3%;
+            }
+            
+            .subscription-content {
+                padding: 1rem 0;
+            }
+            
+            .subscription-header h1 {
+                font-size: 2rem;
+            }
+            
+            .model-highlight {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+            
+            .model-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .model-name {
+                font-size: 1.6rem;
+            }
+            
+            .packages-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .package-card {
+                padding: 1.5rem;
+            }
+            
+            .package-name {
+                font-size: 1.5rem;
+            }
+            
+            .package-price {
+                font-size: 2rem;
+            }
+            
+            .guarantee {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 0.8rem;
+            }
+            
+            .subscription-header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .subscription-description {
+                font-size: 0.9rem;
+            }
+            
+            .model-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .model-name {
+                font-size: 1.4rem;
+            }
+            
+            .model-message {
+                font-size: 0.9rem;
+            }
+            
+            .package-card {
+                padding: 1.2rem;
+            }
+            
+            .package-header {
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+            }
+            
+            .package-name {
+                font-size: 1.3rem;
+            }
+            
+            .package-price {
+                font-size: 1.8rem;
+            }
+            
+            .package-button {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .package-popular {
+                padding: 0.3rem 2rem;
+                font-size: 0.7rem;
+                right: -25px;
+            }
+            
+            .feature-text {
+                font-size: 0.9rem;
+            }
+            
+            .success-title {
+                font-size: 1.8rem;
+            }
+            
+            .success-icon {
+                font-size: 4rem;
+            }
+            
+            .action-button {
+                padding: 0.8rem 1.5rem;
+            }
+        }
+        
+        /* Fix for iOS Safari 100vh issue */
+        @supports (-webkit-touch-callout: none) {
+            .subscription-container {
+                min-height: -webkit-fill-available;
+            }
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--dark);
+        }
     </style>
 </head>
 <body>
@@ -384,7 +532,7 @@
         <div class="logo-container">
             <a href="/">
                 <div class="logo">ThreadPay</div>
-                <div class="tagline">ai adult companion</div>
+                <div class="tagline">secure creator payments</div>
             </a>
         </div>
         
@@ -392,34 +540,34 @@
             <!-- Subscription selection view -->
             <div id="subscription-view">
                 <div class="subscription-header">
-                    <h1>Choose Your <span>Experience</span></h1>
-                    <p class="subscription-description">Select a subscription package to start your personal AI experience with your companion.</p>
+                    <h1>Choose Your <span>Plan</span></h1>
+                    <p class="subscription-description">Select a subscription package to start monetizing your creative work.</p>
                 </div>
                 
                 <div class="model-highlight" id="model-highlight">
                     <div class="model-image" id="model-image"></div>
                     <div class="model-details">
-                        <h2 class="model-name" id="model-name">Your AI Companion</h2>
-                        <p class="model-message" id="model-message">"I can't wait to get to know you better. Choose a package that fits your desires, and let's begin our journey together."</p>
+                        <h2 class="model-name" id="model-name">Creator Name</h2>
+                        <p class="model-message" id="model-message">"Thank you for considering a subscription! Your support allows me to create more exclusive content for you."</p>
                     </div>
-                        </div>
+                </div>
                         
                 <div class="packages-container" id="packages-container">
                     <!-- Packages will be loaded dynamically -->
                     <div class="loading-indicator">Loading packages...</div>
-                        </div>
+                </div>
                         
                 <div id="subscription-message" class="subscription-message"></div>
                 
                 <div class="subscription-footer">
-                    <p>All subscriptions include unlimited conversations, personalized responses, and a safe, private experience. You can cancel anytime.</p>
+                    <p>All subscriptions include exclusive content, direct creator interaction, and a safe, private experience. You can cancel anytime.</p>
                     
                     <div class="guarantee">
                         <div class="guarantee-icon">
                             <i class="fas fa-shield-alt"></i>
                         </div>
                         <div class="guarantee-text">
-                            <strong>100% Privacy Guarantee</strong>: Your conversations and personal information are completely private and secure. We never share your data with third parties.
+                            <strong>100% Privacy Guarantee</strong>: Your payment information and personal details are completely private and secure. We never share your data with third parties.
                         </div>
                     </div>
                 </div>
@@ -432,7 +580,7 @@
                     <i class="fas fa-check-circle"></i>
                     </div>
                     <h1 class="success-title">Subscription Activated!</h1>
-                    <p class="success-message" id="success-message">Thank you for subscribing. Your premium experience with <span id="model-name-success"></span> is now active.</p>
+                    <p class="success-message" id="success-message">Thank you for subscribing. Your premium access to <span id="model-name-success"></span>'s content is now active.</p>
                     <a href="/dashboard.html" class="action-button">Go to Dashboard</a>
                 </div>
             </div>
@@ -646,7 +794,7 @@
                         handleSuccessfulSubscription(sessionId);
                     } else {
                         // Load model data and packages
-                        loadModelData();
+                        loadCreatorData();
                     }
                 });
             } else {
@@ -731,46 +879,46 @@
             subscriptionMessage.className = 'subscription-message success';
         }
         
-        // Load model data and packages
-        async function loadModelData() {
+        // Load creator data and packages
+        async function loadCreatorData() {
             try {
                 if (!userData.model_id) {
-                    showError('No AI companion found. Please contact support.');
+                    showError('Creator information not found. Please contact support.');
                     return;
                 }
                 
-                // Fetch model data
-                const { data: modelData, error: modelError } = await supabase
+                // Fetch creator data (still using models table for compatibility)
+                const { data: creatorData, error: creatorError } = await supabase
                     .from('models')
                     .select('*')
                     .eq('id', userData.model_id)
                     .single();
                 
-                if (modelError) throw modelError;
+                if (creatorError) throw creatorError;
                 
-                if (!modelData) {
-                    showError('AI companion information not found. Please contact support.');
+                if (!creatorData) {
+                    showError('Creator information not found. Please contact support.');
                     return;
                 }
                 
-                // Update the UI with model data
-                modelName.textContent = modelData.name;
+                // Update the UI with creator data
+                modelName.textContent = creatorData.name;
                 
-                // Set custom greeting message based on model
+                // Set custom greeting message based on creator
                 const greetings = [
-                    `"I've been waiting for you. Choose a package that fits your desires, and let's begin our intimate journey together."`,
-                    `"I'm so excited to get to know you better. Select a subscription that works for you, and we can start exploring right away."`,
-                    `"I can't wait to share my thoughts with you. Pick a package that suits you, and let's create something special."`,
-                    `"I'm ready to be your personal companion. Choose your subscription, and I'll be all yours."`,
+                    `"Thank you for your interest in my content! By subscribing, you'll get access to exclusive updates and creations."`,
+                    `"I'm excited to share my content with you. Choose a subscription that works for your budget, and let's get started!"`,
+                    `"Your support means everything to me as a creator. Select a subscription and join my community today."`,
+                    `"Ready to explore my exclusive content? Choose a subscription tier that fits your needs."`,
                 ];
                 
                 // Choose a random greeting or use a default
                 modelMessage.textContent = greetings[Math.floor(Math.random() * greetings.length)];
                 
                 // Set background image if available
-                if (modelData.pictures && modelData.pictures.length > 0) {
-                    const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images//${modelData.pictures[0].replace('.jpg', '.PNG')}`;
-                    console.log('Loading model image from:', imageUrl);
+                if (creatorData.pictures && creatorData.pictures.length > 0) {
+                    const imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images//${creatorData.pictures[0].replace('.jpg', '.PNG')}`;
+                    console.log('Loading creator image from:', imageUrl);
                     modelImage.style.backgroundImage = `url(${imageUrl})`;
                 } else {
                     modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
@@ -782,31 +930,31 @@
                         id: 'basic-monthly',
                         name: 'Basic',
                         price: 9.99,
-                        description: 'Basic access to your AI companion',
+                        description: 'Basic access to creator content',
                         stripe_price_id: 'price_1RgvH8B71e12H8w7O2DhtXTD',
-                        model_id: modelData.id
+                        model_id: creatorData.id
                     },
                     {
                         id: 'premium-monthly',
                         name: 'Premium',
                         price: 19.99,
-                        description: 'Enhanced interaction with your AI companion, Faster response times, More personalization options',
+                        description: 'Enhanced access to exclusive content, Faster responses, More personalized interaction',
                         stripe_price_id: 'price_1RgvHiB71e12H8w7K0L6yFEb',
-                        model_id: modelData.id
+                        model_id: creatorData.id
                     },
                     {
                         id: 'vip-monthly',
                         name: 'VIP Experience',
                         price: 29.99,
-                        description: 'Full access to all premium features, Priority support, Exclusive content',
+                        description: 'Full access to all premium content, Priority support, Exclusive behind-the-scenes',
                         stripe_price_id: 'price_1RgvHxB71e12H8w7jPiVMYY6',
-                        model_id: modelData.id
+                        model_id: creatorData.id
                     }
                 ];
                 
-                // Fetch packages for this model
+                // Fetch packages for this creator
                 try {
-                    console.log(`Fetching packages for model ID: ${userData.model_id}`);
+                    console.log(`Fetching packages for creator ID: ${userData.model_id}`);
                     const { data: packagesData, error: packagesError } = await supabase
                         .from('packages')
                         .select('*')
@@ -821,7 +969,7 @@
                     if (!packagesData || packagesData.length === 0) {
                         console.log('No packages found in database, using fallback packages');
                         // Display the fallback packages if none found in database
-                        displayPackages(fallbackPackages, modelData.name);
+                        displayPackages(fallbackPackages, creatorData.name);
                     } else {
                         console.log('Packages found in database:', packagesData);
                         
@@ -838,26 +986,26 @@
                         
                         if (hasValidPriceIds) {
                             console.log('Using packages from database');
-                            displayPackages(packagesData, modelData.name);
+                            displayPackages(packagesData, creatorData.name);
                         } else {
                             console.log('Database packages have invalid Stripe price IDs, using fallback packages');
-                            displayPackages(fallbackPackages, modelData.name);
+                            displayPackages(fallbackPackages, creatorData.name);
                         }
                     }
                 } catch (packageError) {
                     console.error('Error in package query:', packageError);
                     // Use fallback packages if there's an error
-                    displayPackages(fallbackPackages, modelData.name);
+                    displayPackages(fallbackPackages, creatorData.name);
                 }
                 
             } catch (error) {
-                console.error('Error loading model data:', error);
-                showError('Unable to load AI companion information. Please try again later.');
+                console.error('Error loading creator data:', error);
+                showError('Unable to load creator information. Please try again later.');
             }
         }
         
         // Display packages
-        function displayPackages(packages, modelName) {
+        function displayPackages(packages, creatorName) {
             // Clear loading indicator
             packagesContainer.innerHTML = '';
             
@@ -920,7 +1068,7 @@
                     </div>
                     
                     <div class="package-features">
-                        ${getFeaturesList(pkg)}
+                        ${getFeaturesList(pkg, creatorName)}
                     </div>
                     
                     <button class="package-button" 
@@ -979,21 +1127,21 @@
         }
         
         // Get features list based on package
-        function getFeaturesList(pkg) {
+        function getFeaturesList(pkg, creatorName) {
             const basicFeatures = [
-                'Personal AI companion',
-                'Unlimited conversations',
-                'Personalized responses',
-                '24/7 availability',
-                'Private and secure'
+                `Support ${creatorName}'s work`,
+                'Access to subscriber-only content',
+                'Regular content updates',
+                'Secure payment processing',
+                'Cancel anytime'
             ];
             
             const premiumFeatures = [
-                'Priority access',
-                'Faster response times',
-                'Enhanced personalization',
-                'Extended conversation history',
-                'Premium content'
+                'Priority access to new content',
+                'Exclusive behind-the-scenes',
+                'Enhanced content quality',
+                'Extended content library',
+                'Premium supporter recognition'
             ];
             
             // Determine if this is a premium package
@@ -1054,10 +1202,10 @@
                 subscriptionView.classList.add('hidden');
                 successView.classList.remove('hidden');
                 
-                // Update success message with model name
+                // Update success message with creator name
                 if (userData.model_name) {
                     modelNameSuccess.textContent = userData.model_name;
-                    successMessage.innerHTML = `Thank you for subscribing. Your premium experience with <strong>${userData.model_name}</strong> is now active.`;
+                    successMessage.innerHTML = `Thank you for subscribing. Your premium access to <strong>${userData.model_name}</strong>'s content is now active.`;
                 }
                 
                 // Clean up the URL to remove the session ID parameter
