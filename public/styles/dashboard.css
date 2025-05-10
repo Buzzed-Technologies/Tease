@@ -194,7 +194,7 @@
     border-radius: 8px;
     background-color: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--dark);
+    color: var(--dark) !important;
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
