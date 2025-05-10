@@ -835,7 +835,9 @@
                     modelImage.style.backgroundImage = `url(${imageUrl})`;
                 }
             } else {
-                modelImage.style.backgroundImage = 'url(/images/placeholder-model.jpg)';
+                // Use a placeholder from Supabase storage instead of a local path
+                const placeholderUrl = `${supabaseUrl}/storage/v1/object/public/model-pictures/placeholder-model.jpg`;
+                modelImage.style.backgroundImage = `url(${placeholderUrl})`;
             }
         }
         
