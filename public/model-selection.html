@@ -258,6 +258,7 @@
             align-items: center;
             margin-bottom: 1.5rem;
             padding: 1.5rem 0;
+            width: 100%;
         }
         
         .modal-model-image {
@@ -637,6 +638,8 @@
                 max-height: 90vh;
                 border-radius: 20px 20px 0 0;
                 box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+                display: flex;
+                flex-direction: column;
             }
             
             .modal-header {
@@ -644,6 +647,9 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
+                width: 100%;
+                box-sizing: border-box;
+                order: 0;
             }
             
             .modal-title {
@@ -658,6 +664,10 @@
             
             .modal-body {
                 padding: 0 1rem 1.5rem;
+                width: 100%;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
             }
             
             .modal-model-container {
@@ -666,6 +676,8 @@
                 text-align: center;
                 padding: 1rem 0;
                 margin-bottom: 1.5rem;
+                width: 100%;
+                order: 1;
             }
             
             .modal-model-image {
@@ -696,6 +708,8 @@
                 font-size: 1.1rem;
                 margin-bottom: 1.2rem;
                 text-align: center;
+                width: 100%;
+                order: 2;
             }
             
             .package-item {
@@ -706,6 +720,8 @@
             .package-list {
                 grid-template-columns: 1fr;
                 gap: 1rem;
+                width: 100%;
+                order: 3;
             }
             
             .package-name {
