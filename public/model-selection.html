@@ -23,139 +23,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* Base styles with better CSS variables */
-        :root {
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 0.75rem;
-            --spacing-md: 1rem;
-            --spacing-lg: 1.5rem;
-            --spacing-xl: 2rem;
-            --border-radius-sm: 8px;
-            --border-radius-md: 12px;
-            --border-radius-lg: 18px;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
-            --transition-fast: 0.2s ease;
-            --transition-normal: 0.3s ease;
-        }
-        
-        /* Container layout with better responsive behavior */
-        .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-content {
-            flex: 1;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--spacing-lg);
-        }
-        
-        /* Improved section header */
-        .section-header {
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .section-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            margin-bottom: var(--spacing-xs);
-            color: var(--dark);
-        }
-        
-        .section-description {
-            font-size: clamp(0.85rem, 2vw, 1rem);
-            color: var(--darker);
-            max-width: 700px;
-        }
-        
-        /* Optimized model grid with auto-fit for better layout */
         .model-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-            gap: var(--spacing-lg);
-            width: 100%;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
         
-        /* Improved model card with better performance */
         .model-card {
             background-color: var(--light);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-md);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: var(--spacing-lg);
-            will-change: transform;
-            contain: layout style paint;
+            padding: 1.5rem;
         }
         
         .model-card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
         }
         
-        /* Better image container with aspect ratio */
-        .model-image-container {
-            flex: 0 0 auto;
-            margin-right: var(--spacing-lg);
-            width: 100px;
-            height: 100px;
-        }
-        
-        .model-image {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            background-color: rgba(211, 209, 218, 0.2);
-            box-shadow: var(--shadow-sm);
-            border: 3px solid var(--primary-light);
-        }
-        
-        /* Better responsive text handling */
-        .model-details {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-            min-width: 0; /* Helps with text truncation */
-        }
-        
-        .model-name {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.1rem, 3vw, 1.3rem);
-            margin-bottom: var(--spacing-xs);
-            color: var(--dark);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .model-bio {
-            color: var(--dark);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            line-height: 1.4;
-            margin-bottom: var(--spacing-md);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        /* Subscription badge with better positioning */
         .model-subscription-badge {
             position: absolute;
-            top: var(--spacing-md);
-            right: var(--spacing-md);
+            top: 1rem;
+            right: 1rem;
             background-color: var(--accent);
             color: var(--darker);
             font-size: 0.7rem;
@@ -163,10 +59,57 @@
             padding: 0.3rem 0.8rem;
             border-radius: 1rem;
             text-transform: uppercase;
-            z-index: 2;
+            z-index: 10;
         }
         
-        /* Better card footer layout */
+        .model-image-container {
+            flex: 0 0 auto;
+            margin-right: 1.5rem;
+            position: relative;
+        }
+        
+        .model-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(211, 209, 218, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
+            transition: transform 0.3s ease;
+        }
+        
+        .model-card:hover .model-image {
+            transform: scale(1.05);
+        }
+        
+        .model-details {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .model-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.4rem;
+            color: var(--dark);
+        }
+        
+        .model-bio {
+            color: var(--dark);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            max-height: 2.8em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
         .model-card-footer {
             display: flex;
             justify-content: space-between;
@@ -180,7 +123,6 @@
             padding: 0.25rem 0.7rem;
             border-radius: 1rem;
             text-transform: uppercase;
-            white-space: nowrap;
         }
         
         .model-subscription-status.active {
@@ -199,12 +141,11 @@
             background-color: var(--accent);
             color: var(--darker);
             border: none;
-            border-radius: var(--border-radius-sm);
+            border-radius: 8px;
             padding: 0.5rem 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-normal);
-            white-space: nowrap;
+            transition: all 0.3s ease;
         }
         
         .view-button:hover {
@@ -212,14 +153,13 @@
             transform: translateY(-2px);
         }
         
-        /* Improved loading spinner */
+        /* Loading state */
         .loading-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: var(--spacing-xl) 0;
-            width: 100%;
+            padding: 3rem 0;
         }
         
         .loading-spinner {
@@ -229,7 +169,7 @@
             border-radius: 50%;
             border-top-color: var(--accent);
             animation: spin 1s linear infinite;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 1rem;
         }
         
         @keyframes spin {
@@ -237,33 +177,7 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Empty state responsive layout */
-        .empty-state {
-            text-align: center;
-            padding: var(--spacing-xl) 0;
-            width: 100%;
-        }
-        
-        .empty-icon {
-            font-size: clamp(2rem, 5vw, 3rem);
-            color: rgba(211, 209, 218, 0.5);
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .empty-message {
-            color: var(--dark);
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            margin-bottom: var(--spacing-xs);
-        }
-        
-        .empty-description {
-            color: var(--darker);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        /* Improved Modal Styles */
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -278,9 +192,8 @@
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity var(--transition-normal), visibility var(--transition-normal);
-            padding: var(--spacing-md);
-            overscroll-behavior: contain;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
         }
         
         .modal-overlay.active {
@@ -290,17 +203,15 @@
         
         .modal-content {
             background-color: var(--light);
-            border-radius: var(--border-radius-lg);
+            border-radius: 20px;
             width: 100%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
             transform: translateY(20px);
-            transition: transform var(--transition-normal);
-            box-shadow: var(--shadow-lg);
-            overscroll-behavior: contain;
-            will-change: transform;
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
         
         .modal-overlay.active .modal-content {
@@ -308,7 +219,7 @@
         }
         
         .modal-header {
-            padding: var(--spacing-lg);
+            padding: 1.5rem;
             border-bottom: 1px solid rgba(211, 209, 218, 0.3);
             display: flex;
             justify-content: space-between;
@@ -317,12 +228,12 @@
             top: 0;
             background-color: var(--light);
             z-index: 5;
-            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            border-radius: 20px 20px 0 0;
         }
         
         .modal-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(1.3rem, 4vw, 1.5rem);
+            font-size: 1.5rem;
             color: var(--dark);
         }
         
@@ -337,7 +248,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: all var(--transition-fast);
+            transition: all 0.2s ease;
             background-color: rgba(211, 209, 218, 0.1);
         }
         
@@ -346,60 +257,52 @@
         }
         
         .modal-body {
-            padding: 0 var(--spacing-lg) var(--spacing-lg);
+            padding: 0 1.5rem 1.5rem;
         }
         
         .modal-model-container {
             display: flex;
             align-items: center;
-            margin-bottom: var(--spacing-lg);
-            padding: var(--spacing-lg) 0;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem 0;
         }
         
         .modal-model-image {
-            width: clamp(80px, 20vw, 120px);
-            height: clamp(80px, 20vw, 120px);
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            margin-right: var(--spacing-lg);
-            box-shadow: var(--shadow-md);
+            margin-right: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: 3px solid var(--primary-light);
             flex-shrink: 0;
         }
         
         .modal-model-info {
             flex: 1;
-            min-width: 0;
         }
         
         .modal-model-name {
-            font-size: clamp(1.2rem, 4vw, 1.4rem);
-            margin-bottom: var(--spacing-xs);
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
             font-family: 'Playfair Display', serif;
             color: var(--dark);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .modal-model-bio {
             color: var(--dark);
             line-height: 1.6;
-            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            font-size: 0.95rem;
         }
         
         .modal-section-title {
-            font-size: clamp(1.1rem, 3vw, 1.2rem);
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: 1.5rem;
             color: var(--dark);
             position: relative;
-            padding-bottom: var(--spacing-xs);
+            padding-bottom: 0.5rem;
         }
         
         .modal-section-title:after {
@@ -413,25 +316,22 @@
             border-radius: 3px;
         }
         
-        /* Optimized Package List */
         .package-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-            gap: var(--spacing-md);
-            width: 100%;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
         }
         
         .package-item {
             background-color: var(--primary-light);
-            border-radius: var(--border-radius-md);
-            padding: var(--spacing-lg);
+            border-radius: 16px;
+            padding: 1.5rem;
             border: 1px solid rgba(211, 209, 218, 0.15);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            will-change: transform;
         }
         
         .package-item:before {
@@ -447,36 +347,36 @@
         
         .package-item:hover {
             transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         
         .package-name {
             font-weight: 600;
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: 0.5rem;
             color: var(--dark);
-            font-size: clamp(1rem, 3vw, 1.1rem);
+            font-size: 1.1rem;
         }
         
         .package-price {
-            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 1rem;
             display: flex;
             align-items: flex-end;
         }
         
         .package-price span {
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-size: 0.9rem;
             font-weight: 400;
             margin-left: 4px;
             color: var(--dark-gray);
         }
         
         .package-description {
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-size: 0.9rem;
             color: var(--dark);
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: 1.5rem;
             line-height: 1.5;
             flex-grow: 1;
         }
@@ -486,25 +386,25 @@
             background-color: var(--accent);
             color: var(--darker);
             border: none;
-            border-radius: var(--border-radius-sm);
-            padding: clamp(0.7rem, 2vw, 0.9rem) 0;
+            border-radius: 10px;
+            padding: 0.9rem 0;
             font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-normal);
-            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
         .subscribe-btn i {
-            margin-right: var(--spacing-xs);
+            margin-right: 0.5rem;
         }
         
         .subscribe-btn:hover {
             background-color: #B4C1FF;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         }
         
         .subscribe-btn:active {
@@ -517,40 +417,43 @@
             cursor: default;
         }
         
-        /* Improved notification system */
-        .notification {
-            position: fixed;
-            bottom: var(--spacing-md);
-            left: var(--spacing-md);
-            right: var(--spacing-md);
-            max-width: 600px;
-            width: auto;
-            margin: 0 auto;
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius-sm);
-            background-color: var(--light);
-            box-shadow: var(--shadow-md);
-            z-index: 1050;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity var(--transition-normal), transform var(--transition-normal);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
+        .subscribe-btn.processing {
+            opacity: 0.7;
+            cursor: wait;
         }
         
-        @media (min-width: 769px) {
-            .notification {
-                left: auto;
-                bottom: var(--spacing-md);
-                right: var(--spacing-md);
-                max-width: 350px;
-            }
+        .no-packages {
+            text-align: center;
+            padding: 2rem;
+            color: var(--dark);
+            background-color: var(--primary-light);
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 5rem;
+            right: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background-color: var(--light);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-10px) translateX(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            max-width: 400px;
+            width: calc(100% - 3rem);
         }
         
         .notification.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) translateX(0);
         }
         
         .notification.success {
@@ -563,7 +466,6 @@
         
         .notification-icon {
             font-size: 1.2rem;
-            flex-shrink: 0;
         }
         
         .notification.success .notification-icon {
@@ -576,9 +478,8 @@
         
         .notification-message {
             color: var(--dark);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-size: 0.9rem;
             flex: 1;
-            line-height: 1.4;
         }
         
         .notification-close {
@@ -587,169 +488,93 @@
             color: var(--dark);
             cursor: pointer;
             font-size: 0.9rem;
-            padding: var(--spacing-xs);
-            margin: calc(-1 * var(--spacing-xs));
-            border-radius: 50%;
+            padding: 0.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
-            transition: background-color var(--transition-fast);
-            flex-shrink: 0;
         }
         
-        .notification-close:hover {
-            background-color: rgba(211, 209, 218, 0.2);
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 0;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
-        /* Optimized dashboard header */
-        .dashboard-header {
-            background-color: var(--primary);
-            padding: var(--spacing-md) var(--spacing-lg);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
+        .empty-icon {
+            font-size: 3.5rem;
+            color: rgba(211, 209, 218, 0.5);
+            margin-bottom: 1.5rem;
         }
         
-        .dashboard-header a {
-            text-decoration: none;
-        }
-        
-        .logo {
+        .empty-message {
+            color: var(--dark);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
             font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem, 5vw, 2.2rem);
-            color: var(--light);
-            font-weight: 700;
-            transition: color var(--transition-normal);
         }
         
-        .logo:hover {
-            color: var(--accent);
+        .empty-description {
+            color: var(--darker);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0 auto;
         }
         
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
+        @media (max-width: 1024px) {
+            .model-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1.5rem;
+            }
         }
         
-        .dashboard-link, 
-        .logout-button {
-            background-color: transparent;
-            color: var(--light);
-            border: none;
-            padding: 0.5rem var(--spacing-md);
-            border-radius: var(--border-radius-sm);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            transition: background-color var(--transition-normal);
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-        }
-        
-        .dashboard-link:hover, 
-        .logout-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Responsive media queries */
         @media (max-width: 768px) {
-            .dashboard-content {
-                padding: var(--spacing-md);
+            .dashboard-header {
+                padding: 1rem 5%;
             }
             
-            .dashboard-header {
-                padding: var(--spacing-md);
+            .dashboard-content {
+                padding: 1.5rem 5%;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .section-description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .model-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+                margin-top: 1.5rem;
             }
             
             .model-card {
-                padding: var(--spacing-md);
+                max-width: 100%;
+                padding: 1.2rem;
+                border-radius: 16px;
             }
             
-            .model-image-container {
+            .model-image {
                 width: 80px;
                 height: 80px;
-                margin-right: var(--spacing-md);
-            }
-            
-            .notification {
-                top: var(--spacing-sm);
-                right: var(--spacing-sm);
-                max-width: calc(100% - var(--spacing-md) * 2);
-                width: auto;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .dashboard-content {
-                padding: var(--spacing-sm);
-            }
-            
-            .dashboard-header {
-                padding: var(--spacing-sm);
-            }
-            
-            .model-card {
-                padding: var(--spacing-sm);
-                border-radius: var(--border-radius-md);
             }
             
             .model-image-container {
-                width: 60px;
-                height: 60px;
-                margin-right: var(--spacing-sm);
+                margin-right: 1.2rem;
+            }
+            
+            .model-name {
+                font-size: 1.2rem;
             }
             
             .model-bio {
-                -webkit-line-clamp: 2;
-                margin-bottom: var(--spacing-xs);
-            }
-            
-            .view-button {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-            
-            .btn-text {
-                display: none;
-            }
-            
-            .dashboard-link, 
-            .logout-button {
-                padding: var(--spacing-xs);
-            }
-            
-            /* Mobile modal optimizations */
-            .modal-overlay {
-                padding: 0;
-                align-items: flex-end;
-            }
-            
-            .modal-content {
-                width: 100%;
-                max-height: 90vh;
-                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-                box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
-            }
-            
-            .modal-header {
-                padding: var(--spacing-md);
-            }
-            
-            .modal-body {
-                padding: 0 var(--spacing-md) var(--spacing-md);
-            }
-            
-            .modal-model-container {
-                margin-bottom: var(--spacing-md);
-                padding: var(--spacing-xs) 0;
+                font-size: 0.85rem;
+                margin-bottom: 0.8rem;
             }
             
             .package-list {
@@ -757,66 +582,286 @@
             }
             
             .package-item {
-                padding: var(--spacing-md);
+                padding: 1.2rem;
             }
             
-            .notification {
-                top: auto;
-                bottom: var(--spacing-sm);
-                left: var(--spacing-sm);
-                right: var(--spacing-sm);
-                width: auto;
-                max-width: none;
+            /* Modal improvements for tablet */
+            .modal-overlay {
+                padding: 0.5rem;
+            }
+            
+            .modal-content {
+                max-width: 90%;
+            }
+            
+            .modal-model-container {
+                flex-direction: row;
+                padding: 1rem 0;
+            }
+            
+            .modal-model-image {
+                width: 90px;
+                height: 90px;
+                margin-right: 1.2rem;
+            }
+            
+            .modal-model-name {
+                font-size: 1.3rem;
+            }
+            
+            .modal-model-bio {
+                font-size: 0.9rem;
             }
         }
         
-        /* Mobile touch enhancements */
-        @media (hover: none) {
-            .model-card {
-                transition: transform 0.2s ease;
+        @media (max-width: 480px) {
+            .dashboard-header {
+                padding: 0.8rem 1rem;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background-color: var(--primary);
             }
             
-            .model-card.touch-active {
-                transform: scale(0.98);
-                background-color: rgba(244, 245, 250, 0.8);
-            }
-            
-            .view-button:active {
-                transform: scale(0.95);
-                background-color: #9AACFF;
-            }
-            
-            .subscribe-btn:active {
-                transform: scale(0.98);
-                background-color: #9AACFF;
-            }
-            
-            .modal-close:active {
-                transform: scale(0.9);
-                background-color: rgba(211, 209, 218, 0.4);
-            }
-            
-            /* Add active state for notification close */
-            .notification-close:active {
-                background-color: rgba(211, 209, 218, 0.4);
-                transform: scale(0.9);
-            }
-        }
-        
-        /* Add tap highlight color prevention for better mobile UX */
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Optional: Add pull-to-refresh support for mobile view */
-        @supports (-webkit-overflow-scrolling: touch) {
-            html, body {
-                overscroll-behavior-y: contain;
+            .logo {
+                font-size: 1.8rem;
             }
             
             .dashboard-content {
-                -webkit-overflow-scrolling: touch;
+                padding: 1.2rem 1rem;
             }
+            
+            .section-header h2 {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .section-description {
+                font-size: 0.85rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .model-card {
+                padding: 1rem;
+                border-radius: 12px;
+                align-items: flex-start;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            }
+            
+            .model-image {
+                width: 70px;
+                height: 70px;
+                border-width: 2px;
+            }
+            
+            .model-image-container {
+                margin-right: 1rem;
+            }
+            
+            .model-name {
+                font-size: 1.1rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .model-bio {
+                font-size: 0.8rem;
+                line-height: 1.3;
+                margin-bottom: 0.7rem;
+                -webkit-line-clamp: 2;
+            }
+            
+            .model-card-footer {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+            
+            .model-subscription-status {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.6rem;
+            }
+            
+            .view-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            /* Modal improvements for mobile */
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+            
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                max-height: 90vh;
+                border-radius: 20px 20px 0 0;
+                box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+            }
+            
+            .modal-header {
+                padding: 1rem;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+            }
+            
+            .modal-body {
+                padding: 0 1rem 1.5rem;
+            }
+            
+            .modal-model-container {
+                margin-bottom: 1.2rem;
+            }
+            
+            .modal-model-image {
+                width: 70px;
+                height: 70px;
+                margin-right: 1rem;
+                border-width: 2px;
+            }
+            
+            .modal-model-name {
+                font-size: 1.1rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .modal-model-bio {
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+            
+            .modal-section-title {
+                font-size: 1.1rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .package-item {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+            
+            .package-name {
+                font-size: 1rem;
+            }
+            
+            .package-price {
+                font-size: 1.3rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .package-description {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .subscribe-btn {
+                padding: 0.8rem 0;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+            
+            .header-controls a,
+            .header-controls button {
+                padding: 0.4rem;
+            }
+            
+            .btn-text {
+                display: none;
+            }
+            
+            .model-subscription-badge {
+                top: 0.8rem;
+                right: 0.8rem;
+                font-size: 0.65rem;
+                padding: 0.2rem 0.6rem;
+            }
+        }
+        
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background);
+        }
+        
+        .dashboard-header {
+            background-color: var(--primary);
+            padding: 1.2rem 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .dashboard-link, 
+        .logout-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: transparent;
+            color: var(--accent);
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-link:hover, 
+        .logout-button:hover {
+            background-color: rgba(180, 193, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .dashboard-content {
+            flex: 1;
+            padding: 2rem 7%;
+        }
+        
+        .section-header {
+            margin-bottom: 2.5rem;
+        }
+        
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+        }
+        
+        .section-description {
+            color: var(--darker);
+            font-size: 1rem;
+            max-width: 700px;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -919,31 +964,6 @@
         const notificationClose = document.getElementById('notification-close');
         const logoutButton = document.getElementById('logout-button');
         
-        // Utility functions
-        const debounce = (fn, delay) => {
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => fn(...args), delay);
-            };
-        };
-        
-        // Show notification with auto-dismiss and improved positioning
-        function showNotification(message, type = 'success', duration = 5000) {
-            // Clear any existing notification timeout
-            if (window.notificationTimeout) {
-                clearTimeout(window.notificationTimeout);
-            }
-            
-            notificationMessage.textContent = message;
-            notification.className = `notification ${type} active`;
-            
-            // Auto-dismiss after duration
-            window.notificationTimeout = setTimeout(() => {
-                notification.classList.remove('active');
-            }, duration);
-        }
-        
         // First try to get the key from meta tag
         const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         let supabaseKey = null;
@@ -986,14 +1006,6 @@
                 console.log('Stripe initialized');
             } else {
                 console.error('Stripe.js not loaded');
-                // Attempt to load Stripe dynamically if not available
-                const stripeScript = document.createElement('script');
-                stripeScript.src = 'https://js.stripe.com/v3/';
-                stripeScript.onload = () => {
-                    stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
-                    console.log('Stripe dynamically loaded');
-                };
-                document.head.appendChild(stripeScript);
             }
         }
         
@@ -1004,65 +1016,36 @@
                 loadUserData();
             } else {
                 console.error('Supabase client library not loaded');
-                // Attempt to load Supabase dynamically if not available
-                const supabaseScript = document.createElement('script');
-                supabaseScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js';
-                supabaseScript.onload = () => {
-                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                    console.log('Supabase dynamically loaded');
-                    initStripe();
-                    loadUserData();
-                };
-                document.head.appendChild(supabaseScript);
             }
         }
         
-        // Load user data with improved error handling
+        // Load user data
         async function loadUserData() {
-            try {
-                // Try to get user from localStorage
-                const storedUser = localStorage.getItem('threadpay_user');
-                
-                if (!storedUser) {
-                    console.log('No user found in localStorage');
+            // Try to get user from localStorage
+            const storedUser = localStorage.getItem('threadpay_user');
+            
+            if (storedUser) {
+                try {
+                    userData = JSON.parse(storedUser);
+                    console.log('User loaded from localStorage:', userData);
+                    
+                    // Fetch user details including subscriptions
+                    await fetchUserDetails();
+                    
+                    // Load all models
+                    await loadModels();
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
                     redirectToLogin();
-                    return;
                 }
-                
-                userData = JSON.parse(storedUser);
-                console.log('User loaded from localStorage:', userData);
-                
-                // Fetch user details including subscriptions
-                await fetchUserDetails();
-                
-                // Load all models
-                await loadModels();
-                
-                // Check URL parameters for notifications
-                checkUrlParameters();
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                showNotification('Error loading user data. Please try logging in again.', 'error');
+            } else {
+                console.log('No user found in localStorage');
                 redirectToLogin();
             }
         }
         
-        // Check URL parameters for notifications
-        function checkUrlParameters() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('subscription_canceled')) {
-                showNotification('Subscription process was canceled.', 'error');
-                // Clean up URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else if (urlParams.has('subscription_success')) {
-                showNotification('Successfully subscribed!', 'success');
-                // Clean up URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-        
-        // Fetch user details with retry mechanism
-        async function fetchUserDetails(retryCount = 0) {
+        // Fetch user details
+        async function fetchUserDetails() {
             try {
                 // Get user profile
                 const { data: profile, error: profileError } = await supabase
@@ -1071,14 +1054,7 @@
                     .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
                     .single();
                     
-                if (profileError) {
-                    if (retryCount < 3) {
-                        console.log(`Retrying profile fetch (${retryCount + 1}/3)...`);
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        return fetchUserDetails(retryCount + 1);
-                    }
-                    throw profileError;
-                }
+                if (profileError) throw profileError;
                 
                 if (profile) {
                     // Update user data with profile info
@@ -1102,58 +1078,59 @@
             }
         }
         
-        // Load models with pagination support
-        async function loadModels(limit = 50, page = 0) {
+        // Load models
+        async function loadModels() {
             try {
-                loadingContainer.style.display = 'flex';
+                loadingContainer.style.display = 'block';
                 modelGrid.style.display = 'none';
                 emptyState.style.display = 'none';
                 
-                // Fetch models with pagination
-                const { data: models, error, count } = await supabase
+                // Fetch all models
+                const { data: models, error } = await supabase
                     .from('models')
-                    .select('*', { count: 'exact' })
-                    .range(page * limit, (page + 1) * limit - 1)
-                    .order('id', { ascending: true });
+                    .select('*');
                     
                 if (error) throw error;
                 
                 if (!models || models.length === 0) {
                     loadingContainer.style.display = 'none';
-                    emptyState.style.display = 'flex';
+                    emptyState.style.display = 'block';
                     return;
                 }
                 
                 modelsData = models;
                 
-                // Display models with performance optimizations
+                // Display models
                 displayModels(models);
                 
                 loadingContainer.style.display = 'none';
                 modelGrid.style.display = 'grid';
-                
-                // TODO: Implement pagination UI if needed and count > limit
             } catch (error) {
                 console.error('Error loading models:', error);
                 showNotification('Failed to load creators. Please try again later.', 'error');
                 
                 loadingContainer.style.display = 'none';
-                emptyState.style.display = 'flex';
+                emptyState.style.display = 'block';
             }
         }
         
-        // Display models with improved performance
+        // Display models
         function displayModels(models) {
-            // Use document fragment for better performance
-            const fragment = document.createDocumentFragment();
+            modelGrid.innerHTML = '';
             
-            models.forEach(model => {
+            // Create and append model cards with animation delay
+            models.forEach((model, index) => {
                 // Check if user is already subscribed to this model
                 const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
                 
                 const modelCard = document.createElement('div');
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
+                
+                // Add animation delay for staggered appearance
+                modelCard.style.opacity = '0';
+                modelCard.style.transform = 'translateY(20px)';
+                modelCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 
                 // Add subscription badge if subscribed
                 if (isSubscribed) {
@@ -1163,73 +1140,88 @@
                     modelCard.appendChild(badge);
                 }
                 
-                // Prepare image path with fallback
-                let imagePath = '/images/placeholder-model.png';
+                // Add container for the image
+                const modelImageContainer = document.createElement('div');
+                modelImageContainer.className = 'model-image-container';
                 
+                const modelImage = document.createElement('div');
+                modelImage.className = 'model-image';
+                
+                // Build the correct image path using Supabase bucket
+                let imagePath;
                 if (model.pictures) {
+                    // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
                         imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
                     } else if (model.pictures.main) {
                         imagePath = model.pictures.main;
+                    } else {
+                        imagePath = '/images/placeholder-model.png';
                     }
+                } else {
+                    imagePath = '/images/placeholder-model.png';
                 }
                 
-                // Build the card HTML
-                modelCard.innerHTML = `
-                    <div class="model-image-container">
-                        <div class="model-image" style="background-image: url(${imagePath})"></div>
-                    </div>
-                    <div class="model-details">
-                        <h3 class="model-name">${model.name}</h3>
-                        <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                        <div class="model-card-footer">
-                            <div class="model-subscription-status ${isSubscribed ? 'active' : 'inactive'}">
-                                ${isSubscribed ? 'Subscribed' : 'Not Subscribed'}
-                            </div>
-                            <button class="view-button" data-model-id="${model.id}">
-                                ${isSubscribed ? 'View Details' : 'Subscribe'}
-                            </button>
+                modelImage.style.backgroundImage = `url(${imagePath})`;
+                modelImageContainer.appendChild(modelImage);
+                
+                const modelDetails = document.createElement('div');
+                modelDetails.className = 'model-details';
+                
+                modelDetails.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    <div class="model-card-footer">
+                        <div class="model-subscription-status ${isSubscribed ? 'active' : 'inactive'}">
+                            ${isSubscribed ? 'Subscribed' : 'Not Subscribed'}
                         </div>
+                        <button class="view-button" data-model-id="${model.id}">
+                            ${isSubscribed ? 'View Details' : 'Subscribe'}
+                        </button>
                     </div>
                 `;
                 
-                // Add to fragment
-                fragment.appendChild(modelCard);
-            });
-            
-            // Clear and append all at once for better performance
-            modelGrid.innerHTML = '';
-            modelGrid.appendChild(fragment);
-            
-            // Add event listeners
-            document.querySelectorAll('.view-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const modelId = button.getAttribute('data-model-id');
-                    const model = modelsData.find(m => m.id === modelId);
-                    const isSubscribed = userSubscriptions.some(sub => sub.model_id === modelId);
+                modelCard.appendChild(modelImageContainer);
+                modelCard.appendChild(modelDetails);
+                modelGrid.appendChild(modelCard);
+                
+                // Add event listener to view button
+                const viewButton = modelDetails.querySelector('.view-button');
+                viewButton.addEventListener('click', () => {
+                    const targetModel = modelsData.find(m => m.id === model.id);
                     
                     if (isSubscribed) {
                         // Navigate to dashboard to manage this subscription
                         window.location.href = '/dashboard.html';
-                    } else if (model) {
+                    } else {
                         // Open subscription modal
                         openSubscriptionModal(model);
                     }
                 });
+                
+                // Animate the card after a delay based on its index
+                setTimeout(() => {
+                    modelCard.style.opacity = '1';
+                    modelCard.style.transform = 'translateY(0)';
+                }, 50 * index);
             });
         }
         
         // Open the subscription modal for a model
         function openSubscriptionModal(model) {
-            // Prepare image path with fallback
-            let imagePath = '/images/placeholder-model.png';
-            
+            // Build the correct image path using Supabase bucket
+            let imagePath;
             if (model.pictures) {
+                // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                 if (Array.isArray(model.pictures) && model.pictures.length > 0) {
                     imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
                 } else if (model.pictures.main) {
                     imagePath = model.pictures.main;
+                } else {
+                    imagePath = '/images/placeholder-model.png';
                 }
+            } else {
+                imagePath = '/images/placeholder-model.png';
             }
 
             // Set modal content
@@ -1248,18 +1240,72 @@
                 </div>
             `;
             
-            // Show modal with smooth animation
-            requestAnimationFrame(() => {
-                modelModal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-            });
+            // Show modal with animation
+            modelModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            // Add swipe to close for mobile
+            setupModalSwipe();
             
             // Load packages for this model
             loadPackages(model.id);
         }
         
-        // Load packages with improved error handling
-        async function loadPackages(modelId, retryCount = 0) {
+        // Setup swipe to close for mobile
+        function setupModalSwipe() {
+            let startY;
+            let currentY;
+            const modalContent = document.querySelector('.modal-content');
+            const threshold = 100; // Minimum pixels to swipe to close
+            
+            modalContent.addEventListener('touchstart', (e) => {
+                // Only enable swipe to close if modal body is scrolled to top
+                if (modalContent.scrollTop <= 0) {
+                    startY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            
+            modalContent.addEventListener('touchmove', (e) => {
+                if (startY && modalContent.scrollTop <= 0) {
+                    currentY = e.touches[0].clientY;
+                    const diff = currentY - startY;
+                    
+                    // Only apply transform if dragging down
+                    if (diff > 0) {
+                        modalContent.style.transform = `translateY(${diff}px)`;
+                        modalContent.style.transition = 'none';
+                        e.preventDefault();
+                    }
+                }
+            }, { passive: false });
+            
+            modalContent.addEventListener('touchend', () => {
+                if (startY && currentY) {
+                    const diff = currentY - startY;
+                    
+                    modalContent.style.transition = 'transform 0.3s ease';
+                    
+                    if (diff > threshold) {
+                        // Close the modal
+                        modalContent.style.transform = `translateY(${window.innerHeight}px)`;
+                        setTimeout(() => {
+                            modelModal.classList.remove('active');
+                            document.body.style.overflow = ''; // Restore scrolling
+                            modalContent.style.transform = '';
+                        }, 300);
+                    } else {
+                        // Reset position
+                        modalContent.style.transform = '';
+                    }
+                }
+                
+                startY = null;
+                currentY = null;
+            }, { passive: true });
+        }
+        
+        // Load packages for a model
+        async function loadPackages(modelId) {
             try {
                 const packageList = document.getElementById('package-list');
                 packageList.innerHTML = '<div class="loading-spinner"></div>';
@@ -1271,22 +1317,14 @@
                     .eq('model_id', modelId)
                     .order('price', { ascending: true });
                     
-                if (error) {
-                    if (retryCount < 2) {
-                        console.log(`Retrying package fetch (${retryCount + 1}/2)...`);
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        return loadPackages(modelId, retryCount + 1);
-                    }
-                    throw error;
-                }
+                if (error) throw error;
                 
                 if (!packages || packages.length === 0) {
                     packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
                     return;
                 }
                 
-                // Create document fragment for better performance
-                const fragment = document.createDocumentFragment();
+                packageList.innerHTML = '';
                 
                 packages.forEach(pkg => {
                     const packageItem = document.createElement('div');
@@ -1310,16 +1348,11 @@
                         </button>
                     `;
                     
-                    fragment.appendChild(packageItem);
-                });
-                
-                // Clear and append all at once
-                packageList.innerHTML = '';
-                packageList.appendChild(fragment);
-                
-                // Add event listeners
-                document.querySelectorAll('.subscribe-btn').forEach(button => {
-                    button.addEventListener('click', handleSubscription);
+                    packageList.appendChild(packageItem);
+                    
+                    // Add event listener to subscribe button
+                    const subscribeBtn = packageItem.querySelector('.subscribe-btn');
+                    subscribeBtn.addEventListener('click', handleSubscription);
                 });
             } catch (error) {
                 console.error('Error loading packages:', error);
@@ -1328,7 +1361,7 @@
             }
         }
         
-        // Handle subscription with improved UX
+        // Handle subscription
         async function handleSubscription() {
             const button = this;
             const packageId = button.getAttribute('data-package-id');
@@ -1341,11 +1374,10 @@
             }
             
             try {
-                // Disable all subscription buttons to prevent multiple clicks
-                document.querySelectorAll('.subscribe-btn').forEach(btn => {
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                });
+                // Disable button
+                button.disabled = true;
+                button.classList.add('processing');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 
                 // First create a customer if user doesn't have a Stripe ID
                 if (!userData.stripe_customer_id) {
@@ -1419,49 +1451,64 @@
                 console.error('Error creating subscription:', error);
                 showNotification('Failed to create subscription. Please try again.', 'error');
                 
-                // Re-enable buttons
-                document.querySelectorAll('.subscribe-btn').forEach(btn => {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
-                });
-                
-                // Close modal on error
-                setTimeout(() => {
-                    closeModal();
-                }, 3000);
+                // Re-enable button
+                button.disabled = false;
+                button.classList.remove('processing');
+                button.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
             }
         }
         
         // Close the modal
-        function closeModal() {
+        modalClose.addEventListener('click', () => {
             modelModal.classList.remove('active');
             document.body.style.overflow = ''; // Restore scrolling
-        }
-        
-        modalClose.addEventListener('click', closeModal);
+        });
         
         // Close modal when clicking outside
         modelModal.addEventListener('click', (e) => {
             if (e.target === modelModal) {
-                closeModal();
+                modelModal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
             }
         });
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            // Clear any existing timeout
+            if (window.notificationTimeout) {
+                clearTimeout(window.notificationTimeout);
+            }
+            
+            // Set notification icon and class
+            const notificationIcon = notification.querySelector('.notification-icon i');
+            notificationIcon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            // Set message
+            notificationMessage.textContent = message;
+            
+            // Set type class
+            notification.className = `notification ${type} active`;
+            
+            // Animate in
+            notification.style.animation = 'none';
+            // Force reflow
+            void notification.offsetWidth;
+            notification.style.animation = type === 'success' ? 'slideInRight 0.3s ease' : 'shake 0.5s ease';
+            
+            // Automatically hide after 5 seconds
+            window.notificationTimeout = setTimeout(() => {
+                notification.classList.remove('active');
+            }, 5000);
+        }
         
         // Close notification
         notificationClose.addEventListener('click', () => {
             notification.classList.remove('active');
-            if (window.notificationTimeout) {
-                clearTimeout(window.notificationTimeout);
-            }
         });
         
         // Handle logout button
         logoutButton.addEventListener('click', async () => {
             try {
-                // Disable button to prevent multiple clicks
-                logoutButton.disabled = true;
-                logoutButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                
                 // Clear local storage
                 localStorage.removeItem('threadpay_user');
                 
@@ -1475,38 +1522,35 @@
             } catch (error) {
                 console.error('Error logging out:', error);
                 showNotification('Failed to log out. Please try again.', 'error');
-                
-                // Re-enable button
-                logoutButton.disabled = false;
-                logoutButton.innerHTML = '<i class="fas fa-sign-out-alt"></i><span class="btn-text">Logout</span>';
             }
         });
+        
+        // Check URL parameters for notifications
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('subscription_canceled')) {
+            showNotification('Subscription process was canceled.', 'error');
+        }
         
         // Redirect to login
         function redirectToLogin() {
             window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
         }
         
-        // Handle back button and modal state
-        window.addEventListener('popstate', (event) => {
-            if (modelModal.classList.contains('active')) {
-                closeModal();
-                event.preventDefault();
+        // Add animation keyframes
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(30px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
             }
-        });
-        
-        // Add responsive enhancements for mobile
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            // Add touch enhancements for mobile
-            document.querySelectorAll('.model-card').forEach(card => {
-                card.addEventListener('touchstart', () => {
-                    card.classList.add('touch-active');
-                });
-                card.addEventListener('touchend', () => {
-                    card.classList.remove('touch-active');
-                });
-            });
-        }
+            
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html> 
