@@ -953,6 +953,20 @@
             max-width: 700px;
             line-height: 1.6;
         }
+
+        /* Hide any potential overflow content */
+        .modal-content, .modal-body {
+            overflow-x: hidden;
+        }
+
+        /* Ensure all content is properly contained */
+        .modal-model-container,
+        .package-list,
+        .package-item {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
