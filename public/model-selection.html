@@ -222,19 +222,21 @@
             padding: 1.5rem;
             border-bottom: 1px solid rgba(211, 209, 218, 0.3);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
+            justify-content: center;
+            position: relative;
             top: 0;
             background-color: var(--light);
             z-index: 5;
             border-radius: 20px 20px 0 0;
+            text-align: center;
         }
         
         .modal-title {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             color: var(--dark);
+            width: 100%;
+            text-align: center;
         }
         
         .modal-close {
@@ -250,6 +252,10 @@
             border-radius: 50%;
             transition: all 0.2s ease;
             background-color: rgba(211, 209, 218, 0.1);
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
         }
         
         .modal-close:hover {
@@ -305,15 +311,27 @@
             position: relative;
             display: flex;
             align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-bottom: 1rem;
         }
         
-        .modal-section-title:before {
+        .modal-section-title:before,
+        .modal-section-title:after {
             content: '';
-            width: 4px;
-            height: 1.1rem;
+            width: 50px;
+            height: 1px;
             background-color: var(--accent);
-            margin-right: 0.8rem;
-            border-radius: 4px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .modal-section-title:after {
+            width: 30px;
+            height: 3px;
+            bottom: -2px;
         }
         
         .package-list {
@@ -645,6 +663,7 @@
             
             .modal-section-title {
                 margin: 1rem 0 1.2rem;
+                padding-bottom: 0.8rem;
             }
             
             .package-header {
@@ -749,6 +768,10 @@
                 padding: 1rem;
             }
             
+            .modal-close {
+                right: 1rem;
+            }
+            
             .modal-title {
                 font-size: 1.2rem;
             }
@@ -782,12 +805,16 @@
             .modal-section-title {
                 font-size: 1rem;
                 margin: 0.8rem 0 1rem;
+                padding-bottom: 0.8rem;
             }
             
             .modal-section-title:before {
-                height: 1rem;
-                width: 3px;
-                margin-right: 0.6rem;
+                width: 40px;
+            }
+            
+            .modal-section-title:after {
+                width: 20px;
+                height: 2px;
             }
             
             .package-item {
@@ -1297,7 +1324,7 @@
                     </div>
                 </div>
                 
-                <h3 class="modal-section-title">Select a Subscription Package</h3>
+                <h3 class="modal-section-title">Choose Your Subscription</h3>
                 <div id="package-list" class="package-list">
                     <div class="loading-spinner"></div>
                 </div>
