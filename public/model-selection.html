@@ -65,7 +65,6 @@
         .model-image-container {
             flex: 0 0 auto;
             margin-right: 1.5rem;
-            position: relative;
         }
         
         .model-image {
@@ -77,11 +76,6 @@
             background-color: rgba(211, 209, 218, 0.2);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: 3px solid var(--primary-light);
-            transition: transform 0.3s ease;
-        }
-        
-        .model-card:hover .model-image {
-            transform: scale(1.05);
         }
         
         .model-details {
@@ -114,7 +108,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
         }
         
         .model-subscription-status {
@@ -205,7 +198,7 @@
             background-color: var(--light);
             border-radius: 20px;
             width: 100%;
-            max-width: 580px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -222,21 +215,19 @@
             padding: 1.5rem;
             border-bottom: 1px solid rgba(211, 209, 218, 0.3);
             display: flex;
-            justify-content: center;
-            position: relative;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
             top: 0;
             background-color: var(--light);
             z-index: 5;
             border-radius: 20px 20px 0 0;
-            text-align: center;
         }
         
         .modal-title {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             color: var(--dark);
-            width: 100%;
-            text-align: center;
         }
         
         .modal-close {
@@ -252,10 +243,6 @@
             border-radius: 50%;
             transition: all 0.2s ease;
             background-color: rgba(211, 209, 218, 0.1);
-            position: absolute;
-            right: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
         }
         
         .modal-close:hover {
@@ -269,18 +256,17 @@
         .modal-model-container {
             display: flex;
             align-items: center;
-            margin-bottom: 1.8rem;
-            padding: 1.5rem 0 0.5rem;
-            border-bottom: 1px dashed rgba(211, 209, 218, 0.3);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem 0;
         }
         
         .modal-model-image {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            margin-right: 1.2rem;
+            margin-right: 1.5rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: 3px solid var(--primary-light);
             flex-shrink: 0;
@@ -304,140 +290,97 @@
         }
         
         .modal-section-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin: 1.2rem 0 1.4rem;
+            margin-bottom: 1.5rem;
             color: var(--dark);
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding-bottom: 1rem;
+            padding-bottom: 0.5rem;
         }
         
-        .modal-section-title:before,
         .modal-section-title:after {
             content: '';
-            width: 50px;
-            height: 1px;
-            background-color: var(--accent);
             position: absolute;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .modal-section-title:after {
-            width: 30px;
+            left: 0;
+            width: 50px;
             height: 3px;
-            bottom: -2px;
+            background-color: var(--accent);
+            border-radius: 3px;
         }
         
         .package-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            justify-content: center;
-            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
         }
         
         .package-item {
             background-color: var(--primary-light);
             border-radius: 16px;
-            padding: 0;
+            padding: 1.5rem;
             border: 1px solid rgba(211, 209, 218, 0.15);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            width: 100%;
-            max-width: 320px;
-            margin-bottom: 1rem;
         }
         
         .package-item:before {
             content: '';
             position: absolute;
-            left: 0;
             top: 0;
-            bottom: 0;
-            width: 5px;
-            height: 100%;
+            left: 0;
+            width: 100%;
+            height: 5px;
             background-color: var(--accent);
             opacity: 0.8;
         }
         
         .package-item:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .package-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem 1.5rem;
-            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
-        }
-        
-        .package-title-section {
-            display: flex;
-            flex-direction: column;
         }
         
         .package-name {
             font-weight: 600;
+            margin-bottom: 0.5rem;
             color: var(--dark);
             font-size: 1.1rem;
-            margin-bottom: 0.2rem;
-        }
-        
-        .package-subtitle {
-            font-size: 0.85rem;
-            color: var(--darker);
-            opacity: 0.7;
         }
         
         .package-price {
             font-size: 1.6rem;
             font-weight: 700;
             color: var(--dark);
+            margin-bottom: 1rem;
             display: flex;
             align-items: flex-end;
-            line-height: 1;
         }
         
         .package-price span {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 400;
             margin-left: 4px;
             color: var(--dark-gray);
         }
         
-        .package-content {
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
         .package-description {
             font-size: 0.9rem;
             color: var(--dark);
+            margin-bottom: 1.5rem;
             line-height: 1.5;
-            flex: 1;
+            flex-grow: 1;
         }
         
         .subscribe-btn {
+            width: 100%;
             background-color: var(--accent);
             color: var(--darker);
             border: none;
             border-radius: 10px;
-            padding: 0.9rem 1.8rem;
+            padding: 0.9rem 0;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -445,8 +388,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            white-space: nowrap;
-            flex-shrink: 0;
         }
         
         .subscribe-btn i {
@@ -469,43 +410,26 @@
             cursor: default;
         }
         
-        .subscribe-btn.processing {
-            opacity: 0.7;
-            cursor: wait;
-        }
-        
-        .no-packages {
-            text-align: center;
-            padding: 2rem;
-            color: var(--dark);
-            background-color: var(--primary-light);
-            border-radius: 12px;
-            font-size: 0.95rem;
-        }
-        
-        /* Notification */
         .notification {
             position: fixed;
-            top: 5rem;
-            right: 1.5rem;
+            top: 1rem;
+            right: 1rem;
             padding: 1rem 1.5rem;
-            border-radius: 12px;
+            border-radius: 8px;
             background-color: var(--light);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             opacity: 0;
-            transform: translateY(-10px) translateX(10px);
+            transform: translateY(-10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            max-width: 400px;
-            width: calc(100% - 3rem);
         }
         
         .notification.active {
             opacity: 1;
-            transform: translateY(0) translateX(0);
+            transform: translateY(0);
         }
         
         .notification.success {
@@ -540,37 +464,30 @@
             color: var(--dark);
             cursor: pointer;
             font-size: 0.9rem;
-            padding: 0.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         /* Empty state */
         .empty-state {
             text-align: center;
-            padding: 4rem 0;
-            max-width: 600px;
-            margin: 0 auto;
+            padding: 3rem 0;
         }
         
         .empty-icon {
-            font-size: 3.5rem;
+            font-size: 3rem;
             color: rgba(211, 209, 218, 0.5);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         
         .empty-message {
             color: var(--dark);
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
         }
         
         .empty-description {
             color: var(--darker);
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            max-width: 500px;
             margin: 0 auto;
         }
         
@@ -608,7 +525,6 @@
             .model-card {
                 max-width: 100%;
                 padding: 1.2rem;
-                border-radius: 16px;
             }
             
             .model-image {
@@ -629,33 +545,23 @@
                 margin-bottom: 0.8rem;
             }
             
-            .package-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
+            .package-list {
+                grid-template-columns: 1fr;
             }
             
-            .subscribe-btn {
-                width: 100%;
-                padding: 0.8rem 0;
-            }
-            
-            /* Modal improvements for tablet */
-            .modal-overlay {
-                padding: 0.5rem;
-            }
-            
-            .modal-content {
-                max-width: 90%;
+            .package-item {
+                padding: 1.2rem;
             }
             
             .modal-model-container {
-                padding: 1.2rem 0 0.5rem;
+                flex-direction: row;
+                padding: 0;
             }
             
             .modal-model-image {
-                width: 70px;
-                height: 70px;
+                width: 90px;
+                height: 90px;
+                margin-right: 1.2rem;
             }
             
             .modal-model-name {
@@ -665,45 +571,11 @@
             .modal-model-bio {
                 font-size: 0.9rem;
             }
-            
-            .modal-section-title {
-                margin: 1rem 0 1.2rem;
-                padding-bottom: 0.8rem;
-            }
-            
-            .package-header {
-                padding: 1rem 1.2rem;
-            }
-            
-            .package-content {
-                padding: 1.2rem;
-            }
-            
-            /* Fix main subscription view layout */
-            .subscription-container {
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-            }
-            
-            .subscription-title {
-                text-align: center;
-                margin-bottom: 2rem;
-                width: 100%;
-            }
-            
-            .subscription-cards {
-                width: 100%;
-            }
         }
         
         @media (max-width: 480px) {
             .dashboard-header {
                 padding: 0.8rem 1rem;
-                position: sticky;
-                top: 0;
-                z-index: 100;
-                background-color: var(--primary);
             }
             
             .logo {
@@ -727,8 +599,6 @@
             .model-card {
                 padding: 1rem;
                 border-radius: 12px;
-                align-items: flex-start;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
             }
             
             .model-image {
@@ -750,29 +620,13 @@
                 font-size: 0.8rem;
                 line-height: 1.3;
                 margin-bottom: 0.7rem;
-                -webkit-line-clamp: 2;
-            }
-            
-            .model-card-footer {
-                flex-wrap: wrap;
-                gap: 0.8rem;
-            }
-            
-            .model-subscription-status {
-                font-size: 0.7rem;
-                padding: 0.2rem 0.6rem;
             }
             
             .view-button {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.8rem;
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
             }
             
-            /* Modal improvements for mobile */
             .modal-overlay {
                 padding: 0;
                 align-items: flex-end;
@@ -780,7 +634,6 @@
             
             .modal-content {
                 width: 100%;
-                max-width: 100%;
                 max-height: 90vh;
                 border-radius: 20px 20px 0 0;
                 box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
@@ -788,14 +641,19 @@
             
             .modal-header {
                 padding: 1rem;
-            }
-            
-            .modal-close {
-                right: 1rem;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
             }
             
             .modal-title {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
+                width: auto;
+            }
+            
+            .modal-close {
+                width: 36px;
+                height: 36px;
             }
             
             .modal-body {
@@ -803,78 +661,75 @@
             }
             
             .modal-model-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 1rem 0;
                 margin-bottom: 1.5rem;
-                padding: 1rem 0 0.5rem;
             }
             
             .modal-model-image {
-                width: 60px;
-                height: 60px;
-                margin-right: 1rem;
+                width: 80px;
+                height: 80px;
+                margin-right: 0;
+                margin-bottom: 1rem;
                 border-width: 2px;
+            }
+            
+            .modal-model-info {
+                width: 100%;
             }
             
             .modal-model-name {
                 font-size: 1.1rem;
                 margin-bottom: 0.3rem;
+                text-align: center;
             }
             
             .modal-model-bio {
                 font-size: 0.8rem;
                 line-height: 1.4;
+                text-align: center;
             }
             
             .modal-section-title {
-                font-size: 1rem;
-                margin: 0.8rem 0 1rem;
-                padding-bottom: 0.8rem;
-            }
-            
-            .modal-section-title:before {
-                width: 40px;
-            }
-            
-            .modal-section-title:after {
-                width: 20px;
-                height: 2px;
+                font-size: 1.1rem;
+                margin-bottom: 1.2rem;
+                text-align: center;
             }
             
             .package-item {
+                padding: 1.5rem 1rem;
                 border-radius: 12px;
-                width: 100%;
             }
             
-            .package-header {
-                padding: 0.9rem 1rem;
-            }
-            
-            .package-content {
-                padding: 1rem;
+            .package-list {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
             .package-name {
                 font-size: 1rem;
-            }
-            
-            .package-subtitle {
-                font-size: 0.75rem;
+                text-align: center;
             }
             
             .package-price {
-                font-size: 1.3rem;
-            }
-            
-            .package-price span {
-                font-size: 0.75rem;
+                font-size: 1.5rem;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 0.8rem;
             }
             
             .package-description {
                 font-size: 0.8rem;
                 margin-bottom: 1rem;
+                text-align: center;
             }
             
             .subscribe-btn {
-                padding: 0.8rem 0;
+                width: 100%;
+                padding: 0.75rem 0;
                 font-size: 0.85rem;
                 border-radius: 8px;
             }
@@ -893,289 +748,6 @@
                 right: 0.8rem;
                 font-size: 0.65rem;
                 padding: 0.2rem 0.6rem;
-            }
-            
-            /* Fix package items for mobile */
-            .package-list {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-            
-            .package-item {
-                max-width: 100%;
-                flex-direction: column;
-                margin-bottom: 0.5rem;
-                width: 90%;
-            }
-            
-            #model-modal .package-item {
-                width: 100%;
-                max-width: 100%;
-                flex-direction: column;
-            }
-            
-            #model-modal .package-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-                width: 100%;
-            }
-            
-            #model-modal .package-description {
-                width: 100%;
-                margin-bottom: 1rem;
-            }
-            
-            #model-modal .subscribe-btn {
-                width: 100%;
-                padding: 0.8rem 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            
-            /* Fix main subscription view layout */
-            .subscription-container {
-                flex-direction: column;
-                width: 100%;
-                padding: 0 1rem;
-            }
-            
-            .subscription-title {
-                text-align: center;
-                width: 100%;
-                margin-bottom: 1.5rem;
-            }
-            
-            .subscription-cards {
-                width: 100%;
-            }
-        }
-        
-        .dashboard-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--background);
-        }
-        
-        .dashboard-header {
-            background-color: var(--primary);
-            padding: 1.2rem 7%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-        
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent);
-            text-decoration: none;
-        }
-        
-        .header-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .dashboard-link, 
-        .logout-button {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background-color: transparent;
-            color: var(--accent);
-            border: none;
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .dashboard-link:hover, 
-        .logout-button:hover {
-            background-color: rgba(180, 193, 255, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .dashboard-content {
-            flex: 1;
-            padding: 2rem 7%;
-        }
-        
-        .section-header {
-            margin-bottom: 2.5rem;
-        }
-        
-        .section-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.8rem;
-        }
-        
-        .section-description {
-            color: var(--darker);
-            font-size: 1rem;
-            max-width: 700px;
-            line-height: 1.6;
-        }
-        
-        /* Add these specific styles for the modal packages */
-        #model-modal .package-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin: 1rem 0;
-            width: 100%;
-        }
-        
-        #model-modal .package-item {
-            width: 100%;
-            max-width: 100%;
-            flex-direction: column;
-        }
-        
-        #model-modal .package-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        
-        @media (max-width: 768px) {
-            #model-modal .package-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-                width: 100%;
-            }
-            
-            #model-modal .subscribe-btn {
-                width: 100%;
-                padding: 0.8rem 0;
-            }
-        }
-        
-        /* Add these specific styles for the "Choose Your Subscription" page */
-        .subscription-container {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .subscription-title-wrapper {
-            flex: 0 0 30%;
-            padding-right: 2rem;
-        }
-        
-        .subscription-cards-wrapper {
-            flex: 0 0 70%;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        /* Mobile responsive styles for subscription page */
-        @media (max-width: 992px) {
-            .subscription-container {
-                flex-direction: column;
-                align-items: center;
-                padding: 1rem;
-            }
-            
-            .subscription-title-wrapper {
-                flex: 0 0 100%;
-                width: 100%;
-                text-align: center;
-                padding-right: 0;
-                margin-bottom: 2rem;
-            }
-            
-            .subscription-cards-wrapper {
-                flex: 0 0 100%;
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .subscription-container {
-                padding: 1rem 0.5rem;
-            }
-        }
-        
-        /* Global fix for mobile overflows */
-        body {
-            overflow-x: hidden;
-            max-width: 100vw;
-        }
-        
-        /* Fix specific layout issues for the elements showing in the screenshot */
-        @media (max-width: 480px) {
-            h2, h3 {
-                max-width: 100%;
-            }
-            
-            .choose-subscription-container,
-            .subscription-container,
-            div[class*="subscription"] {
-                display: flex !important;
-                flex-direction: column !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 0 !important;
-                margin: 0 auto !important;
-                overflow: hidden !important;
-            }
-            
-            .choose-subscription-title,
-            .subscription-title,
-            div[class*="title"] {
-                width: 100% !important;
-                text-align: center !important;
-                margin-bottom: 2rem !important;
-                padding: 0 1rem !important;
-            }
-            
-            .choose-subscription-packages,
-            .subscription-packages,
-            div[class*="package"] {
-                width: 100% !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-            }
-            
-            /* Force the subscription card to be vertically stacked */
-            .VIP, 
-            .Regular, 
-            .Premium,
-            div[class*="VIP"],
-            div[class*="Regular"],
-            div[class*="Premium"] {
-                width: 90% !important;
-                max-width: 90% !important;
-                margin: 0 auto 1rem auto !important;
             }
         }
     </style>
@@ -1228,7 +800,7 @@
     <div id="model-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Choose Your Subscription</h2>
+                <div class="modal-title">Subscription Options</div>
                 <button id="modal-close" class="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1433,19 +1005,13 @@
         function displayModels(models) {
             modelGrid.innerHTML = '';
             
-            // Create and append model cards with animation delay
-            models.forEach((model, index) => {
+            models.forEach(model => {
                 // Check if user is already subscribed to this model
                 const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
                 
                 const modelCard = document.createElement('div');
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
-                
-                // Add animation delay for staggered appearance
-                modelCard.style.opacity = '0';
-                modelCard.style.transform = 'translateY(20px)';
-                modelCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 
                 // Add subscription badge if subscribed
                 if (isSubscribed) {
@@ -1513,12 +1079,6 @@
                         openSubscriptionModal(model);
                     }
                 });
-                
-                // Animate the card after a delay based on its index
-                setTimeout(() => {
-                    modelCard.style.opacity = '1';
-                    modelCard.style.transform = 'translateY(0)';
-                }, 50 * index);
             });
         }
         
@@ -1549,88 +1109,18 @@
                     </div>
                 </div>
                 
+                <h3 class="modal-section-title">Select a Subscription Package</h3>
                 <div id="package-list" class="package-list">
                     <div class="loading-spinner"></div>
                 </div>
             `;
             
-            // Show modal with animation
+            // Show modal
             modelModal.classList.add('active');
             document.body.style.overflow = 'hidden'; // Prevent scrolling
             
-            // Add entrance animation for packages when they load
-            const styleEl = document.createElement('style');
-            styleEl.textContent = `
-                @keyframes fadeSlideIn {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                
-                .package-item {
-                    animation: fadeSlideIn 0.5s forwards;
-                    opacity: 0;
-                }
-            `;
-            document.head.appendChild(styleEl);
-            
-            // Add swipe to close for mobile
-            setupModalSwipe();
-            
             // Load packages for this model
             loadPackages(model.id);
-        }
-        
-        // Setup swipe to close for mobile
-        function setupModalSwipe() {
-            let startY;
-            let currentY;
-            const modalContent = document.querySelector('.modal-content');
-            const threshold = 100; // Minimum pixels to swipe to close
-            
-            modalContent.addEventListener('touchstart', (e) => {
-                // Only enable swipe to close if modal body is scrolled to top
-                if (modalContent.scrollTop <= 0) {
-                    startY = e.touches[0].clientY;
-                }
-            }, { passive: true });
-            
-            modalContent.addEventListener('touchmove', (e) => {
-                if (startY && modalContent.scrollTop <= 0) {
-                    currentY = e.touches[0].clientY;
-                    const diff = currentY - startY;
-                    
-                    // Only apply transform if dragging down
-                    if (diff > 0) {
-                        modalContent.style.transform = `translateY(${diff}px)`;
-                        modalContent.style.transition = 'none';
-                        e.preventDefault();
-                    }
-                }
-            }, { passive: false });
-            
-            modalContent.addEventListener('touchend', () => {
-                if (startY && currentY) {
-                    const diff = currentY - startY;
-                    
-                    modalContent.style.transition = 'transform 0.3s ease';
-                    
-                    if (diff > threshold) {
-                        // Close the modal
-                        modalContent.style.transform = `translateY(${window.innerHeight}px)`;
-                        setTimeout(() => {
-                            modelModal.classList.remove('active');
-                            document.body.style.overflow = ''; // Restore scrolling
-                            modalContent.style.transform = '';
-                        }, 300);
-                    } else {
-                        // Reset position
-                        modalContent.style.transform = '';
-                    }
-                }
-                
-                startY = null;
-                currentY = null;
-            }, { passive: true });
         }
         
         // Load packages for a model
@@ -1655,12 +1145,9 @@
                 
                 packageList.innerHTML = '';
                 
-                packages.forEach((pkg, index) => {
+                packages.forEach(pkg => {
                     const packageItem = document.createElement('div');
                     packageItem.className = 'package-item';
-                    
-                    // Add delay based on index for staggered animation
-                    packageItem.style.animationDelay = `${index * 0.15}s`;
                     
                     const priceFormatted = new Intl.NumberFormat('en-US', {
                         style: 'currency',
@@ -1668,28 +1155,16 @@
                         minimumFractionDigits: 2
                     }).format(pkg.price);
                     
-                    // Feature text that might be included in the description
-                    const features = pkg.description 
-                        ? pkg.description 
-                        : 'Access exclusive content and features with this subscription.';
-                    
                     packageItem.innerHTML = `
-                        <div class="package-header">
-                            <div class="package-title-section">
-                                <div class="package-name">${pkg.name}</div>
-                                <div class="package-subtitle">Premium Access</div>
-                            </div>
-                            <div class="package-price">${priceFormatted}<span>/month</span></div>
-                        </div>
-                        <div class="package-content">
-                            <div class="package-description">${features}</div>
-                            <button class="subscribe-btn" 
-                                    data-package-id="${pkg.id}" 
-                                    data-price-id="${pkg.stripe_price_id}" 
-                                    data-model-id="${pkg.model_id}">
-                                <i class="fas fa-credit-card"></i> Subscribe
-                            </button>
-                        </div>
+                        <div class="package-name">${pkg.name}</div>
+                        <div class="package-price">${priceFormatted}<span>/month</span></div>
+                        <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
+                        <button class="subscribe-btn" 
+                                data-package-id="${pkg.id}" 
+                                data-price-id="${pkg.stripe_price_id}" 
+                                data-model-id="${pkg.model_id}">
+                            <i class="fas fa-credit-card"></i> Subscribe Now
+                        </button>
                     `;
                     
                     packageList.appendChild(packageItem);
@@ -1720,8 +1195,7 @@
             try {
                 // Disable button
                 button.disabled = true;
-                button.classList.add('processing');
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                button.textContent = 'Processing...';
                 
                 // First create a customer if user doesn't have a Stripe ID
                 if (!userData.stripe_customer_id) {
@@ -1797,8 +1271,7 @@
                 
                 // Re-enable button
                 button.disabled = false;
-                button.classList.remove('processing');
-                button.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
+                button.textContent = 'Subscribe';
             }
         }
         
@@ -1818,29 +1291,11 @@
         
         // Show notification
         function showNotification(message, type = 'success') {
-            // Clear any existing timeout
-            if (window.notificationTimeout) {
-                clearTimeout(window.notificationTimeout);
-            }
-            
-            // Set notification icon and class
-            const notificationIcon = notification.querySelector('.notification-icon i');
-            notificationIcon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-            
-            // Set message
             notificationMessage.textContent = message;
-            
-            // Set type class
             notification.className = `notification ${type} active`;
             
-            // Animate in
-            notification.style.animation = 'none';
-            // Force reflow
-            void notification.offsetWidth;
-            notification.style.animation = type === 'success' ? 'slideInRight 0.3s ease' : 'shake 0.5s ease';
-            
             // Automatically hide after 5 seconds
-            window.notificationTimeout = setTimeout(() => {
+            setTimeout(() => {
                 notification.classList.remove('active');
             }, 5000);
         }
@@ -1879,22 +1334,6 @@
         function redirectToLogin() {
             window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
         }
-        
-        // Add animation keyframes
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(30px); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                20%, 40%, 60%, 80% { transform: translateX(5px); }
-            }
-        `;
-        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html> 
