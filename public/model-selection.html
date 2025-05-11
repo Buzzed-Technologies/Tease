@@ -205,7 +205,7 @@
             background-color: var(--light);
             border-radius: 20px;
             width: 100%;
-            max-width: 600px;
+            max-width: 580px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -263,17 +263,18 @@
         .modal-model-container {
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding: 1.5rem 0;
+            margin-bottom: 1.8rem;
+            padding: 1.5rem 0 0.5rem;
+            border-bottom: 1px dashed rgba(211, 209, 218, 0.3);
         }
         
         .modal-model-image {
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            margin-right: 1.5rem;
+            margin-right: 1.2rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: 3px solid var(--primary-light);
             flex-shrink: 0;
@@ -297,35 +298,35 @@
         }
         
         .modal-section-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin: 1.2rem 0 1.4rem;
             color: var(--dark);
             position: relative;
-            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
         }
         
-        .modal-section-title:after {
+        .modal-section-title:before {
             content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
+            width: 4px;
+            height: 1.1rem;
             background-color: var(--accent);
-            border-radius: 3px;
+            margin-right: 0.8rem;
+            border-radius: 4px;
         }
         
         .package-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
         
         .package-item {
             background-color: var(--primary-light);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 0;
             border: 1px solid rgba(211, 209, 218, 0.15);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
@@ -337,57 +338,83 @@
         .package-item:before {
             content: '';
             position: absolute;
-            top: 0;
             left: 0;
-            width: 100%;
-            height: 5px;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            height: 100%;
             background-color: var(--accent);
             opacity: 0.8;
         }
         
         .package-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
+        }
+        
+        .package-title-section {
+            display: flex;
+            flex-direction: column;
         }
         
         .package-name {
             font-weight: 600;
-            margin-bottom: 0.5rem;
             color: var(--dark);
             font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .package-subtitle {
+            font-size: 0.85rem;
+            color: var(--darker);
+            opacity: 0.7;
         }
         
         .package-price {
             font-size: 1.6rem;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 1rem;
             display: flex;
             align-items: flex-end;
+            line-height: 1;
         }
         
         .package-price span {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 400;
             margin-left: 4px;
             color: var(--dark-gray);
         }
         
+        .package-content {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
         .package-description {
             font-size: 0.9rem;
             color: var(--dark);
-            margin-bottom: 1.5rem;
             line-height: 1.5;
-            flex-grow: 1;
+            flex: 1;
         }
         
         .subscribe-btn {
-            width: 100%;
             background-color: var(--accent);
             color: var(--darker);
             border: none;
             border-radius: 10px;
-            padding: 0.9rem 0;
+            padding: 0.9rem 1.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -395,6 +422,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .subscribe-btn i {
@@ -577,12 +606,15 @@
                 margin-bottom: 0.8rem;
             }
             
-            .package-list {
-                grid-template-columns: 1fr;
+            .package-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
             }
             
-            .package-item {
-                padding: 1.2rem;
+            .subscribe-btn {
+                width: 100%;
+                padding: 0.8rem 0;
             }
             
             /* Modal improvements for tablet */
@@ -595,14 +627,12 @@
             }
             
             .modal-model-container {
-                flex-direction: row;
-                padding: 1rem 0;
+                padding: 1.2rem 0 0.5rem;
             }
             
             .modal-model-image {
-                width: 90px;
-                height: 90px;
-                margin-right: 1.2rem;
+                width: 70px;
+                height: 70px;
             }
             
             .modal-model-name {
@@ -611,6 +641,18 @@
             
             .modal-model-bio {
                 font-size: 0.9rem;
+            }
+            
+            .modal-section-title {
+                margin: 1rem 0 1.2rem;
+            }
+            
+            .package-header {
+                padding: 1rem 1.2rem;
+            }
+            
+            .package-content {
+                padding: 1.2rem;
             }
         }
         
@@ -708,7 +750,7 @@
             }
             
             .modal-title {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
             }
             
             .modal-body {
@@ -716,12 +758,13 @@
             }
             
             .modal-model-container {
-                margin-bottom: 1.2rem;
+                margin-bottom: 1.5rem;
+                padding: 1rem 0 0.5rem;
             }
             
             .modal-model-image {
-                width: 70px;
-                height: 70px;
+                width: 60px;
+                height: 60px;
                 margin-right: 1rem;
                 border-width: 2px;
             }
@@ -737,22 +780,42 @@
             }
             
             .modal-section-title {
-                font-size: 1.1rem;
-                margin-bottom: 1.2rem;
+                font-size: 1rem;
+                margin: 0.8rem 0 1rem;
+            }
+            
+            .modal-section-title:before {
+                height: 1rem;
+                width: 3px;
+                margin-right: 0.6rem;
             }
             
             .package-item {
-                padding: 1rem;
                 border-radius: 12px;
+            }
+            
+            .package-header {
+                padding: 0.9rem 1rem;
+            }
+            
+            .package-content {
+                padding: 1rem;
             }
             
             .package-name {
                 font-size: 1rem;
             }
             
+            .package-subtitle {
+                font-size: 0.75rem;
+            }
+            
             .package-price {
                 font-size: 1.3rem;
-                margin-bottom: 0.8rem;
+            }
+            
+            .package-price span {
+                font-size: 0.75rem;
             }
             
             .package-description {
@@ -1244,6 +1307,21 @@
             modelModal.classList.add('active');
             document.body.style.overflow = 'hidden'; // Prevent scrolling
             
+            // Add entrance animation for packages when they load
+            const styleEl = document.createElement('style');
+            styleEl.textContent = `
+                @keyframes fadeSlideIn {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                
+                .package-item {
+                    animation: fadeSlideIn 0.5s forwards;
+                    opacity: 0;
+                }
+            `;
+            document.head.appendChild(styleEl);
+            
             // Add swipe to close for mobile
             setupModalSwipe();
             
@@ -1326,9 +1404,12 @@
                 
                 packageList.innerHTML = '';
                 
-                packages.forEach(pkg => {
+                packages.forEach((pkg, index) => {
                     const packageItem = document.createElement('div');
                     packageItem.className = 'package-item';
+                    
+                    // Add delay based on index for staggered animation
+                    packageItem.style.animationDelay = `${index * 0.15}s`;
                     
                     const priceFormatted = new Intl.NumberFormat('en-US', {
                         style: 'currency',
@@ -1336,16 +1417,28 @@
                         minimumFractionDigits: 2
                     }).format(pkg.price);
                     
+                    // Feature text that might be included in the description
+                    const features = pkg.description 
+                        ? pkg.description 
+                        : 'Access exclusive content and features with this subscription.';
+                    
                     packageItem.innerHTML = `
-                        <div class="package-name">${pkg.name}</div>
-                        <div class="package-price">${priceFormatted}<span>/month</span></div>
-                        <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
-                        <button class="subscribe-btn" 
-                                data-package-id="${pkg.id}" 
-                                data-price-id="${pkg.stripe_price_id}" 
-                                data-model-id="${pkg.model_id}">
-                            <i class="fas fa-credit-card"></i> Subscribe Now
-                        </button>
+                        <div class="package-header">
+                            <div class="package-title-section">
+                                <div class="package-name">${pkg.name}</div>
+                                <div class="package-subtitle">Premium Access</div>
+                            </div>
+                            <div class="package-price">${priceFormatted}<span>/month</span></div>
+                        </div>
+                        <div class="package-content">
+                            <div class="package-description">${features}</div>
+                            <button class="subscribe-btn" 
+                                    data-package-id="${pkg.id}" 
+                                    data-price-id="${pkg.stripe_price_id}" 
+                                    data-model-id="${pkg.model_id}">
+                                <i class="fas fa-credit-card"></i> Subscribe
+                            </button>
+                        </div>
                     `;
                     
                     packageList.appendChild(packageItem);
