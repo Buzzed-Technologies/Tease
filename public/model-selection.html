@@ -212,12 +212,11 @@
         }
         
         .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(211, 209, 218, 0.3);
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: none;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
+            flex-direction: column;
+            position: relative;
             top: 0;
             background-color: var(--light);
             z-index: 5;
@@ -228,6 +227,11 @@
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             color: var(--dark);
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.3);
+            width: 100%;
         }
         
         .modal-close {
@@ -243,6 +247,9 @@
             border-radius: 50%;
             transition: all 0.2s ease;
             background-color: rgba(211, 209, 218, 0.1);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
         }
         
         .modal-close:hover {
@@ -255,7 +262,6 @@
         
         .modal-model-container {
             display: flex;
-            flex-direction: column;
             align-items: center;
             margin-bottom: 1.5rem;
             padding: 1.5rem 0;
@@ -267,14 +273,14 @@
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            margin-bottom: 1.2rem;
+            margin-right: 1.5rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: 3px solid var(--primary-light);
+            flex-shrink: 0;
         }
         
         .modal-model-info {
-            text-align: center;
-            width: 100%;
+            flex: 1;
         }
         
         .modal-model-name {
@@ -288,8 +294,6 @@
             color: var(--dark);
             line-height: 1.6;
             font-size: 0.95rem;
-            max-width: 450px;
-            margin: 0 auto 1rem;
         }
         
         .modal-section-title {
@@ -557,13 +561,14 @@
             }
             
             .modal-model-container {
-                padding: 0.5rem 0 1.5rem;
+                flex-direction: row;
+                padding: 0;
             }
             
             .modal-model-image {
-                width: 100px;
-                height: 100px;
-                margin-bottom: 1rem;
+                width: 90px;
+                height: 90px;
+                margin-right: 1.2rem;
             }
             
             .modal-model-name {
@@ -654,23 +659,23 @@
             }
             
             .modal-model-container {
-                padding: 0.5rem 0 1.2rem;
+                margin-bottom: 1.2rem;
             }
             
             .modal-model-image {
-                width: 90px;
-                height: 90px;
-                margin-bottom: 0.8rem;
+                width: 70px;
+                height: 70px;
+                margin-right: 1rem;
                 border-width: 2px;
             }
             
             .modal-model-name {
-                font-size: 1.2rem;
-                margin-bottom: 0.4rem;
+                font-size: 1.1rem;
+                margin-bottom: 0.3rem;
             }
             
             .modal-model-bio {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
                 line-height: 1.4;
             }
             
@@ -770,10 +775,10 @@
     <div id="model-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">Subscription Options</div>
                 <button id="modal-close" class="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
+                <div class="modal-title">Subscription Options</div>
             </div>
             <div class="modal-body" id="modal-body">
                 <!-- Modal content will be dynamically inserted here -->
