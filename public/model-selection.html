@@ -1523,6 +1523,14 @@
         function redirectToLogin() {
             window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
         }
+
+        const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
+        if (dashboardButton) {
+            dashboardButton.addEventListener('click', function(e) {
+                // Always navigate to dashboard.html, even if default is blocked
+                window.location.href = '/dashboard.html';
+            });
+        }
     </script>
 </body>
 </html> 
