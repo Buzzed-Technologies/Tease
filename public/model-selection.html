@@ -1032,248 +1032,196 @@
         let userData = null;
         let modelsData = [];
         let userSubscriptions = [];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM elements
-            const modelGrid = document.getElementById('model-grid');
-            const loadingContainer = document.getElementById('loading-container');
-            const emptyState = document.getElementById('empty-state');
-            const modelModal = document.getElementById('model-modal');
-            const modalBody = document.getElementById('modal-body');
-            const modalClose = document.getElementById('modal-close');
-            const notification = document.getElementById('notification');
-            const notificationMessage = document.getElementById('notification-message');
-            const notificationClose = document.getElementById('notification-close');
-            const logoutButton = document.getElementById('logout-button');
-
-            // First try to get the key from meta tag
-            const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-            let supabaseKey = null;
-
-            // Check if the key is a real key or just the placeholder
-            if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
-                console.log('Using API key from meta tag');
-                supabaseKey = metaKey;
-                initSupabase();
-            } else {
-                // Fetch API key from server config endpoint
-                console.log('Meta tag key not available, trying to fetch from server...');
-                fetch('/api/config')
-                    .then(response => response.json())
-                    .then(config => {
-                        if (config.supabaseKey) {
-                            console.log('Using API key from server');
-                            supabaseKey = config.supabaseKey;
-                        } else {
-                            // Fall back to hardcoded key
-                            console.log('Using hardcoded API key as fallback');
-                            supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                        }
-                        initSupabase();
-                    })
-                    .catch(error => {
-                        console.error('Error fetching config:', error);
+        
+        // DOM elements
+        const modelGrid = document.getElementById('model-grid');
+        const loadingContainer = document.getElementById('loading-container');
+        const emptyState = document.getElementById('empty-state');
+        const modelModal = document.getElementById('model-modal');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const notificationClose = document.getElementById('notification-close');
+        const logoutButton = document.getElementById('logout-button');
+        
+        // First try to get the key from meta tag
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
+        let supabaseKey = null;
+        
+        // Check if the key is a real key or just the placeholder
+        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+            console.log('Using API key from meta tag');
+            supabaseKey = metaKey;
+            initSupabase();
+        } else {
+            // Fetch API key from server config endpoint
+            console.log('Meta tag key not available, trying to fetch from server...');
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.supabaseKey) {
+                        console.log('Using API key from server');
+                        supabaseKey = config.supabaseKey;
+                    } else {
                         // Fall back to hardcoded key
-                        console.log('Using hardcoded API key due to error');
+                        console.log('Using hardcoded API key as fallback');
                         supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                        initSupabase();
-                    });
-            }
-
-            // Initialize Stripe
-            function initStripe() {
-                // Check if stripe.js is loaded
-                if (window.Stripe) {
-                    stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
-                    console.log('Stripe initialized');
-                } else {
-                    console.error('Stripe.js not loaded');
-                }
-            }
-
-            function initSupabase() {
-                if (window.supabase) {
-                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                    initStripe();
-                    loadUserData();
-                } else {
-                    console.error('Supabase client library not loaded');
-                }
-            }
-
-            // Load user data
-            async function loadUserData() {
-                // Try to get user from localStorage
-                const storedUser = localStorage.getItem('threadpay_user');
-                
-                if (storedUser) {
-                    try {
-                        userData = JSON.parse(storedUser);
-                        console.log('User loaded from localStorage:', userData);
-                        
-                        // Fetch user details including subscriptions
-                        await fetchUserDetails();
-                        
-                        // Load all models
-                        await loadModels();
-                    } catch (error) {
-                        console.error('Error parsing user data:', error);
-                        redirectToLogin();
                     }
-                } else {
-                    console.log('No user found in localStorage');
+                    initSupabase();
+                })
+                .catch(error => {
+                    console.error('Error fetching config:', error);
+                    // Fall back to hardcoded key
+                    console.log('Using hardcoded API key due to error');
+                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                });
+        }
+        
+        // Initialize Stripe
+        function initStripe() {
+            // Check if stripe.js is loaded
+            if (window.Stripe) {
+                stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
+                console.log('Stripe initialized');
+            } else {
+                console.error('Stripe.js not loaded');
+            }
+        }
+        
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                initStripe();
+                loadUserData();
+            } else {
+                console.error('Supabase client library not loaded');
+            }
+        }
+        
+        // Load user data
+        async function loadUserData() {
+            // Try to get user from localStorage
+            const storedUser = localStorage.getItem('threadpay_user');
+            
+            if (storedUser) {
+                try {
+                    userData = JSON.parse(storedUser);
+                    console.log('User loaded from localStorage:', userData);
+                    
+                    // Fetch user details including subscriptions
+                    await fetchUserDetails();
+                    
+                    // Load all models
+                    await loadModels();
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
                     redirectToLogin();
                 }
+            } else {
+                console.log('No user found in localStorage');
+                redirectToLogin();
             }
-            
-            // Fetch user details
-            async function fetchUserDetails() {
-                try {
-                    // Get user profile
-                    const { data: profile, error: profileError } = await supabase
-                        .from('profiles')
+        }
+        
+        // Fetch user details
+        async function fetchUserDetails() {
+            try {
+                // Get user profile
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
+                    .single();
+                    
+                if (profileError) throw profileError;
+                
+                if (profile) {
+                    // Update user data with profile info
+                    userData = { ...userData, ...profile };
+                    
+                    // Get user subscriptions
+                    const { data: subscriptions, error: subsError } = await supabase
+                        .from('user_model_subscriptions')
                         .select('*')
-                        .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
-                        .single();
+                        .eq('user_id', userData.id)
+                        .eq('is_active', true);
                         
-                    if (profileError) throw profileError;
+                    if (subsError) throw subsError;
                     
-                    if (profile) {
-                        // Update user data with profile info
-                        userData = { ...userData, ...profile };
-                        
-                        // Get user subscriptions
-                        const { data: subscriptions, error: subsError } = await supabase
-                            .from('user_model_subscriptions')
-                            .select('*')
-                            .eq('user_id', userData.id)
-                            .eq('is_active', true);
-                            
-                        if (subsError) throw subsError;
-                        
-                        userSubscriptions = subscriptions || [];
-                        console.log('User subscriptions:', userSubscriptions);
-                    }
-                } catch (error) {
-                    console.error('Error fetching user details:', error);
-                    showNotification('Failed to load your subscription details. Please try again.', 'error');
+                    userSubscriptions = subscriptions || [];
+                    console.log('User subscriptions:', userSubscriptions);
                 }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                showNotification('Failed to load your subscription details. Please try again.', 'error');
             }
-            
-            // Load models
-            async function loadModels() {
-                try {
-                    loadingContainer.style.display = 'block';
-                    modelGrid.style.display = 'none';
-                    emptyState.style.display = 'none';
+        }
+        
+        // Load models
+        async function loadModels() {
+            try {
+                loadingContainer.style.display = 'block';
+                modelGrid.style.display = 'none';
+                emptyState.style.display = 'none';
+                
+                // Fetch all models
+                const { data: models, error } = await supabase
+                    .from('models')
+                    .select('*');
                     
-                    // Fetch all models
-                    const { data: models, error } = await supabase
-                        .from('models')
-                        .select('*');
-                        
-                    if (error) throw error;
-                    
-                    if (!models || models.length === 0) {
-                        loadingContainer.style.display = 'none';
-                        emptyState.style.display = 'block';
-                        return;
-                    }
-                    
-                    modelsData = models;
-                    
-                    // Display models
-                    displayModels(models);
-                    
-                    loadingContainer.style.display = 'none';
-                    modelGrid.style.display = 'grid';
-                } catch (error) {
-                    console.error('Error loading models:', error);
-                    showNotification('Failed to load creators. Please try again later.', 'error');
-                    
+                if (error) throw error;
+                
+                if (!models || models.length === 0) {
                     loadingContainer.style.display = 'none';
                     emptyState.style.display = 'block';
+                    return;
                 }
-            }
-            
-            // Display models
-            function displayModels(models) {
-                modelGrid.innerHTML = '';
                 
-                models.forEach(model => {
-                    // Check if user is already subscribed to this model
-                    const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
-                    
-                    const modelCard = document.createElement('div');
-                    modelCard.className = 'model-card';
-                    modelCard.dataset.modelId = model.id;
-                    
-                    // Add subscription badge if subscribed
-                    if (isSubscribed) {
-                        const badge = document.createElement('div');
-                        badge.className = 'model-subscription-badge';
-                        badge.textContent = 'Subscribed';
-                        modelCard.appendChild(badge);
-                    }
-                    
-                    // Add container for the image
-                    const modelImageContainer = document.createElement('div');
-                    modelImageContainer.className = 'model-image-container';
-                    
-                    const modelImage = document.createElement('div');
-                    modelImage.className = 'model-image';
-                    
-                    // Build the correct image path using Supabase bucket
-                    let imagePath;
-                    if (model.pictures) {
-                        // Handle both object format (model.pictures.main) and array format (model.pictures[0])
-                        if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                            imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-                        } else if (model.pictures.main) {
-                            imagePath = model.pictures.main;
-                        } else {
-                            imagePath = '/images/placeholder-model.png';
-                        }
-                    } else {
-                        imagePath = '/images/placeholder-model.png';
-                    }
-                    
-                    modelImage.style.backgroundImage = `url(${imagePath})`;
-                    modelImageContainer.appendChild(modelImage);
-                    
-                    const modelDetails = document.createElement('div');
-                    modelDetails.className = 'model-details';
-                    
-                    modelDetails.innerHTML = `
-                        <h3 class="model-name">${model.name}</h3>
-                        <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                        <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" data-model-id="${model.id}">
-                            ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
-                        </button>
-                    `;
-                    
-                    modelCard.appendChild(modelImageContainer);
-                    modelCard.appendChild(modelDetails);
-                    modelGrid.appendChild(modelCard);
-                    
-                    // Add event listener to button
-                    const actionButton = modelDetails.querySelector('.btn');
-                    actionButton.addEventListener('click', () => {
-                        const targetModel = modelsData.find(m => m.id === model.id);
-                        
-                        if (isSubscribed) {
-                            // Navigate to dashboard to manage this subscription
-                            window.location.href = '/dashboard.html';
-                        } else {
-                            // Open subscription modal
-                            openSubscriptionModal(model);
-                        }
-                    });
-                });
+                modelsData = models;
+                
+                // Display models
+                displayModels(models);
+                
+                loadingContainer.style.display = 'none';
+                modelGrid.style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading models:', error);
+                showNotification('Failed to load creators. Please try again later.', 'error');
+                
+                loadingContainer.style.display = 'none';
+                emptyState.style.display = 'block';
             }
+        }
+        
+        // Display models
+        function displayModels(models) {
+            modelGrid.innerHTML = '';
             
-            // Open the subscription modal for a model
-            function openSubscriptionModal(model) {
+            models.forEach(model => {
+                // Check if user is already subscribed to this model
+                const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
+                
+                const modelCard = document.createElement('div');
+                modelCard.className = 'model-card';
+                modelCard.dataset.modelId = model.id;
+                
+                // Add subscription badge if subscribed
+                if (isSubscribed) {
+                    const badge = document.createElement('div');
+                    badge.className = 'model-subscription-badge';
+                    badge.textContent = 'Subscribed';
+                    modelCard.appendChild(badge);
+                }
+                
+                // Add container for the image
+                const modelImageContainer = document.createElement('div');
+                modelImageContainer.className = 'model-image-container';
+                
+                const modelImage = document.createElement('div');
+                modelImage.className = 'model-image';
+                
                 // Build the correct image path using Supabase bucket
                 let imagePath;
                 if (model.pictures) {
@@ -1288,252 +1236,302 @@
                 } else {
                     imagePath = '/images/placeholder-model.png';
                 }
-
-                // Set modal content
-                modalBody.innerHTML = `
-                    <div class="modal-model-container">
-                        <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
-                        <div class="modal-model-info">
-                            <h3 class="modal-model-name">${model.name}</h3>
-                            <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                        </div>
-                    </div>
-                    
-                    <h3 class="modal-section-title">Select a Subscription Package</h3>
-                    <div id="package-list" class="package-list">
-                        <div class="loading-spinner"></div>
-                    </div>
+                
+                modelImage.style.backgroundImage = `url(${imagePath})`;
+                modelImageContainer.appendChild(modelImage);
+                
+                const modelDetails = document.createElement('div');
+                modelDetails.className = 'model-details';
+                
+                modelDetails.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" data-model-id="${model.id}">
+                        ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
+                    </button>
                 `;
                 
-                // Show modal
-                modelModal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+                modelCard.appendChild(modelImageContainer);
+                modelCard.appendChild(modelDetails);
+                modelGrid.appendChild(modelCard);
                 
-                // Load packages for this model
-                loadPackages(model.id);
-            }
-            
-            // Load packages for a model
-            async function loadPackages(modelId) {
-                try {
-                    const packageList = document.getElementById('package-list');
-                    packageList.innerHTML = '<div class="loading-spinner"></div>';
+                // Add event listener to button
+                const actionButton = modelDetails.querySelector('.btn');
+                actionButton.addEventListener('click', () => {
+                    const targetModel = modelsData.find(m => m.id === model.id);
                     
-                    // Fetch packages for this model
-                    const { data: packages, error } = await supabase
-                        .from('packages')
-                        .select('*')
-                        .eq('model_id', modelId)
-                        .order('price', { ascending: true });
-                        
-                    if (error) throw error;
-                    
-                    if (!packages || packages.length === 0) {
-                        packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
-                        return;
+                    if (isSubscribed) {
+                        // Navigate to dashboard to manage this subscription
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        // Open subscription modal
+                        openSubscriptionModal(model);
                     }
-                    
-                    packageList.innerHTML = '';
-                    
-                    packages.forEach(pkg => {
-                        const packageItem = document.createElement('div');
-                        packageItem.className = 'package-item';
-                        
-                        const priceFormatted = new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            minimumFractionDigits: 2
-                        }).format(pkg.price);
-                        
-                        packageItem.innerHTML = `
-                            <div class="package-name">${pkg.name}</div>
-                            <div class="package-price">${priceFormatted}<span>/month</span></div>
-                            <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
-                            <button class="btn btn-full" 
-                                    data-package-id="${pkg.id}" 
-                                    data-price-id="${pkg.stripe_price_id}" 
-                                    data-model-id="${pkg.model_id}">
-                                <i class="fas fa-credit-card"></i> Subscribe Now
-                            </button>
-                        `;
-                        
-                        packageList.appendChild(packageItem);
-                        
-                        // Add event listener to subscribe button
-                        const subscribeBtn = packageItem.querySelector('.btn');
-                        subscribeBtn.addEventListener('click', handleSubscription);
-                    });
-                } catch (error) {
-                    console.error('Error loading packages:', error);
-                    document.getElementById('package-list').innerHTML = 
-                        '<p class="no-packages">Failed to load subscription packages. Please try again later.</p>';
+                });
+            });
+        }
+        
+        // Open the subscription modal for a model
+        function openSubscriptionModal(model) {
+            // Build the correct image path using Supabase bucket
+            let imagePath;
+            if (model.pictures) {
+                // Handle both object format (model.pictures.main) and array format (model.pictures[0])
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else if (model.pictures.main) {
+                    imagePath = model.pictures.main;
+                } else {
+                    imagePath = '/images/placeholder-model.png';
                 }
+            } else {
+                imagePath = '/images/placeholder-model.png';
             }
-            
-            // Handle subscription
-            async function handleSubscription() {
-                const button = this;
-                const packageId = button.getAttribute('data-package-id');
-                const priceId = button.getAttribute('data-price-id');
-                const modelId = button.getAttribute('data-model-id');
+
+            // Set modal content
+            modalBody.innerHTML = `
+                <div class="modal-model-container">
+                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                    <div class="modal-model-info">
+                        <h3 class="modal-model-name">${model.name}</h3>
+                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    </div>
+                </div>
                 
-                if (!packageId || !priceId || !modelId) {
-                    showNotification('Invalid subscription details. Please try again.', 'error');
+                <h3 class="modal-section-title">Select a Subscription Package</h3>
+                <div id="package-list" class="package-list">
+                    <div class="loading-spinner"></div>
+                </div>
+            `;
+            
+            // Show modal
+            modelModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            // Load packages for this model
+            loadPackages(model.id);
+        }
+        
+        // Load packages for a model
+        async function loadPackages(modelId) {
+            try {
+                const packageList = document.getElementById('package-list');
+                packageList.innerHTML = '<div class="loading-spinner"></div>';
+                
+                // Fetch packages for this model
+                const { data: packages, error } = await supabase
+                    .from('packages')
+                    .select('*')
+                    .eq('model_id', modelId)
+                    .order('price', { ascending: true });
+                    
+                if (error) throw error;
+                
+                if (!packages || packages.length === 0) {
+                    packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
                     return;
                 }
                 
-                try {
-                    // Disable button
-                    button.disabled = true;
-                    button.textContent = 'Processing...';
+                packageList.innerHTML = '';
+                
+                packages.forEach(pkg => {
+                    const packageItem = document.createElement('div');
+                    packageItem.className = 'package-item';
                     
-                    // First create a customer if user doesn't have a Stripe ID
-                    if (!userData.stripe_customer_id) {
-                        const createCustomerResponse = await fetch('/api/create-customer', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                name: userData.name || 'User',
-                                email: userData.email || `${userData.username || 'user'}@example.com`,
-                                phone: userData.username || ''
-                            })
-                        });
-                        
-                        if (!createCustomerResponse.ok) {
-                            const errorData = await createCustomerResponse.json();
-                            throw new Error(errorData.error || 'Error creating customer');
-                        }
-                        
-                        const customer = await createCustomerResponse.json();
-                        
-                        // Store the customer ID
-                        userData.stripe_customer_id = customer.customerId;
-                        localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                        
-                        // Update the customer ID in the database
-                        await supabase
-                            .from('profiles')
-                            .update({ stripe_customer_id: customer.customerId })
-                            .eq('id', userData.id);
-                    }
+                    const priceFormatted = new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 2
+                    }).format(pkg.price);
                     
-                    // Create checkout session
-                    const createSessionResponse = await fetch('/api/create-checkout-session', {
+                    packageItem.innerHTML = `
+                        <div class="package-name">${pkg.name}</div>
+                        <div class="package-price">${priceFormatted}<span>/month</span></div>
+                        <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
+                        <button class="btn btn-full" 
+                                data-package-id="${pkg.id}" 
+                                data-price-id="${pkg.stripe_price_id}" 
+                                data-model-id="${pkg.model_id}">
+                            <i class="fas fa-credit-card"></i> Subscribe Now
+                        </button>
+                    `;
+                    
+                    packageList.appendChild(packageItem);
+                    
+                    // Add event listener to subscribe button
+                    const subscribeBtn = packageItem.querySelector('.btn');
+                    subscribeBtn.addEventListener('click', handleSubscription);
+                });
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                document.getElementById('package-list').innerHTML = 
+                    '<p class="no-packages">Failed to load subscription packages. Please try again later.</p>';
+            }
+        }
+        
+        // Handle subscription
+        async function handleSubscription() {
+            const button = this;
+            const packageId = button.getAttribute('data-package-id');
+            const priceId = button.getAttribute('data-price-id');
+            const modelId = button.getAttribute('data-model-id');
+            
+            if (!packageId || !priceId || !modelId) {
+                showNotification('Invalid subscription details. Please try again.', 'error');
+                return;
+            }
+            
+            try {
+                // Disable button
+                button.disabled = true;
+                button.textContent = 'Processing...';
+                
+                // First create a customer if user doesn't have a Stripe ID
+                if (!userData.stripe_customer_id) {
+                    const createCustomerResponse = await fetch('/api/create-customer', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            priceId: priceId,
-                            customerId: userData.stripe_customer_id,
-                            userId: userData.id,
-                            userPhone: userData.username || '',
-                            packageId: packageId,
-                            modelId: modelId,
-                            successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
-                            cancelUrl: window.location.origin + '/model-selection.html?subscription_canceled=true'
+                            name: userData.name || 'User',
+                            email: userData.email || `${userData.username || 'user'}@example.com`,
+                            phone: userData.username || ''
                         })
                     });
                     
-                    if (!createSessionResponse.ok) {
-                        const errorData = await createSessionResponse.json();
-                        throw new Error(errorData.error || 'Error creating checkout session');
+                    if (!createCustomerResponse.ok) {
+                        const errorData = await createCustomerResponse.json();
+                        throw new Error(errorData.error || 'Error creating customer');
                     }
                     
-                    const session = await createSessionResponse.json();
+                    const customer = await createCustomerResponse.json();
                     
-                    // Redirect to Stripe Checkout
-                    if (session.url) {
-                        window.location.href = session.url;
-                    } else if (session.sessionId && stripe) {
-                        const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
-                        if (result.error) {
-                            throw new Error(result.error.message);
-                        }
-                    } else {
-                        throw new Error('Invalid session data');
-                    }
-                } catch (error) {
-                    console.error('Error creating subscription:', error);
-                    showNotification('Failed to create subscription. Please try again.', 'error');
+                    // Store the customer ID
+                    userData.stripe_customer_id = customer.customerId;
+                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
                     
-                    // Re-enable button
-                    button.disabled = false;
-                    button.textContent = 'Subscribe';
+                    // Update the customer ID in the database
+                    await supabase
+                        .from('profiles')
+                        .update({ stripe_customer_id: customer.customerId })
+                        .eq('id', userData.id);
                 }
-            }
-            
-            // Close the modal
-            if (modalClose) {
-                modalClose.addEventListener('click', () => {
-                    modelModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            }
-            
-            // Close modal when clicking outside
-            if (modelModal) {
-                modelModal.addEventListener('click', (e) => {
-                    if (e.target === modelModal) {
-                        modelModal.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-            }
-            
-            // Show notification
-            function showNotification(message, type = 'success') {
-                notificationMessage.textContent = message;
-                notification.className = `notification ${type} active`;
                 
-                // Automatically hide after 5 seconds
-                setTimeout(() => {
-                    notification.classList.remove('active');
-                }, 5000);
-            }
-            
-            // Close notification
-            if (notificationClose) {
-                notificationClose.addEventListener('click', () => {
-                    notification.classList.remove('active');
+                // Create checkout session
+                const createSessionResponse = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        priceId: priceId,
+                        customerId: userData.stripe_customer_id,
+                        userId: userData.id,
+                        userPhone: userData.username || '',
+                        packageId: packageId,
+                        modelId: modelId,
+                        successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
+                        cancelUrl: window.location.origin + '/model-selection.html?subscription_canceled=true'
+                    })
                 });
-            }
-            
-            // Handle logout button
-            if (logoutButton) {
-                logoutButton.addEventListener('click', async () => {
-                    try {
-                        // Clear local storage
-                        localStorage.removeItem('threadpay_user');
-                        
-                        // Sign out from Supabase
-                        if (supabase) {
-                            await supabase.auth.signOut();
-                        }
-                        
-                        // Redirect to home page
-                        window.location.href = '/';
-                    } catch (error) {
-                        console.error('Error logging out:', error);
-                        showNotification('Failed to log out. Please try again.', 'error');
+                
+                if (!createSessionResponse.ok) {
+                    const errorData = await createSessionResponse.json();
+                    throw new Error(errorData.error || 'Error creating checkout session');
+                }
+                
+                const session = await createSessionResponse.json();
+                
+                // Redirect to Stripe Checkout
+                if (session.url) {
+                    window.location.href = session.url;
+                } else if (session.sessionId && stripe) {
+                    const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+                    if (result.error) {
+                        throw new Error(result.error.message);
                     }
-                });
+                } else {
+                    throw new Error('Invalid session data');
+                }
+            } catch (error) {
+                console.error('Error creating subscription:', error);
+                showNotification('Failed to create subscription. Please try again.', 'error');
+                
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = 'Subscribe';
             }
-            const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
-            if (dashboardButton) {
-                dashboardButton.addEventListener('click', function(e) {
-                    window.location.href = '/dashboard.html';
-                });
-            }
-
-            // Check URL parameters for notifications
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('subscription_canceled')) {
-                showNotification('Subscription process was canceled.', 'error');
+        }
+        
+        // Close the modal
+        modalClose.addEventListener('click', () => {
+            modelModal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+        
+        // Close modal when clicking outside
+        modelModal.addEventListener('click', (e) => {
+            if (e.target === modelModal) {
+                modelModal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
             }
         });
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationMessage.textContent = message;
+            notification.className = `notification ${type} active`;
+            
+            // Automatically hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 5000);
+        }
+        
+        // Close notification
+        notificationClose.addEventListener('click', () => {
+            notification.classList.remove('active');
+        });
+        
+        // Handle logout button
+        logoutButton.addEventListener('click', async () => {
+            try {
+                // Clear local storage
+                localStorage.removeItem('threadpay_user');
+                
+                // Sign out from Supabase
+                if (supabase) {
+                    const { error } = await supabase.auth.signOut();
+                    if (error) throw error;
+                }
+                
+                // Redirect to home page
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showNotification('Failed to log out. Please try again.', 'error');
+            }
+        });
+        
+        // Check URL parameters for notifications
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('subscription_canceled')) {
+            showNotification('Subscription process was canceled.', 'error');
+        }
+        
+        // Redirect to login
+        function redirectToLogin() {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
+        }
+
+        const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
+        if (dashboardButton) {
+            dashboardButton.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default behavior
+                window.location.href = '/dashboard.html';
+            });
+        }
     </script>
 </body>
 </html> 
