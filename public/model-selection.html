@@ -210,12 +210,17 @@
         }
         
         .modal-header {
-            height: 0;
-            padding: 0;
-            position: relative;
-            z-index: 10;
-            background: transparent;
-            border: none;
+            padding: 0 2rem 0 2rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--light);
+            z-index: 5;
+            border-radius: 24px 24px 0 0;
+            min-height: 44px;
         }
         
         .modal-title {
@@ -239,9 +244,9 @@
             transition: all 0.3s ease;
             font-size: 1.2rem;
             position: absolute;
-            top: 1.2rem;
-            right: 1.2rem;
-            z-index: 20;
+            top: 1.25rem;
+            right: 2rem;
+            z-index: 10;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
@@ -256,15 +261,14 @@
         }
         
         .modal-body {
-            padding: 2.5rem 2rem 2rem;
-            position: relative;
+            padding: 3.5rem 2rem 2rem 2rem;
         }
         
         .modal-model-container {
             display: flex;
             align-items: center;
             margin-bottom: 2.5rem;
-            padding: 1rem 0 2rem;
+            padding: 0.5rem 0 2rem;
             border-bottom: 1px solid rgba(211, 209, 218, 0.15);
         }
         
@@ -462,10 +466,16 @@
             }
             
             .modal-header {
-                height: 0;
                 padding: 0;
                 width: 100%;
-                border: none;
+                box-sizing: border-box;
+                order: 0;
+                border-bottom: none;
+                height: 38px;
+                background-color: transparent;
+                position: absolute;
+                top: 0;
+                right: 0;
             }
             
             .modal-title {
@@ -478,23 +488,22 @@
                 top: 1.2rem;
                 right: 1.2rem;
                 background-color: rgba(0, 0, 0, 0.15);
-                z-index: 20;
-                position: fixed;
             }
             
             .modal-body {
-                padding: 2.5rem 1.2rem 2rem;
+                padding: 4.5rem 1.2rem 2rem 1.2rem;
                 display: flex;
                 flex-direction: column;
                 width: 100%;
                 box-sizing: border-box;
+                margin-top: 0;
             }
             
             .modal-model-container {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                padding: 1.5rem 0;
+                padding: 1.2rem 0;
                 margin-bottom: 1.5rem;
                 order: 1;
             }
@@ -989,10 +998,11 @@
     <!-- Model Subscription Modal -->
     <div id="model-modal" class="modal-overlay">
         <div class="modal-content">
+            <button id="modal-close" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="modal-header">
-                <button id="modal-close" class="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
+                <!-- (empty, or you can add a modal title here if needed) -->
             </div>
             <div class="modal-body" id="modal-body">
                 <!-- Modal content will be dynamically inserted here -->
