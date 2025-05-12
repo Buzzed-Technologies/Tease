@@ -886,30 +886,6 @@ footer {
         width: 100%;
         max-width: 350px;
     }
-
-    /* Fix model modal image cut-off */
-    .model-modal-image {
-        margin-top: 16px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .model-modal-image img {
-        width: 90px;
-        height: 90px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 3px solid var(--accent);
-        background: var(--light);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    /* Reduce space between bio and subscription header */
-    .model-modal-bio {
-        margin-bottom: 0.5rem;
-    }
-    .subscription-header {
-        margin-top: 0.5rem;
-    }
 }
 
 @media (max-width: 480px) {

@@ -495,7 +495,7 @@
             }
             
             .model-section {
-                height: 180px;
+                height: 300px;
             }
             
             .model-info {
@@ -609,7 +609,7 @@
             }
             
             .model-section {
-                height: 120px;
+                height: 200px;
             }
             
             .model-info {
@@ -744,7 +744,7 @@
             <div id="success-view" class="hidden">
                 <div class="success-container">
                     <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-check-circle"></i>
                     </div>
                     <h1 class="success-title">Subscription Activated!</h1>
                     <p class="success-message" id="success-message">
@@ -929,7 +929,7 @@
                     // Check if it's a full URL or a Supabase storage path
                     if (imagePath.startsWith('http')) {
                         modelSection.style.backgroundImage = `url(${imagePath})`;
-                    } else {
+            } else {
                         // Assume it's a storage path and construct the URL
                         const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${imagePath}`;
                         modelSection.style.backgroundImage = `url(${imageUrl})`;
@@ -1123,7 +1123,7 @@
                     
                     if (countdown <= 0) {
                         clearInterval(timer);
-                        window.location.href = '/dashboard.html';
+                    window.location.href = '/dashboard.html';
                     }
                 }, 1000);
             } catch (error) {
