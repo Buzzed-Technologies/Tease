@@ -913,4 +913,48 @@
     .logout-button:hover {
         background-color: #a3b1ff;
     }
+}
+
+/* Explore More Creators Button Styles */
+.explore-more-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0 1rem 0;
+}
+
+.explore-more-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.75rem 2rem;
+    box-shadow: 0 2px 12px rgba(100, 100, 150, 0.08);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    outline: none;
+}
+
+.explore-more-button i {
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+}
+
+.explore-more-button:hover,
+.explore-more-button:focus {
+    background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 20px rgba(100, 100, 150, 0.15);
+}
+
+@media (max-width: 600px) {
+    .explore-more-button {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
 } 
