@@ -135,14 +135,14 @@
             color: #2ecc71;
         }
         
-        /* Improve popup styles */
+        /* Improved popup styles with better colors */
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -150,7 +150,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
         
         .popup-overlay.active {
@@ -159,76 +159,177 @@
         }
         
         .popup-content {
-            background-color: var(--primary-light);
-            border-radius: 15px;
+            background: linear-gradient(145deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            transform: translateY(20px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transform: translateY(20px) scale(0.98);
             opacity: 0;
-            transition: transform 0.4s ease, opacity 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .popup-overlay.active .popup-content {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
             opacity: 1;
         }
         
         .popup-header {
-            padding: 1.2rem 1.5rem;
-            border-bottom: 1px solid rgba(232, 224, 213, 0.5);
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .popup-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--darker);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
+            font-family: 'Playfair Display', serif;
         }
         
         .popup-close {
-            background: none;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            font-size: 1.2rem;
-            color: var(--light-gray);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--darker);
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
         }
         
         .popup-body {
-            padding: 1.5rem;
+            padding: 1.8rem;
         }
         
         .model-detail-header {
             display: flex;
-            gap: 1.2rem;
-            margin-bottom: 1.5rem;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .model-detail-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
+            width: 110px;
+            height: 110px;
+            border-radius: 15px;
             overflow: hidden;
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .model-detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .model-detail-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .model-detail-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .model-detail-info h3 {
-            margin-bottom: 0.3rem;
-            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.6rem;
             color: var(--darker);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .model-detail-description {
+            color: var(--dark);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.9;
         }
         
         .subscription-details-container {
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            padding: 1.2rem;
-            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .subscription-details-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .subscription-details-container h4 {
+            margin-bottom: 1.2rem;
+            color: var(--darker);
+            font-size: 1.2rem;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .subscription-details-container h4::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--accent);
         }
         
         .subscription-detail-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid rgba(232, 224, 213, 0.5);
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
         }
         
         .subscription-detail-item:last-child {
@@ -237,11 +338,89 @@
             border-bottom: none;
         }
         
+        .subscription-detail-label {
+            color: var(--dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        
+        .subscription-detail-value {
+            font-weight: 600;
+            color: var(--darker);
+            font-size: 0.95rem;
+        }
+        
         .popup-footer {
-            padding: 1.2rem 1.5rem;
-            border-top: 1px solid rgba(232, 224, 213, 0.5);
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .action-button {
+            background: linear-gradient(to right, var(--accent), #b4c1ff);
+            color: var(--darker);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            background: linear-gradient(to right, #b4c1ff, var(--accent));
+        }
+        
+        /* Responsive styles for modal */
+        @media (max-width: 600px) {
+            .model-detail-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .model-detail-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .model-detail-info h3 {
+                font-size: 1.4rem;
+            }
+            
+            .popup-body {
+                padding: 1.3rem;
+            }
+            
+            .subscription-details-container {
+                padding: 1.2rem;
+            }
+            
+            .popup-title {
+                font-size: 1.3rem;
+            }
+            
+            .action-button {
+                width: 100%;
+                padding: 0.9rem 1rem;
+            }
         }
     </style>
 </head>
@@ -583,7 +762,7 @@
                 <div class="model-detail-header">
                     <div class="model-detail-image">
                         <img src="${model.pictures && model.pictures.length > 0 
-                            ? `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}` 
+                            ? `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`
                             : '/images/placeholder-model.jpg'}" alt="${model.name}">
                     </div>
                     <div class="model-detail-info">
@@ -628,420 +807,7 @@
                     `}
                 </div>
             `;
-            
-            // Update manage subscription button text based on subscription status
-            manageSubscriptionButton.textContent = isSubscribed ? 'Manage Subscription' : 'Subscribe Now';
-            
-            // Show popup - using our new class-based system
-            modelPopup.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-            
-            // Force layout reflow to trigger css animations correctly
-            void modelPopup.offsetWidth;
-            
-            // Ensure popup content animation works
-            const popupContent = modelPopup.querySelector('.popup-content');
-            if (popupContent) {
-                popupContent.style.opacity = '1';
-                popupContent.style.transform = 'translateY(0)';
-            }
         }
-        
-        // Close popup
-        popupClose.addEventListener('click', () => {
-            closeModelPopup();
-        });
-        
-        // Close popup when clicking outside
-        modelPopup.addEventListener('click', (e) => {
-            if (e.target === modelPopup) {
-                closeModelPopup();
-            }
-        });
-        
-        // Function to close the popup
-        function closeModelPopup() {
-            // Hide the popup content first with animation
-            const popupContent = modelPopup.querySelector('.popup-content');
-            if (popupContent) {
-                popupContent.style.opacity = '0';
-                popupContent.style.transform = 'translateY(20px)';
-            }
-            
-            // Then hide the overlay after a short delay
-            setTimeout(() => {
-                modelPopup.classList.remove('active');
-                document.body.style.overflow = ''; // Re-enable scrolling
-            }, 300);
-        }
-        
-        // Handle manage subscription button
-        manageSubscriptionButton.addEventListener('click', () => {
-            const isSubscribed = manageSubscriptionButton.textContent === 'Manage Subscription';
-            
-            if (isSubscribed) {
-                alert('This would redirect to Stripe Customer Portal in a real implementation.');
-            } else {
-                alert('This would redirect to a payment page for this model in a real implementation.');
-            }
-        });
-        
-        // Handle settings form submission
-        settingsForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = settingsName.value.trim();
-            const password = settingsPassword.value.trim();
-            const confirmPassword = settingsConfirmPassword.value.trim();
-            
-            // Validate passwords if provided
-            if (password && password !== confirmPassword) {
-                showMessage(settingsMessage, 'Passwords do not match', 'error');
-                return;
-            }
-            
-            try {
-                // Build update object
-                const updates = { name };
-                
-                // Add password if provided
-                if (password) {
-                    // Hash password (in a real app, you'd do this on the server)
-                    const hashedPassword = await hashPassword(password);
-                    updates.password_hash = hashedPassword;
-                }
-                
-                // Update profile
-                const { error } = await supabase
-                    .from('profiles')
-                    .update(updates)
-                    .eq('id', userData.id);
-                
-                if (error) throw error;
-                
-                // Update local storage
-                userData.name = name;
-                localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                
-                // Update UI
-                // userDisplayName.textContent = name || 'User';
-                accountName.textContent = name || 'User';
-                
-                // Clear password fields
-                settingsPassword.value = '';
-                settingsConfirmPassword.value = '';
-                
-                // Show success message
-                showMessage(settingsMessage, 'Settings updated successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error updating settings:', error);
-                showMessage(settingsMessage, 'Error updating settings', 'error');
-            }
-        });
-        
-        // Handle logout
-        logoutButton.addEventListener('click', async function() {
-            // Clear local storage
-            localStorage.removeItem('threadpay_user');
-            
-            // Redirect to login page
-            window.location.href = '/login.html';
-        });
-        
-        // Set up tab navigation
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons and sections
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                contentSections.forEach(section => section.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Show the corresponding section
-                const targetSection = document.getElementById(this.dataset.tab);
-                if (targetSection) {
-                    targetSection.classList.add('active');
-                }
-            });
-        });
-        
-        // Helper function to show messages
-        function showMessage(element, message, type) {
-            element.textContent = message;
-            element.className = `message-area ${type}`;
-            
-            // Hide message after 3 seconds
-            setTimeout(() => {
-                element.className = 'message-area';
-                element.textContent = '';
-            }, 3000);
-        }
-        
-        // Helper function to hash password
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-        
-        // Function to load user subscriptions
-        async function loadUserSubscriptions() {
-            try {
-                // Fetch user's subscriptions from the user_model_subscriptions table
-                const { data: subscriptions, error } = await supabase
-                    .from('user_model_subscriptions')
-                    .select(`
-                        *,
-                        models:model_id (name, bio, pictures),
-                        packages:package_id (name, price, description)
-                    `)
-                    .eq('user_id', userData.id)
-                    .eq('is_active', true);
-                    
-                if (error) throw error;
-                
-                console.log('User subscriptions:', subscriptions);
-                
-                // If user has no subscriptions
-                if (!subscriptions || subscriptions.length === 0) {
-                    document.getElementById('subscribed-models-container').style.display = 'none';
-                    document.getElementById('no-subscription-container').style.display = 'block';
-                    document.getElementById('explore-more-container').style.display = 'none';
-                    return;
-                }
-                
-                // User has subscriptions
-                document.getElementById('subscribed-models-container').style.display = 'grid';
-                document.getElementById('no-subscription-container').style.display = 'none';
-                document.getElementById('explore-more-container').style.display = 'flex';
-                
-                // Clear the container before adding new cards
-                const modelContainer = document.getElementById('subscribed-models-container');
-                modelContainer.innerHTML = '';
-                
-                // Create a card for each subscription
-                subscriptions.forEach(subscription => {
-                    const model = subscription.models;
-                    const pkg = subscription.packages;
-                    
-                    if (!model) return; // Skip if model is not found
-                    
-                    const modelCard = document.createElement('div');
-                    modelCard.className = 'model-subscription-card';
-                    modelCard.dataset.modelId = subscription.model_id;
-                    
-                    // Format price with 2 decimal places
-                    const formattedPrice = new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 2
-                    }).format(pkg?.price || 0);
-                    
-                    // Create the HTML content for the model card
-                    modelCard.innerHTML = `
-                        <div class="model-card-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
-                        <div class="model-card-content">
-                            <h4 class="model-card-name">${model.name}</h4>
-                            <p class="model-card-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                            <div class="model-card-footer">
-                                <div class="model-card-subscription">
-                                    <span class="subscription-plan">${pkg?.name || 'Standard'}</span>
-                                    <span class="subscription-price">${formattedPrice}/month</span>
-                                </div>
-                                <button class="manage-subscription-btn" data-subscription-id="${subscription.id}">
-                                    Manage
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Add the card to the container
-                    modelContainer.appendChild(modelCard);
-                    
-                    // Add event listener to manage button
-                    const manageBtn = modelCard.querySelector('.manage-subscription-btn');
-                    manageBtn.addEventListener('click', () => {
-                        // Handle subscription management (e.g., open a modal or navigate to management page)
-                        openSubscriptionDetails(subscription);
-                    });
-                });
-            } catch (error) {
-                console.error('Error loading user subscriptions:', error);
-                // Show error message
-                document.getElementById('subscribed-models-container').innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Failed to load your subscriptions. Please try again later.</p>
-                    </div>
-                `;
-                document.getElementById('subscribed-models-container').style.display = 'block';
-                document.getElementById('no-subscription-container').style.display = 'none';
-            }
-        }
-        
-        // Function to open subscription details popup
-        function openSubscriptionDetails(subscription) {
-            // Update popup content
-            const popupBody = document.getElementById('popup-body');
-            const model = subscription.models;
-            const pkg = subscription.packages;
-            
-            popupBody.innerHTML = `
-                <div class="popup-model-details">
-                    <div class="popup-model-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
-                    <div class="popup-model-info">
-                        <h3 class="popup-model-name">${model.name}</h3>
-                        <p class="popup-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                    </div>
-                </div>
-                
-                <div class="popup-subscription-details">
-                    <h4>Subscription Details</h4>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Plan:</span>
-                        <span class="detail-value">${pkg?.name || 'Standard'}</span>
-                    </div>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Price:</span>
-                        <span class="detail-value">${new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            minimumFractionDigits: 2
-                        }).format(pkg?.price || 0)}/month</span>
-                    </div>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value subscription-status-active">Active</span>
-                    </div>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Next Payment:</span>
-                        <span class="detail-value">${formatDate(subscription.current_period_end || new Date())}</span>
-                    </div>
-                </div>
-                
-                <div class="popup-actions">
-                    <button class="cancel-subscription-btn" data-subscription-id="${subscription.id}">Cancel Subscription</button>
-                </div>
-            `;
-            
-            // Show popup
-            document.getElementById('model-popup').classList.add('active');
-            
-            // Add event listener to cancel subscription button
-            const cancelBtn = popupBody.querySelector('.cancel-subscription-btn');
-            cancelBtn.addEventListener('click', () => {
-                confirmCancelSubscription(subscription.id);
-            });
-        }
-        
-        // Function to confirm subscription cancellation
-        function confirmCancelSubscription(subscriptionId) {
-            if (confirm('Are you sure you want to cancel this subscription? You will lose access at the end of your current billing period.')) {
-                cancelSubscription(subscriptionId);
-            }
-        }
-        
-        // Function to cancel a subscription
-        async function cancelSubscription(subscriptionId) {
-            try {
-                // Show loading state
-                const cancelBtn = document.querySelector(`.cancel-subscription-btn[data-subscription-id="${subscriptionId}"]`);
-                if (cancelBtn) {
-                    cancelBtn.disabled = true;
-                    cancelBtn.textContent = 'Cancelling...';
-                }
-                
-                // Call API to cancel subscription
-                const response = await fetch('/api/cancel-subscription', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        subscriptionId: subscriptionId,
-                        userId: userData.id
-                    })
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Error cancelling subscription');
-                }
-                
-                // Update UI
-                document.getElementById('model-popup').classList.remove('active');
-                
-                // Show success message
-                showNotification('Subscription cancelled successfully. You will have access until the end of your current billing period.', 'success');
-                
-                // Reload subscriptions
-                await loadUserSubscriptions();
-            } catch (error) {
-                console.error('Error cancelling subscription:', error);
-                showNotification('Failed to cancel subscription. Please try again later.', 'error');
-                
-                // Reset button state
-                const cancelBtn = document.querySelector(`.cancel-subscription-btn[data-subscription-id="${subscriptionId}"]`);
-                if (cancelBtn) {
-                    cancelBtn.disabled = false;
-                    cancelBtn.textContent = 'Cancel Subscription';
-                }
-            }
-        }
-        
-        // Helper function to format date
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            if (isNaN(date.getTime())) {
-                return 'Unknown';
-            }
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-            });
-        }
-        
-        // Function to show notification
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <span class="notification-message">${message}</span>
-                <button class="notification-close"><i class="fas fa-times"></i></button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Show notification
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            
-            // Add event listener to close button
-            const closeBtn = notification.querySelector('.notification-close');
-            closeBtn.addEventListener('click', () => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            });
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 5000);
-        }
-        
-        // Initialize the dashboard
-        initDashboard();
     </script>
 </body>
-</html> 
+</html>
