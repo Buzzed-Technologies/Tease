@@ -280,10 +280,12 @@
         .model-detail-image {
             width: 110px;
             height: 110px;
-            border-radius: 16px;
+            border-radius: 50%;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             border: 3px solid rgba(255, 255, 255, 0.2);
+            aspect-ratio: 1/1;
+            background: #fff;
         }
         
         .model-detail-image img {
@@ -425,6 +427,13 @@
                 left: 50%;
                 transform: translateX(-50%);
                 width: 60px;
+            }
+            
+            .model-detail-image {
+                width: 130px;
+                height: 130px;
+                border-radius: 50%;
+                aspect-ratio: 1/1;
             }
         }
         
