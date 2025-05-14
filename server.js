@@ -197,18 +197,25 @@ app.post('/api/create-checkout-session', async (req, res) => {
 
 app.post('/api/create-portal-session', async (req, res) => {
   try {
-    const { customerId, returnUrl } = req.body;
-    
+    console.log('POST /api/create-portal-session', req.body);
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('STRIPE_SECRET_KEY is missing in environment variables');
+      return res.status(500).json({ error: 'Stripe secret key not configured on server.' });
+    }
+    const { customerId, returnUrl } = req.body || {};
+    if (!customerId) {
+      console.error('Missing customerId in request body:', req.body);
+      return res.status(400).json({ error: 'customerId is required' });
+    }
     // Create a billing portal session for managing subscriptions
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: returnUrl || `${req.headers.origin}/dashboard.html`,
+      return_url: returnUrl || `${req.headers.origin || 'https://tease-kappa.vercel.app'}/dashboard.html`,
     });
-    
     res.json({ url: portalSession.url });
   } catch (error) {
     console.error('Error creating portal session:', error);
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message, details: error });
   }
 });
 
