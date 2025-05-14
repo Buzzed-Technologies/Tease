@@ -708,7 +708,7 @@
             <div id="subscription-view">
                 <div class="subscription-header">
                     <h1>Support <span>Your Creator</span></h1>
-                    <p class="subscription-description" id="subscription-description"></p>
+                    <p class="subscription-description">Show your support by choosing a package below. Your subscription directly helps this creator continue making the content you love—and unlocks exclusive access just for you.</p>
                 </div>
                 
                 <!-- Model background section -->
@@ -907,6 +907,7 @@
         function updateModelDisplay(model) {
             // Update model name and message
             document.getElementById('model-name').textContent = model.name;
+            document.getElementById('model-message').textContent = model.bio && model.bio.trim().length > 0 ? model.bio : 'Thank you for considering a subscription! Your support allows me to create more exclusive content for you.';
             
             // Update model background image
             const modelSection = document.getElementById('model-section');
@@ -929,7 +930,7 @@
                     // Check if it's a full URL or a Supabase storage path
                     if (imagePath.startsWith('http')) {
                         modelSection.style.backgroundImage = `url(${imagePath})`;
-                    } else {
+            } else {
                         // Assume it's a storage path and construct the URL
                         const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${imagePath}`;
                         modelSection.style.backgroundImage = `url(${imageUrl})`;
@@ -943,16 +944,6 @@
             const placeholderUrl = `${supabaseUrl}/storage/v1/object/public/model-images/placeholder-model.jpg`;
             modelSection.style.backgroundImage = `url(${placeholderUrl})`;
             console.log('Using placeholder image:', placeholderUrl);
-            
-            // Update subscription description with model bio
-            const descEl = document.getElementById('subscription-description');
-            if (descEl) {
-                if (model.bio && model.bio.trim().length > 0) {
-                    descEl.textContent = model.bio;
-                } else {
-                    descEl.textContent = 'Show your support by choosing a package below. Your subscription directly helps this creator continue making the content you love—and unlocks exclusive access just for you.';
-                }
-            }
         }
         
         // Load packages for the model
