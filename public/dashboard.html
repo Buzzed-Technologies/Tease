@@ -848,71 +848,71 @@
         function openModelPopup(model, isSubscribed) {
             // Populate popup content
             popupBody.innerHTML = `
-                <div class="model-detail-header">
-                    <div class="model-detail-image">
-                        <img src="${model.pictures && model.pictures.length > 0 
-                            ? `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}` 
-                            : '/images/placeholder-model.jpg'}" alt="${model.name}">
-                    </div>
-                    <div class="model-detail-info">
-                        <h3>${model.name}</h3>
-                        <div class="model-detail-description">${model.bio || 'AI Companion Model'}</div>
+                <div class="popup-model-details">
+                    <div class="popup-model-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
+                    <div class="popup-model-info">
+                        <h3 class="popup-model-name">${model.name}</h3>
+                        <p class="popup-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
                     </div>
                 </div>
                 
-                <div class="subscription-details-container">
+                <div class="popup-subscription-details">
                     <h4>Subscription Details</h4>
-                    
-                    ${isSubscribed ? `
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Status</div>
-                            <div class="subscription-detail-value">Active</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Plan</div>
-                            <div class="subscription-detail-value">Premium</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Price</div>
-                            <div class="subscription-detail-value">$19.99/month</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Next Billing Date</div>
-                            <div class="subscription-detail-value">${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            })}</div>
-                        </div>
-                    ` : `
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Status</div>
-                            <div class="subscription-detail-value">Not Subscribed</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Available Plans</div>
-                            <div class="subscription-detail-value">Basic: $9.99/month, Premium: $19.99/month</div>
-                        </div>
-                    `}
+                    <div class="subscription-detail-row">
+                        <span class="detail-label">Plan:</span>
+                        <span class="detail-value">${pkg?.name || 'Standard'}</span>
+                    </div>
+                    <div class="subscription-detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value subscription-status-active">Active</span>
+                    </div>
+                    <div class="subscription-detail-row">
+                        <span class="detail-label">Next Payment:</span>
+                        <span class="detail-value">${formatDate(subscription.current_period_end || new Date())}</span>
+                    </div>
+                </div>
+                
+                <div class="popup-actions">
+                    <button class="manage-stripe-btn action-button" data-stripe-subscription-id="${subscription.stripe_subscription_id}">Manage in Stripe</button>
                 </div>
             `;
             
-            // Update manage subscription button text based on subscription status
-            manageSubscriptionButton.textContent = isSubscribed ? 'Manage Subscription' : 'Subscribe Now';
-            
-            // Show popup - using our new class-based system
-            modelPopup.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-            
-            // Force layout reflow to trigger css animations correctly
-            void modelPopup.offsetWidth;
-            
-            // Ensure popup content animation works
-            const popupContent = modelPopup.querySelector('.popup-content');
+            // Reset popup content style before showing
+            const popupContent = document.querySelector('#model-popup .popup-content');
             if (popupContent) {
-                popupContent.style.opacity = '1';
-                popupContent.style.transform = 'translateY(0)';
+                popupContent.style.opacity = '';
+                popupContent.style.transform = '';
             }
+            
+            // Show popup
+            document.getElementById('model-popup').classList.add('active');
+            
+            // Add event listener to manage in Stripe button
+            const manageStripeBtn = popupBody.querySelector('.manage-stripe-btn');
+            manageStripeBtn.addEventListener('click', async () => {
+                const originalText = manageStripeBtn.textContent;
+                manageStripeBtn.disabled = true;
+                manageStripeBtn.textContent = 'Redirecting...';
+                try {
+                    // Call your backend to create a Stripe customer portal session
+                    const response = await fetch('/api/stripe-portal', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            subscriptionId: subscription.stripe_subscription_id,
+                            userId: userData.id
+                        })
+                    });
+                    if (!response.ok) throw new Error('Failed to create Stripe portal session');
+                    const data = await response.json();
+                    if (!data.url) throw new Error('No portal URL returned');
+                    window.location.href = data.url;
+                } catch (err) {
+                    showNotification('Could not open Stripe portal. Please try again.', 'error');
+                    manageStripeBtn.disabled = false;
+                    manageStripeBtn.textContent = originalText;
+                }
+            });
         }
         
         // Close popup
@@ -1127,7 +1127,6 @@
                             <div class="model-subscription-status active">Active Subscription</div>
                             <div class="model-card-footer">
                                 <span class="subscription-plan">${pkg?.name || 'Standard'}</span>
-                                <span class="subscription-price">${formattedPrice}/month</span>
                                 <button class="manage-subscription-btn action-button" data-subscription-id="${subscription.id}">
                                     Manage
                                 </button>
@@ -1182,14 +1181,6 @@
                         <span class="detail-value">${pkg?.name || 'Standard'}</span>
                     </div>
                     <div class="subscription-detail-row">
-                        <span class="detail-label">Price:</span>
-                        <span class="detail-value">${new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            minimumFractionDigits: 2
-                        }).format(pkg?.price || 0)}/month</span>
-                    </div>
-                    <div class="subscription-detail-row">
                         <span class="detail-label">Status:</span>
                         <span class="detail-value subscription-status-active">Active</span>
                     </div>
@@ -1200,7 +1191,7 @@
                 </div>
                 
                 <div class="popup-actions">
-                    <button class="cancel-subscription-btn" data-subscription-id="${subscription.id}">Cancel Subscription</button>
+                    <button class="manage-stripe-btn action-button" data-stripe-subscription-id="${subscription.stripe_subscription_id}">Manage in Stripe</button>
                 </div>
             `;
             
@@ -1214,66 +1205,32 @@
             // Show popup
             document.getElementById('model-popup').classList.add('active');
             
-            // Add event listener to cancel subscription button
-            const cancelBtn = popupBody.querySelector('.cancel-subscription-btn');
-            cancelBtn.addEventListener('click', () => {
-                confirmCancelSubscription(subscription.id);
+            // Add event listener to manage in Stripe button
+            const manageStripeBtn = popupBody.querySelector('.manage-stripe-btn');
+            manageStripeBtn.addEventListener('click', async () => {
+                const originalText = manageStripeBtn.textContent;
+                manageStripeBtn.disabled = true;
+                manageStripeBtn.textContent = 'Redirecting...';
+                try {
+                    // Call your backend to create a Stripe customer portal session
+                    const response = await fetch('/api/stripe-portal', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            subscriptionId: subscription.stripe_subscription_id,
+                            userId: userData.id
+                        })
+                    });
+                    if (!response.ok) throw new Error('Failed to create Stripe portal session');
+                    const data = await response.json();
+                    if (!data.url) throw new Error('No portal URL returned');
+                    window.location.href = data.url;
+                } catch (err) {
+                    showNotification('Could not open Stripe portal. Please try again.', 'error');
+                    manageStripeBtn.disabled = false;
+                    manageStripeBtn.textContent = originalText;
+                }
             });
-        }
-        
-        // Function to confirm subscription cancellation
-        function confirmCancelSubscription(subscriptionId) {
-            if (confirm('Are you sure you want to cancel this subscription? You will lose access at the end of your current billing period.')) {
-                cancelSubscription(subscriptionId);
-            }
-        }
-        
-        // Function to cancel a subscription
-        async function cancelSubscription(subscriptionId) {
-            try {
-                // Show loading state
-                const cancelBtn = document.querySelector(`.cancel-subscription-btn[data-subscription-id="${subscriptionId}"]`);
-                if (cancelBtn) {
-                    cancelBtn.disabled = true;
-                    cancelBtn.textContent = 'Cancelling...';
-                }
-                
-                // Call API to cancel subscription
-                const response = await fetch('/api/cancel-subscription', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        subscriptionId: subscriptionId,
-                        userId: userData.id
-                    })
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Error cancelling subscription');
-                }
-                
-                // Update UI
-                document.getElementById('model-popup').classList.remove('active');
-                
-                // Show success message
-                showNotification('Subscription cancelled successfully. You will have access until the end of your current billing period.', 'success');
-                
-                // Reload subscriptions
-                await loadUserSubscriptions();
-            } catch (error) {
-                console.error('Error cancelling subscription:', error);
-                showNotification('Failed to cancel subscription. Please try again later.', 'error');
-                
-                // Reset button state
-                const cancelBtn = document.querySelector(`.cancel-subscription-btn[data-subscription-id="${subscriptionId}"]`);
-                if (cancelBtn) {
-                    cancelBtn.disabled = false;
-                    cancelBtn.textContent = 'Cancel Subscription';
-                }
-            }
         }
         
         // Helper function to format date
