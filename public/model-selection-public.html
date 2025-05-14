@@ -54,15 +54,51 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script>
-        // Supabase client initialization (public, no auth)
+        // Supabase client initialization (public, no auth, match model-selection.html logic)
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
+        let supabase;
+        // First try to get the key from meta tag
+        const metaKey = document.querySelector('meta[name=\"supabase-anon-key\"]')?.getAttribute('content');
+        let supabaseKey = null;
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                loadModels();
+            } else {
+                console.error('Supabase client library not loaded');
+            }
+        }
+        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+            console.log('Using API key from meta tag');
+            supabaseKey = metaKey;
+            initSupabase();
+        } else {
+            // Fetch API key from server config endpoint
+            console.log('Meta tag key not available, trying to fetch from server...');
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.supabaseKey) {
+                        console.log('Using API key from server');
+                        supabaseKey = config.supabaseKey;
+                    } else {
+                        // Fall back to hardcoded key
+                        console.log('Using hardcoded API key as fallback');
+                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    }
+                    initSupabase();
+                })
+                .catch(error => {
+                    console.error('Error fetching config:', error);
+                    // Fall back to hardcoded key
+                    console.log('Using hardcoded API key due to error');
+                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                });
+        }
         const modelGrid = document.getElementById('model-grid');
         const loadingContainer = document.getElementById('loading-container');
         const emptyState = document.getElementById('empty-state');
-
         async function loadModels() {
             try {
                 loadingContainer.style.display = 'block';
@@ -132,7 +168,6 @@
                 });
             });
         }
-        loadModels();
     </script>
 </body>
 </html> 
