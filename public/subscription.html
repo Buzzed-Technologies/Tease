@@ -999,11 +999,12 @@
                     minimumFractionDigits: 2
                 }).format(pkg.price);
                 
-                // Create the package features list with enhanced features
+                // Create the package features list from description column
                 let featuresHTML = '';
-                if (pkg.features && pkg.features.length > 0) {
+                if (pkg.description && typeof pkg.description === 'string' && pkg.description.trim().length > 0) {
+                    const features = pkg.description.split(',').map(f => f.trim()).filter(f => f.length > 0);
                     featuresHTML = `<div class="package-features">
-                        ${pkg.features.map(feature => `
+                        ${features.map(feature => `
                             <div class="feature-item">
                                 <div class="feature-icon"><i class="fas fa-check"></i></div>
                                 <div class="feature-text">${feature}</div>
@@ -1011,7 +1012,7 @@
                         `).join('')}
                     </div>`;
                 } else {
-                    // Default features with more attractive options if none are specified
+                    // Default features if no description is provided
                     featuresHTML = `<div class="package-features">
                         <div class="feature-item">
                             <div class="feature-icon"><i class="fas fa-check"></i></div>
