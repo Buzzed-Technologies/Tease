@@ -1204,6 +1204,13 @@
                 </div>
             `;
             
+            // Reset popup content style before showing
+            const popupContent = document.querySelector('#model-popup .popup-content');
+            if (popupContent) {
+                popupContent.style.opacity = '';
+                popupContent.style.transform = '';
+            }
+            
             // Show popup
             document.getElementById('model-popup').classList.add('active');
             
