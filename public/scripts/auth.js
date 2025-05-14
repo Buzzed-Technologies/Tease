@@ -413,11 +413,8 @@ function updateAuthUI(user) {
 }
 
 // Handle login form submission
-async function handleLogin(telegramUsername, password) {
+async function handleLogin(telegramNumber, password) {
   try {
-    // Strip @ from telegram username if included
-    telegramUsername = telegramUsername.replace('@', '');
-    
     // Hash the password
     const passwordHash = await hashPassword(password);
 
@@ -425,7 +422,7 @@ async function handleLogin(telegramUsername, password) {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('telegram_username', telegramUsername)
+      .eq('telegram_number', telegramNumber)
       .eq('password_hash', passwordHash)
       .single();
 
@@ -438,7 +435,7 @@ async function handleLogin(telegramUsername, password) {
       const userData = {
         id: data.id,
         name: data.name,
-        telegram_username: data.telegram_username,
+        telegram_number: data.telegram_number,
         subscription_status: data.subscription_status,
         model_id: data.model_id
       };
@@ -458,7 +455,7 @@ async function handleLogin(telegramUsername, password) {
     } else {
       return { 
         success: false, 
-        message: 'Invalid Telegram username or password'
+        message: 'Invalid Telegram number or password'
       };
     }
   } catch (error) {

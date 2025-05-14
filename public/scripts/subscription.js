@@ -165,7 +165,7 @@ async function handleSubscription(e) {
             body: JSON.stringify({
                 email: user.email || '',
                 name: user.name || '',
-                phone: user.phone || ''
+                phone: user.telegram_number || user.phone || ''
             })
         });
         
