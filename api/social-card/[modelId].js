@@ -10,11 +10,9 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export default async function handler(req) {
   const { searchParams, pathname } = new URL(req.url);
-  // Support both /api/social-card/[modelId] and /api/social-card?modelId=...
   let modelId = searchParams.get('modelId');
   if (!modelId) {
-    // Try to extract from pathname
-    const match = pathname.match(/social-card\/(.+)$/);
+    const match = pathname.match(/social-card\/([^/]+)/);
     if (match) modelId = match[1];
   }
   if (!modelId) {
@@ -29,11 +27,24 @@ export default async function handler(req) {
     .single();
 
   if (error || !model) {
-    return new Response('Model not found', { status: 404 });
+    // Show a fallback card for unknown models
+    return new ImageResponse(
+      <div style={{
+        width: '1200px', height: '630px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'linear-gradient(135deg, #f5f0e8 0%, #c6d2ff 100%)', fontFamily: "'Montserrat', 'Playfair Display', serif"
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 60, fontWeight: 700, color: '#C6D2FF', marginBottom: 40 }}>ThreadPay</div>
+          <div style={{ fontSize: 48, color: '#333', marginBottom: 20 }}>Model Not Found</div>
+          <div style={{ fontSize: 32, color: '#555' }}>This invite link is invalid or expired.</div>
+        </div>
+      </div>,
+      { width: 1200, height: 630 }
+    );
   }
 
   let imageUrl = '';
-  if (model.pictures && model.pictures.length > 0) {
+  if (model.pictures && Array.isArray(model.pictures) && model.pictures.length > 0) {
     imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0]}`;
   }
 
