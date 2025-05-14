@@ -693,7 +693,11 @@
             if (window.supabase) {
                 supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
                 // Initialize the rest of the app once Supabase is ready
-                initDashboard();
+                if (supabase) {
+                    initDashboard();
+                } else {
+                    console.error('Supabase client failed to initialize');
+                }
             } else {
                 console.error('Supabase client library not loaded');
             }
