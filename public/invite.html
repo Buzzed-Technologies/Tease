@@ -20,14 +20,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <!-- Social Card Meta Tags -->
-    <meta property="og:title" content="Join {Model Name} on ThreadPay" />
-    <meta property="og:description" content="Subscribe to {Model Name} and start supporting your favorite creator on ThreadPay." />
-    <meta property="og:image" content="https://tease-kappa.vercel.app/api/social-card/{modelId}" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Join {Model Name} on ThreadPay" />
-    <meta name="twitter:description" content="Subscribe to {Model Name} and start supporting your favorite creator on ThreadPay." />
-    <meta name="twitter:image" content="https://tease-kappa.vercel.app/api/social-card/{modelId}" />
+    <meta property="og:title" content="Join ThreadPay" id="og-title">
+    <meta property="og:description" content="Subscribe to your favorite creator on ThreadPay." id="og-desc">
+    <meta property="og:image" content="https://tease-kappa.vercel.app/images/fallback-social-card.svg" id="og-image">
+    <meta property="og:url" content="https://tease-kappa.vercel.app/invite" id="og-url">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Join ThreadPay" id="twitter-title">
+    <meta name="twitter:description" content="Subscribe to your favorite creator on ThreadPay." id="twitter-desc">
+    <meta name="twitter:image" content="https://tease-kappa.vercel.app/images/fallback-social-card.svg" id="twitter-image">
     
     <style>
         .invite-container {
@@ -588,6 +589,8 @@
                         modelIdField.value = modelId;
                         document.getElementById('signup-form').appendChild(modelIdField);
                     }
+                    // Update OG meta tags for social sharing
+                    updateSocialMetaTags(data);
                 }
             } catch (error) {
                 console.error('Error loading model:', error);
@@ -753,6 +756,24 @@
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Dynamically update OG and Twitter meta tags with model info
+        function updateSocialMetaTags(model) {
+            if (!model) return;
+            const modelName = model.name || "Creator";
+            const modelId = model.id || "";
+            // If you later add a dynamic OG endpoint, update the image URL here
+            const ogImage = `https://tease-kappa.vercel.app/images/fallback-social-card.svg`;
+
+            document.getElementById('og-title').setAttribute('content', `Join ${modelName} on ThreadPay`);
+            document.getElementById('og-desc').setAttribute('content', `Subscribe to ${modelName} and start supporting your favorite creator on ThreadPay.`);
+            document.getElementById('og-image').setAttribute('content', ogImage);
+            document.getElementById('og-url').setAttribute('content', `https://tease-kappa.vercel.app/invite/${modelId}`);
+
+            document.getElementById('twitter-title').setAttribute('content', `Join ${modelName} on ThreadPay`);
+            document.getElementById('twitter-desc').setAttribute('content', `Subscribe to ${modelName} and start supporting your favorite creator on ThreadPay.`);
+            document.getElementById('twitter-image').setAttribute('content', ogImage);
         }
     </script>
 </body>

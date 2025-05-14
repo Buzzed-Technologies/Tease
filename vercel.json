@@ -12,10 +12,6 @@
   ],
   "routes": [
     {
-      "src": "/api/social-card/(.*)",
-      "dest": "/api/social-card/[modelId].js"
-    },
-    {
       "src": "/api/(.*)",
       "dest": "/server.js"
     },
