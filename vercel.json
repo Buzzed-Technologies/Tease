@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/social-card/[modelId].js",
+      "use": "@vercel/og"
+    },
+    {
       "src": "server.js",
       "use": "@vercel/node"
     },
