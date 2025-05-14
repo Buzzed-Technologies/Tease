@@ -848,71 +848,71 @@
         function openModelPopup(model, isSubscribed) {
             // Populate popup content
             popupBody.innerHTML = `
-                <div class="popup-model-details">
-                    <div class="popup-model-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
-                    <div class="popup-model-info">
-                        <h3 class="popup-model-name">${model.name}</h3>
-                        <p class="popup-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                <div class="model-detail-header">
+                    <div class="model-detail-image">
+                        <img src="${model.pictures && model.pictures.length > 0 
+                            ? `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}` 
+                            : '/images/placeholder-model.jpg'}" alt="${model.name}">
+                    </div>
+                    <div class="model-detail-info">
+                        <h3>${model.name}</h3>
+                        <div class="model-detail-description">${model.bio || 'AI Companion Model'}</div>
                     </div>
                 </div>
                 
-                <div class="popup-subscription-details">
+                <div class="subscription-details-container">
                     <h4>Subscription Details</h4>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Plan:</span>
-                        <span class="detail-value">${pkg?.name || 'Standard'}</span>
-                    </div>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value subscription-status-active">Active</span>
-                    </div>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Next Payment:</span>
-                        <span class="detail-value">${formatDate(subscription.current_period_end || new Date())}</span>
-                    </div>
-                </div>
-                
-                <div class="popup-actions">
-                    <button class="manage-stripe-btn action-button" data-stripe-subscription-id="${subscription.stripe_subscription_id}">Manage in Stripe</button>
+                    
+                    ${isSubscribed ? `
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Status</div>
+                            <div class="subscription-detail-value">Active</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Plan</div>
+                            <div class="subscription-detail-value">Premium</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Price</div>
+                            <div class="subscription-detail-value">$19.99/month</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Next Billing Date</div>
+                            <div class="subscription-detail-value">${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}</div>
+                        </div>
+                    ` : `
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Status</div>
+                            <div class="subscription-detail-value">Not Subscribed</div>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <div class="subscription-detail-label">Available Plans</div>
+                            <div class="subscription-detail-value">Basic: $9.99/month, Premium: $19.99/month</div>
+                        </div>
+                    `}
                 </div>
             `;
             
-            // Reset popup content style before showing
-            const popupContent = document.querySelector('#model-popup .popup-content');
+            // Update manage subscription button text based on subscription status
+            manageSubscriptionButton.textContent = isSubscribed ? 'Manage Subscription' : 'Subscribe Now';
+            
+            // Show popup - using our new class-based system
+            modelPopup.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            // Force layout reflow to trigger css animations correctly
+            void modelPopup.offsetWidth;
+            
+            // Ensure popup content animation works
+            const popupContent = modelPopup.querySelector('.popup-content');
             if (popupContent) {
-                popupContent.style.opacity = '';
-                popupContent.style.transform = '';
+                popupContent.style.opacity = '1';
+                popupContent.style.transform = 'translateY(0)';
             }
-            
-            // Show popup
-            document.getElementById('model-popup').classList.add('active');
-            
-            // Add event listener to manage in Stripe button
-            const manageStripeBtn = popupBody.querySelector('.manage-stripe-btn');
-            manageStripeBtn.addEventListener('click', async () => {
-                const originalText = manageStripeBtn.textContent;
-                manageStripeBtn.disabled = true;
-                manageStripeBtn.textContent = 'Redirecting...';
-                try {
-                    // Call your backend to create a Stripe customer portal session
-                    const response = await fetch('/api/stripe-portal', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            subscriptionId: subscription.stripe_subscription_id,
-                            userId: userData.id
-                        })
-                    });
-                    if (!response.ok) throw new Error('Failed to create Stripe portal session');
-                    const data = await response.json();
-                    if (!data.url) throw new Error('No portal URL returned');
-                    window.location.href = data.url;
-                } catch (err) {
-                    showNotification('Could not open Stripe portal. Please try again.', 'error');
-                    manageStripeBtn.disabled = false;
-                    manageStripeBtn.textContent = originalText;
-                }
-            });
         }
         
         // Close popup
@@ -1126,7 +1126,6 @@
                             <div class="model-description">${model.bio || 'Creator on ThreadPay'}</div>
                             <div class="model-subscription-status active">Active Subscription</div>
                             <div class="model-card-footer">
-                                <span class="subscription-plan">${pkg?.name || 'Standard'}</span>
                                 <button class="manage-subscription-btn action-button" data-subscription-id="${subscription.id}">
                                     Manage
                                 </button>
@@ -1177,10 +1176,6 @@
                 <div class="popup-subscription-details">
                     <h4>Subscription Details</h4>
                     <div class="subscription-detail-row">
-                        <span class="detail-label">Plan:</span>
-                        <span class="detail-value">${pkg?.name || 'Standard'}</span>
-                    </div>
-                    <div class="subscription-detail-row">
                         <span class="detail-label">Status:</span>
                         <span class="detail-value subscription-status-active">Active</span>
                     </div>
@@ -1188,10 +1183,6 @@
                         <span class="detail-label">Next Payment:</span>
                         <span class="detail-value">${formatDate(subscription.current_period_end || new Date())}</span>
                     </div>
-                </div>
-                
-                <div class="popup-actions">
-                    <button class="manage-stripe-btn action-button" data-stripe-subscription-id="${subscription.stripe_subscription_id}">Manage in Stripe</button>
                 </div>
             `;
             
@@ -1205,32 +1196,31 @@
             // Show popup
             document.getElementById('model-popup').classList.add('active');
             
-            // Add event listener to manage in Stripe button
-            const manageStripeBtn = popupBody.querySelector('.manage-stripe-btn');
-            manageStripeBtn.addEventListener('click', async () => {
-                const originalText = manageStripeBtn.textContent;
-                manageStripeBtn.disabled = true;
-                manageStripeBtn.textContent = 'Redirecting...';
+            // Set up manage subscription button for Stripe portal
+            manageSubscriptionButton.onclick = async function () {
+                const customerId = subscription.stripe_customer_id || userData.stripe_customer_id;
+                if (!customerId) {
+                    alert('Stripe customer ID not found.');
+                    return;
+                }
+                manageSubscriptionButton.disabled = true;
+                manageSubscriptionButton.textContent = 'Redirecting...';
                 try {
-                    // Call your backend to create a Stripe customer portal session
-                    const response = await fetch('/api/stripe-portal', {
+                    const response = await fetch('/api/create-portal-session', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            subscriptionId: subscription.stripe_subscription_id,
-                            userId: userData.id
-                        })
+                        body: JSON.stringify({ customerId, returnUrl: window.location.origin + '/dashboard.html' })
                     });
                     if (!response.ok) throw new Error('Failed to create Stripe portal session');
                     const data = await response.json();
-                    if (!data.url) throw new Error('No portal URL returned');
                     window.location.href = data.url;
                 } catch (err) {
-                    showNotification('Could not open Stripe portal. Please try again.', 'error');
-                    manageStripeBtn.disabled = false;
-                    manageStripeBtn.textContent = originalText;
+                    alert('Error redirecting to Stripe portal: ' + err.message);
+                } finally {
+                    manageSubscriptionButton.disabled = false;
+                    manageSubscriptionButton.textContent = 'Manage Subscription';
                 }
-            });
+            };
         }
         
         // Helper function to format date
