@@ -752,28 +752,11 @@
                 
                 if (profileError) throw profileError;
                 
-                // Update the UI with user data
+                // Update the UI with user data (name, email, etc.)
                 updateUserInterface(profile);
                 
-                // Check if user has a subscribed model
-                if (profile.model_id) {
-                    // Fetch the subscribed model
-                    const { data: model, error: modelError } = await supabase
-                        .from('models')
-                        .select('*')
-                        .eq('id', profile.model_id)
-                        .single();
-                    
-                    if (modelError) throw modelError;
-                    
-                    // Display the subscribed model
-                    displaySubscribedModel(model, true);
-                } else {
-                    // Show no subscription message
-                    subscribedModelsContainer.style.display = 'none';
-                    noSubscriptionContainer.style.display = 'block';
-                }
-                
+                // Load all user subscriptions (show all cards)
+                await loadUserSubscriptions();
             } catch (error) {
                 console.error('Error initializing dashboard:', error);
                 // Show error state
