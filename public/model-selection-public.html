@@ -13,7 +13,117 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Use the same styles as model-selection.html */
+        /* Unified Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent);
+            color: var(--darker);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
+            text-decoration: none;
+            letter-spacing: 0.2px;
+        }
+        .btn:hover {
+            background-color: #B4C1FF;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
+        }
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        .btn i {
+            margin-right: 0.7rem;
+        }
+        .btn-secondary {
+            background-color: var(--primary-light);
+            color: var(--dark);
+            border: 1px solid rgba(211, 209, 218, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+        .btn-success {
+            background-color: rgba(46, 204, 113, 0.9);
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: rgba(46, 204, 113, 1);
+        }
+        .btn-full {
+            width: 100%;
+        }
+        .model-card {
+            background-color: var(--light);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 2rem;
+            border: 1px solid rgba(211, 209, 218, 0.1);
+        }
+        .model-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(180, 193, 255, 0.3);
+        }
+        .model-image-container {
+            flex: 0 0 auto;
+            margin-right: 2rem;
+        }
+        .model-image {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(211, 209, 218, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        .model-card:hover .model-image {
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+        .model-details {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .model-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+        .model-bio {
+            color: var(--dark);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+            max-height: 3.2em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            opacity: 0.85;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +243,7 @@
                 modelImageContainer.className = 'model-image-container';
                 const modelImage = document.createElement('div');
                 modelImage.className = 'model-image';
+                // Build the correct image path using Supabase bucket (match model-selection.html)
                 let imagePath;
                 if (model.pictures) {
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
@@ -150,11 +261,9 @@
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
                 modelDetails.innerHTML = `
-                    <h3 class="model-name">${model.name}</h3>
-                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                    <button class="btn select-model-btn" data-model-id="${model.id}">
-                        <i class="fas fa-arrow-right"></i> Select
-                    </button>
+                    <h3 class=\"model-name\">${model.name}</h3>
+                    <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
+                    <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
                 `;
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
@@ -164,7 +273,7 @@
             document.querySelectorAll('.select-model-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const modelId = this.getAttribute('data-model-id');
-                    window.location.href = `/signup.html?model_id=${encodeURIComponent(modelId)}`;
+                    window.location.href = `/invite/${encodeURIComponent(modelId)}`;
                 });
             });
         }
