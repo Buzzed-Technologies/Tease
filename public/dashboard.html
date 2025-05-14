@@ -774,7 +774,6 @@
             // Update settings form and account info
             settingsName.value = profile.name || '';
             settingsEmail.value = profile.email || '';
-            
             accountName.textContent = profile.name || 'User';
             accountEmail.textContent = profile.email || 'Not provided';
             accountCreated.textContent = `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { 
@@ -782,7 +781,6 @@
                 month: 'long', 
                 day: 'numeric' 
             })}`;
-            
             // Set subscription status
             if (profile.subscription_status) {
                 accountSubscriptionStatus.textContent = 'Active';
@@ -791,6 +789,11 @@
                 accountSubscriptionStatus.textContent = 'Inactive';
                 accountSubscriptionStatus.className = 'model-subscription-status inactive';
             }
+            // Always update userData and localStorage with the latest stripe_customer_id
+            userData.stripe_customer_id = profile.stripe_customer_id || null;
+            localStorage.setItem('threadpay_user', JSON.stringify(userData));
+            // Debug log
+            console.log('Fetched profile:', profile);
         }
         
         // Display subscribed model
@@ -1199,8 +1202,9 @@
             // Set up manage subscription button for Stripe portal
             manageSubscriptionButton.onclick = async function () {
                 const customerId = subscription.stripe_customer_id || userData.stripe_customer_id;
+                console.log('Stripe customerId for portal:', customerId);
                 if (!customerId) {
-                    alert('Stripe customer ID not found.');
+                    alert('Stripe customer ID not found. Please contact support or try re-logging in.');
                     return;
                 }
                 manageSubscriptionButton.disabled = true;
