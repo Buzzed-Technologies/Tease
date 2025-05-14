@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
+    <title>Explore Models | ThreadPay Secure Payment Platform</title>
+    <!-- Favicon and styles omitted for brevity -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Use the same styles as model-selection.html */
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <a href="/">
+                <div class="logo">ThreadPay</div>
+            </a>
+            <div class="header-controls">
+                <a href="/login.html" class="btn btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span class="btn-text">Sign In</span>
+                </a>
+                <a href="/signup.html" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    <span class="btn-text">Sign Up</span>
+                </a>
+            </div>
+        </header>
+        <div class="dashboard-content">
+            <div class="section-header">
+                <h2>Explore Creators</h2>
+                <p class="section-description">Discover and select your favorite creator to sign up with.</p>
+            </div>
+            <div id="loading-container" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading creators...</p>
+            </div>
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="empty-message">No creators found</h3>
+                <p class="empty-description">We couldn't find any models available at the moment. Please check back later.</p>
+            </div>
+            <div id="model-grid" class="model-grid"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script>
+        // Supabase client initialization (public, no auth)
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const modelGrid = document.getElementById('model-grid');
+        const loadingContainer = document.getElementById('loading-container');
+        const emptyState = document.getElementById('empty-state');
+
+        async function loadModels() {
+            try {
+                loadingContainer.style.display = 'block';
+                modelGrid.style.display = 'none';
+                emptyState.style.display = 'none';
+                const { data: models, error } = await supabase
+                    .from('models')
+                    .select('*');
+                if (error) throw error;
+                if (!models || models.length === 0) {
+                    loadingContainer.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                displayModels(models);
+                loadingContainer.style.display = 'none';
+                modelGrid.style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading models:', error);
+                loadingContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+        function displayModels(models) {
+            modelGrid.innerHTML = '';
+            models.forEach(model => {
+                const modelCard = document.createElement('div');
+                modelCard.className = 'model-card';
+                modelCard.dataset.modelId = model.id;
+                // Add container for the image
+                const modelImageContainer = document.createElement('div');
+                modelImageContainer.className = 'model-image-container';
+                const modelImage = document.createElement('div');
+                modelImage.className = 'model-image';
+                let imagePath;
+                if (model.pictures) {
+                    if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                    } else if (model.pictures.main) {
+                        imagePath = model.pictures.main;
+                    } else {
+                        imagePath = '/images/placeholder-model.png';
+                    }
+                } else {
+                    imagePath = '/images/placeholder-model.png';
+                }
+                modelImage.style.backgroundImage = `url(${imagePath})`;
+                modelImageContainer.appendChild(modelImage);
+                const modelDetails = document.createElement('div');
+                modelDetails.className = 'model-details';
+                modelDetails.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    <button class="btn select-model-btn" data-model-id="${model.id}">
+                        <i class="fas fa-arrow-right"></i> Select
+                    </button>
+                `;
+                modelCard.appendChild(modelImageContainer);
+                modelCard.appendChild(modelDetails);
+                modelGrid.appendChild(modelCard);
+            });
+            // Add event listeners for selection
+            document.querySelectorAll('.select-model-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modelId = this.getAttribute('data-model-id');
+                    window.location.href = `/signup.html?model_id=${encodeURIComponent(modelId)}`;
+                });
+            });
+        }
+        loadModels();
+    </script>
+</body>
+</html> 

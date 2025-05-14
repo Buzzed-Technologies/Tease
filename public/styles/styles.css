@@ -1340,4 +1340,13 @@ input[type=number] {
 ::-moz-selection {
     background-color: var(--accent);
     color: var(--light);
+}
+
+.form-input {
+    color: #111 !important;
+    background-color: var(--primary-light);
+}
+
+.login-message.success {
+    color: #28a745 !important;
 } 

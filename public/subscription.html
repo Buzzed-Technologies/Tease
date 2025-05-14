@@ -1061,24 +1061,19 @@
         // Handle successful subscription after redirect from Stripe
         async function handleSuccessfulSubscription(sessionId) {
             console.log('Processing successful subscription with session ID:', sessionId);
-            
             try {
                 // Show processing state
                 document.getElementById('subscription-view').classList.add('hidden');
                 document.getElementById('success-view').classList.remove('hidden');
                 document.getElementById('success-message').textContent = 'Finalizing your subscription...';
-                
                 // Fetch session details from Stripe
                 const response = await fetch(`/api/stripe-session?session_id=${sessionId}`);
-                
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.error || 'Error validating subscription');
                 }
-                
                 const sessionData = await response.json();
                 console.log('Session data:', sessionData);
-                
                 // Update user_model_subscriptions table
                 const { error: subscriptionError } = await supabase
                     .from('user_model_subscriptions')
@@ -1092,9 +1087,7 @@
                         subscription_plan: 'monthly',
                         is_active: true
                     }]);
-                    
                 if (subscriptionError) throw subscriptionError;
-                
                 // Update profiles table to increment subscription count
                 const { error: profileError } = await supabase
                     .from('profiles')
@@ -1102,35 +1095,54 @@
                         subscription_count: supabase.rpc('increment', { x: 1 })
                     })
                     .eq('id', userData.id);
-                    
                 if (profileError) throw profileError;
-                
                 // Update success view
                 document.getElementById('model-name-success').textContent = modelData.name || 'the creator';
                 document.getElementById('success-message').innerHTML = 
                     `Thank you for subscribing! Your payment has been processed successfully, and your access to <span class="model-name-highlight">${modelData.name}'s</span> content is now active.`;
-                
                 // Update URL to remove query parameters
                 window.history.replaceState({}, document.title, '/subscription.html');
-                
-                // Start countdown for auto-redirect
-                let countdown = 5;
-                const countdownElement = document.getElementById('countdown');
-                
-                const timer = setInterval(() => {
-                    countdown--;
-                    countdownElement.textContent = countdown;
-                    
-                    if (countdown <= 0) {
-                        clearInterval(timer);
-                    window.location.href = '/dashboard.html';
-                    }
-                }, 1000);
+                // Show the redirect countdown (now handled globally)
+                startDashboardRedirectCountdown();
             } catch (error) {
                 console.error('Error processing successful subscription:', error);
                 showError('There was an issue verifying your subscription. Please check your account status or contact support.');
             }
         }
+        
+        // Always redirect to dashboard after showing the success view
+        function startDashboardRedirectCountdown() {
+            let countdown = 5;
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) return;
+            countdownElement.textContent = countdown;
+            const timer = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    window.location.href = '/dashboard.html';
+                }
+            }, 1000);
+        }
+
+        // Observe when the success view is shown and start the redirect
+        const observer = new MutationObserver(() => {
+            const successView = document.getElementById('success-view');
+            if (successView && !successView.classList.contains('hidden')) {
+                startDashboardRedirectCountdown();
+            }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const successView = document.getElementById('success-view');
+            if (successView) {
+                observer.observe(successView, { attributes: true, attributeFilter: ['class'] });
+                // If already visible on load, start countdown
+                if (!successView.classList.contains('hidden')) {
+                    startDashboardRedirectCountdown();
+                }
+            }
+        });
         
         // Global handler for subscribe button clicks
         async function handleSubscribeClick(e) {

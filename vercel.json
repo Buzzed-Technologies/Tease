@@ -22,6 +22,10 @@
     {
       "src": "/(.*)",
       "dest": "/public/$1"
+    },
+    {
+      "src": "/model-selection-public",
+      "dest": "/public/model-selection-public.html"
     }
   ]
 } 
