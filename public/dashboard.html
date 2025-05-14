@@ -1128,7 +1128,7 @@
                             <div class="model-card-footer">
                                 <span class="subscription-plan">${pkg?.name || 'Standard'}</span>
                                 <span class="subscription-price">${formattedPrice}/month</span>
-                                <button class="manage-subscription-btn" data-subscription-id="${subscription.id}">
+                                <button class="manage-subscription-btn action-button" data-subscription-id="${subscription.id}">
                                     Manage
                                 </button>
                             </div>
@@ -1144,9 +1144,6 @@
                         e.stopPropagation();
                         openSubscriptionDetails(subscription);
                     });
-
-                    // Add click event to open popup for the card (optional, like old behavior)
-                    modelCard.addEventListener('click', () => openSubscriptionDetails(subscription));
                 });
             } catch (error) {
                 console.error('Error loading user subscriptions:', error);
