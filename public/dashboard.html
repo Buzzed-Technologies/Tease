@@ -1091,51 +1091,62 @@
                 const modelContainer = document.getElementById('subscribed-models-container');
                 modelContainer.innerHTML = '';
                 
-                // Create a card for each subscription
+                // Create a card for each subscription using the styled markup
                 subscriptions.forEach(subscription => {
                     const model = subscription.models;
                     const pkg = subscription.packages;
-                    
                     if (!model) return; // Skip if model is not found
-                    
-                    const modelCard = document.createElement('div');
-                    modelCard.className = 'model-subscription-card';
-                    modelCard.dataset.modelId = subscription.model_id;
-                    
+
                     // Format price with 2 decimal places
                     const formattedPrice = new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',
                         minimumFractionDigits: 2
                     }).format(pkg?.price || 0);
-                    
-                    // Create the HTML content for the model card
+
+                    // Get the image URL (handle both array and object for pictures)
+                    let imageUrl = '/images/placeholder-model.jpg';
+                    if (model.pictures) {
+                        if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                            imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        } else if (typeof model.pictures === 'object' && model.pictures.main) {
+                            imageUrl = model.pictures.main;
+                        }
+                    }
+
+                    const modelCard = document.createElement('div');
+                    modelCard.className = 'model-card';
+                    modelCard.dataset.modelId = subscription.model_id;
                     modelCard.innerHTML = `
-                        <div class="model-card-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
-                        <div class="model-card-content">
-                            <h4 class="model-card-name">${model.name}</h4>
-                            <p class="model-card-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                        <div class="model-image">
+                            <img src="${imageUrl}" alt="${model.name}">
+                        </div>
+                        <div class="model-info">
+                            <div class="model-name">${model.name}</div>
+                            <div class="model-description">${model.bio || 'Creator on ThreadPay'}</div>
+                            <div class="model-subscription-status active">Active Subscription</div>
                             <div class="model-card-footer">
-                                <div class="model-card-subscription">
-                                    <span class="subscription-plan">${pkg?.name || 'Standard'}</span>
-                                    <span class="subscription-price">${formattedPrice}/month</span>
-                                </div>
+                                <span class="subscription-plan">${pkg?.name || 'Standard'}</span>
+                                <span class="subscription-price">${formattedPrice}/month</span>
                                 <button class="manage-subscription-btn" data-subscription-id="${subscription.id}">
                                     Manage
                                 </button>
                             </div>
                         </div>
                     `;
-                    
+
                     // Add the card to the container
                     modelContainer.appendChild(modelCard);
-                    
+
                     // Add event listener to manage button
                     const manageBtn = modelCard.querySelector('.manage-subscription-btn');
-                    manageBtn.addEventListener('click', () => {
-                        // Handle subscription management (e.g., open a modal or navigate to management page)
+                    manageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
                         openSubscriptionDetails(subscription);
                     });
+
+                    // Add click event to open popup for the card (optional, like old behavior)
+                    modelCard.addEventListener('click', () => openSubscriptionDetails(subscription));
                 });
             } catch (error) {
                 console.error('Error loading user subscriptions:', error);
