@@ -955,35 +955,12 @@
             const isSubscribed = manageSubscriptionButton.textContent === 'Manage Subscription';
             
             if (isSubscribed) {
-                // Redirect to Stripe Customer Portal
-                const customerId = userData.stripe_customer_id;
-                if (!customerId) {
-                    console.error('No Stripe customer ID found');
-                    return;
-                }
-                
-                fetch('/api/create-portal-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        customerId,
-                        returnUrl: window.location.origin + '/dashboard.html'
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.url) {
-                        window.location.href = data.url;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error creating portal session:', error);
-                });
+                alert('This would redirect to Stripe Customer Portal in a real implementation.');
             } else {
-                // Redirect to subscription page
-                window.location.href = '/subscription.html';
+                alert('This would redirect to a payment page for this model in a real implementation.');
             }
         });
+        
         // Handle settings form submission
         settingsForm.addEventListener('submit', async function(e) {
             e.preventDefault();
