@@ -26,6 +26,14 @@
     {
       "src": "/model-selection-public",
       "dest": "/public/model-selection-public.html"
+    },
+    {
+      "src": "/privacy-policy",
+      "dest": "/public/privacy-policy.html"
+    },
+    {
+      "src": "/terms-of-service",
+      "dest": "/public/terms-of-service.html"
     }
   ]
 } 
