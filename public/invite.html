@@ -307,17 +307,15 @@
         /* Model image gallery styles */
         #model-image-gallery {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.1rem;
             justify-content: center;
             align-items: flex-start;
-            margin-bottom: 2rem;
+            margin-bottom: 1.2rem;
             overflow-x: auto;
             scrollbar-width: thin;
             scrollbar-color: #C6D2FF #f8faff;
             padding-bottom: 0.2rem;
-            padding-left: 0;
-            padding-right: 0;
-            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
         }
         #model-image-gallery::-webkit-scrollbar {
             height: 8px;
@@ -337,32 +335,62 @@
             overflow: hidden;
             flex-shrink: 0;
             transition: transform 0.18s;
-            border: 1.5px solid #e0e6f7;
-            scroll-snap-align: center;
         }
         .hero-img-gallery-item:hover {
             transform: scale(1.04);
         }
-        @media (max-width: 600px) {
-            #model-image-gallery {
-                gap: 4vw;
-                padding-left: 5vw;
-                padding-right: 5vw;
-                margin-bottom: 1.5rem;
-                scrollbar-width: none;
+        /* Carousel styles */
+        #model-image-carousel {
+            position: relative;
+            width: 100%;
+            max-width: 260px;
+            margin: 0 auto 1.2rem auto;
+            overflow: hidden;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(.77,0,.18,1);
+            will-change: transform;
+        }
+        .carousel-img {
+            min-width: 100%;
+            aspect-ratio: 4/5;
+            border-radius: 18px;
+            object-fit: cover;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            background: #e6eaff;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: box-shadow 0.18s;
+        }
+        .carousel-img:active {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.7rem;
+        }
+        .carousel-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #d1d1e0;
+            opacity: 0.6;
+            transition: background 0.2s, opacity 0.2s;
+            cursor: pointer;
+        }
+        .carousel-dot.active {
+            background: var(--accent);
+            opacity: 1;
+        }
+        @media (min-width: 900px) {
+            #model-image-carousel {
+                max-width: 480px;
             }
-            #model-image-gallery::-webkit-scrollbar {
-                display: none;
-            }
-            .hero-img-gallery-item {
-                width: 90vw;
-                max-width: 320px;
-                min-width: 220px;
-                aspect-ratio: 4/5;
-                border-radius: 18px;
-                box-shadow: 0 4px 18px rgba(0,0,0,0.13);
-                border: 1.5px solid #e0e6f7;
-                scroll-snap-align: center;
+            .carousel-img {
+                min-width: 50%;
             }
         }
     </style>
@@ -374,7 +402,10 @@
             <div class="logo">ThreadPay</div>
             <div class="tagline">secure creator payments</div>
             <div class="hero">
-                <div id="model-image-gallery"></div>
+                <div id="model-image-carousel">
+                    <div class="carousel-track" id="carousel-track"></div>
+                    <div class="carousel-dots" id="carousel-dots"></div>
+                </div>
                 <div class="hero-name" id="model-name">Loading...</div>
                 <div class="hero-bio" id="model-bio">Loading model information...</div>
             </div>
@@ -502,30 +533,89 @@
         function updateModelDisplay(model) {
             document.getElementById('model-name').textContent = model.name;
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
-            const gallery = document.getElementById('model-image-gallery');
-            gallery.innerHTML = '';
-            if (model.pictures && model.pictures.length > 0) {
-                if (model.pictures.length === 1) {
-                    const imageName = model.pictures[0];
-                    const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                    const img = document.createElement('div');
-                    img.className = 'hero-img-gallery-item';
-                    img.style.backgroundImage = `url(${url})`;
-                    img.style.backgroundSize = 'cover';
-                    img.style.backgroundPosition = 'center';
-                    gallery.appendChild(img);
-                } else {
-                    model.pictures.forEach(imageName => {
-                        const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                        const img = document.createElement('div');
-                        img.className = 'hero-img-gallery-item';
-                        img.style.backgroundImage = `url(${url})`;
-                        img.style.backgroundSize = 'cover';
-                        img.style.backgroundPosition = 'center';
-                        gallery.appendChild(img);
-                    });
-                }
+            const track = document.getElementById('carousel-track');
+            const dots = document.getElementById('carousel-dots');
+            track.innerHTML = '';
+            dots.innerHTML = '';
+            let images = Array.isArray(model.pictures) ? model.pictures : [];
+            if (!images.length) {
+                // fallback: show a blank image
+                const img = document.createElement('div');
+                img.className = 'carousel-img';
+                img.style.background = '#e6eaff';
+                track.appendChild(img);
+                return;
             }
+            // Desktop: show up to 2 images side by side, mobile: 1 at a time
+            const isDesktop = window.matchMedia('(min-width: 900px)').matches;
+            images.forEach((imageName, i) => {
+                const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
+                const img = document.createElement('div');
+                img.className = 'carousel-img';
+                img.style.backgroundImage = `url(${url})`;
+                img.style.backgroundSize = 'cover';
+                img.style.backgroundPosition = 'center';
+                track.appendChild(img);
+                // Dots
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot';
+                dot.onclick = () => goToSlide(i);
+                dots.appendChild(dot);
+            });
+            let current = 0;
+            let autoTimer = null;
+            function updateCarousel() {
+                const slideWidth = track.offsetWidth / (isDesktop ? 2 : 1);
+                const visible = isDesktop ? 2 : 1;
+                let offset = current;
+                if (isDesktop && images.length > 1) {
+                    // Clamp so last slide always shows 2 images if possible
+                    offset = Math.min(current, images.length - visible);
+                }
+                track.style.transform = `translateX(-${offset * 100 / visible}%)`;
+                Array.from(dots.children).forEach((d, i) => d.classList.toggle('active', i === current));
+            }
+            function goToSlide(idx) {
+                current = idx;
+                updateCarousel();
+                resetAuto();
+            }
+            function nextSlide() {
+                current = (current + 1) % images.length;
+                updateCarousel();
+            }
+            function prevSlide() {
+                current = (current - 1 + images.length) % images.length;
+                updateCarousel();
+            }
+            function resetAuto() {
+                if (autoTimer) clearInterval(autoTimer);
+                autoTimer = setInterval(nextSlide, 3500);
+            }
+            // Touch/swipe support
+            let startX = 0, dx = 0, dragging = false;
+            track.addEventListener('touchstart', e => {
+                dragging = true;
+                startX = e.touches[0].clientX;
+                dx = 0;
+                if (autoTimer) clearInterval(autoTimer);
+            });
+            track.addEventListener('touchmove', e => {
+                if (!dragging) return;
+                dx = e.touches[0].clientX - startX;
+            });
+            track.addEventListener('touchend', e => {
+                dragging = false;
+                if (Math.abs(dx) > 40) {
+                    if (dx < 0) nextSlide();
+                    else prevSlide();
+                }
+                resetAuto();
+            });
+            // Auto-advance
+            resetAuto();
+            updateCarousel();
+            window.addEventListener('resize', updateCarousel);
             document.getElementById('model-id').value = model.id;
         }
         function hashPassword(password) {
