@@ -357,14 +357,9 @@
             aspect-ratio: 4/5;
             border-radius: 18px;
             object-fit: cover;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
             background: #e6eaff;
             overflow: hidden;
             flex-shrink: 0;
-            transition: box-shadow 0.18s;
-        }
-        .carousel-img:active {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
         }
         .carousel-dots {
             display: flex;
@@ -404,7 +399,6 @@
             <div class="hero">
                 <div id="model-image-carousel">
                     <div class="carousel-track" id="carousel-track"></div>
-                    <div class="carousel-dots" id="carousel-dots"></div>
                 </div>
                 <div class="hero-name" id="model-name">Loading...</div>
                 <div class="hero-bio" id="model-bio">Loading model information...</div>
@@ -556,11 +550,6 @@
                 img.style.backgroundSize = 'cover';
                 img.style.backgroundPosition = 'center';
                 track.appendChild(img);
-                // Dots
-                const dot = document.createElement('div');
-                dot.className = 'carousel-dot';
-                dot.onclick = () => goToSlide(i);
-                dots.appendChild(dot);
             });
             let current = 0;
             let autoTimer = null;
@@ -573,7 +562,6 @@
                     offset = Math.min(current, images.length - visible);
                 }
                 track.style.transform = `translateX(-${offset * 100 / visible}%)`;
-                Array.from(dots.children).forEach((d, i) => d.classList.toggle('active', i === current));
             }
             function goToSlide(idx) {
                 current = idx;
