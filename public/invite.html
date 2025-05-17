@@ -17,151 +17,119 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --accent: #6C63FF;
-            --accent-light: #B4C1FF;
-            --dark: #22223B;
-            --darker: #1A1A2E;
-            --bg: #F8F8FC;
-            --white: #fff;
-            --error: #e74c3c;
-            --success: #2ecc71;
+            --accent: #C6D2FF;
+            --dark: #2d2d2d;
+            --darker: #181818;
         }
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            background: var(--bg);
             font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
             color: var(--dark);
         }
-        .invite-container {
+        body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(135deg, #f5f0e8 0%, #ffffff 100%);
-            padding: 0;
         }
-        .logo-container {
-            margin: 2.5rem 0 1.5rem 0;
-            text-align: center;
-        }
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            color: var(--accent);
-            letter-spacing: 2px;
-            font-weight: 700;
-        }
-        .tagline {
-            color: var(--dark);
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-top: 0.3rem;
-            font-weight: 600;
-        }
-        .invite-content {
-            flex: 1;
-            max-width: 1100px;
-            margin: 0 auto;
-            width: 100%;
+        .hero {
             display: flex;
-            align-items: flex-start;
+            flex-direction: row;
+            min-height: 100vh;
+            width: 100vw;
+            align-items: stretch;
             justify-content: center;
-            padding: 0 2vw 2vw 2vw;
+            background: none;
         }
-        .columns {
-            display: flex;
-            width: 100%;
-            gap: 2.5rem;
-        }
-        .model-column {
-            flex: 1;
+        .creator-card {
+            flex: 1.2;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
+            background: none;
+            padding: 4vw 2vw 4vw 6vw;
+            min-width: 0;
         }
-        .model-image {
+        .creator-image {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             aspect-ratio: 3/4;
-            border-radius: 18px;
-            overflow: hidden;
-            background-color: #eaeaf6;
-            margin-bottom: 2rem;
+            border-radius: 2rem;
+            background: #eaeaea;
             background-size: cover;
             background-position: center top;
-            box-shadow: 0 10px 40px rgba(108, 99, 255, 0.12);
-            transition: box-shadow 0.3s;
+            box-shadow: 0 12px 40px 0 rgba(0,0,0,0.18);
+            margin-bottom: 2.5rem;
+            transition: box-shadow 0.2s;
         }
-        .model-image:hover {
-            box-shadow: 0 16px 48px rgba(108, 99, 255, 0.18);
+        .creator-image:hover {
+            box-shadow: 0 18px 60px 0 rgba(0,0,0,0.25);
         }
-        .model-info {
+        .creator-info {
             text-align: center;
-            max-width: 400px;
+            max-width: 420px;
         }
-        .model-name {
+        .creator-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.7rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.7rem;
+        }
+        .creator-bio {
+            color: var(--dark);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+        .logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
-            margin-bottom: 0.7rem;
+            color: var(--accent);
+            margin-bottom: 0.2rem;
+            letter-spacing: 1px;
+        }
+        .tagline {
             color: var(--dark);
-            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 2.5rem;
         }
-        .model-bio {
-            color: #444;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-        .signup-column {
+        .signup-card {
             flex: 1;
-            background: var(--white);
-            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+        .signup-inner {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(198,210,255,0.18);
             padding: 2.5rem 2rem 2rem 2rem;
-            box-shadow: 0 6px 32px rgba(108, 99, 255, 0.08);
-            max-width: 440px;
-            margin-top: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(198,210,255,0.18);
+            position: sticky;
+            top: 3vw;
+            margin: 4vw 2vw 4vw 0;
+            animation: floatIn 0.7s cubic-bezier(.23,1.02,.32,1) 1;
         }
-        #packages-section {
-            margin-bottom: 2.2rem;
-        }
-        #packages-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.1rem;
-        }
-        .package-card {
-            border: 2px solid #eaeaf6;
-            border-radius: 12px;
-            padding: 1.2rem 1.1rem;
-            background: #f8f8fc;
-            cursor: pointer;
-            transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.04);
-            position: relative;
-        }
-        .package-card.selected, .package-card:active, .package-card:focus {
-            border-color: var(--accent);
-            background: #ecebff;
-            box-shadow: 0 0 0 3px #c6d2ff44;
-        }
-        .package-card .fa-star {
-            color: var(--accent);
-            margin-right: 0.4em;
-        }
-        .package-card .price {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--accent);
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: none; }
         }
         .signup-header {
             text-align: center;
@@ -172,98 +140,114 @@
             font-size: 2rem;
             margin-bottom: 0.7rem;
             color: var(--dark);
-            font-weight: 700;
         }
         .signup-description {
-            color: #555;
-            line-height: 1.6;
+            color: var(--dark);
             font-size: 1.05rem;
+            line-height: 1.6;
         }
-        #signup-form {
+        #packages-section {
+            margin-bottom: 2.2rem;
+        }
+        #packages-list {
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
+            gap: 1.1rem;
+        }
+        .package-card {
+            background: rgba(198,210,255,0.13);
+            border: 2px solid transparent;
+            border-radius: 1.1rem;
+            padding: 1.1rem 1.2rem;
+            cursor: pointer;
+            transition: box-shadow 0.18s, border 0.18s, background 0.18s;
+            box-shadow: 0 2px 10px 0 rgba(198,210,255,0.08);
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .package-card:hover, .package-card.selected {
+            border: 2px solid var(--accent);
+            background: rgba(198,210,255,0.22);
+            box-shadow: 0 4px 18px 0 rgba(198,210,255,0.18);
         }
         .form-group {
-            position: relative;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.3rem;
         }
         .form-label {
-            position: absolute;
-            left: 1.1rem;
-            top: 1.1rem;
-            color: #888;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
             font-size: 1rem;
-            pointer-events: none;
-            transition: 0.2s;
-            background: transparent;
-        }
-        .form-input:focus + .form-label,
-        .form-input:not(:placeholder-shown) + .form-label {
-            top: -0.7rem;
-            left: 0.9rem;
-            font-size: 0.85rem;
-            color: var(--accent);
-            background: var(--white);
-            padding: 0 0.3rem;
         }
         .form-input {
             width: 100%;
-            padding: 1.1rem 1.1rem 0.7rem 1.1rem;
-            border-radius: 8px;
-            background: #f8f8fc;
-            border: 1.5px solid #eaeaf6;
-            color: #22223B;
+            padding: 1rem 1.1rem;
+            border-radius: 0.8rem;
+            background-color: #fff !important;
+            border: 1.5px solid rgba(198,210,255,0.4) !important;
+            color: #333 !important;
             font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-            outline: none;
+            font-size: 1.05rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-text-fill-color: #333 !important;
+            opacity: 1 !important;
+            caret-color: #333 !important;
         }
         .form-input:focus {
+            outline: none;
             border-color: var(--accent);
-            background: #ecebff;
+            box-shadow: 0 0 0 2px rgba(198,210,255,0.18);
+        }
+        .form-input::placeholder {
+            color: rgba(51,51,51,0.5);
+            font-weight: 400;
         }
         .form-description {
             font-size: 0.85rem;
-            color: #888;
+            color: var(--dark);
             margin-top: 0.3rem;
         }
         .submit-btn {
             width: 100%;
             padding: 1.1rem;
-            border-radius: 8px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-            color: var(--white);
+            border-radius: 0.8rem;
+            background: linear-gradient(90deg, var(--accent) 60%, #fff 100%);
+            color: var(--darker);
             font-weight: 700;
             font-size: 1.1rem;
+            text-align: center;
             border: none;
             cursor: pointer;
             font-family: 'Montserrat', sans-serif;
-            box-shadow: 0 2px 12px rgba(108, 99, 255, 0.10);
+            box-shadow: 0 2px 10px 0 rgba(198,210,255,0.10);
             transition: background 0.2s, box-shadow 0.2s;
         }
         .submit-btn:hover, .submit-btn:focus {
-            background: linear-gradient(90deg, #7a6cff, #b4c1ff);
-            box-shadow: 0 4px 18px rgba(108, 99, 255, 0.18);
+            background: linear-gradient(90deg, #B4C1FF 60%, #fff 100%);
+            box-shadow: 0 4px 18px 0 rgba(198,210,255,0.18);
         }
         .signup-message {
-            margin-top: 0.7rem;
-            padding: 0.9rem;
-            border-radius: 8px;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 0.8rem;
             font-size: 1rem;
             text-align: center;
             display: none;
         }
         .signup-message.error {
-            background: rgba(231, 76, 60, 0.12);
-            color: var(--error);
-            border: 1px solid rgba(231, 76, 60, 0.18);
+            background-color: rgba(231,76,60,0.13);
+            color: #e74c3c;
+            border: 1.5px solid rgba(231,76,60,0.18);
             display: block;
         }
         .signup-message.success {
-            background: rgba(46, 204, 113, 0.12);
-            color: var(--success);
-            border: 1px solid rgba(46, 204, 113, 0.18);
+            background-color: rgba(46,204,113,0.13);
+            color: #2ecc71;
+            border: 1.5px solid rgba(46,204,113,0.18);
             display: block;
         }
         .login-link {
@@ -271,7 +255,7 @@
             text-align: center;
             margin-top: 1.7rem;
             color: var(--dark);
-            font-size: 1rem;
+            font-size: 1.05rem;
         }
         .login-link a {
             color: var(--accent);
@@ -281,123 +265,85 @@
         .login-link a:hover {
             text-decoration: underline;
         }
-        @media (max-width: 900px) {
-            .invite-content {
-                padding: 0 1vw 2vw 1vw;
-            }
-            .columns {
-                flex-direction: column;
-                gap: 2.5rem;
-                align-items: center;
-            }
-            .model-column, .signup-column {
-                max-width: 100%;
-            }
+        /* Responsive layout */
+        @media (max-width: 1100px) {
+            .hero { flex-direction: column; align-items: stretch; }
+            .creator-card, .signup-card { padding: 4vw 4vw; margin: 0; }
+            .signup-inner { position: static; margin: 0 auto; }
         }
-        @media (max-width: 600px) {
-            .logo {
-                font-size: 2rem;
-            }
-            .tagline {
-                font-size: 0.9rem;
-            }
-            .invite-content {
-                padding: 0 0.5vw 2vw 0.5vw;
-            }
-            .columns {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            .model-image {
-                max-width: 90vw;
-                border-radius: 14px;
-            }
-            .signup-column {
-                padding: 1.2rem 0.7rem 1.2rem 0.7rem;
-                border-radius: 14px;
-            }
+        @media (max-width: 700px) {
+            .hero { flex-direction: column; padding: 0; }
+            .creator-card, .signup-card { padding: 7vw 4vw 2vw 4vw; }
+            .creator-image { max-width: 90vw; border-radius: 1.2rem; }
+            .signup-inner { padding: 2rem 0.7rem 1.5rem 0.7rem; border-radius: 1.2rem; }
         }
-        @media (max-width: 400px) {
-            .logo {
-                font-size: 1.3rem;
-            }
-            .signup-header h1 {
-                font-size: 1.2rem;
-            }
+        @media (max-width: 480px) {
+            .logo { font-size: 1.5rem; }
+            .tagline { font-size: 0.8rem; }
+            .creator-name { font-size: 1.3rem; }
+            .creator-bio { font-size: 0.9rem; }
+            .signup-header h1 { font-size: 1.2rem; }
+            .signup-description { font-size: 0.9rem; }
+            .form-label, .login-link { font-size: 0.95rem; }
+            .form-input, .submit-btn { font-size: 1rem; padding: 0.8rem; }
         }
     </style>
 </head>
 <body>
-    <div class="invite-container">
-        <div class="logo-container">
+    <div class="hero">
+        <div class="creator-card">
             <div class="logo">ThreadPay</div>
             <div class="tagline">secure creator payments</div>
+            <div class="creator-image" id="model-image"></div>
+            <div class="creator-info">
+                <div class="creator-name" id="model-name">Loading...</div>
+                <div class="creator-bio" id="model-bio">Loading model information...</div>
+            </div>
         </div>
-        
-        <div class="invite-content">
-            <div class="columns">
-                <div class="model-column">
-                    <div class="model-image" id="model-image"></div>
-                    <div class="model-info">
-                        <h2 class="model-name" id="model-name">Loading...</h2>
-                        <p class="model-bio" id="model-bio">Loading model information...</p>
-                    </div>
+        <div class="signup-card">
+            <div class="signup-inner">
+                <div id="packages-section">
+                    <h3 style="text-align:center; margin-bottom:1rem; font-size:1.25rem; font-weight:700;">Choose Your Package</h3>
+                    <div id="packages-list"></div>
                 </div>
-                
-                <div class="signup-column">
-                    <div id="packages-section">
-                        <h3 style="text-align:center; margin-bottom:1rem; font-size:1.25rem; font-weight:700; color:var(--accent); letter-spacing:1px;">Choose Your Package</h3>
-                        <div id="packages-list"></div>
-                    </div>
-                    <div class="signup-header">
-                        <h1>Sign Up to Subscribe</h1>
-                        <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
-                    </div>
-                    
-                    <form id="signup-form" autocomplete="off">
-                        <input type="hidden" id="model-id" name="model-id" value="">
-                        <input type="hidden" id="package-id" name="package-id" value="">
-                        
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
-                            <label for="name" class="form-label">Your Name</label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="number" id="age" name="age" class="form-input" placeholder=" " min="18" required>
-                            <label for="age" class="form-label">Your Age</label>
-                            <p class="form-description">You must be 18 or older to use ThreadPay.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="tel" id="telegram" name="telegram" class="form-input" placeholder=" " required>
-                            <label for="telegram" class="form-label">Telegram Number</label>
-                            <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
-                            <label for="email" class="form-label">Email</label>
-                            <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="password" id="password" name="password" class="form-input" placeholder=" " required>
-                            <label for="password" class="form-label">Password</label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder=" " required>
-                            <label for="confirm-password" class="form-label">Confirm Password</label>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
-                        
-                        <div id="signup-message" class="signup-message"></div>
-                    </form>
-                    
-                    <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+                <div class="signup-header">
+                    <h1>Sign Up to Subscribe</h1>
+                    <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
                 </div>
+                <form id="signup-form">
+                    <input type="hidden" id="model-id" name="model-id" value="">
+                    <input type="hidden" id="package-id" name="package-id" value="">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Your Name</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age" class="form-label">Your Age</label>
+                        <input type="number" id="age" name="age" class="form-input" placeholder="Enter your age" min="18" required>
+                        <p class="form-description">You must be 18 or older to use ThreadPay.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="telegram" class="form-label">Telegram Number</label>
+                        <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Enter your Telegram phone number" required>
+                        <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address" required>
+                        <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password" class="form-label">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
+                    <div id="signup-message" class="signup-message"></div>
+                </form>
+                <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
             </div>
         </div>
     </div>
@@ -454,14 +400,10 @@
             packages.forEach(pkg => {
                 const card = document.createElement('div');
                 card.className = 'package-card';
-                card.tabIndex = 0;
                 card.innerHTML = `
-                    <div style="display:flex;align-items:center;gap:0.5em;">
-                        <span class="fa fa-star" style="display:${pkg.price == Math.min(...packages.map(p=>p.price)) ? 'inline-block':'none'}"></span>
-                        <span style="font-weight:700;font-size:1.1rem;">${pkg.name}</span>
-                    </div>
-                    <div class="price">$${parseFloat(pkg.price).toFixed(2)} <span style="font-size:0.95rem;font-weight:400;">/ month</span></div>
-                    <div style="font-size:0.97rem;color:#666;margin-top:0.3em;">${pkg.description || 'Exclusive access'}</div>
+                    <div style="font-weight:700;font-size:1.15rem;">${pkg.name}</div>
+                    <div style="font-size:1.1rem;margin:0.4rem 0 0.2rem 0;">$${parseFloat(pkg.price).toFixed(2)} <span style="font-size:0.95rem;font-weight:400;">/ month</span></div>
+                    <div style="font-size:0.98rem;color:#666;">${pkg.description || 'Exclusive access'}</div>
                 `;
                 card.onclick = () => {
                     document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
@@ -471,9 +413,6 @@
                     document.getElementById('package-id').setAttribute('data-stripe-price-id', pkg.stripe_price_id);
                     document.getElementById('signup-form').style.opacity = 1;
                     document.getElementById('signup-form').style.pointerEvents = 'auto';
-                };
-                card.onkeydown = (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') card.onclick();
                 };
                 list.appendChild(card);
             });
@@ -550,11 +489,13 @@
                     showError('Invalid model selection. Please refresh the page and try again.');
                     return;
                 }
+                // Disable submit button during signup
                 const submitButton = document.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.textContent;
                 submitButton.disabled = true;
                 submitButton.textContent = 'Creating Account...';
                 try {
+                    // Register the user with Supabase Auth
                     const { data, error } = await supabase.auth.signUp({
                         email: email,
                         password: password,
@@ -567,6 +508,7 @@
                         }
                     });
                     if (error) throw error;
+                    // Store user data for future use
                     const userData = {
                         id: data.user.id,
                         email: data.user.email,
@@ -576,7 +518,9 @@
                         package_id: packageId
                     };
                     localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                    // Hash the password with SHA-256
                     const passwordHash = await hashPassword(password);
+                    // Create profile entry
                     const { error: profileError } = await supabase
                         .from('profiles')
                         .insert([
@@ -590,6 +534,7 @@
                         ]);
                     if (profileError) throw profileError;
                     showSuccess('Account created! Redirecting to payment...');
+                    // Create Stripe checkout session for the selected package
                     const checkoutRes = await fetch('/api/create-checkout-session', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
