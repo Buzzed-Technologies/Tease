@@ -105,8 +105,11 @@
 .dashboard-container {
     padding: 0;
     min-height: 100vh;
-    background-color: var(--primary);
+    background: none;
     color: var(--dark);
+    position: relative;
+    z-index: 1;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .dashboard-content {
@@ -130,12 +133,10 @@
     display: block;
 }
 
-.dashboard-card {
-    background-color: #FFFFFF;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2rem;
+.dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px rgba(198,210,255,0.18);
     border: 1px solid rgba(232, 224, 213, 0.3);
 }
 
@@ -298,26 +299,31 @@
 
 /* Logout button styles */
 .logout-button {
-    background-color: var(--accent);
+    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
     color: var(--darker);
     border: none;
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.1s;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-left: auto;
+    box-shadow: 0 2px 8px #c6d2ff33;
 }
 
 .logout-button:hover {
     background-color: #a3b1ff;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button:active {
+    transform: scale(0.98);
 }
 
 .logout-button i {
@@ -406,22 +412,27 @@
 
 /* Action button */
 .action-button {
-    background-color: var(--accent);
+    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
     color: var(--darker);
     border: none;
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.1s;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px #c6d2ff33;
 }
 
 .action-button:hover {
     background-color: #a3b1ff;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:active {
+    transform: scale(0.98);
 }
 
 /* Models section */
@@ -927,36 +938,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary-dark);
+    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
     color: var(--darker);
     border: none;
     padding: 0.8rem 1.5rem;
     border-radius: 50px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 
-        0 2px 10px rgba(232, 224, 213, 0.3),
-        0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 2px 8px #c6d2ff33;
     gap: 10px;
+}
+
+.explore-more-button:hover {
+    background-color: #a3b1ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.explore-more-button:active {
+    transform: scale(0.98);
 }
 
 .explore-more-button i {
     font-size: 1.1rem;
-}
-
-.explore-more-button:hover {
-    background-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 
-        0 5px 15px rgba(198, 210, 255, 0.4),
-        0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.explore-more-button:active {
-    transform: translateY(1px);
-    box-shadow: 
-        0 2px 8px rgba(198, 210, 255, 0.5);
 }
 
 /* Enhanced model card styling */
@@ -1190,7 +1195,7 @@
 }
 
 .action-button {
-    background-color: var(--accent);
+    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
     color: var(--darker);
     border: none;
     padding: 0.8rem 1.5rem;
@@ -1201,4 +1206,55 @@
     box-shadow: 
         0 2px 10px rgba(198, 210, 255, 0.3),
         0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+:root {
+    --accent: #C6D2FF;
+    --dark: #2d2d2d;
+    --darker: #181818;
+    --radius: 18px;
+}
+body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(120deg, #f5f0e8 0%, #e6eaff 100%);
+    position: relative;
+    overflow-x: hidden;
+}
+.bg-blur {
+    position: fixed;
+    top: -100px; left: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, #fff0 80%);
+    filter: blur(80px);
+    z-index: 0;
+}
+.dashboard-container {
+    padding: 0;
+    min-height: 100vh;
+    background: none;
+    color: var(--dark);
+    position: relative;
+    z-index: 1;
+    font-family: 'Montserrat', sans-serif;
+}
+.dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px rgba(198,210,255,0.18);
+    border: 1px solid rgba(232, 224, 213, 0.3);
+}
+.action-button, .logout-button, .explore-more-button {
+    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
+    color: var(--darker);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px #c6d2ff33;
+    transition: background 0.2s, transform 0.1s;
+}
+.action-button:active, .logout-button:active, .explore-more-button:active {
+    transform: scale(0.98);
 } 
