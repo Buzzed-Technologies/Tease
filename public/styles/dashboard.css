@@ -11,18 +11,9 @@
 
 /* Dashboard Styles */
 .dashboard-header {
-    background-color: var(--primary-light);
-    padding: 1rem 5%;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: none !important;
+    box-shadow: none !important;
+    border-bottom: none !important;
 }
 
 .header-content {
@@ -135,9 +126,86 @@
 
 .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card {
     background: #fff !important;
-    border-radius: var(--radius);
-    box-shadow: 0 4px 24px rgba(198,210,255,0.18);
-    border: 1px solid rgba(232, 224, 213, 0.3);
+    border-radius: var(--radius) !important;
+    box-shadow: 0 4px 24px rgba(198,210,255,0.18) !important;
+    border: 1px solid #e0e6f7 !important;
+    margin-bottom: 1.2rem;
+    padding: 1.5rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.model-card {
+    flex-direction: row;
+    min-height: 110px;
+    transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.model-card:hover {
+    box-shadow: 0 8px 32px rgba(198,210,255,0.25) !important;
+    transform: scale(1.03);
+}
+
+.model-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+    object-fit: cover;
+    background: #e6eaff;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.model-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+    display: block;
+}
+
+.model-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.model-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--dark);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.model-description {
+    font-size: 0.97rem;
+    color: #888;
+    margin-bottom: 0.2rem;
+}
+
+.model-subscription-status {
+    font-size: 0.9rem;
+    color: #2ecc71;
+    background: rgba(46,204,113,0.10);
+    border-radius: 8px;
+    padding: 0.2rem 0.7rem;
+    display: inline-block;
+    font-weight: 600;
+    margin-top: 0.2rem;
+}
+
+.popup-content {
+    max-width: 420px !important;
+    padding: 2rem 1.5rem !important;
+}
+
+.no-subscription-message {
+    text-align: center;
+    padding: 2rem 1.2rem;
 }
 
 .user-details {
