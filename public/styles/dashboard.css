@@ -1406,4 +1406,22 @@ body {
     margin-bottom: 0;
     justify-content: flex-start;
     padding-bottom: 2.5rem;
+}
+
+.settings-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(198,210,255,0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+@media (max-width: 900px) {
+    .dashboard-main-card {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .settings-card {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
 } 
