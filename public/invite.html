@@ -304,40 +304,72 @@
                 padding: 1.2rem 0.7rem 1rem 0.7rem;
             }
         }
-        /* Model image gallery styles */
+        /* Premium Model Image Carousel */
         #model-image-gallery {
             display: flex;
             gap: 1.1rem;
-            justify-content: center;
-            align-items: flex-start;
+            justify-content: flex-start;
+            align-items: flex-end;
             margin-bottom: 1.2rem;
             overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #C6D2FF #f8faff;
             padding-bottom: 0.2rem;
             -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+            position: relative;
+            min-height: 260px;
         }
         #model-image-gallery::-webkit-scrollbar {
-            height: 8px;
+            display: none;
         }
-        #model-image-gallery::-webkit-scrollbar-thumb {
-            background: #C6D2FF;
-            border-radius: 8px;
+        .gallery-fade {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 40px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .gallery-fade.left {
+            left: 0;
+            background: linear-gradient(90deg, #f5f0e8 80%, transparent);
+        }
+        .gallery-fade.right {
+            right: 0;
+            background: linear-gradient(270deg, #f5f0e8 80%, transparent);
         }
         .hero-img-gallery-item {
-            width: 220px;
+            width: 180px;
             aspect-ratio: 4/5;
             border-radius: 18px;
             object-fit: cover;
             box-shadow: 0 8px 32px rgba(0,0,0,0.18);
             background: #e6eaff;
             display: inline-block;
-            overflow: hidden;
             flex-shrink: 0;
-            transition: transform 0.18s;
+            scroll-snap-align: center;
+            transition: transform 0.25s, box-shadow 0.25s, filter 0.25s;
+            filter: brightness(0.92) grayscale(0.2);
+            opacity: 0.7;
         }
-        .hero-img-gallery-item:hover {
-            transform: scale(1.04);
+        .hero-img-gallery-item.active {
+            width: 220px;
+            z-index: 1;
+            transform: scale(1.12);
+            box-shadow: 0 12px 40px rgba(198,210,255,0.25);
+            filter: brightness(1) grayscale(0);
+            opacity: 1;
+        }
+        .hero-img-gallery-item:hover, .hero-img-gallery-item:focus {
+            filter: brightness(1.05) grayscale(0);
+            box-shadow: 0 16px 48px rgba(198,210,255,0.32);
+        }
+        @media (max-width: 600px) {
+            .hero-img-gallery-item, .hero-img-gallery-item.active {
+                width: 120px;
+                min-width: 120px;
+            }
+            #model-image-gallery {
+                min-height: 150px;
+            }
         }
     </style>
 </head>
@@ -478,28 +510,50 @@
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
             const gallery = document.getElementById('model-image-gallery');
             gallery.innerHTML = '';
+            // Add gradient fades
+            const fadeLeft = document.createElement('div');
+            fadeLeft.className = 'gallery-fade left';
+            const fadeRight = document.createElement('div');
+            fadeRight.className = 'gallery-fade right';
+            gallery.appendChild(fadeLeft);
             if (model.pictures && model.pictures.length > 0) {
-                if (model.pictures.length === 1) {
-                    const imageName = model.pictures[0];
+                model.pictures.forEach((imageName, idx) => {
                     const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                    const img = document.createElement('div');
-                    img.className = 'hero-img-gallery-item';
-                    img.style.backgroundImage = `url(${url})`;
-                    img.style.backgroundSize = 'cover';
-                    img.style.backgroundPosition = 'center';
+                    const img = document.createElement('img');
+                    img.className = 'hero-img-gallery-item' + (idx === 0 ? ' active' : '');
+                    img.src = url;
+                    img.alt = model.name + ' image';
+                    img.tabIndex = 0;
                     gallery.appendChild(img);
-                } else {
-                    model.pictures.forEach(imageName => {
-                        const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                        const img = document.createElement('div');
-                        img.className = 'hero-img-gallery-item';
-                        img.style.backgroundImage = `url(${url})`;
-                        img.style.backgroundSize = 'cover';
-                        img.style.backgroundPosition = 'center';
-                        gallery.appendChild(img);
-                    });
-                }
+                });
             }
+            gallery.appendChild(fadeRight);
+            // Center image effect on scroll
+            function updateActiveImage() {
+                const imgs = Array.from(gallery.querySelectorAll('.hero-img-gallery-item'));
+                if (!imgs.length) return;
+                let minDist = Infinity, activeIdx = 0;
+                const galleryRect = gallery.getBoundingClientRect();
+                imgs.forEach((img, idx) => {
+                    const rect = img.getBoundingClientRect();
+                    const imgCenter = rect.left + rect.width / 2;
+                    const galleryCenter = galleryRect.left + galleryRect.width / 2;
+                    const dist = Math.abs(imgCenter - galleryCenter);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        activeIdx = idx;
+                    }
+                });
+                imgs.forEach((img, idx) => {
+                    if (idx === activeIdx) img.classList.add('active');
+                    else img.classList.remove('active');
+                });
+            }
+            gallery.addEventListener('scroll', () => {
+                window.requestAnimationFrame(updateActiveImage);
+            });
+            // Initial active
+            setTimeout(updateActiveImage, 100);
             document.getElementById('model-id').value = model.id;
         }
         function hashPassword(password) {
