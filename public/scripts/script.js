@@ -255,27 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Handle CTA button clicks
-    const ctaButtons = document.querySelectorAll('.cta-button');
-    const ctaSection = document.getElementById('cta');
-    const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
-    
-    ctaButtons.forEach(button => {
-        if (!button.closest('#cta')) {  // Don't apply to buttons inside CTA section
-            button.addEventListener('click', () => {
-                if (isScrolling) return;
-                
-                isScrolling = true;
-                updateSection(ctaSectionIndex);
-                
-                // Debounce scrolling
-                setTimeout(() => {
-                    isScrolling = false;
-                }, 800);
-            });
-        }
-    });
-    
     // "About Our Mission" link scrolls to mission section
     const missionLink = document.querySelector('.footer-links a:nth-child(4)');
     const missionSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'mission');
@@ -1296,4 +1275,22 @@ function setupFormHandlers(userData) {
             }, 3000);
         });
     }
+}
+
+// Only add scroll-to-cta handler for .cta-button in the hero section, not in #login-signup or .cta-card
+const heroCtaButton = document.querySelector('#hero .cta-button');
+const ctaSection = document.getElementById('cta');
+const ctaSectionIndex = Array.from(screens).findIndex(screen => screen.id === 'cta');
+if (heroCtaButton) {
+    heroCtaButton.addEventListener('click', (e) => {
+        // If the button is a link to another page, let it navigate
+        if (heroCtaButton.getAttribute('href') && heroCtaButton.getAttribute('href').startsWith('/')) return;
+        if (isScrolling) return;
+        isScrolling = true;
+        updateSection(ctaSectionIndex);
+        setTimeout(() => {
+            isScrolling = false;
+        }, 800);
+        e.preventDefault();
+    });
 } 
