@@ -304,6 +304,41 @@
                 padding: 1.2rem 0.7rem 1rem 0.7rem;
             }
         }
+        /* Model image gallery styles */
+        #model-image-gallery {
+            display: flex;
+            gap: 1.1rem;
+            justify-content: center;
+            align-items: flex-start;
+            margin-bottom: 1.2rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #C6D2FF #f8faff;
+            padding-bottom: 0.2rem;
+            -webkit-overflow-scrolling: touch;
+        }
+        #model-image-gallery::-webkit-scrollbar {
+            height: 8px;
+        }
+        #model-image-gallery::-webkit-scrollbar-thumb {
+            background: #C6D2FF;
+            border-radius: 8px;
+        }
+        .hero-img-gallery-item {
+            width: 220px;
+            aspect-ratio: 4/5;
+            border-radius: 18px;
+            object-fit: cover;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            background: #e6eaff;
+            display: inline-block;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: transform 0.18s;
+        }
+        .hero-img-gallery-item:hover {
+            transform: scale(1.04);
+        }
     </style>
 </head>
 <body>
@@ -313,7 +348,7 @@
             <div class="logo">ThreadPay</div>
             <div class="tagline">secure creator payments</div>
             <div class="hero">
-                <div class="hero-img" id="model-image"></div>
+                <div id="model-image-gallery"></div>
                 <div class="hero-name" id="model-name">Loading...</div>
                 <div class="hero-bio" id="model-bio">Loading model information...</div>
             </div>
@@ -441,12 +476,29 @@
         function updateModelDisplay(model) {
             document.getElementById('model-name').textContent = model.name;
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
+            const gallery = document.getElementById('model-image-gallery');
+            gallery.innerHTML = '';
             if (model.pictures && model.pictures.length > 0) {
-                const imageName = model.pictures[0];
-                const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                document.getElementById('model-image').style.backgroundImage = `url(${url})`;
-                document.getElementById('model-image').style.backgroundSize = 'cover';
-                document.getElementById('model-image').style.backgroundPosition = 'center';
+                if (model.pictures.length === 1) {
+                    const imageName = model.pictures[0];
+                    const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
+                    const img = document.createElement('div');
+                    img.className = 'hero-img-gallery-item';
+                    img.style.backgroundImage = `url(${url})`;
+                    img.style.backgroundSize = 'cover';
+                    img.style.backgroundPosition = 'center';
+                    gallery.appendChild(img);
+                } else {
+                    model.pictures.forEach(imageName => {
+                        const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
+                        const img = document.createElement('div');
+                        img.className = 'hero-img-gallery-item';
+                        img.style.backgroundImage = `url(${url})`;
+                        img.style.backgroundSize = 'cover';
+                        img.style.backgroundPosition = 'center';
+                        gallery.appendChild(img);
+                    });
+                }
             }
             document.getElementById('model-id').value = model.id;
         }
