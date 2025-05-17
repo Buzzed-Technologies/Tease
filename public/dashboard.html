@@ -518,36 +518,49 @@
 </head>
 <body>
     <div class="bg-blur"></div>
-    <div class="dashboard-outer-card">
-        <div class="dashboard-content">
-            <div class="tab-navigation">
-                <button class="tab-button active" data-tab="account-section">
-                    <i class="fas fa-user"></i>
-                    <span>Account</span>
-                </button>
-                <button class="tab-button" data-tab="settings-section">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </button>
-            </div>
-            <!-- Account Section -->
-            <section id="account-section" class="content-section active">
-                <div class="account-info dashboard-inner-card">
-                    <div class="account-header">
-                        <div>
-                            <div class="user-name-large" id="account-name">User Name</div>
-                            <div class="account-email" id="account-email">user@example.com</div>
-                            <div class="account-created" id="account-created">Member since January 1, 2025</div>
-                        </div>
-                    </div>
+    <div class="dashboard-main-card">
+        <button id="logout-button" class="logout-button" style="position:absolute;top:1.5rem;right:2rem;z-index:2;">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="btn-text">Logout</span>
+        </button>
+        <div class="dashboard-inner">
+            <div class="dashboard-left-card">
+                <div class="account-info-card">
+                    <div class="user-name-large" id="account-name">User Name</div>
+                    <div class="account-email" id="account-email">user@example.com</div>
+                    <div class="account-created" id="account-created">Member since January 1, 2025</div>
                     <div class="account-details">
-                        <div>
-                            <div class="account-label">Subscription Status</div>
-                            <div class="model-subscription-status active" id="account-subscription-status">Active</div>
-                        </div>
+                        <div class="account-label">Subscription Status</div>
+                        <div class="model-subscription-status active" id="account-subscription-status">Active</div>
                     </div>
                 </div>
-                <div class="models-section dashboard-inner-card">
+                <div class="settings-card">
+                    <h2>Account Settings</h2>
+                    <form class="settings-form" id="settings-form">
+                        <div class="form-group">
+                            <label for="settings-name" class="form-label">Display Name</label>
+                            <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-email" class="form-label">Email Address</label>
+                            <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
+                            <p class="input-note">Email cannot be changed</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-password" class="form-label">New Password</label>
+                            <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                            <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                        </div>
+                        <button type="submit" class="action-button">Save Changes</button>
+                        <div id="settings-message" class="message-area"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="dashboard-right-card">
+                <div class="models-section">
                     <h3>Your Creator Subscriptions</h3>
                     <div id="subscribed-models-container" style="display: none;"></div>
                     <div id="no-subscription-container" style="display: none;">
@@ -564,39 +577,7 @@
                         </button>
                     </div>
                 </div>
-            </section>
-            <!-- Settings Section -->
-            <section id="settings-section" class="content-section dashboard-inner-card">
-                <div class="section-header">
-                    <h2>Account Settings</h2>
-                    <p class="section-description">Update your account information and preferences.</p>
-                </div>
-                <form class="settings-form" id="settings-form">
-                    <div class="form-group">
-                        <label for="settings-name" class="form-label">Display Name</label>
-                        <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
-                    </div>
-                    <div class="form-group">
-                        <label for="settings-email" class="form-label">Email Address</label>
-                        <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
-                        <p class="input-note">Email cannot be changed</p>
-                    </div>
-                    <div class="form-group">
-                        <label for="settings-password" class="form-label">New Password</label>
-                        <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
-                    </div>
-                    <div class="form-group">
-                        <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
-                        <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
-                    </div>
-                    <button type="submit" class="action-button">Save Changes</button>
-                    <div id="settings-message" class="message-area"></div>
-                </form>
-            </section>
-            <button id="logout-button" class="logout-button full-width">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="btn-text">Logout</span>
-            </button>
+            </div>
         </div>
     </div>
     <!-- Subscription Details Popup -->
@@ -614,6 +595,7 @@
             </div>
         </div>
     </div>
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script>
         // Supabase client initialization
