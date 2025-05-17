@@ -1201,4 +1201,135 @@
     box-shadow: 
         0 2px 10px rgba(198, 210, 255, 0.3),
         0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+:root {
+    --primary: #fafdff;
+    --primary-dark: #c6d2ff;
+    --primary-light: #ffffff;
+    --accent: #3a5fff;
+    --accent-glow: #b4c1ff;
+    --dark: #1a1a2f;
+    --darker: #0a0a1a;
+    --light: #fff;
+    --gray: #e3e8f0;
+    --light-gray: #bfc8e6;
+    --glass-bg: rgba(255,255,255,0.7);
+    --glass-blur: 18px;
+    --shadow: 0 8px 32px 0 rgba(58,95,255,0.12), 0 1.5px 6px 0 rgba(0,0,0,0.08);
+    --shadow-hover: 0 12px 40px 0 rgba(58,95,255,0.18), 0 2px 8px 0 rgba(0,0,0,0.12);
+    --border-radius: 22px;
+    --card-radius: 28px;
+    --input-radius: 16px;
+    --button-radius: 50px;
+    --transition: all 0.22s cubic-bezier(.4,0,.2,1);
+    --font-main: 'Montserrat', 'Inter', 'Segoe UI', Arial, sans-serif;
+    --font-head: 'Playfair Display', 'Inter', serif;
+}
+
+body, .dashboard-container {
+    font-family: var(--font-main);
+    background: linear-gradient(120deg, var(--primary-light) 60%, var(--primary-dark) 100%);
+    color: var(--dark);
+    min-height: 100vh;
+}
+
+.dashboard-header, .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: var(--card-radius) !important;
+    box-shadow: var(--shadow) !important;
+    border: 1.5px solid var(--primary-dark) !important;
+    transition: var(--transition);
+}
+
+.dashboard-header {
+    background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-light) 100%) !important;
+    box-shadow: var(--shadow-hover) !important;
+}
+
+h1, h2, h3, .popup-title, .model-name, .user-name-large {
+    font-family: var(--font-head);
+    font-weight: 800;
+    color: var(--darker);
+    letter-spacing: -1px;
+}
+
+.action-button, .logout-button, .explore-more-button {
+    background: linear-gradient(90deg, var(--accent) 60%, var(--primary-dark) 100%);
+    color: var(--light) !important;
+    border: none;
+    padding: 1.1rem 2.2rem;
+    border-radius: var(--button-radius);
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+    text-shadow: 0 2px 8px var(--accent-glow);
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-button:hover, .logout-button:hover, .explore-more-button:hover {
+    background: linear-gradient(90deg, var(--primary-dark) 0%, var(--accent) 100%);
+    color: var(--primary) !important;
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.action-button:active, .logout-button:active, .explore-more-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.form-input, input, select, textarea {
+    background: var(--glass-bg) !important;
+    border-radius: var(--input-radius) !important;
+    border: 1.5px solid var(--primary-dark) !important;
+    color: var(--dark) !important;
+    font-size: 1.1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(58,95,255,0.04);
+    transition: var(--transition);
+}
+
+.form-input:focus, input:focus, select:focus, textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+    outline: none;
+}
+
+.tab-button {
+    background: transparent;
+    color: var(--accent);
+    font-weight: 700;
+    border-radius: var(--button-radius);
+    transition: var(--transition);
+    padding: 0.8rem 1.5rem;
+}
+
+.tab-button.active, .tab-button:hover {
+    background: var(--accent);
+    color: var(--light);
+    box-shadow: var(--shadow-hover);
+}
+
+.popup-overlay {
+    background: rgba(58,95,255,0.12) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+@media (max-width: 767px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    .dashboard-header, .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card {
+        border-radius: 18px !important;
+        padding: 1.2rem !important;
+    }
+    .action-button, .logout-button, .explore-more-button {
+        font-size: 1rem;
+        padding: 1rem 1.5rem;
+    }
 } 
