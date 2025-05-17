@@ -380,6 +380,160 @@
                 font-size: 0.85rem;
             }
         }
+        
+        /* Hero section */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            min-height: 320px;
+            max-height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            background: #eee;
+        }
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+            filter: blur(16px) brightness(0.85);
+            z-index: 1;
+            transition: background-image 0.5s;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.05) 100%);
+            z-index: 2;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+            color: #fff;
+            max-width: 500px;
+        }
+        .hero-content .model-name {
+            font-size: 2.8rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+            text-shadow: 0 4px 24px rgba(0,0,0,0.25);
+        }
+        .hero-content .model-bio {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        
+        /* Packages section */
+        #packages-section {
+            margin-bottom: 2.5rem;
+        }
+        #packages-list {
+            display: flex;
+            flex-direction: row;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) #eee;
+        }
+        #packages-list::-webkit-scrollbar {
+            height: 8px;
+        }
+        #packages-list::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 8px;
+        }
+        .package-card {
+            min-width: 260px;
+            max-width: 320px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(198,210,255,0.13), 0 1.5px 8px rgba(0,0,0,0.07);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: box-shadow 0.2s, border 0.2s, transform 0.15s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
+        .package-card:hover, .package-card.selected {
+            border: 2px solid var(--accent);
+            box-shadow: 0 8px 32px rgba(198,210,255,0.22), 0 2px 12px rgba(0,0,0,0.10);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .package-card .package-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        .package-card .package-price {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        .package-card .package-description {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Signup form */
+        .signup-column {
+            background: rgba(255,255,255,0.97);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 2.5rem 2rem;
+            max-width: 420px;
+            margin: 0 auto;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .signup-column.active {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.5s;
+        }
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .signup-header h1 {
+            font-size: 2rem;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+        }
+        .signup-description {
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero-content { padding: 1.5rem; }
+            .signup-column { padding: 1.5rem 1rem; }
+        }
+        @media (max-width: 600px) {
+            .hero-section { min-height: 180px; max-height: 220px; }
+            .hero-content .model-name { font-size: 1.5rem; }
+            .signup-column { max-width: 100%; }
+            #packages-list { gap: 0.7rem; }
+            .package-card { min-width: 180px; padding: 1.2rem 0.7rem; }
+        }
     </style>
 </head>
 <body>
@@ -388,72 +542,58 @@
             <div class="logo">ThreadPay</div>
             <div class="tagline">secure creator payments</div>
         </div>
-        
-        <div class="invite-content">
-            <div class="columns">
-                <div class="model-column">
-                    <div class="model-image" id="model-image"></div>
-                    <div class="model-info">
-                        <h2 class="model-name" id="model-name">Loading...</h2>
-                        <p class="model-bio" id="model-bio">Loading model information...</p>
-                    </div>
-                </div>
-                
-                <div class="signup-column">
-                    <div id="packages-section">
-                        <h3 style="text-align:center; margin-bottom:1rem;">Choose Your Package</h3>
-                        <div id="packages-list" style="margin-bottom:2rem;"></div>
-                    </div>
-                    <div class="signup-header">
-                        <h1>Sign Up to Subscribe</h1>
-                        <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
-                    </div>
-                    
-                    <form id="signup-form">
-                        <input type="hidden" id="model-id" name="model-id" value="">
-                        <input type="hidden" id="package-id" name="package-id" value="">
-                        
-                        <div class="form-group">
-                            <label for="name" class="form-label">Your Name</label>
-                            <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="age" class="form-label">Your Age</label>
-                            <input type="number" id="age" name="age" class="form-input" placeholder="Enter your age" min="18" required>
-                            <p class="form-description">You must be 18 or older to use ThreadPay.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="telegram" class="form-label">Telegram Number</label>
-                            <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Enter your Telegram phone number" required>
-                            <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address" required>
-                            <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-input" placeholder="Create a password" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="confirm-password" class="form-label">Confirm Password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
-                        
-                        <div id="signup-message" class="signup-message"></div>
-                    </form>
-                    
-                    <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
-                </div>
+        <div class="hero-section">
+            <div class="hero-bg" id="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="model-name" id="model-name">Loading...</div>
+                <div class="model-bio" id="model-bio">Loading model information...</div>
             </div>
+        </div>
+        <div id="packages-section">
+            <h3 style="text-align:center; margin-bottom:1rem;">Choose Your Package</h3>
+            <div id="packages-list"></div>
+        </div>
+        <div class="signup-column" id="signup-column">
+            <div class="signup-header">
+                <h1>Sign Up to Subscribe</h1>
+                <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
+            </div>
+            <form id="signup-form">
+                <input type="hidden" id="model-id" name="model-id" value="">
+                <input type="hidden" id="package-id" name="package-id" value="">
+                <input type="hidden" id="price-id" name="price-id" value="">
+                <div class="form-group">
+                    <label for="name" class="form-label">Your Name</label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="age" class="form-label">Your Age</label>
+                    <input type="number" id="age" name="age" class="form-input" placeholder="Enter your age" min="18" required>
+                    <p class="form-description">You must be 18 or older to use ThreadPay.</p>
+                </div>
+                <div class="form-group">
+                    <label for="telegram" class="form-label">Telegram Number</label>
+                    <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Enter your Telegram phone number" required>
+                    <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address" required>
+                    <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
+                <div id="signup-message" class="signup-message"></div>
+            </form>
+            <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
         </div>
     </div>
 
@@ -510,18 +650,20 @@
                 const card = document.createElement('div');
                 card.className = 'package-card';
                 card.style = 'border:1px solid #ccc;padding:1.2rem;margin-bottom:1rem;border-radius:10px;cursor:pointer;transition:box-shadow 0.2s;';
+                card.setAttribute('data-package-id', pkg.id);
+                card.setAttribute('data-stripe-price-id', pkg.stripe_price_id);
                 card.innerHTML = `
                     <div style="font-weight:600;font-size:1.2rem;">${pkg.name}</div>
                     <div style="font-size:1.1rem;margin:0.5rem 0;">$${parseFloat(pkg.price).toFixed(2)} / month</div>
                     <div style="font-size:0.95rem;color:#666;">${pkg.description || 'Exclusive access'}</div>
                 `;
                 card.onclick = () => {
-                    document.querySelectorAll('.package-card').forEach(c => c.style.boxShadow = 'none');
-                    card.style.boxShadow = '0 0 0 2px #C6D2FF';
+                    document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
                     selectedPackageId = pkg.id;
                     document.getElementById('package-id').value = pkg.id;
-                    document.getElementById('signup-form').style.opacity = 1;
-                    document.getElementById('signup-form').style.pointerEvents = 'auto';
+                    document.getElementById('price-id').value = pkg.stripe_price_id;
+                    document.getElementById('signup-column').classList.add('active');
                 };
                 list.appendChild(card);
             });
@@ -548,7 +690,7 @@
             if (model.pictures && model.pictures.length > 0) {
                 const imageName = model.pictures[0];
                 const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                document.getElementById('model-image').style.backgroundImage = `url(${url})`;
+                document.getElementById('hero-bg').style.backgroundImage = `url(${url})`;
             }
             document.getElementById('model-id').value = model.id;
         }
@@ -574,6 +716,7 @@
                 const confirmPassword = document.getElementById('confirm-password').value;
                 const modelId = document.getElementById('model-id').value;
                 const packageId = document.getElementById('package-id').value;
+                const priceId = document.getElementById('price-id').value;
                 if (!selectedPackageId || !packageId) {
                     showError('Please select a package to continue.');
                     return;
@@ -651,6 +794,7 @@
                             userId: data.user.id,
                             packageId: packageId,
                             modelId: modelId,
+                            priceId: priceId,
                             email: email,
                             name: name,
                             phone: telegram,
@@ -715,6 +859,11 @@
                     initSupabase();
                 });
         }
+        
+        // On page load, hide signup-column
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('signup-column').classList.remove('active');
+        });
     </script>
 </body>
 </html> 
