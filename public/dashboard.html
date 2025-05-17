@@ -518,13 +518,18 @@
 </head>
 <body>
     <div class="bg-blur"></div>
+    <div class="dashboard-hero-logo">ThreadPay</div>
     <div class="dashboard-main-card">
         <button id="logout-button" class="logout-button" style="position:absolute;top:1.5rem;right:2rem;z-index:2;">
             <i class="fas fa-sign-out-alt"></i>
             <span class="btn-text">Logout</span>
         </button>
+        <div class="dashboard-tabs">
+            <button class="tab-btn tab-active" data-tab="account">Account</button>
+            <button class="tab-btn" data-tab="settings">Settings</button>
+        </div>
         <div class="dashboard-inner">
-            <div class="dashboard-left-card">
+            <div class="dashboard-left-card tab-section" id="tab-account">
                 <div class="account-info-card">
                     <div class="user-name-large" id="account-name">User Name</div>
                     <div class="account-email" id="account-email">user@example.com</div>
@@ -534,6 +539,27 @@
                         <div class="model-subscription-status active" id="account-subscription-status">Active</div>
                     </div>
                 </div>
+                <div class="dashboard-right-card">
+                    <div class="models-section">
+                        <h3>Your Creator Subscriptions</h3>
+                        <div id="subscribed-models-container" style="display: none;"></div>
+                        <div id="no-subscription-container" style="display: none;">
+                            <div class="no-subscription-message">
+                                <h3>No Active Subscriptions</h3>
+                                <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
+                                <button class="action-button" id="explore-models-button">Explore Available Creators</button>
+                            </div>
+                        </div>
+                        <div id="explore-more-container" class="explore-more-container" style="display: none;">
+                            <button class="explore-more-button" id="explore-more-button">
+                                <i class="fas fa-plus"></i>
+                                <span>Explore More Creators</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-left-card tab-section" id="tab-settings" style="display:none;">
                 <div class="settings-card">
                     <h2>Account Settings</h2>
                     <form class="settings-form" id="settings-form">
@@ -557,25 +583,6 @@
                         <button type="submit" class="action-button">Save Changes</button>
                         <div id="settings-message" class="message-area"></div>
                     </form>
-                </div>
-            </div>
-            <div class="dashboard-right-card">
-                <div class="models-section">
-                    <h3>Your Creator Subscriptions</h3>
-                    <div id="subscribed-models-container" style="display: none;"></div>
-                    <div id="no-subscription-container" style="display: none;">
-                        <div class="no-subscription-message">
-                            <h3>No Active Subscriptions</h3>
-                            <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
-                            <button class="action-button" id="explore-models-button">Explore Available Creators</button>
-                        </div>
-                    </div>
-                    <div id="explore-more-container" class="explore-more-container" style="display: none;">
-                        <button class="explore-more-button" id="explore-more-button">
-                            <i class="fas fa-plus"></i>
-                            <span>Explore More Creators</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -666,7 +673,7 @@
         const settingsPassword = document.getElementById('settings-password');
         const settingsConfirmPassword = document.getElementById('settings-confirm-password');
         const settingsMessage = document.getElementById('settings-message');
-        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabButtons = document.querySelectorAll('.tab-btn');
         const contentSections = document.querySelectorAll('.content-section');
         const modelPopup = document.getElementById('model-popup');
         const popupBody = document.getElementById('popup-body');
@@ -968,17 +975,14 @@
         // Set up tab navigation
         tabButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Remove active class from all buttons and sections
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                contentSections.forEach(section => section.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Show the corresponding section
-                const targetSection = document.getElementById(this.dataset.tab);
-                if (targetSection) {
-                    targetSection.classList.add('active');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+                this.classList.add('tab-active');
+                if (this.dataset.tab === 'account') {
+                    document.getElementById('tab-account').style.display = '';
+                    document.getElementById('tab-settings').style.display = 'none';
+                } else {
+                    document.getElementById('tab-account').style.display = 'none';
+                    document.getElementById('tab-settings').style.display = '';
                 }
             });
         });

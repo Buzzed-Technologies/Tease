@@ -1319,4 +1319,65 @@ body {
     .dashboard-main-card {
         padding: 1.2rem 0.5rem 1rem 0.5rem;
     }
+}
+
+.dashboard-hero-logo {
+    width: 100%;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.7rem;
+    color: #181818;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+    text-shadow: 0 4px 32px #c6d2ff33, 0 1px 0 #fff;
+    z-index: 3;
+    position: relative;
+}
+.dashboard-main-card {
+    margin-top: 0.5rem;
+}
+.dashboard-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2.2rem;
+    margin-top: 0.5rem;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #888;
+    padding: 0.7rem 2.2rem;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    outline: none;
+    position: relative;
+}
+.tab-btn.tab-active {
+    color: var(--dark);
+    background: #f8faff;
+    box-shadow: 0 2px 12px #c6d2ff22;
+    border-bottom: 2px solid var(--accent);
+    z-index: 2;
+}
+@media (max-width: 900px) {
+    .dashboard-hero-logo {
+        font-size: 1.7rem;
+        margin-top: 1.2rem;
+        margin-bottom: 0.7rem;
+    }
+    .dashboard-tabs {
+        gap: 0.7rem;
+        margin-bottom: 1.2rem;
+    }
+    .tab-btn {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+    }
 } 
