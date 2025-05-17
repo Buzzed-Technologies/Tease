@@ -1431,4 +1431,15 @@ body {
 
 .btn-text {
     display: inline;
+}
+
+.settings-form .action-button {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+.action-button:disabled, .action-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.2);
+    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
 } 
