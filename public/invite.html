@@ -400,13 +400,18 @@
                 </div>
                 
                 <div class="signup-column">
+                    <div id="packages-section">
+                        <h3 style="text-align:center; margin-bottom:1rem;">Choose Your Package</h3>
+                        <div id="packages-list" style="margin-bottom:2rem;"></div>
+                    </div>
                     <div class="signup-header">
-                        <h1>You've Been Invited</h1>
-                        <p class="signup-description">Create your account to start accepting payments as a creator.</p>
+                        <h1>Sign Up to Subscribe</h1>
+                        <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
                     </div>
                     
                     <form id="signup-form">
                         <input type="hidden" id="model-id" name="model-id" value="">
+                        <input type="hidden" id="package-id" name="package-id" value="">
                         
                         <div class="form-group">
                             <label for="name" class="form-label">Your Name</label>
@@ -441,7 +446,7 @@
                             <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
                         </div>
                         
-                        <button type="submit" class="submit-btn">Create My Account</button>
+                        <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
                         
                         <div id="signup-message" class="signup-message"></div>
                     </form>
@@ -459,206 +464,145 @@
         let supabase = null;
         let supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-        
-        // Extract model ID from the URL
-        const urlPath = window.location.pathname;
-        const invitePattern = /\/invite\/([a-fA-F0-9-]+)/;
-        const match = urlPath.match(invitePattern);
-        let modelId = match ? match[1] : null;
-        
-        console.log('Model ID from URL:', modelId);
-        
-        // Validate UUID format
-        function isValidUUID(uuid) {
-            const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-            return uuidPattern.test(uuid);
-        }
-        
-        if (modelId && !isValidUUID(modelId)) {
-            console.error('Invalid UUID format for model ID:', modelId);
-            modelId = null;
-        }
-        
         let currentModel = null;
+        let selectedPackageId = null;
         
-        // Check if the key is a real key or just the placeholder
-        if (supabaseKey && !supabaseKey.includes('%NEXT_PUBLIC')) {
-            console.log('Using API key from meta tag');
-            initSupabase();
-        } else {
-            // Fetch API key from server config endpoint
-            console.log('Meta tag key not available, trying to fetch from server...');
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    if (config.supabaseKey) {
-                        console.log('Using API key from server');
-                        supabaseKey = config.supabaseKey;
-                    } else {
-                        // Fall back to hardcoded key
-                        console.log('Using hardcoded API key as fallback');
-                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    }
-                    initSupabase();
-                })
-                .catch(error => {
-                    console.error('Error fetching config:', error);
-                    // Fall back to hardcoded key
-                    console.log('Using hardcoded API key due to error');
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                });
+        // Extract model name from the URL
+        function getModelNameFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/invite\/([a-zA-Z0-9_-]+)/);
+            return match && match[1] ? decodeURIComponent(match[1]) : null;
         }
         
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                loadModel();
-                setupForm();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
+        // Fetch model by name (case-insensitive)
+        async function fetchModelByName(modelName) {
+            if (!modelName) return null;
+            const { data, error } = await supabase
+                .from('models')
+                .select('*')
+                .ilike('name', modelName)
+                .single();
+            if (error) return null;
+            return data;
         }
         
-        // Load model details if a model ID was provided
-        async function loadModel() {
-            if (!modelId) {
-                // If no model ID is provided, show default content or redirect
-                document.querySelector('.model-column').style.display = 'none';
-                document.querySelector('.signup-column').style.flex = '1';
-                document.querySelector('.signup-description').textContent = 'Create your account to get started.';
-                showError('No model ID found. Please use a valid invite link.');
+        // Fetch packages for the model
+        async function fetchPackagesForModel(modelId) {
+            const { data, error } = await supabase
+                .from('packages')
+                .select('*')
+                .eq('model_id', modelId)
+                .order('price', { ascending: true });
+            if (error) return [];
+            return data;
+        }
+        
+        // Render packages and handle selection
+        function renderPackages(packages) {
+            const list = document.getElementById('packages-list');
+            list.innerHTML = '';
+            if (!packages.length) {
+                list.innerHTML = '<div style="color:#e74c3c;text-align:center;">No packages available for this creator.</div>';
+                document.getElementById('signup-form').style.display = 'none';
                 return;
             }
-            
-            console.log('Attempting to load model with ID:', modelId);
-            
-            try {
-                const { data, error } = await supabase
-                    .from('models')
-                    .select('*')
-                    .eq('id', modelId)
-                    .single();
-                
-                console.log('Model data fetch result:', data ? 'Found' : 'Not found', error ? `Error: ${error.message}` : 'No error');
-                    
-                if (error) throw error;
-                
-                if (data) {
-                    currentModel = data;
-                    
-                    // Update the model info in the page
-                    document.getElementById('model-name').textContent = data.name;
-                    document.getElementById('model-bio').textContent = data.bio || 'Creator on ThreadPay';
-                    
-                    // Update model image if available
-                    if (data.pictures && data.pictures.length > 0) {
-                        try {
-                            // Use the correct Supabase URL for model images
-                            const imageName = data.pictures[0];
-                            
-                            // Use the provided URL format
-                            const correctUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${imageName}`;
-                            console.log('Loading image from correct URL:', correctUrl);
-                            
-                            document.getElementById('model-image').style.backgroundImage = `url(${correctUrl})`;
-                        } catch (err) {
-                            console.error('Error setting image:', err);
-                        }
-                    }
-                    
-                    // Store the model ID in a hidden field for later use during signup
-                    const modelIdInput = document.getElementById('model-id');
-                    if (modelIdInput) {
-                        modelIdInput.value = modelId;
-                    } else {
-                        const modelIdField = document.createElement('input');
-                        modelIdField.type = 'hidden';
-                        modelIdField.id = 'model-id';
-                        modelIdField.value = modelId;
-                        document.getElementById('signup-form').appendChild(modelIdField);
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading model:', error);
-            }
+            packages.forEach(pkg => {
+                const card = document.createElement('div');
+                card.className = 'package-card';
+                card.style = 'border:1px solid #ccc;padding:1.2rem;margin-bottom:1rem;border-radius:10px;cursor:pointer;transition:box-shadow 0.2s;';
+                card.innerHTML = `
+                    <div style="font-weight:600;font-size:1.2rem;">${pkg.name}</div>
+                    <div style="font-size:1.1rem;margin:0.5rem 0;">$${parseFloat(pkg.price).toFixed(2)} / month</div>
+                    <div style="font-size:0.95rem;color:#666;">${pkg.description || 'Exclusive access'}</div>
+                `;
+                card.onclick = () => {
+                    document.querySelectorAll('.package-card').forEach(c => c.style.boxShadow = 'none');
+                    card.style.boxShadow = '0 0 0 2px #C6D2FF';
+                    selectedPackageId = pkg.id;
+                    document.getElementById('package-id').value = pkg.id;
+                    document.getElementById('signup-form').style.opacity = 1;
+                    document.getElementById('signup-form').style.pointerEvents = 'auto';
+                };
+                list.appendChild(card);
+            });
+            // Disable signup form until a package is selected
+            document.getElementById('signup-form').style.opacity = 0.5;
+            document.getElementById('signup-form').style.pointerEvents = 'none';
         }
         
-        // Set up the signup form
+        function showError(message) {
+            const messageElement = document.getElementById('signup-message');
+            messageElement.textContent = message;
+            messageElement.className = 'signup-message error';
+        }
+        
+        function showSuccess(message) {
+            const messageElement = document.getElementById('signup-message');
+            messageElement.textContent = message;
+            messageElement.className = 'signup-message success';
+        }
+        
+        function updateModelDisplay(model) {
+            document.getElementById('model-name').textContent = model.name;
+            document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
+            if (model.pictures && model.pictures.length > 0) {
+                const imageName = model.pictures[0];
+                const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
+                document.getElementById('model-image').style.backgroundImage = `url(${url})`;
+            }
+            document.getElementById('model-id').value = model.id;
+        }
+        
+        function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            });
+        }
+        
         function setupForm() {
             const signupForm = document.getElementById('signup-form');
-            
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
                 const name = document.getElementById('name').value.trim();
                 const age = parseInt(document.getElementById('age').value, 10);
                 const telegram = document.getElementById('telegram').value.trim().replace('@', '');
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirm-password').value;
-                
-                // Get model ID with fallback - use the global modelId if the form field is empty
-                let modelIdValue = document.getElementById('model-id')?.value;
-                if (!modelIdValue && modelId) {
-                    modelIdValue = modelId;
-                    console.log('Using global modelId value:', modelIdValue);
+                const modelId = document.getElementById('model-id').value;
+                const packageId = document.getElementById('package-id').value;
+                if (!selectedPackageId || !packageId) {
+                    showError('Please select a package to continue.');
+                    return;
                 }
-                
-                // Validate input
                 if (!name || !telegram || !email || !password || isNaN(age)) {
                     showError('Please fill in all required fields.');
                     return;
                 }
-                
                 if (age < 18) {
                     window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI&list=PLNo5p5wex1o_nj6S38ehq3zKuR_BIfd3R&index=60';
                     return;
                 }
-                
                 if (password !== confirmPassword) {
                     showError('Passwords do not match.');
                     return;
                 }
-                
                 if (password.length < 6) {
                     showError('Password must be at least 6 characters long.');
                     return;
                 }
-                
-                if (!modelIdValue) {
+                if (!modelId) {
                     showError('Invalid model selection. Please refresh the page and try again.');
                     return;
                 }
-                
-                // Verify the model exists before creating an account
-                try {
-                    console.log('Verifying model exists with ID:', modelIdValue);
-                    const { data: modelCheck, error: modelCheckError } = await supabase
-                        .from('models')
-                        .select('id, name')
-                        .eq('id', modelIdValue)
-                        .single();
-                        
-                    if (modelCheckError || !modelCheck) {
-                        console.error('Model validation failed:', modelCheckError || 'Model not found');
-                        showError('Invalid model. Please try again with a valid invite link.');
-                        return;
-                    }
-                    
-                    console.log('Model validated successfully:', modelCheck.name);
-                } catch (error) {
-                    console.error('Error validating model:', error);
-                    showError('Error validating model. Please try again.');
-                    return;
-                }
-                
                 // Disable submit button during signup
                 const submitButton = document.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.textContent;
                 submitButton.disabled = true;
                 submitButton.textContent = 'Creating Account...';
-                
                 try {
                     // Register the user with Supabase Auth
                     const { data, error } = await supabase.auth.signUp({
@@ -672,23 +616,19 @@
                             }
                         }
                     });
-                    
                     if (error) throw error;
-                    
                     // Store user data for future use
                     const userData = {
                         id: data.user.id,
                         email: data.user.email,
                         name: name,
                         telegram_number: telegram,
-                        model_id: modelIdValue,
+                        model_id: modelId,
+                        package_id: packageId
                     };
-                    
                     localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                    
-                    // Hash the password with SHA-256 (same as login page)
+                    // Hash the password with SHA-256
                     const passwordHash = await hashPassword(password);
-                    
                     // Create profile entry
                     const { error: profileError } = await supabase
                         .from('profiles')
@@ -697,52 +637,83 @@
                                 auth_id: data.user.id,
                                 name: name,
                                 telegram_username: telegram,
-                                model_id: modelIdValue, // Save the initial model ID
-                                password_hash: passwordHash // Store the hashed password
+                                model_id: modelId,
+                                password_hash: passwordHash
                             }
                         ]);
-                    
                     if (profileError) throw profileError;
-                    
-                    showSuccess('Account created successfully! Redirecting to subscription page...');
-                    
-                    // Redirect to subscription page after a short delay
-                    setTimeout(() => {
-                        window.location.href = `/subscription.html?model=${modelIdValue}`;
-                    }, 2000);
-                    
+                    showSuccess('Account created! Redirecting to payment...');
+                    // Create Stripe checkout session for the selected package
+                    const checkoutRes = await fetch('/api/create-checkout-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: data.user.id,
+                            packageId: packageId,
+                            modelId: modelId,
+                            email: email,
+                            name: name,
+                            phone: telegram,
+                            successUrl: `${window.location.origin}/subscription-success.html`,
+                            cancelUrl: `${window.location.origin}/invite/${encodeURIComponent(currentModel.name)}`
+                        })
+                    });
+                    if (!checkoutRes.ok) {
+                        const err = await checkoutRes.json();
+                        throw new Error(err.error || 'Error creating checkout session');
+                    }
+                    const { url } = await checkoutRes.json();
+                    setTimeout(() => { window.location.href = url; }, 1200);
                 } catch (error) {
-                    console.error('Signup error:', error);
                     showError(error.message || 'Error creating account. Please try again.');
-                    
-                    // Re-enable submit button
                     submitButton.disabled = false;
                     submitButton.textContent = originalButtonText;
                 }
             });
         }
         
-        // Helper function to show error messages
-        function showError(message) {
-            const messageElement = document.getElementById('signup-message');
-            messageElement.textContent = message;
-            messageElement.className = 'signup-message error';
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                loadPage();
+            } else {
+                console.error('Supabase client library not loaded');
+            }
         }
         
-        // Helper function to show success messages
-        function showSuccess(message) {
-            const messageElement = document.getElementById('signup-message');
-            messageElement.textContent = message;
-            messageElement.className = 'signup-message success';
+        async function loadPage() {
+            const modelName = getModelNameFromUrl();
+            if (!modelName) {
+                showError('No model found. Please use a valid invite link.');
+                document.getElementById('signup-form').style.display = 'none';
+                return;
+            }
+            const model = await fetchModelByName(modelName);
+            if (!model) {
+                showError('Invalid model. Please try again with a valid invite link.');
+                document.getElementById('signup-form').style.display = 'none';
+                return;
+            }
+            currentModel = model;
+            updateModelDisplay(model);
+            const packages = await fetchPackagesForModel(model.id);
+            renderPackages(packages);
+            setupForm();
         }
-
-        // Add the hashPassword function to the page if it doesn't exist
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        if (supabaseKey && !supabaseKey.includes('%NEXT_PUBLIC')) {
+            initSupabase();
+        } else {
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    supabaseKey = config.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                })
+                .catch(() => {
+                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                });
         }
     </script>
 </body>
