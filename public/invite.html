@@ -528,9 +528,7 @@
             document.getElementById('model-name').textContent = model.name;
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
             const track = document.getElementById('carousel-track');
-            const dots = document.getElementById('carousel-dots');
             track.innerHTML = '';
-            dots.innerHTML = '';
             let images = Array.isArray(model.pictures) ? model.pictures : [];
             if (!images.length) {
                 // fallback: show a blank image
