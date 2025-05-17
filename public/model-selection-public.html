@@ -130,6 +130,7 @@
     </style>
 </head>
 <body>
+    <div class="bg-blur"></div>
     <div class="dashboard-container">
         <header class="dashboard-header">
             <a href="/">
@@ -151,11 +152,11 @@
                 <h2>Explore Creators</h2>
                 <p class="section-description">Discover and select your favorite creator to sign up with.</p>
             </div>
-            <div id="loading-container" class="loading-container">
+            <div id="loading-container" class="loading-container card">
                 <div class="loading-spinner"></div>
                 <p>Loading creators...</p>
             </div>
-            <div id="empty-state" class="empty-state" style="display: none;">
+            <div id="empty-state" class="empty-state card" style="display: none;">
                 <div class="empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
@@ -241,6 +242,7 @@
                 const modelCard = document.createElement('div');
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
+                modelCard.dataset.modelName = model.name;
                 // Add container for the image
                 const modelImageContainer = document.createElement('div');
                 modelImageContainer.className = 'model-image-container';
@@ -275,8 +277,10 @@
             // Add event listeners for selection
             document.querySelectorAll('.select-model-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const modelId = this.getAttribute('data-model-id');
-                    window.location.href = `/invite/${encodeURIComponent(modelId)}`;
+                    const modelName = this.closest('.model-card').dataset.modelName?.trim();
+                    if (modelName) {
+                        window.location.href = `/invite/${encodeURIComponent(modelName)}`;
+                    }
                 });
             });
         }
