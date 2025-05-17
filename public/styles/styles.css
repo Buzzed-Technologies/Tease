@@ -33,16 +33,17 @@ html {
 }
 
 body {
-    min-height: 100vh;
-    margin: 0;
     font-family: 'Montserrat', sans-serif;
-    background: #f8f8fa;
+    background-color: var(--primary);
     color: var(--dark);
-    position: relative;
     overflow-x: hidden;
     line-height: 1.6;
     /* Prevent scroll chaining on other browsers */
     overscroll-behavior: none;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(120deg, #f5f0e8 0%, #e6eaff 100%);
+    position: relative;
 }
 
 h1, h2, h3 {
@@ -94,7 +95,7 @@ a:hover {
 .logo {
     font-family: 'Playfair Display', serif;
     font-size: 2.1rem;
-    color: #181818;
+    color: #181818 !important;
     margin-bottom: 0.2rem;
     text-align: center;
     font-weight: 700;
@@ -1355,28 +1356,13 @@ input[type=number] {
     color: #28a745 !important;
 }
 
-.background-accent-top {
+.bg-blur {
     position: fixed;
-    top: -180px;
-    right: -180px;
-    width: 520px;
-    height: 520px;
-    background: radial-gradient(circle at 70% 30%, rgba(198,210,255,0.18) 0%, rgba(255,255,255,0) 80%);
-    filter: blur(60px);
+    top: -100px; left: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, #fff0 80%);
+    filter: blur(80px);
     z-index: 0;
-    pointer-events: none;
-}
-
-.background-accent-bottom {
-    position: fixed;
-    bottom: -180px;
-    left: -180px;
-    width: 520px;
-    height: 520px;
-    background: radial-gradient(circle at 30% 70%, rgba(198,210,255,0.13) 0%, rgba(255,255,255,0) 80%);
-    filter: blur(60px);
-    z-index: 0;
-    pointer-events: none;
 }
 
 .btn-secondary {
@@ -1400,7 +1386,14 @@ input[type=number] {
     background-color: rgba(46, 204, 113, 1);
 }
 
-.btn-full { width: 100%; }
+.btn-full {
+    width: 100%;
+    display: block;
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+    font-size: 1.15rem;
+    margin-top: 1.2rem;
+}
 
 /* Card and Section Styles */
 .card, .signup-card, .cta-card, .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card, .models-section, .account-info-card, .settings-card {
@@ -1645,4 +1638,8 @@ input[type=number] {
     margin: 0 auto;
     padding: 2rem 5%;
 }
-/* Responsive and utility classes from invite.html/dashboard.css are also included here. */ 
+/* Responsive and utility classes from invite.html/dashboard.css are also included here. */
+
+.cta-card .cta-button {
+    margin-top: 1.2rem;
+} 
