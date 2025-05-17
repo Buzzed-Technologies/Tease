@@ -518,37 +518,88 @@
 </head>
 <body>
     <div class="bg-blur"></div>
-    <div class="dashboard-container">
-        <header class="dashboard-header" style="background: none; box-shadow: none; border-bottom: none;">
-            <a href="/">
-                <div class="logo" style="color: #181818; font-size: 2.1rem; font-family: 'Playfair Display', serif;">ThreadPay</div>
-            </a>
-            <div class="header-controls">
-                <button id="logout-button" class="logout-button">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="btn-text">Logout</span>
+    <div class="dashboard-outer-card">
+        <div class="dashboard-content">
+            <div class="tab-navigation">
+                <button class="tab-button active" data-tab="account-section">
+                    <i class="fas fa-user"></i>
+                    <span>Account</span>
+                </button>
+                <button class="tab-button" data-tab="settings-section">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
                 </button>
             </div>
-        </header>
-        <main class="dashboard-content" style="max-width: 480px; margin: 2.5rem auto 0 auto; padding: 0;">
-            <section id="account-section" class="content-section active" style="background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(198,210,255,0.18); padding: 2rem 1.5rem;">
-                <div id="subscribed-models-container" style="display: flex; flex-direction: column; gap: 1.2rem; padding: 0; background: none; box-shadow: none; border: none;"></div>
-                <div id="no-subscription-container" style="display: none;">
-                    <div class="no-subscription-message" style="background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(198,210,255,0.18); border: 1px solid #e0e6f7; text-align: center;">
-                        <h3>No Active Subscriptions</h3>
-                        <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
-                        <button class="action-button" id="explore-models-button">Explore Available Creators</button>
+            <!-- Account Section -->
+            <section id="account-section" class="content-section active">
+                <div class="account-info dashboard-inner-card">
+                    <div class="account-header">
+                        <div>
+                            <div class="user-name-large" id="account-name">User Name</div>
+                            <div class="account-email" id="account-email">user@example.com</div>
+                            <div class="account-created" id="account-created">Member since January 1, 2025</div>
+                        </div>
+                    </div>
+                    <div class="account-details">
+                        <div>
+                            <div class="account-label">Subscription Status</div>
+                            <div class="model-subscription-status active" id="account-subscription-status">Active</div>
+                        </div>
                     </div>
                 </div>
-                <div id="explore-more-container" class="explore-more-container" style="display: none; justify-content: center;">
-                    <button class="explore-more-button" id="explore-more-button">
-                        <i class="fas fa-plus"></i>
-                        <span>Explore More Creators</span>
-                    </button>
+                <div class="models-section dashboard-inner-card">
+                    <h3>Your Creator Subscriptions</h3>
+                    <div id="subscribed-models-container" style="display: none;"></div>
+                    <div id="no-subscription-container" style="display: none;">
+                        <div class="no-subscription-message">
+                            <h3>No Active Subscriptions</h3>
+                            <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
+                            <button class="action-button" id="explore-models-button">Explore Available Creators</button>
+                        </div>
+                    </div>
+                    <div id="explore-more-container" class="explore-more-container" style="display: none;">
+                        <button class="explore-more-button" id="explore-more-button">
+                            <i class="fas fa-plus"></i>
+                            <span>Explore More Creators</span>
+                        </button>
+                    </div>
                 </div>
             </section>
-        </main>
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section dashboard-inner-card">
+                <div class="section-header">
+                    <h2>Account Settings</h2>
+                    <p class="section-description">Update your account information and preferences.</p>
+                </div>
+                <form class="settings-form" id="settings-form">
+                    <div class="form-group">
+                        <label for="settings-name" class="form-label">Display Name</label>
+                        <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
+                    </div>
+                    <div class="form-group">
+                        <label for="settings-email" class="form-label">Email Address</label>
+                        <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
+                        <p class="input-note">Email cannot be changed</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="settings-password" class="form-label">New Password</label>
+                        <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                        <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                    </div>
+                    <button type="submit" class="action-button">Save Changes</button>
+                    <div id="settings-message" class="message-area"></div>
+                </form>
+            </section>
+            <button id="logout-button" class="logout-button full-width">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="btn-text">Logout</span>
+            </button>
+        </div>
     </div>
+    <!-- Subscription Details Popup -->
     <div class="popup-overlay" id="model-popup">
         <div class="popup-content">
             <div class="popup-header">
