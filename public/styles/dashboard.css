@@ -133,8 +133,8 @@
     display: block;
 }
 
-.dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message {
-    background: #fff;
+.dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card {
+    background: #fff !important;
     border-radius: var(--radius);
     box-shadow: 0 4px 24px rgba(198,210,255,0.18);
     border: 1px solid rgba(232, 224, 213, 0.3);
