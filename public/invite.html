@@ -409,11 +409,11 @@
             </div>
         </div>
         <div class="signup-card">
-            <div class="signup-header">
+            <div class="signup-header" id="signup-header" style="display:none;">
                 <h1>Sign Up to Subscribe</h1>
                 <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
             </div>
-            <form id="signup-form" autocomplete="off">
+            <form id="signup-form" autocomplete="off" style="display:none;">
                 <input type="hidden" id="model-id" name="model-id" value="">
                 <input type="hidden" id="package-id" name="package-id" value="">
                 <div class="form-group">
@@ -483,9 +483,14 @@
         function renderPackages(packages) {
             const list = document.getElementById('packages-list');
             list.innerHTML = '';
+            const signupForm = document.getElementById('signup-form');
+            const signupHeader = document.getElementById('signup-header');
+            signupForm.style.display = 'none';
+            signupHeader.style.display = 'none';
             if (!packages.length) {
                 list.innerHTML = '<div style="color:#e74c3c;text-align:center;">No packages available for this creator.</div>';
-                document.getElementById('signup-form').style.display = 'none';
+                signupForm.style.display = 'none';
+                signupHeader.style.display = 'none';
                 return;
             }
             const icons = ['fa-star', 'fa-gem', 'fa-crown', 'fa-fire', 'fa-heart'];
@@ -506,13 +511,15 @@
                     selectedPackageId = pkg.id;
                     document.getElementById('package-id').value = pkg.id;
                     document.getElementById('package-id').setAttribute('data-stripe-price-id', pkg.stripe_price_id);
-                    document.getElementById('signup-form').style.opacity = 1;
-                    document.getElementById('signup-form').style.pointerEvents = 'auto';
+                    signupForm.style.display = 'block';
+                    signupHeader.style.display = 'block';
+                    signupForm.style.opacity = 1;
+                    signupForm.style.pointerEvents = 'auto';
                 };
                 list.appendChild(card);
             });
-            document.getElementById('signup-form').style.opacity = 0.5;
-            document.getElementById('signup-form').style.pointerEvents = 'none';
+            signupForm.style.opacity = 0.5;
+            signupForm.style.pointerEvents = 'none';
         }
         function showError(message) {
             const messageElement = document.getElementById('signup-message');
