@@ -59,14 +59,15 @@
             text-align: center;
         }
         .hero-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
+            width: 220px;
+            aspect-ratio: 4/5;
+            border-radius: 18px;
             object-fit: cover;
             box-shadow: 0 8px 32px rgba(0,0,0,0.18);
             margin-bottom: 1.2rem;
             background: #e6eaff;
             display: inline-block;
+            overflow: hidden;
         }
         .hero-name {
             font-family: 'Playfair Display', serif;
@@ -82,7 +83,7 @@
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.1rem;
-            color: var(--accent);
+            color: #181818;
             margin-bottom: 0.2rem;
         }
         .tagline {
@@ -191,7 +192,7 @@
         }
         .form-input {
             width: 100%;
-            padding: 1.1rem 1.1rem 0.7rem 2.7rem;
+            padding: 1.1rem 1.1rem 0.7rem 1.1rem;
             border-radius: 8px;
             background: #f8faff;
             border: 1.5px solid #e0e6f7;
@@ -203,19 +204,6 @@
         }
         .form-input:focus {
             border-color: var(--accent);
-        }
-        .input-icon {
-            position: absolute;
-            left: 0.9rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #b4b4b4;
-            font-size: 1.1rem;
-        }
-        .form-description {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 0.3rem;
         }
         .submit-btn {
             width: 100%;
@@ -334,35 +322,29 @@
                 <input type="hidden" id="package-id" name="package-id" value="">
                 <div class="form-group">
                     <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
-                    <span class="input-icon"><i class="fa fa-user"></i></span>
                     <label for="name" class="form-label">Your Name</label>
                 </div>
                 <div class="form-group">
                     <input type="number" id="age" name="age" class="form-input" placeholder=" " min="18" required>
-                    <span class="input-icon"><i class="fa fa-cake-candles"></i></span>
                     <label for="age" class="form-label">Your Age</label>
                     <p class="form-description">You must be 18 or older to use ThreadPay.</p>
                 </div>
                 <div class="form-group">
                     <input type="tel" id="telegram" name="telegram" class="form-input" placeholder=" " required>
-                    <span class="input-icon"><i class="fa fa-paper-plane"></i></span>
                     <label for="telegram" class="form-label">Telegram Number</label>
                     <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
                 </div>
                 <div class="form-group">
                     <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
-                    <span class="input-icon"><i class="fa fa-envelope"></i></span>
                     <label for="email" class="form-label">Email</label>
                     <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
                 </div>
                 <div class="form-group">
                     <input type="password" id="password" name="password" class="form-input" placeholder=" " required>
-                    <span class="input-icon"><i class="fa fa-lock"></i></span>
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="form-group">
                     <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder=" " required>
-                    <span class="input-icon"><i class="fa fa-lock"></i></span>
                     <label for="confirm-password" class="form-label">Confirm Password</label>
                 </div>
                 <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
