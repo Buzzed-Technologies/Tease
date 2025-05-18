@@ -1,4 +1,24 @@
 :root {
+    /* Velvet-glass, neon, and dark iOS palette */
+    --primary: #181A20; /* Deep velvet black */
+    --primary-dark: #101114; /* Even deeper for nav/footer */
+    --primary-light: #23242b; /* Card backgrounds */
+    --accent: #7B61FF; /* Neon purple (sexy accent) */
+    --accent-gradient: linear-gradient(90deg, #7B61FF 0%, #FF61D2 100%);
+    --accent-glow: 0 0 16px #7B61FF99, 0 0 32px #FF61D299;
+    --success: #2ecc71;
+    --danger: #e74c3c;
+    --glass: rgba(36, 37, 46, 0.7);
+    --glass-blur: blur(18px);
+    --card-radius: 22px;
+    --input-radius: 16px;
+    --shadow: 0 8px 32px rgba(123, 97, 255, 0.12), 0 1.5px 8px rgba(0,0,0,0.18);
+    --shadow-strong: 0 12px 40px #7B61FF22, 0 2px 12px #0008;
+    --text-main: #fff;
+    --text-secondary: #bdb8d7;
+    --text-accent: #FF61D2;
+    --nav-height: 70px;
+    
     /* Updated velvet color palette with C6D2FF accent */
     --primary: #F5F0E8;  /* Soft velvet white/tan */
     --primary-dark: #E6EAF0;  /* Slightly darker velvet */
@@ -33,17 +53,19 @@ html {
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', 'San Francisco', 'Segoe UI', Arial, sans-serif;
     background-color: var(--primary);
-    color: var(--dark);
+    color: var(--text-main);
     overflow-x: hidden;
     line-height: 1.6;
     /* Prevent scroll chaining on other browsers */
     overscroll-behavior: none;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(120deg, #f5f0e8 0%, #e6eaff 100%);
+    background: linear-gradient(120deg, #181A20 0%, #23242b 100%);
     position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3 {
@@ -1642,4 +1664,175 @@ input[type=number] {
 
 .cta-card .cta-button {
     margin-top: 1.2rem;
-} 
+}
+
+/* Glassy Card */
+.card-ios {
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow);
+    border: 1.5px solid rgba(123, 97, 255, 0.08);
+    padding: 2rem 1.5rem;
+    color: var(--text-main);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.card-ios:hover {
+    box-shadow: var(--shadow-strong);
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* Sexy Buttons */
+.btn-ios {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-gradient);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 1rem 2.2rem;
+    box-shadow: 0 2px 16px #7B61FF33;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    outline: none;
+}
+.btn-ios:active {
+    transform: scale(0.97);
+}
+.btn-ios-glow {
+    box-shadow: var(--accent-glow);
+}
+
+/* iOS Inputs */
+.input-ios {
+    width: 100%;
+    padding: 1.1rem 1.2rem;
+    border-radius: var(--input-radius);
+    background: rgba(36, 37, 46, 0.85);
+    border: 1.5px solid #2d2c3a;
+    color: var(--text-main);
+    font-size: 1.08rem;
+    font-family: inherit;
+    margin-bottom: 1.2rem;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1.5px 8px #7B61FF11;
+}
+.input-ios:focus {
+    border: 1.5px solid #7B61FF;
+    box-shadow: 0 0 0 2px #7B61FF44;
+    outline: none;
+}
+
+/* Floating label for iOS input */
+.input-group-ios {
+    position: relative;
+    margin-bottom: 2rem;
+}
+.input-label-ios {
+    position: absolute;
+    left: 1.2rem;
+    top: 1.2rem;
+    color: #bdb8d7;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: 0.2s;
+    background: transparent;
+}
+.input-ios:focus + .input-label-ios,
+.input-ios:not(:placeholder-shown) + .input-label-ios {
+    top: -0.7rem;
+    left: 1rem;
+    font-size: 0.85rem;
+    color: var(--accent);
+    background: var(--glass);
+    padding: 0 0.3rem;
+    border-radius: 8px;
+}
+
+/* Avatars */
+.avatar-ios {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7B61FF 0%, #FF61D2 100%);
+    box-shadow: 0 4px 24px #7B61FF44;
+    border: 3px solid #23242b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0 auto 1.2rem auto;
+}
+.avatar-ios img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav-ios {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: var(--nav-height);
+    background: rgba(24, 26, 32, 0.92);
+    backdrop-filter: blur(16px);
+    border-top: 1.5px solid #23242b;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 24px #7B61FF22;
+}
+.bottom-nav-ios .nav-item {
+    flex: 1;
+    text-align: center;
+    color: #bdb8d7;
+    font-size: 1.5rem;
+    padding: 0.2rem 0 0.1rem 0;
+    transition: color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+.bottom-nav-ios .nav-item.active,
+.bottom-nav-ios .nav-item:active {
+    color: #fff;
+}
+.bottom-nav-ios .nav-item.active:after {
+    content: '';
+    display: block;
+    margin: 0 auto;
+    margin-top: 0.2rem;
+    width: 18px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--accent-gradient);
+}
+
+/* Section headers */
+.section-header-ios {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 12px #7B61FF22;
+}
+
+/* Animations */
+@keyframes ios-pop {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.ios-pop {
+    animation: ios-pop 0.35s cubic-bezier(.77,0,.18,1) both;
+}
+
+/* Utility */
+.hide-ios { display: none !important; }
+.show-ios { display: block !important; } 
