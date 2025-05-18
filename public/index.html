@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#111122">
-    <title>ThreadPay | Secure Payment and Discovery Platform for Creators</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#F5F0E8">
+    <title>ThreadPay | Premium Content Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -15,16 +17,16 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Social Media Cards -->
-    <meta property="og:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
-    <meta property="og:description" content="A secure payment and discovery platform for content creators and their supporters.">
+    <meta property="og:title" content="ThreadPay | Premium Content Platform">
+    <meta property="og:description" content="A secure payment and discovery platform for exclusive content creators and their supporters.">
     <meta property="og:image" content="/images/Group 69.png">
     <meta property="og:url" content="https://threadpay.vercel.app">
     <meta property="og:type" content="website">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
-    <meta name="twitter:description" content="A secure payment and discovery platform for content creators and their supporters.">
+    <meta name="twitter:title" content="ThreadPay | Premium Content Platform">
+    <meta name="twitter:description" content="A secure payment and discovery platform for exclusive content creators and their supporters.">
     <meta name="twitter:image" content="/images/Group 69.png">
     
     <!-- Stylesheets -->
@@ -32,210 +34,317 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* iOS-inspired color scheme */
         :root {
-            --primary: #111122;  /* Dark background */
-            --primary-dark: #080814;  /* Darker background */
-            --primary-light: #27293D;  /* Lighter panel */
-            --accent: #7574FF;  /* Main accent - purple */
-            --accent-secondary: #FF2D55;  /* Secondary accent - pink */
-            --dark: #FFFFFF;    /* Text on dark background */
-            --darker: #E0E0E6;  /* Secondary text */
-            --light: #111122;   /* Dark text on light backgrounds */
-            --gray: #6E6E7E;    /* Medium gray */
-            --light-gray: #8E8EA0; /* Light gray */
-            --radius: 16px;
-            --button-radius: 14px;
-            --shadow: 0 10px 30px rgba(0,0,0,0.25);
-            --card-bg: rgba(39, 41, 61, 0.7);
-            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #F5F0E8;  
+            --primary-dark: #E6EAF0;
+            --primary-light: #FFF9F0;
+            --accent: #C6D2FF;
+            --dark: #2D2D2D;
+            --darker: #181818;
+            --light: #FFFFFF;
+            --radius: 18px;
+            --radius-sm: 12px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
         }
         
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(120deg, var(--primary) 0%, var(--primary-light) 100%);
             color: var(--dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Montserrat', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
         }
         
-        /* Animated background */
+        /* Background effects */
         .bg-blur {
             position: fixed;
+            top: -100px; left: -100px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle at 30% 30%, var(--accent) 0%, rgba(255,255,255,0) 80%);
+            filter: blur(80px);
             z-index: 0;
-            width: 60vw;
-            height: 60vh;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(117, 116, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
+            opacity: 0.7;
+            animation: floatBlur 25s ease-in-out infinite alternate;
+        }
+        
+        .bg-blur-2 {
+            position: fixed;
+            right: -100px; 
+            bottom: -100px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle at 70% 70%, rgba(198, 210, 255, 0.5) 0%, rgba(255,255,255,0) 70%);
             filter: blur(80px);
-            opacity: 0.6;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-            animation: pulse 15s infinite alternate ease-in-out;
+            z-index: 0;
+            opacity: 0.7;
+            animation: floatBlur 30s ease-in-out infinite alternate-reverse;
         }
         
-        .bg-blur:after {
-            content: '';
-            position: absolute;
-            width: 40vw;
-            height: 40vh;
-            background: radial-gradient(circle, rgba(255, 45, 85, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(80px);
-            top: 20vh;
-            left: -20vw;
-            border-radius: 50%;
-            animation: float 20s infinite alternate ease-in-out;
+        @keyframes floatBlur {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.2); }
         }
         
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-            50% { transform: translateX(-55%) scale(1.1); opacity: 0.7; }
-            100% { transform: translateX(-45%) scale(1); opacity: 0.6; }
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 100%;
+            overflow: hidden;
         }
         
-        @keyframes float {
-            0% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
+        /* iOS-style Nav/Header */
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
         
-        /* Fix logo for iOS style */
         .logo {
-            font-size: 2.4rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--dark);
+            color: var(--darker);
             letter-spacing: -0.5px;
             text-align: center;
-            word-wrap: break-word;
+            margin: 0;
+            line-height: 1.1;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            border-radius: 1px;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-button {
+            background: linear-gradient(90deg, var(--accent) 0%, #b4c1ff 100%);
+            color: var(--darker);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .nav-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--darker);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
         }
         
         /* Hero section styles */
-        #hero {
-            position: relative;
-            padding-top: 4rem;
+        .screen {
             min-height: 100vh;
+            padding: 6rem 5% 3rem;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            position: relative;
+        }
+        
+        #hero {
+            overflow: hidden;
+            background: linear-gradient(135deg, #fcf9f5 0%, #f3f0f9 100%);
+        }
+        
+        .content {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
         
         .hero-content {
-            text-align: left;
-            margin-top: 1rem;
-            position: relative;
-            z-index: 5;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
         }
         
-        .logo-container {
-            text-align: center;
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .hero-image {
+            flex: 1;
+            position: relative;
+            max-width: 500px;
+        }
+        
+        .device-mockup {
+            position: relative;
             width: 100%;
-            position: absolute;
-            top: 2rem;
-            left: 0;
-            z-index: 10;
+            padding-bottom: 200%;
+            background: url('/images/iphone-mockup.png') no-repeat center;
+            background-size: contain;
+            transform: rotate(-5deg);
+            filter: drop-shadow(0 30px 60px rgba(0,0,0,0.12));
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(-5deg); }
         }
         
         h1 {
-            font-size: 3.6rem;
-            font-weight: 700;
+            font-size: 4rem;
             margin-bottom: 1.5rem;
+            font-weight: 700;
             line-height: 1.1;
-            letter-spacing: -1px;
-            color: var(--dark);
+            color: var(--darker);
+            letter-spacing: -0.5px;
         }
         
         .highlight {
-            background: linear-gradient(135deg, var(--accent) 0%, #8A8AFF 100%);
+            background: linear-gradient(to right, var(--accent), #b4c1ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-weight: 700;
+            padding: 0;
             position: relative;
             display: inline-block;
         }
         
-        .highlight:after {
+        .highlight::after {
             content: '';
             position: absolute;
-            width: 100%;
-            height:.2rem;
-            bottom: -.2rem;
             left: 0;
-            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-secondary) 100%);
-            border-radius: 1rem;
+            bottom: 0.1em;
+            width: 100%;
+            height: 0.2em;
+            background: linear-gradient(to right, var(--accent), #b4c1ff);
+            opacity: 0.3;
+            border-radius: 10px;
+            z-index: -1;
         }
         
         .intro-text {
             font-size: 1.2rem;
-            color: var(--darker);
             line-height: 1.6;
             margin-bottom: 2.5rem;
-            font-weight: 400;
-            max-width: 600px;
+            color: var(--dark);
+            font-weight: 500;
         }
         
-        /* iOS-style button */
+        .cta-wrapper {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
         .cta-button {
+            background: linear-gradient(90deg, var(--accent) 0%, #b4c1ff 100%);
+            color: var(--darker);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 1rem 2rem;
-            background-color: var(--accent);
-            color: white;
-            font-weight: 600;
-            border-radius: var(--button-radius);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: none;
-            text-decoration: none;
-            font-size: 1rem;
-            letter-spacing: -0.2px;
-            box-shadow: 0 4px 12px rgba(117, 116, 255, 0.3);
+            gap: 0.8rem;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.8s ease;
         }
         
         .cta-button:hover {
-            background-color: #8A8AFF;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(117, 116, 255, 0.4);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
         
-        .cta-button:active {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(117, 116, 255, 0.2);
+        .cta-button:hover::after {
+            transform: translateX(100%);
         }
         
-        .pulse-circle {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(117, 116, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-            top: 50%;
-            right: -100px;
-            transform: translateY(-50%);
-            z-index: -1;
-            filter: blur(40px);
-            opacity: 0.8;
-            animation: pulse-animation 6s infinite ease-in-out;
-        }
-        
-        @keyframes pulse-animation {
-            0% {
-                transform: translateY(-50%) scale(1);
-                opacity: 0.8;
-            }
-            50% {
-                transform: translateY(-60%) scale(1.1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-50%) scale(1);
-                opacity: 0.8;
-            }
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--dark);
+            box-shadow: var(--shadow-sm);
         }
         
         .scroll-indicator {
@@ -243,227 +352,200 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
-            color: var(--darker);
-            font-weight: 500;
             text-align: center;
+            color: var(--dark);
+            font-size: 0.9rem;
             cursor: pointer;
             animation: bounce 2s infinite;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
         }
         
-        .scroll-indicator span {
+        .scroll-indicator:hover {
+            opacity: 1;
+        }
+        
+        .scroll-indicator i {
             display: block;
-            margin-top: .5rem;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
         }
         
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0) translateX(-50%);
-            }
-            40% {
-                transform: translateY(-10px) translateX(-50%);
-            }
-            60% {
-                transform: translateY(-5px) translateX(-50%);
-            }
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-10px) translateX(-50%); }
+            60% { transform: translateY(-5px) translateX(-50%); }
         }
         
-        /* About section */
+        /* Features section */
         #about {
-            padding: 5rem 1rem;
-            text-align: center;
-            position: relative;
-            z-index: 5;
+            background: linear-gradient(135deg, #f5f0e8 0%, #f9f9ff 100%);
+            padding: 8rem 5%;
         }
         
-        #about h2 {
-            font-size: 2.5rem;
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
             font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
+            color: var(--darker);
             letter-spacing: -0.5px;
         }
         
-        #about p {
-            color: var(--darker);
-            font-size: 1.1rem;
+        .section-description {
+            font-size: 1.2rem;
             max-width: 700px;
-            margin: 0 auto 3rem;
+            margin: 0 auto;
+            color: var(--dark);
             line-height: 1.6;
         }
         
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin-top: 2rem;
         }
         
         .feature {
-            background: var(--card-bg);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
             border-radius: var(--radius);
-            padding: 2rem;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(232, 224, 213, 0.3);
         }
         
         .feature:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow);
-            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
         }
         
         .feature i {
             color: var(--accent);
-            font-size: 2rem;
-            margin-bottom: 1.2rem;
-            background: rgba(117, 116, 255, 0.1);
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            margin: 0 auto 1.2rem;
-            transition: all 0.3s ease;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: transform 0.3s ease;
         }
         
         .feature:hover i {
-            background: rgba(117, 116, 255, 0.2);
-            transform: scale(1.1);
+            transform: scale(1.2);
         }
         
         .feature h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1.4rem;
             margin-bottom: 1rem;
-            color: var(--dark);
-            letter-spacing: -0.3px;
+            color: var(--darker);
+            font-weight: 700;
         }
         
         .feature p {
-            color: var(--darker);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 0;
-        }
-        
-        /* Login/signup section */
-        #login-signup {
-            background: var(--card-bg);
-            padding: 5rem 1rem;
-            text-align: center;
-            position: relative;
-            z-index: 5;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid var(--card-border);
-        }
-        
-        #login-signup h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
             color: var(--dark);
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.5px;
+            font-size: 1rem;
+            line-height: 1.6;
         }
         
-        #login-signup p {
-            color: var(--darker);
-            font-size: 1.1rem;
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            line-height: 1.6;
+        /* CTA Section */
+        #login-signup {
+            background: linear-gradient(135deg, #ebeeff 0%, #f5f0e8 100%);
+            text-align: center;
+            padding: 8rem 5%;
+            position: relative;
+            overflow: hidden;
         }
         
         .cta-options {
             display: flex;
             justify-content: center;
             gap: 2rem;
+            margin-top: 4rem;
             flex-wrap: wrap;
         }
         
         .cta-card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius);
-            padding: 2.5rem 2rem;
-            width: 340px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3rem 2rem;
+            border-radius: var(--radius-lg);
+            width: 320px;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            position: relative;
+            overflow: hidden;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(232, 224, 213, 0.3);
         }
         
         .cta-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow);
-            border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
         }
         
         .cta-card i {
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--accent);
             margin-bottom: 1.5rem;
-            background: rgba(117, 116, 255, 0.1);
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-            transition: all 0.3s ease;
+            display: inline-block;
+            transition: transform 0.3s ease;
         }
         
         .cta-card:hover i {
-            background: rgba(117, 116, 255, 0.2);
-            transform: scale(1.1);
+            transform: scale(1.2) rotate(10deg);
         }
         
         .cta-card h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark);
+            font-size: 1.6rem;
             margin-bottom: 1rem;
-            letter-spacing: -0.3px;
+            color: var(--darker);
+            font-weight: 700;
         }
         
         .cta-card p {
-            color: var(--darker) !important;
-            font-size: 1rem !important;
-            margin-bottom: 2rem !important;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            font-size: 1.05rem;
             line-height: 1.6;
-            opacity: 0.9;
         }
         
-        /* Footer */
+        /* iOS-style Footer */
         footer {
-            background: rgba(8, 8, 20, 0.5);
-            padding: 3rem 1rem;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 5%;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
         }
         
         .footer-links {
             display: flex;
-            justify-content: center;
             gap: 2rem;
-            margin-bottom: 2rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .footer-links a {
             color: var(--darker);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-weight: 500;
             transition: color 0.3s ease;
         }
         
@@ -471,181 +553,372 @@
             color: var(--accent);
         }
         
-        .footer-logo {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .copyright {
             color: var(--dark);
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.5px;
-        }
-        
-        .footer-text {
-            color: var(--darker);
             font-size: 0.9rem;
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.6;
             opacity: 0.7;
         }
         
-        /* Responsive styles */
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 3.5rem;
+            }
+            
+            .hero-content {
+                gap: 2rem;
+            }
+        }
+        
         @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-text {
+                order: 2;
+            }
+            
+            .hero-image {
+                order: 1;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
             h1 {
                 font-size: 2.8rem;
             }
             
+            .section-header h2 {
+                font-size: 2.5rem;
+            }
+            
+            .cta-wrapper {
+                justify-content: center;
+            }
+            
             .feature-grid {
                 grid-template-columns: 1fr;
-                max-width: 400px;
+                gap: 1.5rem;
             }
             
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .intro-text {
-                font-size: 1.1rem;
-            }
-            
-            #about, #login-signup {
-                padding: 4rem 1.5rem;
-            }
-            
-            #about h2, #login-signup h2 {
-                font-size: 2rem;
-            }
-            
-            .cta-card {
-                width: 100%;
-                padding: 2rem 1.5rem;
+            .cta-options {
+                flex-direction: column;
+                align-items: center;
             }
         }
         
         @media (max-width: 480px) {
+            .screen {
+                padding: 6rem 1.5rem 3rem;
+            }
+            
             h1 {
                 font-size: 2.3rem;
             }
             
-            .logo {
-                font-size: 1.8rem;
+            .section-header h2 {
+                font-size: 2rem;
             }
             
             .intro-text {
-                font-size: 1rem;
-            }
-            
-            .feature i {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
+                font-size: 1.05rem;
             }
             
             .cta-button {
-                width: 100%;
+                padding: 0.9rem 1.5rem;
+                font-size: 1rem;
             }
-            
-            #about h2, #login-signup h2 {
-                font-size: 1.8rem;
-            }
+        }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: right 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            padding: 5rem 2rem 2rem;
+        }
+        
+        .mobile-menu.active {
+            right: 0;
+        }
+        
+        .mobile-menu-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--darker);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .mobile-menu-links a {
+            color: var(--darker);
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .mobile-menu-cta {
+            margin-top: 2rem;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
     </style>
 </head>
 <body>
+    <!-- Background elements -->
     <div class="bg-blur"></div>
+    <div class="bg-blur-2"></div>
     
-    <main>
-        <!-- HERO SECTION -->
-        <section id="hero">
-            <!-- Logo at the top -->
-            <div class="logo-container">
-                <div class="logo">ThreadPay</div>
-            </div>
-            <div class="content hero-content">
-                <h1>Support <span class="highlight">Exceptional</span><br>Creators</h1>
-                <p class="intro-text">ThreadPay connects you with hand-picked, thoroughly trained creators. Your new destination for quality content.</p>
-                <div class="cta-wrapper">
-                    <a href="/model-selection-public.html" class="cta-button">
-                        <i class="fas fa-search"></i>
-                        Explore Creators
-                    </a>
-                </div>
-                <div class="pulse-circle"></div>
-            </div>
-            <div class="scroll-indicator">
-                <i class="fas fa-chevron-down"></i>
-                <span>Learn More</span>
-            </div>
-        </section>
-        
-        <!-- ABOUT SECTION -->
-        <section id="about">
-            <div class="content">
-                <h2>Why Choose ThreadPay</h2>
-                <p>We provide a secure, premium platform that connects you with exceptional creators.</p>
-                
-                <div class="feature-grid">
-                    <div class="feature">
-                        <i class="fas fa-shield-alt"></i>
-                        <h3>Secure Payments</h3>
-                        <p>Your financial information is protected with state-of-the-art encryption and security measures.</p>
-                    </div>
-                    
-                    <div class="feature">
-                        <i class="fas fa-user-check"></i>
-                        <h3>Verified Creators</h3>
-                        <p>All our creators are thoroughly vetted to ensure you receive authentic, high-quality content.</p>
-                    </div>
-                    
-                    <div class="feature">
-                        <i class="fas fa-comments"></i>
-                        <h3>Direct Communication</h3>
-                        <p>Connect directly with your favorite creators and enjoy personalized experiences.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- LOGIN/SIGNUP SECTION -->
-        <section id="login-signup">
-            <div class="content">
-                <h2>Join Our Community</h2>
-                <p>Whether you're a creator or a supporter, we have the perfect solution for you.</p>
-                
-                <div class="cta-options">
-                    <div class="cta-card">
-                        <i class="fas fa-user"></i>
-                        <h3>Supporters</h3>
-                        <p>Discover and support your favorite creators with secure payments and exclusive content.</p>
-                        <a href="/signup.html" class="cta-button">Sign Up Now</a>
-                    </div>
-                    
-                    <div class="cta-card">
-                        <i class="fas fa-star"></i>
-                        <h3>Creators</h3>
-                        <p>Monetize your content, build your audience, and connect with supporters who value your work.</p>
-                        <a href="/signup.html?creator=true" class="cta-button">Become a Creator</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+    <!-- Mobile menu overlay -->
+    <div class="overlay" id="overlay"></div>
     
-    <footer>
-        <div class="footer-logo">ThreadPay</div>
-        <div class="footer-links">
-            <a href="/about.html">About Us</a>
-            <a href="/terms-of-service.html">Terms of Service</a>
-            <a href="/privacy-policy.html">Privacy Policy</a>
-            <a href="/contact.html">Contact</a>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" id="mobile-menu-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-menu-links">
+            <a href="#about">Features</a>
+            <a href="#login-signup">Get Started</a>
+            <a href="/login.html">Sign In</a>
         </div>
-        <p class="footer-text">© 2025 ThreadPay. All rights reserved. ThreadPay is a secure payment platform connecting creators and supporters.</p>
-    </footer>
+        <div class="mobile-menu-cta">
+            <a href="/model-selection-public.html" class="cta-button">
+                <i class="fas fa-heart"></i>
+                Support a Creator
+            </a>
+        </div>
+    </div>
     
+    <div class="app-container">
+        <!-- iOS-style header -->
+        <header>
+            <div class="logo">ThreadPay</div>
+            <nav class="nav-links">
+                <a href="#about">Features</a>
+                <a href="#login-signup">Get Started</a>
+                <a href="/login.html">Sign In</a>
+                <a href="/model-selection-public.html" class="nav-button">
+                    <i class="fas fa-heart"></i> Support
+                </a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        
+        <main>
+            <!-- HERO SECTION -->
+            <section class="screen" id="hero">
+                <div class="content hero-content">
+                    <div class="hero-text">
+                        <h1>Support <span class="highlight">Exceptional</span> Creators</h1>
+                        <p class="intro-text">ThreadPay connects you with hand-picked, thoroughly trained creators. Your destination for exclusive, premium content you won't find anywhere else.</p>
+                        <div class="cta-wrapper">
+                            <a href="/model-selection-public.html" class="cta-button">
+                                <i class="fas fa-heart"></i>
+                                Explore Creators
+                            </a>
+                            <a href="/login.html" class="cta-button cta-secondary">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Sign In
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div class="device-mockup"></div>
+                    </div>
+                </div>
+                <div class="scroll-indicator" id="scroll-down">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Learn More</span>
+                </div>
+            </section>
+            
+            <!-- ABOUT SECTION -->
+            <section class="screen" id="about">
+                <div class="content">
+                    <div class="section-header">
+                        <h2>Why <span class="highlight">ThreadPay</span></h2>
+                        <p class="section-description">ThreadPay is a premium platform connecting supporters with exclusive creators. We personally select every creator to ensure exceptional quality.</p>
+                    </div>
+                    <div class="feature-grid">
+                        <div class="feature">
+                            <i class="fas fa-medal"></i>
+                            <h3>Curated Quality</h3>
+                            <p>Every creator is hand-selected for exceptional talent and exclusive content you won't find elsewhere.</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-lock"></i>
+                            <h3>Secure Payments</h3>
+                            <p>Your financial details remain private and protected with our bank-level security system.</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-heart"></i>
+                            <h3>Direct Support</h3>
+                            <p>Your contributions enable creators to focus on producing the quality content you love.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- LOGIN/SIGNUP SECTION -->
+            <section class="screen" id="login-signup">
+                <div class="content">
+                    <div class="section-header">
+                        <h2>Get <span class="highlight">Started</span></h2>
+                        <p class="section-description">Join our community of supporters and discover exceptional creators today.</p>
+                    </div>
+                    <div class="cta-options">
+                        <div class="cta-card">
+                            <i class="fas fa-user-plus"></i>
+                            <h3>New to ThreadPay?</h3>
+                            <p>Create an account to start supporting your favorite creators and unlock exclusive content.</p>
+                            <a href="/model-selection-public.html" class="cta-button">Sign Up</a>
+                        </div>
+                        <div class="cta-card">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <h3>Returning Supporter?</h3>
+                            <p>Sign in to continue supporting your creators and access your premium content.</p>
+                            <a href="/login.html" class="cta-button">Sign In</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- FOOTER SECTION -->
+        <footer>
+            <div class="footer-content">
+                <div class="logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="#">About Us</a>
+                    <a href="#">For Creators</a>
+                    <a href="#">Support</a>
+                    <a href="/privacy-policy.html">Privacy Policy</a>
+                    <a href="/terms-of-service.html">Terms of Service</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/scripts/auth.js"></script>
     <script>
-        // Smooth scroll for the scroll indicator
-        document.querySelector('.scroll-indicator').addEventListener('click', function() {
-            document.querySelector('#about').scrollIntoView({
-                behavior: 'smooth'
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggling
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('overlay');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            function closeMenu() {
+                mobileMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            mobileMenuClose.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            
+            // Mobile menu link clicks
+            document.querySelectorAll('.mobile-menu-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    closeMenu();
+                });
+            });
+            
+            // Scroll indicator
+            const scrollDown = document.getElementById('scroll-down');
+            if (scrollDown) {
+                scrollDown.addEventListener('click', function() {
+                    const aboutSection = document.getElementById('about');
+                    aboutSection.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+            
+            // Header scroll effect
+            const header = document.querySelector('header');
+            let lastScrollY = 0;
+            
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY;
+                
+                // Show/hide header based on scroll direction
+                if (scrollY > lastScrollY) {
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    header.style.transform = 'translateY(0)';
+                }
+                
+                // Add box shadow when scrolled
+                if (scrollY > 0) {
+                    header.style.boxShadow = 'var(--shadow-md)';
+                } else {
+                    header.style.boxShadow = 'var(--shadow-sm)';
+                }
+                
+                lastScrollY = scrollY;
             });
         });
     </script>

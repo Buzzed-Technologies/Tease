@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#111122">
-    <title>Dashboard | ThreadPay Secure Payment Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F5F0E8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Dashboard | ThreadPay</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -20,74 +22,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* iOS-inspired enhancements */
-        :root {
-            --primary: #111122;  /* Dark background */
-            --primary-dark: #080814;  /* Darker background */
-            --primary-light: #27293D;  /* Lighter panel */
-            --accent: #7574FF;  /* Main accent - purple */
-            --accent-secondary: #FF2D55;  /* Secondary accent - pink */
-            --dark: #FFFFFF;    /* Text on dark background */
-            --darker: #E0E0E6;  /* Secondary text */
-            --light: #111122;   /* Dark text on light backgrounds */
-            --gray: #6E6E7E;    /* Medium gray */
-            --light-gray: #8E8EA0; /* Light gray */
-            --success: #4CD964; /* iOS success green */
-            --warning: #FF9500; /* iOS warning orange */
-            --error: #FF3B30;   /* iOS error red */
-            --radius: 16px;
-            --button-radius: 14px;
-            --shadow: 0 10px 30px rgba(0,0,0,0.25);
-            --card-bg: rgba(39, 41, 61, 0.7);
-            --card-border: rgba(255, 255, 255, 0.08);
-        }
-        
-        /* Animated background */
-        .bg-blur {
-            position: fixed;
-            z-index: 0;
-            width: 60vw;
-            height: 60vh;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(117, 116, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(80px);
-            opacity: 0.6;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-            animation: pulse 15s infinite alternate ease-in-out;
-        }
-        
-        .bg-blur:after {
-            content: '';
-            position: absolute;
-            width: 40vw;
-            height: 40vh;
-            background: radial-gradient(circle, rgba(255, 45, 85, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(80px);
-            top: 20vh;
-            left: -20vw;
-            border-radius: 50%;
-            animation: float 20s infinite alternate ease-in-out;
-        }
-        
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-            50% { transform: translateX(-55%) scale(1.1); opacity: 0.7; }
-            100% { transform: translateX(-45%) scale(1); opacity: 0.6; }
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
-        }
-        
-        /* Explore more button */
+        /* Add styles for the explore more container and button */
         .explore-more-container {
             display: flex;
             justify-content: center;
@@ -99,16 +37,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--accent);
-            color: white;
+            background-color: var(--primary-dark);
+            color: var(--darker);
             border: none;
-            padding: 0.9rem 1.5rem;
-            border-radius: var(--button-radius);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 2px 10px rgba(232, 224, 213, 0.3),
+                0 5px 15px rgba(0, 0, 0, 0.05);
             gap: 10px;
-            box-shadow: 0 4px 12px rgba(117, 116, 255, 0.3);
         }
         
         .explore-more-button i {
@@ -116,66 +56,80 @@
         }
         
         .explore-more-button:hover {
-            background-color: #8A8AFF;
+            background-color: var(--accent);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(117, 116, 255, 0.4);
+            box-shadow: 
+                0 5px 15px rgba(198, 210, 255, 0.4),
+                0 8px 25px rgba(0, 0, 0, 0.1);
         }
         
-        .explore-more-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(117, 116, 255, 0.2);
-        }
-        
-        /* Model card iOS-style redesign */
+        /* Enhanced model card styling */
         .model-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
+            background: linear-gradient(145deg, var(--primary-light), var(--primary));
+            border-radius: 16px;
             overflow: hidden;
             display: flex;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid var(--card-border);
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.2rem;
             position: relative;
-            padding: 1.8rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
         
         .model-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
             border-color: var(--accent);
         }
         
-        .model-image-container {
-            flex: 0 0 auto;
-            margin-right: 1.5rem;
+        .model-card:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05));
+            pointer-events: none;
         }
         
         .model-image {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            margin: 0 auto 1.2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .model-card:hover .model-image {
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-            transform: scale(1.05);
-            border-color: var(--accent);
+        .model-image:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, rgba(198, 210, 255, 0.2), transparent);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .model-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .model-card:hover .model-image img {
+            transform: scale(1.1);
         }
         
         .model-info {
             flex: 1;
+            padding: 1.2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -184,68 +138,77 @@
         }
         
         .model-name {
-            font-weight: 700;
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            line-height: 1.2;
-            letter-spacing: -0.3px;
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-bottom: 0.6rem;
+            color: var(--darker);
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .model-name:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent);
+            border-radius: 1px;
         }
         
         .model-description {
             font-size: 0.95rem;
-            color: var(--darker);
-            margin-bottom: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             line-height: 1.5;
-            opacity: 0.85;
+            opacity: 0.8;
         }
         
         .model-subscription-status {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
             font-weight: 600;
-            letter-spacing: 0.2px;
-            gap: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         
         .model-subscription-status.active {
-            background-color: rgba(76, 217, 100, 0.15);
-            color: var(--success);
-            border: 1px solid rgba(76, 217, 100, 0.3);
-            box-shadow: 0 2px 8px rgba(76, 217, 100, 0.1);
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
         }
         
         .model-subscription-status.inactive {
-            background-color: rgba(255, 59, 48, 0.15);
-            color: var(--error);
-            border: 1px solid rgba(255, 59, 48, 0.3);
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
         }
         
-        /* iOS-style modal/popup */
+        /* Improve popup styles */
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.75);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 1rem;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(8px);
         }
         
         .popup-overlay.active {
@@ -254,62 +217,57 @@
         }
         
         .popup-content {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            width: 100%;
+            background: linear-gradient(145deg, var(--primary-light), var(--primary));
+            border-radius: 18px;
+            width: 92%;
             max-width: 520px;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow);
-            transform: translateY(30px) scale(0.95);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .popup-overlay.active .popup-content {
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
+            opacity: 1;
         }
         
         .popup-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.4rem 1.5rem;
+            border-bottom: 1px solid rgba(232, 224, 213, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--card-bg);
-            z-index: 5;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
         }
         
         .popup-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-            letter-spacing: -0.5px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--darker);
+            font-family: 'Playfair Display', serif;
         }
         
         .popup-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
             width: 36px;
             height: 36px;
+            font-size: 1.1rem;
+            color: var(--darker);
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--dark);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
         }
         
         .popup-close:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background: var(--accent);
             transform: rotate(90deg);
         }
         
@@ -561,795 +519,565 @@
     </style>
 </head>
 <body>
+    <!-- Background effects -->
     <div class="bg-blur"></div>
+    <div class="bg-blur" style="right: -100px; left: auto; top: auto; bottom: -100px; background: radial-gradient(circle at 70% 70%, rgba(198, 210, 255, 0.6) 0%, rgba(255,255,255,0) 70%);"></div>
     
     <div class="dashboard-container">
+        <!-- iOS-style header -->
         <header class="dashboard-header">
-            <a href="/" class="logo">ThreadPay</a>
-            <div class="header-controls">
-                <button class="theme-toggle" id="theme-toggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="notification-btn" id="notification-btn">
-                    <span class="notification-badge" id="notificationBadge"></span>
-                    <i class="fas fa-bell"></i>
-                </button>
-                <div class="user-dropdown">
-                    <button class="user-dropdown-btn" id="userDropdownBtn">
-                        <div class="user-avatar" id="userAvatar"></div>
-                        <span class="user-name" id="userName"></span>
-                        <i class="fas fa-chevron-down"></i>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>ThreadPay</h1>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#" class="active">Dashboard</a></li>
+                        <li><a href="/model-selection.html">Models</a></li>
+                        <li><a href="#settings-section" class="tab-link" data-tab="settings">Settings</a></li>
+                    </ul>
+                </nav>
+                <div class="header-controls">
+                    <button class="text-button" id="notifications-btn">
+                        <i class="fa-regular fa-bell"></i>
                     </button>
-                    <div class="user-dropdown-menu" id="userDropdownMenu">
-                        <a href="/profile.html" class="dropdown-item">
-                            <i class="fas fa-user"></i>
-                            Profile
-                        </a>
-                        <a href="/settings.html" class="dropdown-item">
-                            <i class="fas fa-cog"></i>
-                            Settings
-                        </a>
-                        <button id="logout-btn" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </button>
-                    </div>
+                    <button class="logout-button" id="logout-btn">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span class="btn-text">Logout</span>
+                    </button>
                 </div>
             </div>
         </header>
-        
-        <div class="dashboard-content">
-            <div class="dashboard-grid">
-                <!-- Left Column -->
-                <div class="dashboard-column">
-                    <section class="dashboard-section balance-card">
-                        <div class="card-overlay"></div>
-                        <div class="section-header">
-                            <h2>Balance</h2>
-                            <p class="section-description">Your current balance and recent activity</p>
-                        </div>
-                        <div class="balance-container">
-                            <div class="balance-amount">
-                                <span class="currency">$</span>
-                                <span class="amount" id="balanceAmount">0.00</span>
-                            </div>
-                            <div class="balance-actions">
-                                <button class="balance-action-btn withdraw-btn">
-                                    <i class="fas fa-arrow-down"></i>
-                                    <span>Withdraw</span>
-                                </button>
-                                <button class="balance-action-btn deposit-btn">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>Deposit</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="balance-chart">
-                            <canvas id="balanceChart"></canvas>
-                        </div>
-                    </section>
-                    
-                    <section class="dashboard-section models-card">
-                        <div class="section-header">
-                            <h2>My Models</h2>
-                            <p class="section-description">Models you're subscribed to</p>
-                        </div>
-                        
-                        <div id="models-list" class="models-list">
-                            <!-- Loading state -->
-                            <div id="models-loading" class="loading-state">
-                                <div class="loading-spinner"></div>
-                                <p>Loading your models...</p>
-                            </div>
-                            
-                            <!-- Empty state -->
-                            <div id="models-empty" class="empty-state" style="display: none;">
-                                <div class="empty-icon">
-                                    <i class="fas fa-user-slash"></i>
-                                </div>
-                                <h3 class="empty-title">No Models Yet</h3>
-                                <p class="empty-description">You haven't subscribed to any models yet. Explore our catalog to find your favorites.</p>
-                                <button id="explore-models-btn" class="btn">
-                                    <i class="fas fa-search"></i>
-                                    Explore Models
-                                </button>
-                            </div>
-                            
-                            <!-- Models will be populated here -->
-                        </div>
-                        
-                        <div class="explore-more-container">
-                            <button class="explore-more-button">
-                                <i class="fas fa-compass"></i>
-                                Explore More Models
-                            </button>
-                        </div>
-                    </section>
-                </div>
-                
-                <!-- Right Column -->
-                <div class="dashboard-column">
-                    <section class="dashboard-section activity-card">
-                        <div class="section-header">
-                            <h2>Recent Activity</h2>
-                            <p class="section-description">Your recent transactions and account activity</p>
-                        </div>
-                        
-                        <div id="activity-list" class="activity-list">
-                            <!-- Loading state -->
-                            <div id="activity-loading" class="loading-state">
-                                <div class="loading-spinner"></div>
-                                <p>Loading activity...</p>
-                            </div>
-                            
-                            <!-- Empty state -->
-                            <div id="activity-empty" class="empty-state" style="display: none;">
-                                <div class="empty-icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <h3 class="empty-title">No Activity Yet</h3>
-                                <p class="empty-description">You don't have any recent transactions or activity. Start by subscribing to a model.</p>
-                            </div>
-                            
-                            <!-- Activity items will be populated here -->
-                        </div>
-                    </section>
-                    
-                    <section class="dashboard-section upcoming-card">
-                        <div class="section-header">
-                            <h2>Upcoming</h2>
-                            <p class="section-description">Upcoming payments and events</p>
-                        </div>
-                        
-                        <div id="upcoming-list" class="upcoming-list">
-                            <!-- Loading state -->
-                            <div id="upcoming-loading" class="loading-state">
-                                <div class="loading-spinner"></div>
-                                <p>Loading upcoming events...</p>
-                            </div>
-                            
-                            <!-- Empty state -->
-                            <div id="upcoming-empty" class="empty-state" style="display: none;">
-                                <div class="empty-icon">
-                                    <i class="fas fa-calendar"></i>
-                                </div>
-                                <h3 class="empty-title">No Upcoming Events</h3>
-                                <p class="empty-description">You don't have any upcoming payments or events scheduled.</p>
-                            </div>
-                            
-                            <!-- Upcoming items will be populated here -->
-                        </div>
-                    </section>
-                </div>
+
+        <main class="dashboard-content">
+            <!-- Pull to refresh indicator -->
+            <div class="pull-indicator">
+                <div class="pull-spinner"></div>
+                <span>Refreshing...</span>
             </div>
-        </div>
-    </div>
-    
-    <!-- Model details popup -->
-    <div class="popup-overlay" id="modelDetailsPopup">
-        <div class="popup-content">
-            <div class="popup-header">
-                <h2 class="popup-title">Model Details</h2>
-                <button class="popup-close" id="closeModelPopup">
-                    <i class="fas fa-times"></i>
+            
+            <!-- iOS-style tab navigation -->
+            <div class="tab-navigation">
+                <button class="tab-button active" data-tab="subscriptions">
+                    <i class="fa-solid fa-star"></i>
+                    My Subscriptions
+                </button>
+                <button class="tab-button" data-tab="account">
+                    <i class="fa-solid fa-user"></i>
+                    My Account
+                </button>
+                <button class="tab-button" data-tab="settings">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
                 </button>
             </div>
-            <div class="popup-body" id="modelDetailsBody">
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <p>Loading model details...</p>
+
+            <!-- Dashboard sections -->
+            <section id="subscriptions-section" class="dashboard-section active">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Your Subscriptions</h2>
+                        <p class="section-description">Manage your current subscriptions or explore new models.</p>
+                    </div>
+                    
+                    <div id="subscribed-models-container">
+                        <!-- Models will be populated here via JavaScript -->
+                        <div class="model-loading">
+                            <div class="loading-indicator"></div>
+                            <p>Loading your subscriptions...</p>
+                        </div>
+                    </div>
+
+                    <div id="no-subscriptions" class="no-subscription-message" style="display: none;">
+                        <h3>No Subscriptions Yet</h3>
+                        <p>You haven't subscribed to any models yet. Explore our selection to find your favorites.</p>
+                        <a href="/model-selection.html" class="action-button">
+                            <i class="fa-solid fa-compass"></i>
+                            Explore Models
+                        </a>
+                    </div>
+                    
+                    <div class="explore-more-container">
+                        <a href="/model-selection.html" class="explore-more-button">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Discover More Models</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="account-section" class="dashboard-section">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Account Information</h2>
+                        <p class="section-description">Review your personal information and account details.</p>
+                    </div>
+
+                    <div class="user-details">
+                        <div class="user-avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3 id="user-name">Loading...</h3>
+                            <p id="user-email">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-form">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-input" id="username-display" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" id="email-display" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Account Created</label>
+                            <input type="text" class="form-input" id="created-at-display" disabled>
+                        </div>
+                        
+                        <div class="form-message" id="account-message"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings-section" class="dashboard-section">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Account Settings</h2>
+                        <p class="section-description">Update your account information and preferences.</p>
+                    </div>
+
+                    <div class="dashboard-form settings-form">
+                        <div class="form-group">
+                            <label class="form-label" for="update-username">Username</label>
+                            <input type="text" class="form-input" id="update-username" placeholder="Enter new username">
+                        </div>
+                        
+                        <button class="action-button" id="update-username-btn">
+                            <i class="fa-solid fa-check"></i>
+                            Update Username
+                        </button>
+                        
+                        <div class="form-message" id="username-message"></div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="update-password">New Password</label>
+                            <input type="password" class="form-input" id="update-password" placeholder="Enter new password">
+                            <p class="input-note">Leave blank if you don't want to change it</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="confirm-password">Confirm Password</label>
+                            <input type="password" class="form-input" id="confirm-password" placeholder="Confirm new password">
+                        </div>
+                        
+                        <button class="action-button" id="update-password-btn">
+                            <i class="fa-solid fa-lock"></i>
+                            Update Password
+                        </button>
+                        
+                        <div class="form-message" id="password-message"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- iOS-style sheet modal -->
+        <div class="popup-sheet" id="model-detail-popup">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h3 class="popup-title">Subscription Details</h3>
+                    <button class="popup-close" id="close-popup">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="popup-body">
+                    <div class="model-detail-header">
+                        <div class="model-detail-image">
+                            <img src="" alt="Model" id="popup-model-image">
+                        </div>
+                        <div class="model-detail-info">
+                            <h3 id="popup-model-name"></h3>
+                            <p class="model-detail-description" id="popup-model-description"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="subscription-details-container">
+                        <h4>Subscription Information</h4>
+                        <div class="subscription-detail-item">
+                            <span class="subscription-detail-label">Status</span>
+                            <span class="subscription-detail-value" id="popup-subscription-status"></span>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <span class="subscription-detail-label">Subscription Date</span>
+                            <span class="subscription-detail-value" id="popup-subscription-date"></span>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <span class="subscription-detail-label">Next Billing Date</span>
+                            <span class="subscription-detail-value" id="popup-next-billing-date"></span>
+                        </div>
+                        <div class="subscription-detail-item">
+                            <span class="subscription-detail-label">Monthly Fee</span>
+                            <span class="subscription-detail-value" id="popup-subscription-fee"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-footer">
+                    <button class="action-button manage-subscription-btn" id="manage-subscription">
+                        <i class="fa-solid fa-gear"></i>
+                        Manage Subscription
+                    </button>
                 </div>
             </div>
         </div>
+        
+        <!-- iOS-style bottom tab bar (mobile only) -->
+        <nav class="ios-tab-bar">
+            <ul>
+                <li>
+                    <a href="#" class="active" data-tab="subscriptions">
+                        <i class="fa-solid fa-star"></i>
+                        <span>Subscriptions</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-tab="account">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-tab="settings">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/model-selection.html">
+                        <i class="fa-solid fa-compass"></i>
+                        <span>Explore</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
     
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/scripts/auth.js"></script>
     <script>
-        // Supabase initialization
-        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        let supabase;
-        
-        // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-        let supabaseKey = null;
-        
-        // Initialize Supabase connection
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                checkAuthStatus();
-            } else {
-                console.error('Supabase client library not loaded');
+        // Initialize Supabase client
+        const SUPABASE_URL = 'https://mmkxwjzfbtlnopivnkct.supabase.co';
+        const SUPABASE_KEY = document.querySelector('meta[name="supabase-anon-key"]').getAttribute('content');
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is logged in
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = '/';
+                return;
             }
-        }
-        
-        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
-            console.log('Using API key from meta tag');
-            supabaseKey = metaKey;
-            initSupabase();
-        } else {
-            // Fetch API key from server config endpoint
-            console.log('Meta tag key not available, trying to fetch from server...');
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    if (config.supabaseKey) {
-                        console.log('Using API key from server');
-                        supabaseKey = config.supabaseKey;
-                    } else {
-                        // Fall back to hardcoded key
-                        console.log('Using hardcoded API key as fallback');
-                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    }
-                    initSupabase();
-                })
-                .catch(error => {
-                    console.error('Error fetching config:', error);
-                    // Fall back to hardcoded key
-                    console.log('Using hardcoded API key due to error');
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                });
-        }
-        
-        // Check if user is authenticated
-        async function checkAuthStatus() {
+
+            // Load user data
+            loadUserData(user);
+            
+            // Load subscribed models
+            loadSubscribedModels(user.id);
+            
+            // Setup event listeners
+            setupEventListeners(user);
+            
+            // Add pull-to-refresh behavior for mobile
+            setupPullToRefresh(() => {
+                loadUserData(user);
+                loadSubscribedModels(user.id);
+            });
+        });
+
+        // Load user data from Supabase
+        async function loadUserData(user) {
             try {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                
-                if (error) {
-                    throw error;
-                }
-                
-                if (!user) {
-                    // Redirect to login if not authenticated
-                    window.location.href = '/login.html';
-                    return;
-                }
-                
-                // User is authenticated, load dashboard data
-                loadUserInfo(user);
-                loadBalanceData();
-                loadModels();
-                loadActivity();
-                loadUpcoming();
-                setupEventListeners();
-                initBalanceChart();
-                
-            } catch (error) {
-                console.error('Error checking auth status:', error);
-                window.location.href = '/login.html';
-            }
-        }
-        
-        // Load user information
-        async function loadUserInfo(user) {
-            try {
-                const { data: profile, error } = await supabase
-                    .from('profiles')
+                const { data, error } = await supabase
+                    .from('users')
                     .select('*')
                     .eq('id', user.id)
                     .single();
                 
                 if (error) throw error;
                 
-                // Display user information
-                const userName = document.getElementById('userName');
-                const userAvatar = document.getElementById('userAvatar');
-                
-                if (profile) {
-                    userName.textContent = profile.username || profile.email || 'User';
+                if (data) {
+                    // Update display elements
+                    document.getElementById('user-name').textContent = data.username || 'User';
+                    document.getElementById('user-email').textContent = user.email;
                     
-                    if (profile.avatar_url) {
-                        userAvatar.style.backgroundImage = `url(${profile.avatar_url})`;
-                    } else {
-                        // Set default avatar with initials
-                        const initials = (profile.username || profile.email || 'U').charAt(0).toUpperCase();
-                        userAvatar.innerHTML = initials;
-                        userAvatar.style.backgroundColor = generateAvatarColor(profile.username || profile.email);
-                    }
+                    document.getElementById('username-display').value = data.username || 'Not set';
+                    document.getElementById('email-display').value = user.email;
+                    
+                    // Format created_at date
+                    const createdAt = new Date(data.created_at);
+                    const formattedDate = createdAt.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                    document.getElementById('created-at-display').value = formattedDate;
+                    
+                    // Pre-fill update form
+                    document.getElementById('update-username').value = data.username || '';
                 }
-                
             } catch (error) {
-                console.error('Error loading user info:', error);
+                console.error('Error loading user data:', error);
+                document.getElementById('account-message').textContent = 'Error loading account data. Please try again.';
+                document.getElementById('account-message').classList.add('error');
             }
         }
-        
-        // Generate a consistent color based on username
-        function generateAvatarColor(text) {
-            let hash = 0;
-            if (!text) return '#7574FF';
-            
-            for (let i = 0; i < text.length; i++) {
-                hash = text.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            
-            const colors = [
-                '#7574FF', '#FF2D55', '#5AC8FA', '#4CD964', 
-                '#FF9500', '#FF3B30', '#5856D6', '#007AFF'
-            ];
-            
-            return colors[Math.abs(hash) % colors.length];
-        }
-        
-        // Load balance data
-        async function loadBalanceData() {
+
+        // Load subscribed models from Supabase
+        async function loadSubscribedModels(userId) {
             try {
-                const { data: { user } } = await supabase.auth.getUser();
+                const { data, error } = await supabase
+                    .from('subscriptions')
+                    .select(`
+                        *,
+                        models (*)
+                    `)
+                    .eq('user_id', userId);
                 
-                if (!user) throw new Error('User not authenticated');
+                if (error) throw error;
                 
-                const { data: balance, error } = await supabase
-                    .from('balances')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .single();
+                const container = document.getElementById('subscribed-models-container');
+                container.innerHTML = ''; // Clear loading state
                 
-                if (error && error.code !== 'PGRST116') throw error;
-                
-                const balanceAmount = document.getElementById('balanceAmount');
-                
-                if (balance) {
-                    // Format and display balance
-                    balanceAmount.textContent = parseFloat(balance.amount || 0).toFixed(2);
+                if (data && data.length > 0) {
+                    document.getElementById('no-subscriptions').style.display = 'none';
                     
-                    // Update chart with balance history
-                    updateBalanceChart(balance.history || []);
+                    data.forEach(subscription => {
+                        if (subscription.models) {
+                            const model = subscription.models;
+                            const modelCard = createModelCard(model, subscription);
+                            container.appendChild(modelCard);
+                        }
+                    });
                 } else {
-                    balanceAmount.textContent = '0.00';
+                    document.getElementById('no-subscriptions').style.display = 'block';
                 }
-                
             } catch (error) {
-                console.error('Error loading balance:', error);
+                console.error('Error loading subscribed models:', error);
+                const container = document.getElementById('subscribed-models-container');
+                container.innerHTML = `
+                    <div class="message-area error">
+                        <p>Error loading subscriptions. Please try again later.</p>
+                    </div>
+                `;
             }
         }
-        
-        // Initialize balance chart
-        function initBalanceChart() {
-            const ctx = document.getElementById('balanceChart').getContext('2d');
+
+        // Create model card element
+        function createModelCard(model, subscription) {
+            const card = document.createElement('div');
+            card.className = 'model-card';
+            card.dataset.modelId = model.id;
+            card.dataset.subscriptionId = subscription.id;
             
-            // Create empty chart initially
-            window.balanceChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Balance',
-                        data: [],
-                        borderColor: '#7574FF',
-                        backgroundColor: 'rgba(117, 116, 255, 0.1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#FFFFFF',
-                        pointBorderColor: '#7574FF',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(39, 41, 61, 0.9)',
-                            titleColor: '#FFFFFF',
-                            bodyColor: '#E0E0E6',
-                            borderColor: 'rgba(255, 255, 255, 0.1)',
-                            borderWidth: 1,
-                            cornerRadius: 8,
-                            displayColors: false,
-                            padding: 12,
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 13
-                            },
-                            callbacks: {
-                                label: function(context) {
-                                    return `$${context.raw.toFixed(2)}`;
-                                }
-                            }
+            // Format dates for display
+            const subscriptionDate = new Date(subscription.created_at);
+            const formattedSubscriptionDate = subscriptionDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Calculate next billing date (1 month after subscription date)
+            const nextBillingDate = new Date(subscriptionDate);
+            nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+            const formattedNextBillingDate = nextBillingDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            card.innerHTML = `
+                <div class="model-image">
+                    <img src="${model.profile_image || '/images/avatar-placeholder.png'}" alt="${model.name}">
+                </div>
+                <div class="model-info">
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-description">${model.description || 'No description available'}</p>
+                    <span class="model-subscription-status active">Active</span>
+                </div>
+            `;
+            
+            // Add click event to show popup
+            card.addEventListener('click', () => {
+                showModelDetail(model, subscription, formattedSubscriptionDate, formattedNextBillingDate);
+            });
+            
+            return card;
+        }
+
+        // Show model detail popup
+        function showModelDetail(model, subscription, subscriptionDate, nextBillingDate) {
+            // Populate popup with data
+            document.getElementById('popup-model-name').textContent = model.name;
+            document.getElementById('popup-model-description').textContent = model.description || 'No description available';
+            document.getElementById('popup-model-image').src = model.profile_image || '/images/avatar-placeholder.png';
+            document.getElementById('popup-model-image').alt = model.name;
+            
+            document.getElementById('popup-subscription-status').textContent = 'Active';
+            document.getElementById('popup-subscription-date').textContent = subscriptionDate;
+            document.getElementById('popup-next-billing-date').textContent = nextBillingDate;
+            document.getElementById('popup-subscription-fee').textContent = `$${model.price.toFixed(2)}/month`;
+            
+            // Show popup
+            document.getElementById('model-detail-popup').classList.add('active');
+            
+            // Add event listener to manage subscription button
+            document.getElementById('manage-subscription').onclick = () => {
+                // Implement subscription management functionality
+                console.log('Manage subscription for model ID:', model.id);
+                // This would typically redirect to a payment/subscription management page
+            };
+        }
+
+        // Setup event listeners
+        function setupEventListeners(user) {
+            // Tab navigation
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all tabs and sections
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.dashboard-section').forEach(section => section.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding section
+                    button.classList.add('active');
+                    const tabId = button.dataset.tab;
+                    document.getElementById(`${tabId}-section`).classList.add('active');
+                    
+                    // Update mobile tab bar
+                    document.querySelectorAll('.ios-tab-bar a').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.dataset.tab === tabId) {
+                            link.classList.add('active');
                         }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: 'rgba(224, 224, 230, 0.7)',
-                                font: {
-                                    size: 10
-                                },
-                                maxRotation: 0
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.05)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: 'rgba(224, 224, 230, 0.7)',
-                                font: {
-                                    size: 11
-                                },
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            }
-                        }
-                    }
+                    });
+                });
+            });
+            
+            // Mobile tab bar
+            document.querySelectorAll('.ios-tab-bar a[data-tab]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs and sections
+                    document.querySelectorAll('.ios-tab-bar a').forEach(l => l.classList.remove('active'));
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.dashboard-section').forEach(section => section.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding section
+                    link.classList.add('active');
+                    const tabId = link.dataset.tab;
+                    document.getElementById(`${tabId}-section`).classList.add('active');
+                    
+                    // Update desktop tab buttons
+                    document.querySelector(`.tab-button[data-tab="${tabId}"]`).classList.add('active');
+                });
+            });
+            
+            // Close popup
+            document.getElementById('close-popup').addEventListener('click', () => {
+                document.getElementById('model-detail-popup').classList.remove('active');
+            });
+            
+            // Click outside popup to close
+            document.getElementById('model-detail-popup').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('model-detail-popup')) {
+                    document.getElementById('model-detail-popup').classList.remove('active');
                 }
             });
-        }
-        
-        // Update balance chart with new data
-        function updateBalanceChart(historyData) {
-            if (!historyData || !historyData.length || !window.balanceChart) {
-                return;
-            }
             
-            // Process history data
-            const sortedHistory = [...historyData].sort((a, b) => 
-                new Date(a.date) - new Date(b.date)
-            );
-            
-            // Format dates for labels
-            const labels = sortedHistory.map(item => {
-                const date = new Date(item.date);
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            });
-            
-            const values = sortedHistory.map(item => item.amount);
-            
-            // Update chart data
-            window.balanceChart.data.labels = labels;
-            window.balanceChart.data.datasets[0].data = values;
-            window.balanceChart.update();
-        }
-        
-        // Load models
-        async function loadModels() {
-            const modelsList = document.getElementById('models-list');
-            const modelsLoading = document.getElementById('models-loading');
-            const modelsEmpty = document.getElementById('models-empty');
-            
-            try {
-                const { data: { user } } = await supabase.auth.getUser();
+            // Update username
+            document.getElementById('update-username-btn').addEventListener('click', async () => {
+                const usernameField = document.getElementById('update-username');
+                const username = usernameField.value.trim();
+                const messageElement = document.getElementById('username-message');
                 
-                if (!user) throw new Error('User not authenticated');
-                
-                // Show loading state
-                modelsLoading.style.display = 'flex';
-                modelsEmpty.style.display = 'none';
-                
-                // Get user subscriptions
-                const { data: subscriptions, error: subError } = await supabase
-                    .from('subscriptions')
-                    .select('*, model:model_id(*)')
-                    .eq('user_id', user.id);
-                
-                if (subError) throw subError;
-                
-                // Hide loading state
-                modelsLoading.style.display = 'none';
-                
-                // Handle empty state
-                if (!subscriptions || subscriptions.length === 0) {
-                    modelsEmpty.style.display = 'flex';
+                if (!username) {
+                    messageElement.textContent = 'Username cannot be empty';
+                    messageElement.classList.add('error');
                     return;
                 }
                 
-                // Clear previous models
-                const existingModels = modelsList.querySelectorAll('.model-card');
-                existingModels.forEach(model => model.remove());
-                
-                // Render models
-                subscriptions.forEach(subscription => {
-                    const model = subscription.model;
-                    if (!model) return;
+                try {
+                    messageElement.textContent = 'Updating username...';
+                    messageElement.classList.remove('error', 'success');
                     
-                    const modelCard = document.createElement('div');
-                    modelCard.className = 'model-card';
-                    modelCard.dataset.modelId = model.id;
+                    const { data, error } = await supabase
+                        .from('users')
+                        .update({ username })
+                        .eq('id', user.id);
                     
-                    // Determine if subscription is active
-                    const isActive = subscription.status === 'active';
-                    const statusClass = isActive ? 'active' : 'inactive';
-                    const statusText = isActive ? 'Active' : 'Inactive';
-                    const statusIcon = isActive ? 'fa-check-circle' : 'fa-times-circle';
+                    if (error) throw error;
                     
-                    // Build image path
-                    let imagePath = '/images/placeholder-model.png';
-                    if (model.pictures) {
-                        if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                            imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0]}`;
-                        } else if (model.pictures.main) {
-                            imagePath = model.pictures.main;
-                        }
-                    }
+                    messageElement.textContent = 'Username updated successfully!';
+                    messageElement.classList.add('success');
                     
-                    modelCard.innerHTML = `
-                        <div class="model-image-container">
-                            <div class="model-image" style="background-image: url('${imagePath}')"></div>
-                        </div>
-                        <div class="model-info">
-                            <h3 class="model-name">${model.name}</h3>
-                            <p class="model-description">${model.bio || 'No description available'}</p>
-                            <div class="model-subscription-status ${statusClass}">
-                                <i class="fas ${statusIcon}"></i>
-                                ${statusText}
-                            </div>
-                        </div>
-                    `;
+                    // Refresh user data display
+                    loadUserData(user);
                     
-                    // Add click event
-                    modelCard.addEventListener('click', () => {
-                        showModelDetails(model.id);
-                    });
-                    
-                    modelsList.appendChild(modelCard);
-                });
-                
-            } catch (error) {
-                console.error('Error loading models:', error);
-                modelsLoading.style.display = 'none';
-                modelsEmpty.style.display = 'flex';
-                modelsEmpty.querySelector('.empty-description').textContent = 
-                    'An error occurred while loading your models. Please try again later.';
-            }
-        }
-        
-        // Show model details in popup
-        async function showModelDetails(modelId) {
-            const popup = document.getElementById('modelDetailsPopup');
-            const popupBody = document.getElementById('modelDetailsBody');
+                } catch (error) {
+                    console.error('Error updating username:', error);
+                    messageElement.textContent = 'Error updating username. Please try again.';
+                    messageElement.classList.add('error');
+                }
+            });
             
-            // Show popup with loading state
-            popup.classList.add('active');
-            popupBody.innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <p>Loading model details...</p>
-                </div>
-            `;
-            
-            try {
-                // Fetch model details
-                const { data: model, error } = await supabase
-                    .from('models')
-                    .select('*')
-                    .eq('id', modelId)
-                    .single();
+            // Update password
+            document.getElementById('update-password-btn').addEventListener('click', async () => {
+                const passwordField = document.getElementById('update-password');
+                const confirmField = document.getElementById('confirm-password');
+                const password = passwordField.value;
+                const confirmPassword = confirmField.value;
+                const messageElement = document.getElementById('password-message');
                 
-                if (error) throw error;
-                
-                if (!model) {
-                    popupBody.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="fas fa-exclamation-circle"></i>
-                            </div>
-                            <h3 class="empty-title">Model Not Found</h3>
-                            <p class="empty-description">The requested model could not be found.</p>
-                        </div>
-                    `;
+                if (!password) {
+                    messageElement.textContent = 'Please enter a new password';
+                    messageElement.classList.add('error');
                     return;
                 }
                 
-                // Build image path
-                let imagePath = '/images/placeholder-model.png';
-                if (model.pictures) {
-                    if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0]}`;
-                    } else if (model.pictures.main) {
-                        imagePath = model.pictures.main;
-                    }
+                if (password !== confirmPassword) {
+                    messageElement.textContent = 'Passwords do not match';
+                    messageElement.classList.add('error');
+                    return;
                 }
                 
-                // Render model details
-                popupBody.innerHTML = `
-                    <div class="model-details-content">
-                        <div class="model-details-header">
-                            <div class="model-details-image" style="background-image: url('${imagePath}')"></div>
-                            <div class="model-details-info">
-                                <h3 class="model-details-name">${model.name}</h3>
-                                <p class="model-details-bio">${model.bio || 'No bio available'}</p>
-                            </div>
-                        </div>
-                        
-                        <div class="model-details-section">
-                            <h4 class="model-details-section-title">About</h4>
-                            <p class="model-details-about">${model.description || 'No description available'}</p>
-                        </div>
-                        
-                        <div class="model-details-section">
-                            <h4 class="model-details-section-title">Subscription</h4>
-                            <div class="model-subscription-details">
-                                <div class="model-subscription-price">
-                                    <span class="price-label">Monthly Price:</span>
-                                    <span class="price-value">$${(model.subscription_price || 0).toFixed(2)}</span>
-                                </div>
-                                
-                                <div class="model-subscription-control">
-                                    <button class="btn btn-secondary cancel-subscription-btn" data-model-id="${model.id}">
-                                        <i class="fas fa-times"></i>
-                                        Cancel Subscription
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Add event listeners for cancel button
-                const cancelBtn = popupBody.querySelector('.cancel-subscription-btn');
-                if (cancelBtn) {
-                    cancelBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        confirmCancelSubscription(model.id, model.name);
-                    });
-                }
-                
-            } catch (error) {
-                console.error('Error loading model details:', error);
-                popupBody.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <h3 class="empty-title">Error</h3>
-                        <p class="empty-description">An error occurred while loading model details. Please try again later.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Confirm subscription cancellation
-        function confirmCancelSubscription(modelId, modelName) {
-            // Show confirmation dialog
-            const popupBody = document.getElementById('modelDetailsBody');
-            popupBody.innerHTML = `
-                <div class="confirmation-dialog">
-                    <div class="confirmation-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3 class="confirmation-title">Cancel Subscription?</h3>
-                    <p class="confirmation-message">Are you sure you want to cancel your subscription to ${modelName}? You will lose access at the end of your current billing period.</p>
+                try {
+                    messageElement.textContent = 'Updating password...';
+                    messageElement.classList.remove('error', 'success');
                     
-                    <div class="confirmation-actions">
-                        <button class="btn btn-secondary confirmation-cancel-btn">
-                            <i class="fas fa-arrow-left"></i>
-                            Go Back
-                        </button>
-                        <button class="btn btn-danger confirmation-confirm-btn">
-                            <i class="fas fa-times"></i>
-                            Cancel Subscription
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // Add event listeners
-            const cancelBtn = popupBody.querySelector('.confirmation-cancel-btn');
-            const confirmBtn = popupBody.querySelector('.confirmation-confirm-btn');
-            
-            cancelBtn.addEventListener('click', () => {
-                showModelDetails(modelId); // Go back to model details
-            });
-            
-            confirmBtn.addEventListener('click', async () => {
-                await cancelSubscription(modelId);
-            });
-        }
-        
-        // Cancel subscription
-        async function cancelSubscription(modelId) {
-            const popupBody = document.getElementById('modelDetailsBody');
-            popupBody.innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <p>Cancelling subscription...</p>
-                </div>
-            `;
-            
-            try {
-                const { data: { user } } = await supabase.auth.getUser();
-                
-                if (!user) throw new Error('User not authenticated');
-                
-                // Update subscription status
-                const { error } = await supabase
-                    .from('subscriptions')
-                    .update({ status: 'cancelled' })
-                    .eq('user_id', user.id)
-                    .eq('model_id', modelId);
-                
-                if (error) throw error;
-                
-                // Show success message
-                popupBody.innerHTML = `
-                    <div class="success-message">
-                        <div class="success-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h3 class="success-title">Subscription Cancelled</h3>
-                        <p class="success-description">Your subscription has been cancelled successfully. You will continue to have access until the end of the current billing period.</p>
-                        <button class="btn close-popup-btn">Close</button>
-                    </div>
-                `;
-                
-                // Add close button event listener
-                const closeBtn = popupBody.querySelector('.close-popup-btn');
-                closeBtn.addEventListener('click', () => {
-                    document.getElementById('modelDetailsPopup').classList.remove('active');
-                    // Reload models to reflect changes
-                    loadModels();
-                });
-                
-            } catch (error) {
-                console.error('Error cancelling subscription:', error);
-                popupBody.innerHTML = `
-                    <div class="error-message">
-                        <div class="error-icon">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </div>
-                        <h3 class="error-title">Error</h3>
-                        <p class="error-description">An error occurred while cancelling your subscription. Please try again later.</p>
-                        <button class="btn close-popup-btn">Close</button>
-                    </div>
-                `;
-                
-                // Add close button event listener
-                const closeBtn = popupBody.querySelector('.close-popup-btn');
-                closeBtn.addEventListener('click', () => {
-                    document.getElementById('modelDetailsPopup').classList.remove('active');
-                });
-            }
-        }
-        
-        // Load activity
-        async function loadActivity() {
-            // Implementation for loading activity
-        }
-        
-        // Load upcoming
-        async function loadUpcoming() {
-            // Implementation for loading upcoming events
-        }
-        
-        // Set up event listeners
-        function setupEventListeners() {
-            // Close model popup
-            document.getElementById('closeModelPopup').addEventListener('click', () => {
-                document.getElementById('modelDetailsPopup').classList.remove('active');
-            });
-            
-            // Close popup when clicking outside
-            document.getElementById('modelDetailsPopup').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('modelDetailsPopup')) {
-                    document.getElementById('modelDetailsPopup').classList.remove('active');
-                }
-            });
-            
-            // User dropdown toggle
-            document.getElementById('userDropdownBtn').addEventListener('click', () => {
-                document.getElementById('userDropdownMenu').classList.toggle('active');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.user-dropdown') && document.getElementById('userDropdownMenu').classList.contains('active')) {
-                    document.getElementById('userDropdownMenu').classList.remove('active');
+                    const { data, error } = await supabase.auth.updateUser({
+                        password: password
+                    });
+                    
+                    if (error) throw error;
+                    
+                    // Clear form fields
+                    passwordField.value = '';
+                    confirmField.value = '';
+                    
+                    messageElement.textContent = 'Password updated successfully!';
+                    messageElement.classList.add('success');
+                    
+                } catch (error) {
+                    console.error('Error updating password:', error);
+                    messageElement.textContent = 'Error updating password. Please try again.';
+                    messageElement.classList.add('error');
                 }
             });
             
@@ -1358,54 +1086,56 @@
                 try {
                     const { error } = await supabase.auth.signOut();
                     if (error) throw error;
-                    window.location.href = '/login.html';
+                    window.location.href = '/';
                 } catch (error) {
                     console.error('Error signing out:', error);
+                    alert('Error signing out. Please try again.');
                 }
             });
+        }
+        
+        // Setup pull-to-refresh functionality
+        function setupPullToRefresh(callback) {
+            let touchStartY = 0;
+            let touchEndY = 0;
+            const pullThreshold = 100; // pixels
+            const pullIndicator = document.querySelector('.pull-indicator');
             
-            // Explore more button
-            document.querySelector('.explore-more-button').addEventListener('click', () => {
-                window.location.href = '/model-selection.html';
-            });
+            // Touch events for mobile
+            document.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
             
-            // Explore models button in empty state
-            const exploreModelsBtn = document.getElementById('explore-models-btn');
-            if (exploreModelsBtn) {
-                exploreModelsBtn.addEventListener('click', () => {
-                    window.location.href = '/model-selection.html';
-                });
-            }
-            
-            // Theme toggle
-            document.getElementById('theme-toggle').addEventListener('click', () => {
-                document.body.classList.toggle('light-theme');
+            document.addEventListener('touchmove', (e) => {
+                touchEndY = e.touches[0].clientY;
                 
-                const themeIcon = document.querySelector('#theme-toggle i');
-                if (document.body.classList.contains('light-theme')) {
-                    themeIcon.className = 'fas fa-sun';
-                    localStorage.setItem('theme', 'light');
+                // Only trigger pull effect at the top of the page
+                if (window.scrollY === 0 && touchEndY > touchStartY) {
+                    const pullDistance = touchEndY - touchStartY;
+                    if (pullDistance > 30) {
+                        pullIndicator.classList.add('visible');
+                    }
+                }
+            }, { passive: true });
+            
+            document.addEventListener('touchend', () => {
+                const pullDistance = touchEndY - touchStartY;
+                
+                if (window.scrollY === 0 && pullDistance > pullThreshold) {
+                    // Execute refresh callback
+                    callback();
+                    
+                    // Show refreshing indicator for a moment
+                    setTimeout(() => {
+                        pullIndicator.classList.remove('visible');
+                    }, 1500);
                 } else {
-                    themeIcon.className = 'fas fa-moon';
-                    localStorage.setItem('theme', 'dark');
+                    pullIndicator.classList.remove('visible');
                 }
                 
-                // Update chart theme if it exists
-                if (window.balanceChart) {
-                    const isDark = !document.body.classList.contains('light-theme');
-                    window.balanceChart.options.scales.x.ticks.color = isDark ? 'rgba(224, 224, 230, 0.7)' : 'rgba(17, 17, 34, 0.7)';
-                    window.balanceChart.options.scales.y.ticks.color = isDark ? 'rgba(224, 224, 230, 0.7)' : 'rgba(17, 17, 34, 0.7)';
-                    window.balanceChart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-                    window.balanceChart.update();
-                }
-            });
-            
-            // Check if there's a saved theme preference
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-theme');
-                document.querySelector('#theme-toggle i').className = 'fas fa-sun';
-            }
+                touchStartY = 0;
+                touchEndY = 0;
+            }, { passive: true });
         }
     </script>
 </body>
