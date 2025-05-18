@@ -196,14 +196,24 @@
             border-radius: 8px;
             background: #f8faff;
             border: 1.5px solid #e0e6f7;
-            color: #333;
+            color: #333 !important;
             font-family: 'Montserrat', sans-serif;
             font-size: 1rem;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
             outline: none;
         }
         .form-input:focus {
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(198, 210, 255, 0.3);
+        }
+        .form-input::placeholder {
+            color: rgba(51, 51, 51, 0.4);
+        }
+        .form-description {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #777;
+            line-height: 1.4;
         }
         .submit-btn {
             width: 100%;
@@ -620,6 +630,18 @@
         }
         function setupForm() {
             const signupForm = document.getElementById('signup-form');
+            
+            // Add input focus effects for better visual feedback
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('input-focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('input-focused');
+                });
+            });
+            
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('name').value.trim();

@@ -573,21 +573,40 @@
             
             .header-controls a,
             .header-controls button {
-                padding: 0.5rem;
-                width: 38px;
-                height: 38px;
-                border-radius: 50%;
+                padding: 0.6rem 1rem;
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
                 justify-content: center;
+                align-items: center;
+            }
+            
+            .btn-text {
+                display: none;
             }
             
             .header-controls a i,
             .header-controls button i {
                 margin-right: 0;
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             
-            .btn-text {
-                display: none;
+            .btn {
+                width: 100%;
+            }
+            
+            .model-card {
+                padding: 1.5rem;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .model-image-container {
+                margin: 0 auto 1rem auto;
+            }
+            
+            .model-details {
+                text-align: center;
             }
             
             .notification {
@@ -944,6 +963,22 @@
                 font-size: 1.3rem;
             }
         }
+        
+        /* Ensure text input boxes have proper contrast */
+        .form-input {
+            color: var(--dark) !important;
+            background-color: #FFFFFF;
+            border: 1px solid rgba(211, 209, 218, 0.4);
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(198, 210, 255, 0.3);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(51, 51, 51, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -1227,7 +1262,7 @@
                 if (model.pictures) {
                     // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        imagePath = `${supabaseUrl}/storage/v1/object/public/model-images/${model.pictures[0]}`;
                     } else if (model.pictures.main) {
                         imagePath = model.pictures.main;
                     } else {
@@ -1247,7 +1282,7 @@
                     <h3 class="model-name">${model.name}</h3>
                     <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
                     <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" data-model-id="${model.id}">
-                        ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
+                        ${isSubscribed ? '<i class="fas fa-eye"></i> View Details' : '<i class="fas fa-star"></i> Subscribe'}
                     </button>
                 `;
                 
@@ -1258,8 +1293,6 @@
                 // Add event listener to button
                 const actionButton = modelDetails.querySelector('.btn');
                 actionButton.addEventListener('click', () => {
-                    const targetModel = modelsData.find(m => m.id === model.id);
-                    
                     if (isSubscribed) {
                         // Navigate to dashboard to manage this subscription
                         window.location.href = '/dashboard.html';
@@ -1268,6 +1301,16 @@
                         openSubscriptionModal(model);
                     }
                 });
+                
+                // Make the entire card clickable for better UX
+                if (!isSubscribed) {
+                    modelCard.addEventListener('click', (e) => {
+                        // Only trigger if not clicking on the button itself
+                        if (!e.target.closest('.btn')) {
+                            openSubscriptionModal(model);
+                        }
+                    });
+                }
             });
         }
         
@@ -1278,7 +1321,7 @@
             if (model.pictures) {
                 // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                 if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                    imagePath = `${supabaseUrl}/storage/v1/object/public/model-images/${model.pictures[0]}`;
                 } else if (model.pictures.main) {
                     imagePath = model.pictures.main;
                 } else {

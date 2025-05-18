@@ -3,17 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#050505">
-    <title>Explore Models | ThreadPay Secure Payment Platform</title>
-    <!-- Favicon and styles omitted for brevity -->
+    <meta name="theme-color" content="#F5F0E8">
+    <title>Explore Creators | ThreadPay</title>
+    
+    <!-- Supabase API Key -->
+    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
-    <link rel="stylesheet" href="/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        /* Unified Button Styles */
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 7%;
+            background-color: var(--primary-light);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.3s ease;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+        
+        .dashboard-content {
+            flex: 1;
+            padding: 3rem 7%;
+            transition: padding 0.3s ease;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .section-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--darker);
+            opacity: 0.8;
+            max-width: 700px;
+            line-height: 1.6;
+            margin: 0 auto;
+        }
+        
+        /* Model card styles */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+        
+        .model-card {
+            background-color: var(--light);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 2rem;
+            border: 1px solid rgba(211, 209, 218, 0.1);
+        }
+        
+        .model-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(180, 193, 255, 0.3);
+        }
+        
+        .model-image-container {
+            flex: 0 0 auto;
+            margin-right: 2rem;
+        }
+        
+        .model-image {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(211, 209, 218, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        
+        .model-card:hover .model-image {
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .model-details {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .model-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+        
+        .model-bio {
+            color: var(--dark);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+            max-height: 3.2em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            opacity: 0.85;
+        }
+        
         .btn {
             display: inline-flex;
             align-items: center;
@@ -31,101 +174,189 @@
             text-decoration: none;
             letter-spacing: 0.2px;
         }
+        
         .btn:hover {
             background-color: #B4C1FF;
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
         }
+        
         .btn:active {
             transform: translateY(-1px);
         }
+        
         .btn i {
             margin-right: 0.7rem;
         }
-        .btn-secondary {
-            background-color: var(--primary-light);
-            color: var(--dark);
-            border: 1px solid rgba(211, 209, 218, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-        }
-        .btn-secondary:hover {
-            background-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-        }
-        .btn-success {
-            background-color: rgba(46, 204, 113, 0.9);
-            color: white;
-        }
-        .btn-success:hover {
-            background-color: rgba(46, 204, 113, 1);
-        }
-        .btn-full {
-            width: 100%;
-        }
-        .model-card {
-            background-color: var(--light);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 1.2rem 1.2rem;
-            border: 1px solid rgba(211, 209, 218, 0.1);
-            margin-bottom: 1.5rem;
-            margin-top: 0.75rem;
-        }
-        .model-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .model-image-container {
-            flex: 0 0 auto;
-            margin-right: 1.2rem;
-        }
-        .model-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            background-color: rgba(211, 209, 218, 0.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            border: 2px solid var(--primary-light);
-            transition: all 0.3s ease;
-        }
-        .model-card:hover .model-image {
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.13);
-            transform: scale(1.04);
-        }
-        .model-details {
-            flex: 1 1 auto;
+        
+        /* Loading state */
+        .loading-container {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 0;
         }
-        .model-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
-            color: var(--dark);
-            line-height: 1.2;
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(211, 209, 218, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
         }
-        .model-bio {
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 0;
+            background-color: var(--primary-light);
+            border-radius: 20px;
+            margin-top: 2rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(211, 209, 218, 0.5);
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-message {
             color: var(--dark);
-            font-size: 0.92rem;
-            line-height: 1.5;
-            margin-bottom: 1.1rem;
-            max-height: 2.6em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            opacity: 0.85;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .empty-description {
+            color: var(--darker);
+            font-size: 1rem;
+            max-width: 550px;
+            margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0.8;
+        }
+        
+        /* Sign up button */
+        .signup-button {
+            margin-top: 1rem;
+            background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
+        }
+        
+        /* Login button */
+        .login-button {
+            background-color: transparent;
+            color: var(--dark);
+            border: 2px solid var(--accent);
+        }
+        
+        .login-button:hover {
+            background-color: rgba(198, 210, 255, 0.1);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1200px) {
+            .dashboard-header, 
+            .dashboard-content {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+            
+            .model-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.2rem 5%;
+            }
+            
+            .dashboard-content {
+                padding: 2rem 5%;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .section-description {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .model-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+            }
+            
+            .model-card {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            
+            .model-image {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .model-image-container {
+                margin-right: 1.5rem;
+            }
+            
+            .model-name {
+                font-size: 1.3rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .model-bio {
+                font-size: 0.9rem;
+                margin-bottom: 1.2rem;
+                line-height: 1.5;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .model-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .model-image-container {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .btn-text {
+                display: none;
+            }
+            
+            .empty-state {
+                padding: 3rem 1rem;
+            }
+            
+            .empty-icon {
+                font-size: 3rem;
+            }
+            
+            .empty-message {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -133,71 +364,74 @@
     <div class="bg-blur"></div>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <a href="/">
-                <div class="logo">ThreadPay</div>
-            </a>
+            <a href="/" class="logo">ThreadPay</a>
             <div class="header-controls">
-                <a href="/login.html" class="btn btn-secondary">
+                <a href="/login.html" class="btn login-button">
                     <i class="fas fa-sign-in-alt"></i>
-                    <span class="btn-text">Sign In</span>
+                    <span class="btn-text">Login</span>
                 </a>
-                <a href="/signup.html" class="btn btn-secondary">
+                <a href="/index.html#cta" class="btn signup-button">
                     <i class="fas fa-user-plus"></i>
                     <span class="btn-text">Sign Up</span>
                 </a>
             </div>
         </header>
+        
         <div class="dashboard-content">
             <div class="section-header">
                 <h2>Explore Creators</h2>
-                <p class="section-description">Discover and select your favorite creator to sign up with.</p>
+                <p class="section-description">Discover and subscribe to your favorite creators on ThreadPay.</p>
             </div>
-            <div id="loading-container" class="loading-container card">
+            
+            <!-- Loading State -->
+            <div id="loading-container" class="loading-container">
                 <div class="loading-spinner"></div>
                 <p>Loading creators...</p>
             </div>
-            <div id="empty-state" class="empty-state card" style="display: none;">
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
                 <div class="empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
                 <h3 class="empty-message">No creators found</h3>
-                <p class="empty-description">We couldn't find any models available at the moment. Please check back later.</p>
+                <p class="empty-description">We couldn't find any creators available for subscription at the moment. Please check back later.</p>
             </div>
+            
+            <!-- Models Grid -->
             <div id="model-grid" class="model-grid"></div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script>
-        // Supabase client initialization (public, no auth, match model-selection.html logic)
+        // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;
+        let modelsData = [];
+        
+        // DOM elements
+        const modelGrid = document.getElementById('model-grid');
+        const loadingContainer = document.getElementById('loading-container');
+        const emptyState = document.getElementById('empty-state');
+        
         // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name=\"supabase-anon-key\"]')?.getAttribute('content');
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         let supabaseKey = null;
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                loadModels();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
+        
+        // Check if the key is a real key or just the placeholder
         if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
-            console.log('Using API key from meta tag');
             supabaseKey = metaKey;
             initSupabase();
         } else {
             // Fetch API key from server config endpoint
-            console.log('Meta tag key not available, trying to fetch from server...');
             fetch('/api/config')
                 .then(response => response.json())
                 .then(config => {
                     if (config.supabaseKey) {
-                        console.log('Using API key from server');
                         supabaseKey = config.supabaseKey;
                     } else {
                         // Fall back to hardcoded key
-                        console.log('Using hardcoded API key as fallback');
                         supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
                     }
                     initSupabase();
@@ -205,54 +439,84 @@
                 .catch(error => {
                     console.error('Error fetching config:', error);
                     // Fall back to hardcoded key
-                    console.log('Using hardcoded API key due to error');
                     supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
                     initSupabase();
                 });
         }
-        const modelGrid = document.getElementById('model-grid');
-        const loadingContainer = document.getElementById('loading-container');
-        const emptyState = document.getElementById('empty-state');
+        
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                loadModels();
+            } else {
+                console.error('Supabase client library not loaded');
+                showErrorState("Couldn't connect to our servers. Please try again later.");
+            }
+        }
+        
+        // Load models
         async function loadModels() {
             try {
-                loadingContainer.style.display = 'block';
+                loadingContainer.style.display = 'flex';
                 modelGrid.style.display = 'none';
                 emptyState.style.display = 'none';
+                
+                // Fetch all models
                 const { data: models, error } = await supabase
                     .from('models')
                     .select('*');
+                    
                 if (error) throw error;
+                
                 if (!models || models.length === 0) {
                     loadingContainer.style.display = 'none';
                     emptyState.style.display = 'block';
                     return;
                 }
+                
+                modelsData = models;
+                
+                // Display models
                 displayModels(models);
+                
                 loadingContainer.style.display = 'none';
                 modelGrid.style.display = 'grid';
             } catch (error) {
                 console.error('Error loading models:', error);
-                loadingContainer.style.display = 'none';
-                emptyState.style.display = 'block';
+                showErrorState("Failed to load creators. Please try again later.");
             }
         }
+        
+        // Display error state
+        function showErrorState(message) {
+            loadingContainer.style.display = 'none';
+            emptyState.querySelector('.empty-message').textContent = "Something went wrong";
+            emptyState.querySelector('.empty-description').textContent = message;
+            emptyState.style.display = 'block';
+        }
+        
+        // Display models
         function displayModels(models) {
             modelGrid.innerHTML = '';
+            
             models.forEach(model => {
                 const modelCard = document.createElement('div');
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
-                modelCard.dataset.modelName = model.name;
+                
                 // Add container for the image
                 const modelImageContainer = document.createElement('div');
                 modelImageContainer.className = 'model-image-container';
+                
                 const modelImage = document.createElement('div');
                 modelImage.className = 'model-image';
-                // Build the correct image path using Supabase bucket (match model-selection.html)
+                
+                // Build the correct image path using Supabase bucket
                 let imagePath;
                 if (model.pictures) {
+                    // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        imagePath = `${supabaseUrl}/storage/v1/object/public/model-images/${model.pictures[0]}`;
                     } else if (model.pictures.main) {
                         imagePath = model.pictures.main;
                     } else {
@@ -261,27 +525,24 @@
                 } else {
                     imagePath = '/images/placeholder-model.png';
                 }
+                
                 modelImage.style.backgroundImage = `url(${imagePath})`;
                 modelImageContainer.appendChild(modelImage);
+                
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
+                
                 modelDetails.innerHTML = `
-                    <h3 class=\"model-name\">${model.name}</h3>
-                    <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
-                    <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    <a href="/invite/${encodeURIComponent(model.name)}" class="btn">
+                        <i class="fas fa-star"></i>Subscribe
+                    </a>
                 `;
+                
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
-            });
-            // Add event listeners for selection
-            document.querySelectorAll('.select-model-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modelName = this.closest('.model-card').dataset.modelName?.trim();
-                    if (modelName) {
-                        window.location.href = `/invite/${encodeURIComponent(modelName)}`;
-                    }
-                });
             });
         }
     </script>

@@ -179,6 +179,7 @@
 
 .form-group {
     margin-bottom: 1.5rem;
+    position: relative;
 }
 
 .form-label {
@@ -194,7 +195,7 @@
     padding: 1rem;
     border-radius: 8px;
     background-color: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(211, 209, 218, 0.3);
     color: var(--dark) !important;
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
@@ -204,12 +205,17 @@
 .form-input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(180, 193, 255, 0.3);
+    box-shadow: 0 0 0 3px rgba(198, 210, 255, 0.3);
+}
+
+.form-group.input-focused {
+    transition: transform 0.2s ease;
+    transform: translateY(-2px);
 }
 
 /* Fix placeholder color for better visibility */
 .form-input::placeholder {
-    color: rgba(0, 0, 0, 0.4);
+    color: rgba(51, 51, 51, 0.4);
     opacity: 1;
 }
 
@@ -232,6 +238,69 @@
 
 .form-message.error {
     color: #e74c3c;
+}
+
+/* Fix button consistency */
+.btn, .action-button, .logout-button, .explore-more-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Fix disabled button states */
+.btn:disabled, .action-button:disabled, .logout-button:disabled, .explore-more-button:disabled,
+.btn.disabled, .action-button.disabled, .logout-button.disabled, .explore-more-button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Improve modal close button accessibility */
+.modal-close, .popup-close {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mobile improvements */
+@media (max-width: 768px) {
+    .form-input, button, input[type="submit"] {
+        min-height: 44px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    .tab-button, .popup-close, .modal-close {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Fix spacing on mobile */
+    .dashboard-section {
+        padding: 1rem 0;
+    }
+    
+    .content-section {
+        padding: 1.2rem;
+    }
+    
+    /* Ensure buttons are properly sized on mobile */
+    .btn, .action-button, .logout-button, .explore-more-button {
+        padding: 0.8rem 1.2rem;
+    }
+}
+
+/* Fix Safari issues */
+@supports (-webkit-touch-callout: none) {
+    input, select, textarea, button {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+    }
+    
+    .btn, button, .action-button, .logout-button, .explore-more-button, input[type="submit"] {
+        min-height: 44px;
+    }
 }
 
 /* Message area styles */
