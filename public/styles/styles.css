@@ -1,35 +1,28 @@
 :root {
-    /* Velvet-glass, neon, and dark iOS palette */
-    --primary: #181A20; /* Deep velvet black */
-    --primary-dark: #101114; /* Even deeper for nav/footer */
-    --primary-light: #23242b; /* Card backgrounds */
-    --accent: #7B61FF; /* Neon purple (sexy accent) */
-    --accent-gradient: linear-gradient(90deg, #7B61FF 0%, #FF61D2 100%);
-    --accent-glow: 0 0 16px #7B61FF99, 0 0 32px #FF61D299;
-    --success: #2ecc71;
-    --danger: #e74c3c;
-    --glass: rgba(36, 37, 46, 0.7);
-    --glass-blur: blur(18px);
-    --card-radius: 22px;
-    --input-radius: 16px;
-    --shadow: 0 8px 32px rgba(123, 97, 255, 0.12), 0 1.5px 8px rgba(0,0,0,0.18);
-    --shadow-strong: 0 12px 40px #7B61FF22, 0 2px 12px #0008;
-    --text-main: #fff;
-    --text-secondary: #bdb8d7;
-    --text-accent: #FF61D2;
-    --nav-height: 70px;
+    /* Updated color palette with iOS-inspired tones */
+    --primary: #111122;  /* Dark background */
+    --primary-dark: #080814;  /* Darker background */
+    --primary-light: #27293D;  /* Lighter panel */
+    --accent: #7574FF;  /* Main accent - purple */
+    --accent-secondary: #FF2D55;  /* Secondary accent - pink */
+    --dark: #FFFFFF;    /* Text on dark background */
+    --darker: #E0E0E6;  /* Secondary text */
+    --light: #111122;   /* Dark text on light backgrounds */
+    --gray: #6E6E7E;    /* Medium gray */
+    --light-gray: #8E8EA0; /* Light gray */
+    --radius: 16px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.25);
+    --card-bg: rgba(39, 41, 61, 0.7);
+    --card-border: rgba(255, 255, 255, 0.08);
     
-    /* Updated velvet color palette with C6D2FF accent */
-    --primary: #F5F0E8;  /* Soft velvet white/tan */
-    --primary-dark: #E6EAF0;  /* Slightly darker velvet */
-    --primary-light: #FFF9F0;  /* Lighter velvet */
-    --accent: #C6D2FF;  /* Kept accent color */
-    --dark: #2D2D2D;    /* Dark text */
-    --darker: #181818;  /* Darker text */
-    --light: #FFF;   /* Pure white */
-    --gray: #ccc0b3;    /* Light gray */
-    --light-gray: #D3D1DA; /* Medium gray for secondary text */
-    --radius: 18px;
+    /* iOS-style font */
+    --font-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --font-secondary: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    
+    /* Animation speeds */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+    --transition-slow: 0.4s;
     
     /* Persona Theme Colors - kept neutral/soft */
     --passionate: #F8EAE6; /* Soft cream */
@@ -43,6 +36,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -53,54 +47,56 @@ html {
 }
 
 body {
-    font-family: 'Montserrat', 'San Francisco', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--font-primary);
     background-color: var(--primary);
-    color: var(--text-main);
+    color: var(--dark);
     overflow-x: hidden;
     line-height: 1.6;
     /* Prevent scroll chaining on other browsers */
     overscroll-behavior: none;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(120deg, #181A20 0%, #23242b 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     position: relative;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-primary);
     font-weight: 700;
     margin-bottom: 1rem;
 }
 
 h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
     line-height: 1.2;
+    letter-spacing: -0.5px;
 }
 
 h2 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.3px;
 }
 
 h3 {
     font-size: 1.5rem;
+    letter-spacing: -0.2px;
 }
 
 p {
     margin-bottom: 1.5rem;
-    font-weight: 300;
+    font-weight: 400;
+    letter-spacing: 0.2px;
 }
 
 a {
-    color: var(--light);
+    color: var(--accent);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color var(--transition-fast) ease;
 }
 
 a:hover {
-    color: var(--primary-light);
+    color: var(--accent-secondary);
 }
 
 .highlight {
@@ -115,13 +111,11 @@ a:hover {
 
 /* Logo */
 .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.1rem;
-    color: #181818 !important;
-    margin-bottom: 0.2rem;
-    text-align: center;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-family: var(--font-primary);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--dark) !important;
+    letter-spacing: -0.5px;
 }
 
 .logo-container {
@@ -140,29 +134,30 @@ a:hover {
 }
 
 .cta-button, .btn, .action-button, .logout-button, .explore-more-button, .manage-subscription-btn {
-    background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
-    color: var(--darker);
+    background: var(--accent);
+    color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    box-shadow: 0 2px 8px #c6d2ff33;
-    transition: background 0.2s, transform 0.1s;
-    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.9rem 1.5rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(117, 116, 255, 0.3);
+    transition: all var(--transition-fast) cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .cta-button:hover, .btn:hover, .action-button:hover, .logout-button:hover, .explore-more-button:hover, .manage-subscription-btn:hover {
-    background: #a3b1ff;
+    background: #8A8AFF;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(117, 116, 255, 0.4);
 }
 
 .cta-button:active, .btn:active, .action-button:active, .logout-button:active, .explore-more-button:active, .manage-subscription-btn:active {
-    transform: scale(0.98);
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(117, 116, 255, 0.2);
 }
 
 .cta-button.large {
@@ -1361,17 +1356,34 @@ input[type=number] {
 /* Selection styles */
 ::selection {
     background-color: var(--accent);
-    color: var(--light);
+    color: white;
 }
 
 ::-moz-selection {
     background-color: var(--accent);
-    color: var(--light);
+    color: white;
 }
 
 .form-input {
-    color: #111 !important;
-    background-color: var(--primary-light);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--dark) !important;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    transition: all var(--transition-fast) ease;
+    width: 100%;
+}
+
+.form-input:focus {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(117, 116, 255, 0.2);
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .login-message.success {
@@ -1380,49 +1392,85 @@ input[type=number] {
 
 .bg-blur {
     position: fixed;
-    top: -100px; left: -100px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, #fff0 80%);
-    filter: blur(80px);
     z-index: 0;
+    width: 60vw;
+    height: 60vh;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(117, 116, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
+    filter: blur(80px);
+    opacity: 0.6;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
 }
 
-.btn-secondary {
-    background: var(--primary-light);
-    color: var(--dark);
-    border: 1px solid rgba(211, 209, 218, 0.2);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+.bg-blur:after {
+    content: '';
+    position: absolute;
+    width: 40vw;
+    height: 40vh;
+    background: radial-gradient(circle, rgba(255, 45, 85, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+    filter: blur(80px);
+    top: 20vh;
+    left: -20vw;
+    border-radius: 50%;
 }
 
-.btn-secondary:hover {
-    background: var(--primary);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+/* iOS-style toggle switches */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 32px;
 }
 
-.btn-success {
-    background-color: rgba(46, 204, 113, 0.9);
-    color: white;
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
-.btn-success:hover {
-    background-color: rgba(46, 204, 113, 1);
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.1);
+    transition: .4s;
+    border-radius: 34px;
 }
 
-.btn-full {
-    width: 100%;
-    display: block;
-    padding-top: 1.2rem;
-    padding-bottom: 1.2rem;
-    font-size: 1.15rem;
-    margin-top: 1.2rem;
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 28px;
+    width: 28px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--accent);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
 }
 
 /* Card and Section Styles */
 .card, .signup-card, .cta-card, .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card, .models-section, .account-info-card, .settings-card {
-    background: #fff;
+    background: var(--card-bg);
     border-radius: var(--radius);
-    box-shadow: 0 4px 24px rgba(198,210,255,0.18);
-    border: 1px solid rgba(232, 224, 213, 0.3);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 .model-card, .subscribed-model-card {
     display: flex;
@@ -1518,21 +1566,6 @@ input[type=number] {
     font-size: 0.85rem;
     color: var(--accent);
     background: #fff;
-}
-.form-input {
-    width: 100%;
-    padding: 1.1rem 1.1rem 0.7rem 1.1rem;
-    border-radius: 8px;
-    background: #f8faff;
-    border: 1.5px solid #e0e6f7;
-    color: #333;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-    outline: none;
-}
-.form-input:focus {
-    border-color: var(--accent);
 }
 .submit-btn {
     width: 100%;
@@ -1664,175 +1697,4 @@ input[type=number] {
 
 .cta-card .cta-button {
     margin-top: 1.2rem;
-}
-
-/* Glassy Card */
-.card-ios {
-    background: var(--glass);
-    backdrop-filter: var(--glass-blur);
-    border-radius: var(--card-radius);
-    box-shadow: var(--shadow);
-    border: 1.5px solid rgba(123, 97, 255, 0.08);
-    padding: 2rem 1.5rem;
-    color: var(--text-main);
-    transition: box-shadow 0.2s, transform 0.2s;
-}
-.card-ios:hover {
-    box-shadow: var(--shadow-strong);
-    transform: translateY(-4px) scale(1.02);
-}
-
-/* Sexy Buttons */
-.btn-ios {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent-gradient);
-    color: #fff;
-    border: none;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 1.15rem;
-    padding: 1rem 2.2rem;
-    box-shadow: 0 2px 16px #7B61FF33;
-    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    outline: none;
-}
-.btn-ios:active {
-    transform: scale(0.97);
-}
-.btn-ios-glow {
-    box-shadow: var(--accent-glow);
-}
-
-/* iOS Inputs */
-.input-ios {
-    width: 100%;
-    padding: 1.1rem 1.2rem;
-    border-radius: var(--input-radius);
-    background: rgba(36, 37, 46, 0.85);
-    border: 1.5px solid #2d2c3a;
-    color: var(--text-main);
-    font-size: 1.08rem;
-    font-family: inherit;
-    margin-bottom: 1.2rem;
-    transition: border 0.2s, box-shadow 0.2s;
-    box-shadow: 0 1.5px 8px #7B61FF11;
-}
-.input-ios:focus {
-    border: 1.5px solid #7B61FF;
-    box-shadow: 0 0 0 2px #7B61FF44;
-    outline: none;
-}
-
-/* Floating label for iOS input */
-.input-group-ios {
-    position: relative;
-    margin-bottom: 2rem;
-}
-.input-label-ios {
-    position: absolute;
-    left: 1.2rem;
-    top: 1.2rem;
-    color: #bdb8d7;
-    font-size: 1rem;
-    pointer-events: none;
-    transition: 0.2s;
-    background: transparent;
-}
-.input-ios:focus + .input-label-ios,
-.input-ios:not(:placeholder-shown) + .input-label-ios {
-    top: -0.7rem;
-    left: 1rem;
-    font-size: 0.85rem;
-    color: var(--accent);
-    background: var(--glass);
-    padding: 0 0.3rem;
-    border-radius: 8px;
-}
-
-/* Avatars */
-.avatar-ios {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7B61FF 0%, #FF61D2 100%);
-    box-shadow: 0 4px 24px #7B61FF44;
-    border: 3px solid #23242b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    margin: 0 auto 1.2rem auto;
-}
-.avatar-ios img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-/* Bottom Navigation Bar */
-.bottom-nav-ios {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    height: var(--nav-height);
-    background: rgba(24, 26, 32, 0.92);
-    backdrop-filter: blur(16px);
-    border-top: 1.5px solid #23242b;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-    box-shadow: 0 -2px 24px #7B61FF22;
-}
-.bottom-nav-ios .nav-item {
-    flex: 1;
-    text-align: center;
-    color: #bdb8d7;
-    font-size: 1.5rem;
-    padding: 0.2rem 0 0.1rem 0;
-    transition: color 0.2s;
-    cursor: pointer;
-    position: relative;
-}
-.bottom-nav-ios .nav-item.active,
-.bottom-nav-ios .nav-item:active {
-    color: #fff;
-}
-.bottom-nav-ios .nav-item.active:after {
-    content: '';
-    display: block;
-    margin: 0 auto;
-    margin-top: 0.2rem;
-    width: 18px;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--accent-gradient);
-}
-
-/* Section headers */
-.section-header-ios {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.1rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 1.2rem;
-    letter-spacing: 0.01em;
-    text-shadow: 0 2px 12px #7B61FF22;
-}
-
-/* Animations */
-@keyframes ios-pop {
-    0% { transform: scale(0.95); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-}
-.ios-pop {
-    animation: ios-pop 0.35s cubic-bezier(.77,0,.18,1) both;
-}
-
-/* Utility */
-.hide-ios { display: none !important; }
-.show-ios { display: block !important; } 
+} 

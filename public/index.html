@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#111122">
     <title>ThreadPay | Secure Payment and Discovery Platform for Creators</title>
     
     <!-- Supabase API Key -->
@@ -11,6 +12,7 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Social Media Cards -->
     <meta property="og:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
@@ -30,25 +32,85 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Improved contrast and visibility */
+        /* iOS-inspired color scheme */
         :root {
-            --primary: #F5F0E8;  
-            --primary-dark: #E0D5C5;
-            --accent: #9FB4FF;  /* Stronger accent color */
-            --dark: #222222;
-            --darker: #111111;
-            --light: #FFFFFF;
+            --primary: #111122;  /* Dark background */
+            --primary-dark: #080814;  /* Darker background */
+            --primary-light: #27293D;  /* Lighter panel */
+            --accent: #7574FF;  /* Main accent - purple */
+            --accent-secondary: #FF2D55;  /* Secondary accent - pink */
+            --dark: #FFFFFF;    /* Text on dark background */
+            --darker: #E0E0E6;  /* Secondary text */
+            --light: #111122;   /* Dark text on light backgrounds */
+            --gray: #6E6E7E;    /* Medium gray */
+            --light-gray: #8E8EA0; /* Light gray */
+            --radius: 16px;
+            --button-radius: 14px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.25);
+            --card-bg: rgba(39, 41, 61, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
         }
         
-        /* Fix logo and improve visibility for light text */
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Animated background */
+        .bg-blur {
+            position: fixed;
+            z-index: 0;
+            width: 60vw;
+            height: 60vh;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(117, 116, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(80px);
+            opacity: 0.6;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            animation: pulse 15s infinite alternate ease-in-out;
+        }
+        
+        .bg-blur:after {
+            content: '';
+            position: absolute;
+            width: 40vw;
+            height: 40vh;
+            background: radial-gradient(circle, rgba(255, 45, 85, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(80px);
+            top: 20vh;
+            left: -20vw;
+            border-radius: 50%;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+            50% { transform: translateX(-55%) scale(1.1); opacity: 0.7; }
+            100% { transform: translateX(-45%) scale(1); opacity: 0.6; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        
+        /* Fix logo for iOS style */
         .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem; /* Smaller base size */
-            line-height: 1.1;
+            font-size: 2.4rem;
             font-weight: 700;
-            color: var(--accent);
+            color: var(--dark);
+            letter-spacing: -0.5px;
             text-align: center;
             word-wrap: break-word;
         }
@@ -56,258 +118,536 @@
         /* Hero section styles */
         #hero {
             position: relative;
-            padding-top: 30px;
+            padding-top: 4rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .hero-content {
             text-align: left;
-            margin-top: 30px;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 5;
         }
         
         .logo-container {
             text-align: center;
             width: 100%;
             position: absolute;
-            top: 30px;
+            top: 2rem;
             left: 0;
+            z-index: 10;
         }
         
-        /* Shorter about section */
+        h1 {
+            font-size: 3.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            color: var(--dark);
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, var(--accent) 0%, #8A8AFF 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .highlight:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height:.2rem;
+            bottom: -.2rem;
+            left: 0;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-secondary) 100%);
+            border-radius: 1rem;
+        }
+        
+        .intro-text {
+            font-size: 1.2rem;
+            color: var(--darker);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            max-width: 600px;
+        }
+        
+        /* iOS-style button */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: white;
+            font-weight: 600;
+            border-radius: var(--button-radius);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none;
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: -0.2px;
+            box-shadow: 0 4px 12px rgba(117, 116, 255, 0.3);
+        }
+        
+        .cta-button:hover {
+            background-color: #8A8AFF;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(117, 116, 255, 0.4);
+        }
+        
+        .cta-button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(117, 116, 255, 0.2);
+        }
+        
+        .pulse-circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(117, 116, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            z-index: -1;
+            filter: blur(40px);
+            opacity: 0.8;
+            animation: pulse-animation 6s infinite ease-in-out;
+        }
+        
+        @keyframes pulse-animation {
+            0% {
+                transform: translateY(-50%) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-60%) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50%) scale(1);
+                opacity: 0.8;
+            }
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--darker);
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+        }
+        
+        .scroll-indicator span {
+            display: block;
+            margin-top: .5rem;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) translateX(-50%);
+            }
+            40% {
+                transform: translateY(-10px) translateX(-50%);
+            }
+            60% {
+                transform: translateY(-5px) translateX(-50%);
+            }
+        }
+        
+        /* About section */
         #about {
-            padding-top: 50px;
-            padding-bottom: 50px;
-            min-height: auto;
+            padding: 5rem 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+        
+        #about h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        
+        #about p {
+            color: var(--darker);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
         }
         
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-            margin-bottom: 30px;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        /* Feature styles with improved readability */
+        .feature {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .feature:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
         .feature i {
-            color: var(--accent); /* Blue icons */
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            background: rgba(117, 116, 255, 0.1);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover i {
+            background: rgba(117, 116, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .feature h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            letter-spacing: -0.3px;
         }
         
         .feature p {
-            color: var(--dark); /* Darker color for better readability */
-            font-weight: 400;
+            color: var(--darker);
             font-size: 0.95rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            margin-bottom: 0;
         }
         
-        .scroll-indicator {
-            color: var(--dark); /* Darker color for better visibility */
-            font-weight: 500;
-        }
-        
-        .scroll-indicator span {
-            display: block; /* Ensure text is on its own line */
-            margin-top: 5px;
-        }
-        
-        /* Improved mobile visibility */
-        @media (max-width: 768px) {
-            .screen {
-                min-height: auto;
-                padding: 60px 20px;
-            }
-            
-            #hero {
-                min-height: 100vh;
-                padding-top: 80px;
-            }
-            
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .logo {
-                font-size: 2.2rem; /* Even smaller on mobile */
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .cta-options {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                align-items: center;
-            }
-            
-            .intro-text {
-                font-size: 1.1rem;
-                color: var(--dark); /* Ensure good contrast */
-                font-weight: 400; /* More visible weight */
-            }
-        }
-        
-        /* Added styles for login/signup section */
+        /* Login/signup section */
         #login-signup {
-            background: linear-gradient(135deg, var(--darker) 0%, var(--primary-dark) 100%);
+            background: var(--card-bg);
+            padding: 5rem 1rem;
             text-align: center;
-            min-height: auto;
-            padding: 60px 20px;
+            position: relative;
+            z-index: 5;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--card-border);
         }
         
-        #login-signup h2,
+        #login-signup h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        
         #login-signup p {
-            color: var(--light); /* White text for better contrast on dark background */
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Slight shadow for better readability */
+            color: var(--darker);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
         }
         
         .cta-options {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-top: 40px;
-            flex-wrap: wrap; /* Allow proper wrapping on smaller screens */
+            gap: 2rem;
+            flex-wrap: wrap;
         }
         
         .cta-card {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 12px;
-            width: 300px;
-            max-width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            width: 340px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 0 auto; /* Ensure centering */
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
         
         .cta-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.12);
         }
         
         .cta-card i {
             font-size: 2.5rem;
             color: var(--accent);
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
+            background: rgba(117, 116, 255, 0.1);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-card:hover i {
+            background: rgba(117, 116, 255, 0.2);
+            transform: scale(1.1);
         }
         
         .cta-card h3 {
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            letter-spacing: -0.3px;
         }
         
         .cta-card p {
-            margin-bottom: 20px;
-            color: var(--dark) !important; /* Override white color for card text */
+            color: var(--darker) !important;
+            font-size: 1rem !important;
+            margin-bottom: 2rem !important;
+            line-height: 1.6;
+            opacity: 0.9;
         }
         
-        .cta-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: var(--accent);
+        /* Footer */
+        footer {
+            background: rgba(8, 8, 20, 0.5);
+            padding: 3rem 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
             color: var(--darker);
-            font-weight: 600;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            border: none;
             text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
         }
         
-        .cta-button:hover {
-            background-color: #8BA3FF;
-            transform: translateY(-2px);
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .footer-text {
+            color: var(--darker);
+            font-size: 0.9rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.7;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .intro-text {
+                font-size: 1.1rem;
+            }
+            
+            #about, #login-signup {
+                padding: 4rem 1.5rem;
+            }
+            
+            #about h2, #login-signup h2 {
+                font-size: 2rem;
+            }
+            
+            .cta-card {
+                width: 100%;
+                padding: 2rem 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.3rem;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .intro-text {
+                font-size: 1rem;
+            }
+            
+            .feature i {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .cta-button {
+                width: 100%;
+            }
+            
+            #about h2, #login-signup h2 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="bg-blur"></div>
-    <div class="app-container">
-        <main>
-            <!-- HERO SECTION -->
-            <section class="screen" id="hero">
-                <div class="content">
-                    <div class="card-ios ios-pop" style="margin: 2.5rem auto 2rem auto; max-width: 420px; text-align: center;">
-                        <div class="avatar-ios" style="margin-bottom: 1.2rem;">
-                            <img src="/images/Group 69.png" alt="ThreadPay Logo">
-                        </div>
-                        <div class="logo section-header-ios" style="margin-bottom: 0.5rem;">ThreadPay</div>
-                        <h1 class="section-header-ios" style="font-size:2.2rem; margin-bottom: 1.2rem;">Support <span style="color:var(--accent)">Exceptional</span><br>Creators</h1>
-                        <p class="intro-text" style="font-size:1.15rem; color:var(--text-secondary); margin-bottom:2rem;">ThreadPay connects you with hand-picked, thoroughly trained creators.<br>Your new destination for quality content.</p>
-                        <a href="/model-selection-public.html" class="btn-ios btn-ios-glow" style="width:100%; max-width:320px; margin:0 auto;">Support a Creator</a>
-                    </div>
-                </div>
-            </section>
-            <!-- FEATURES SECTION -->
-            <section class="screen" id="about">
-                <div class="content">
-                    <div class="section-header-ios" style="text-align:center;">Why <span style="color:var(--accent)">ThreadPay</span></div>
-                    <p class="section-description" style="text-align:center; color:var(--text-secondary); margin-bottom:2.2rem;">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
-                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:2rem;">
-                        <div class="card-ios ios-pop" style="text-align:center;">
-                            <i class="fas fa-medal" style="font-size:2.2rem; color:var(--accent); margin-bottom:1rem;"></i>
-                            <h3 style="margin-bottom:0.7rem;">Curated Quality</h3>
-                            <p style="color:var(--text-secondary);">Every creator is hand-selected for exceptional talent</p>
-                        </div>
-                        <div class="card-ios ios-pop" style="text-align:center;">
-                            <i class="fas fa-lock" style="font-size:2.2rem; color:var(--accent); margin-bottom:1rem;"></i>
-                            <h3 style="margin-bottom:0.7rem;">Secure Payments</h3>
-                            <p style="color:var(--text-secondary);">Your financial details remain private and protected</p>
-                        </div>
-                        <div class="card-ios ios-pop" style="text-align:center;">
-                            <i class="fas fa-heart" style="font-size:2.2rem; color:var(--accent); margin-bottom:1rem;"></i>
-                            <h3 style="margin-bottom:0.7rem;">Direct Support</h3>
-                            <p style="color:var(--text-secondary);">Your contributions enable creators to focus on quality</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- LOGIN/SIGNUP SECTION -->
-            <section class="screen" id="login-signup">
-                <div class="content">
-                    <div class="section-header-ios" style="text-align:center;">Get <span style="color:var(--accent)">Started</span></div>
-                    <p class="section-description" style="text-align:center; color:var(--text-secondary); margin-bottom:2.2rem;">Join our community of supporters and discover exceptional creators today.</p>
-                    <div style="display:flex; flex-wrap:wrap; gap:2rem; justify-content:center;">
-                        <div class="card-ios ios-pop" style="text-align:center; min-width:260px; max-width:340px;">
-                            <i class="fas fa-user-plus" style="font-size:2.2rem; color:var(--accent); margin-bottom:1rem;"></i>
-                            <h3 style="margin-bottom:0.7rem;">New to ThreadPay?</h3>
-                            <p style="color:var(--text-secondary);">Create an account to start supporting your favorite creators</p>
-                            <a href="/model-selection-public.html" class="btn-ios" style="width:100%; margin-top:1.2rem;">Sign Up</a>
-                        </div>
-                        <div class="card-ios ios-pop" style="text-align:center; min-width:260px; max-width:340px;">
-                            <i class="fas fa-sign-in-alt" style="font-size:2.2rem; color:var(--accent); margin-bottom:1rem;"></i>
-                            <h3 style="margin-bottom:0.7rem;">Returning Supporter?</h3>
-                            <p style="color:var(--text-secondary);">Sign in to continue supporting your creators</p>
-                            <a href="/login.html" class="btn-ios" style="width:100%; margin-top:1.2rem;">Sign In</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-        <!-- FOOTER SECTION -->
-        <footer style="background:rgba(24,26,32,0.98); border-top:1.5px solid #23242b; padding:2.5rem 0 7rem 0; margin-top:auto;">
-            <div class="footer-content" style="text-align:center;">
-                <div class="logo section-header-ios" style="margin-bottom:0.5rem;">ThreadPay</div>
-                <div class="footer-links" style="margin-bottom:1.2rem;">
-                    <a href="/privacy-policy.html" style="color:var(--accent); margin:0 1.2rem;">Privacy Policy</a>
-                    <a href="/terms-of-service.html" style="color:var(--accent); margin:0 1.2rem;">Terms of Service</a>
-                </div>
-                <div class="copyright" style="color:var(--text-secondary); font-size:0.95rem;">&copy; 2025 ThreadPay. All rights reserved.</div>
+    
+    <main>
+        <!-- HERO SECTION -->
+        <section id="hero">
+            <!-- Logo at the top -->
+            <div class="logo-container">
+                <div class="logo">ThreadPay</div>
             </div>
-        </footer>
-        <!-- Bottom Navigation Bar -->
-        <nav class="bottom-nav-ios">
-            <div class="nav-item active"><i class="fas fa-home"></i><div style="font-size:0.8rem;">Home</div></div>
-            <div class="nav-item"><i class="fas fa-compass"></i><div style="font-size:0.8rem;">Discover</div></div>
-            <div class="nav-item"><i class="fas fa-comments"></i><div style="font-size:0.8rem;">Chat</div></div>
-            <div class="nav-item"><i class="fas fa-user"></i><div style="font-size:0.8rem;">Profile</div></div>
-        </nav>
-    </div>
-    <!-- Necessary libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <!-- Application scripts -->
-    <script src="/scripts/script.js"></script>
-    <script src="/scripts/auth.js"></script>
+            <div class="content hero-content">
+                <h1>Support <span class="highlight">Exceptional</span><br>Creators</h1>
+                <p class="intro-text">ThreadPay connects you with hand-picked, thoroughly trained creators. Your new destination for quality content.</p>
+                <div class="cta-wrapper">
+                    <a href="/model-selection-public.html" class="cta-button">
+                        <i class="fas fa-search"></i>
+                        Explore Creators
+                    </a>
+                </div>
+                <div class="pulse-circle"></div>
+            </div>
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+                <span>Learn More</span>
+            </div>
+        </section>
+        
+        <!-- ABOUT SECTION -->
+        <section id="about">
+            <div class="content">
+                <h2>Why Choose ThreadPay</h2>
+                <p>We provide a secure, premium platform that connects you with exceptional creators.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Secure Payments</h3>
+                        <p>Your financial information is protected with state-of-the-art encryption and security measures.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <i class="fas fa-user-check"></i>
+                        <h3>Verified Creators</h3>
+                        <p>All our creators are thoroughly vetted to ensure you receive authentic, high-quality content.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <i class="fas fa-comments"></i>
+                        <h3>Direct Communication</h3>
+                        <p>Connect directly with your favorite creators and enjoy personalized experiences.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- LOGIN/SIGNUP SECTION -->
+        <section id="login-signup">
+            <div class="content">
+                <h2>Join Our Community</h2>
+                <p>Whether you're a creator or a supporter, we have the perfect solution for you.</p>
+                
+                <div class="cta-options">
+                    <div class="cta-card">
+                        <i class="fas fa-user"></i>
+                        <h3>Supporters</h3>
+                        <p>Discover and support your favorite creators with secure payments and exclusive content.</p>
+                        <a href="/signup.html" class="cta-button">Sign Up Now</a>
+                    </div>
+                    
+                    <div class="cta-card">
+                        <i class="fas fa-star"></i>
+                        <h3>Creators</h3>
+                        <p>Monetize your content, build your audience, and connect with supporters who value your work.</p>
+                        <a href="/signup.html?creator=true" class="cta-button">Become a Creator</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-logo">ThreadPay</div>
+        <div class="footer-links">
+            <a href="/about.html">About Us</a>
+            <a href="/terms-of-service.html">Terms of Service</a>
+            <a href="/privacy-policy.html">Privacy Policy</a>
+            <a href="/contact.html">Contact</a>
+        </div>
+        <p class="footer-text">© 2025 ThreadPay. All rights reserved. ThreadPay is a secure payment platform connecting creators and supporters.</p>
+    </footer>
+    
+    <script>
+        // Smooth scroll for the scroll indicator
+        document.querySelector('.scroll-indicator').addEventListener('click', function() {
+            document.querySelector('#about').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    </script>
 </body>
 </html> 

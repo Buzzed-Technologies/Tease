@@ -2,124 +2,220 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#050505">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#111122">
     <title>Explore Models | ThreadPay Secure Payment Platform</title>
-    <!-- Favicon and styles omitted for brevity -->
+    
+    <!-- Supabase API Key -->
+    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="stylesheet" href="/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* iOS-inspired color scheme */
+        :root {
+            --primary: #111122;  /* Dark background */
+            --primary-dark: #080814;  /* Darker background */
+            --primary-light: #27293D;  /* Lighter panel */
+            --accent: #7574FF;  /* Main accent - purple */
+            --accent-secondary: #FF2D55;  /* Secondary accent - pink */
+            --dark: #FFFFFF;    /* Text on dark background */
+            --darker: #E0E0E6;  /* Secondary text */
+            --light: #111122;   /* Dark text on light backgrounds */
+            --gray: #6E6E7E;    /* Medium gray */
+            --light-gray: #8E8EA0; /* Light gray */
+            --radius: 16px;
+            --button-radius: 14px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.25);
+            --card-bg: rgba(39, 41, 61, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Animated background */
+        .bg-blur {
+            position: fixed;
+            z-index: 0;
+            width: 60vw;
+            height: 60vh;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(117, 116, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(80px);
+            opacity: 0.6;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            animation: pulse 15s infinite alternate ease-in-out;
+        }
+        
+        .bg-blur:after {
+            content: '';
+            position: absolute;
+            width: 40vw;
+            height: 40vh;
+            background: radial-gradient(circle, rgba(255, 45, 85, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(80px);
+            top: 20vh;
+            left: -20vw;
+            border-radius: 50%;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+            50% { transform: translateX(-55%) scale(1.1); opacity: 0.7; }
+            100% { transform: translateX(-45%) scale(1); opacity: 0.6; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        
         /* Unified Button Styles */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             background-color: var(--accent);
-            color: var(--darker);
+            color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: var(--button-radius);
             padding: 0.8rem 1.5rem;
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(117, 116, 255, 0.3);
             text-decoration: none;
-            letter-spacing: 0.2px;
+            letter-spacing: -0.2px;
         }
+        
         .btn:hover {
-            background-color: #B4C1FF;
+            background-color: #8A8AFF;
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(117, 116, 255, 0.4);
         }
+        
         .btn:active {
             transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(117, 116, 255, 0.2);
         }
+        
         .btn i {
             margin-right: 0.7rem;
         }
+        
         .btn-secondary {
-            background-color: var(--primary-light);
+            background-color: rgba(255, 255, 255, 0.1);
             color: var(--dark);
-            border: 1px solid rgba(211, 209, 218, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+        
         .btn-secondary:hover {
-            background-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
-        .btn-success {
-            background-color: rgba(46, 204, 113, 0.9);
-            color: white;
-        }
-        .btn-success:hover {
-            background-color: rgba(46, 204, 113, 1);
-        }
-        .btn-full {
-            width: 100%;
-        }
+        
+        /* Model card redesign */
         .model-card {
-            background-color: var(--light);
-            border-radius: 16px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 1.2rem 1.2rem;
-            border: 1px solid rgba(211, 209, 218, 0.1);
-            margin-bottom: 1.5rem;
-            margin-top: 0.75rem;
+            padding: 1.8rem;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin-bottom: 0;
         }
+        
+        .model-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        
         .model-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
             margin-top: 2rem;
         }
+        
         .model-image-container {
             flex: 0 0 auto;
-            margin-right: 1.2rem;
+            margin-right: 1.5rem;
         }
+        
         .model-image {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background-size: cover;
             background-position: center;
-            background-color: rgba(211, 209, 218, 0.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            border: 2px solid var(--primary-light);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
+        
         .model-card:hover .model-image {
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.13);
-            transform: scale(1.04);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+            transform: scale(1.05);
+            border-color: var(--accent);
         }
+        
         .model-details {
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
         }
+        
         .model-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
             color: var(--dark);
             line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
+        
         .model-bio {
-            color: var(--dark);
+            color: var(--darker);
             font-size: 0.92rem;
             line-height: 1.5;
-            margin-bottom: 1.1rem;
-            max-height: 2.6em;
+            margin-bottom: 1.2rem;
+            max-height: 2.8em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -127,52 +223,286 @@
             -webkit-box-orient: vertical;
             opacity: 0.85;
         }
+        
+        /* Loading state */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 0;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            margin-top: 2rem;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .empty-icon {
+            font-size: 3.5rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-message {
+            color: var(--dark);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+        
+        .empty-description {
+            color: var(--darker);
+            font-size: 1rem;
+            max-width: 550px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+        
+        /* Dashboard Layout Improvements */
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            position: relative;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            background-color: rgba(20, 20, 40, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .logo:hover {
+            opacity: 0.9;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .dashboard-content {
+            flex: 1;
+            padding: 2rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .section-header {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .section-description {
+            color: var(--darker);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            max-width: 800px;
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 480px) {
+            .dashboard-header {
+                padding: 1rem 5%;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .dashboard-content {
+                padding: 1.5rem 5%;
+            }
+            
+            .section-header h2 {
+                font-size: 1.6rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .section-description {
+                font-size: 0.95rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .model-card {
+                padding: 1.2rem;
+                border-radius: 16px;
+            }
+            
+            .model-image {
+                width: 75px;
+                height: 75px;
+            }
+            
+            .model-image-container {
+                margin-right: 1rem;
+            }
+            
+            .model-name {
+                font-size: 1.2rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .model-bio {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+            
+            .btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .model-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .header-controls a,
+            .header-controls button {
+                padding: 0.6rem;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                justify-content: center;
+            }
+            
+            .header-controls a i,
+            .header-controls button i {
+                margin-right: 0;
+                font-size: 1rem;
+            }
+            
+            .btn-text {
+                display: none;
+            }
+        }
+        
+        /* iOS touch optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn {
+                min-height: 44px; /* Apple recommended touch target size */
+            }
+            
+            input, select, textarea, button {
+                font-size: 16px !important; /* Prevent zoom on form fields in iOS */
+            }
+        }
     </style>
 </head>
 <body>
     <div class="bg-blur"></div>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <a href="/">
-                <div class="logo">ThreadPay</div>
-            </a>
+            <a href="/" class="logo">ThreadPay</a>
             <div class="header-controls">
                 <a href="/login.html" class="btn btn-secondary">
                     <i class="fas fa-sign-in-alt"></i>
                     <span class="btn-text">Sign In</span>
                 </a>
-                <a href="/signup.html" class="btn btn-secondary">
+                <a href="/signup.html" class="btn">
                     <i class="fas fa-user-plus"></i>
                     <span class="btn-text">Sign Up</span>
                 </a>
             </div>
         </header>
-        <div class="dashboard-content">
+        
+        <!-- Main content -->
+        <main class="dashboard-content">
             <div class="section-header">
                 <h2>Explore Creators</h2>
-                <p class="section-description">Discover and select your favorite creator to sign up with.</p>
+                <p class="section-description">Discover and select your favorite creator to sign up with. Join our exclusive platform for premium content and personal connections.</p>
             </div>
-            <div id="loading-container" class="loading-container card">
+            
+            <!-- Loading state -->
+            <div id="loading-container" class="loading-container">
                 <div class="loading-spinner"></div>
                 <p>Loading creators...</p>
             </div>
-            <div id="empty-state" class="empty-state card" style="display: none;">
+            
+            <!-- Empty state -->
+            <div id="empty-state" class="empty-state" style="display: none;">
                 <div class="empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
-                <h3 class="empty-message">No creators found</h3>
-                <p class="empty-description">We couldn't find any models available at the moment. Please check back later.</p>
+                <h3 class="empty-message">No Creators Found</h3>
+                <p class="empty-description">We couldn't find any creators available at the moment. Please check back later or refresh the page.</p>
             </div>
+            
+            <!-- Model grid -->
             <div id="model-grid" class="model-grid"></div>
-        </div>
+        </main>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script>
         // Supabase client initialization (public, no auth, match model-selection.html logic)
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;
         // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name=\"supabase-anon-key\"]')?.getAttribute('content');
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         let supabaseKey = null;
         function initSupabase() {
             if (window.supabase) {
@@ -215,7 +545,7 @@
         const emptyState = document.getElementById('empty-state');
         async function loadModels() {
             try {
-                loadingContainer.style.display = 'block';
+                loadingContainer.style.display = 'flex';
                 modelGrid.style.display = 'none';
                 emptyState.style.display = 'none';
                 const { data: models, error } = await supabase
@@ -266,17 +596,26 @@
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
                 modelDetails.innerHTML = `
-                    <h3 class=\"model-name\">${model.name}</h3>
-                    <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
-                    <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    <button class="btn" data-model-id="${model.id}"><i class="fas fa-arrow-right"></i> Select</button>
                 `;
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
-            });
-            // Add event listeners for selection
-            document.querySelectorAll('.select-model-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                
+                // Make the entire card clickable
+                modelCard.addEventListener('click', function() {
+                    const modelName = this.dataset.modelName?.trim();
+                    if (modelName) {
+                        window.location.href = `/invite/${encodeURIComponent(modelName)}`;
+                    }
+                });
+                
+                // Add event listeners for selection button
+                const selectBtn = modelDetails.querySelector('.btn');
+                selectBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent the card click from triggering
                     const modelName = this.closest('.model-card').dataset.modelName?.trim();
                     if (modelName) {
                         window.location.href = `/invite/${encodeURIComponent(modelName)}`;
