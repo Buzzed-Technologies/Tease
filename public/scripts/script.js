@@ -150,21 +150,26 @@ document.addEventListener('DOMContentLoaded', () => {
     footer.style.zIndex = '1';
     footer.style.visibility = 'hidden';
     
+    // Helper function to check if the event target is an interactive element
+    function isInteractiveElement(element) {
+        return element && (
+            element.tagName === 'A' ||
+            element.tagName === 'BUTTON' ||
+            element.closest('a, button')
+        );
+    }
+    
     // Handle wheel events for scrolling
     window.addEventListener('wheel', (e) => {
-        if (isScrolling || isInputFocused) return; // Skip if input is focused
-        
+        if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
         // Determine scroll direction
         const direction = Math.sign(e.deltaY);
-        
         if (direction !== 0) {
             isScrolling = true;
-            
             const nextSection = currentSection + direction;
             if (nextSection >= 0 && nextSection <= screens.length) {
                 updateSection(nextSection);
             }
-            
             // Debounce scrolling
             setTimeout(() => {
                 isScrolling = false;
@@ -174,36 +179,30 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Touch events for mobile
     document.addEventListener('touchstart', (e) => {
-        // Skip touch handling if an input is focused
-        if (isInputFocused) return;
-        
+        // Skip touch handling if an input is focused or on a link/button
+        if (isInputFocused || isInteractiveElement(e.target)) return;
         touchStartY = e.touches[0].clientY;
         startTime = Date.now();
     }, { passive: true });
     
     document.addEventListener('touchmove', (e) => {
-        if (isScrolling || isInputFocused) return; // Skip if input is focused
+        if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
         touchEndY = e.touches[0].clientY;
     }, { passive: true });
     
-    document.addEventListener('touchend', () => {
-        if (isScrolling || isInputFocused) return; // Skip if input is focused
-        
+    document.addEventListener('touchend', (e) => {
+        if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
         const touchDiff = touchStartY - touchEndY;
         const timeDiff = Date.now() - startTime;
-        
         // Detect swipe vs tap - velocity based
         if (Math.abs(touchDiff) > 50 || (Math.abs(touchDiff) > 20 && timeDiff < 200)) {
             isScrolling = true;
-            
             // Determine direction (positive = down, negative = up)
             const direction = touchDiff > 0 ? 1 : -1;
-            
             const nextSection = currentSection + direction;
             if (nextSection >= 0 && nextSection <= screens.length) {
                 updateSection(nextSection);
             }
-            
             // Debounce scrolling
             setTimeout(() => {
                 isScrolling = false;
@@ -213,10 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Keyboard navigation for accessibility
     document.addEventListener('keydown', (e) => {
-        if (isScrolling || isInputFocused) return; // Skip if input is focused
-        
+        if (isScrolling || isInputFocused || isInteractiveElement(document.activeElement)) return; // Skip if input is focused or on a link/button
         let direction = 0;
-        
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
             direction = 1;
             e.preventDefault();
@@ -224,15 +221,12 @@ document.addEventListener('DOMContentLoaded', () => {
             direction = -1;
             e.preventDefault();
         }
-        
         if (direction !== 0) {
             isScrolling = true;
-            
             const nextSection = currentSection + direction;
             if (nextSection >= 0 && nextSection <= screens.length) {
                 updateSection(nextSection);
             }
-            
             // Debounce scrolling
             setTimeout(() => {
                 isScrolling = false;
@@ -242,12 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Scroll indicator click
     if (scrollIndicator) {
-        scrollIndicator.addEventListener('click', () => {
+        scrollIndicator.addEventListener('click', (e) => {
+            // Prevent if the click is on a link or button
+            if (isInteractiveElement(e.target)) return;
             if (isScrolling) return;
-            
             isScrolling = true;
             updateSection(currentSection + 1);
-            
             // Debounce scrolling
             setTimeout(() => {
                 isScrolling = false;
@@ -1293,4 +1287,12 @@ if (heroCtaButton) {
         }, 800);
         e.preventDefault();
     });
-} 
+}
+
+// Ensure CTA and navigation buttons always perform navigation as expected
+document.querySelectorAll('a.cta-button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Let the default navigation happen, do not trigger section scroll
+        isScrolling = false;
+    });
+}); 
