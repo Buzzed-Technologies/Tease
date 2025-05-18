@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#F5F0E8">
-    <title>Invite | ThreadPay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join ThreadPay | Secure Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -14,75 +11,44 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --accent: #C6D2FF;
+            --dark: #2d2d2d;
+            --darker: #181818;
+            --radius: 18px;
+        }
         body {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-            color: var(--dark);
-            font-family: -apple-system, BlinkMacSystemFont, 'Montserrat', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(120deg, #f5f0e8 0%, #e6eaff 100%);
+            position: relative;
             overflow-x: hidden;
         }
-        
         .bg-blur {
             position: fixed;
-            top: -100px; 
-            right: -100px;
-            width: 600px; 
-            height: 600px;
-            background: radial-gradient(circle at 70% 30%, var(--accent) 0%, rgba(255,255,255,0) 70%);
+            top: -100px; left: -100px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, #fff0 80%);
             filter: blur(80px);
             z-index: 0;
-            opacity: 0.6;
-            animation: floatBlur 25s ease-in-out infinite alternate;
         }
-        
-        @keyframes floatBlur {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-30px, 30px) scale(1.1); }
-        }
-        
-        .container {
+        .invite-main {
             position: relative;
             z-index: 1;
-            max-width: 500px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem;
-            flex: 1;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-        }
-        
-        /* iOS-style header */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            z-index: 100;
             justify-content: flex-start;
             padding: 0;
         }

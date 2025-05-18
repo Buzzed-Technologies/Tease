@@ -3,395 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#F5F0E8">
-    <title>Explore Creators | ThreadPay</title>
-
-    <!-- Supabase API Key -->
-    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    
-    <!-- Stylesheets -->
+    <meta name="theme-color" content="#050505">
+    <title>Explore Models | ThreadPay Secure Payment Platform</title>
+    <!-- Favicon and styles omitted for brevity -->
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="stylesheet" href="/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #F5F0E8;
-            --primary-dark: #E6EAF0;
-            --primary-light: #FFF9F0;
-            --accent: #C6D2FF;
-            --dark: #2D2D2D;
-            --darker: #181818;
-            --light: #FFFFFF;
-            --radius: 18px;
-            --radius-sm: 12px;
-            --radius-lg: 24px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
-        }
-        
-        body {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-            color: var(--dark);
-            font-family: -apple-system, BlinkMacSystemFont, 'Montserrat', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
-        }
-        
-        .bg-blur {
-            position: fixed;
-            top: -100px; 
-            right: -100px;
-            width: 600px; 
-            height: 600px;
-            background: radial-gradient(circle at 70% 30%, var(--accent) 0%, rgba(255,255,255,0) 70%);
-            filter: blur(80px);
-            z-index: 0;
-            opacity: 0.6;
-            animation: floatBlur 25s ease-in-out infinite alternate;
-        }
-        
-        .bg-blur-2 {
-            position: fixed;
-            left: -100px; 
-            bottom: -100px;
-            width: 600px; 
-            height: 600px;
-            background: radial-gradient(circle at 30% 70%, rgba(198, 210, 255, 0.5) 0%, rgba(255,255,255,0) 70%);
-            filter: blur(80px);
-            z-index: 0;
-            opacity: 0.6;
-            animation: floatBlur 30s ease-in-out infinite alternate-reverse;
-        }
-        
-        @keyframes floatBlur {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, 30px) scale(1.1); }
-        }
-        
-        /* Dashboard Container */
-        .dashboard-container {
-            position: relative;
-            z-index: 1;
-            max-width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* iOS-style Header */
-        .dashboard-header {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            padding: 1.2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-        
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--darker);
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-            margin: 0;
-        }
-        
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .dashboard-content {
-            flex: 1;
-            padding: 6rem 5% 3rem;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        /* Section Header */
-        .section-header {
-            margin-bottom: 2.5rem;
-            text-align: center;
-        }
-        
-        .section-header h2 {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
-            color: var(--darker);
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        
-        .section-description {
-            font-size: 1.1rem;
-            color: var(--dark);
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        /* Button Styles */
+        /* Unified Button Styles */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            background: linear-gradient(90deg, var(--accent) 0%, #b4c1ff 100%);
+            background-color: var(--accent);
             color: var(--darker);
             border: none;
-            border-radius: var(--radius-sm);
-            padding: 0.9rem 1.5rem;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
             text-decoration: none;
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 0.2px;
         }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.8s ease;
-        }
-        
         .btn:hover {
+            background-color: #B4C1FF;
             transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
         }
-        
-        .btn:hover::after {
-            transform: translateX(100%);
+        .btn:active {
+            transform: translateY(-1px);
         }
-        
+        .btn i {
+            margin-right: 0.7rem;
+        }
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.8);
+            background-color: var(--primary-light);
             color: var(--dark);
+            border: 1px solid rgba(211, 209, 218, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
-        
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+        .btn-success {
+            background-color: rgba(46, 204, 113, 0.9);
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: rgba(46, 204, 113, 1);
+        }
         .btn-full {
             width: 100%;
         }
-        
-        /* Model Grid */
+        .model-card {
+            background-color: var(--light);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 1.2rem 1.2rem;
+            border: 1px solid rgba(211, 209, 218, 0.1);
+            margin-bottom: 1.5rem;
+            margin-top: 0.75rem;
+        }
         .model-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
-        
-        /* Model Card */
-        .model-card {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(230, 230, 230, 0.3);
-            height: 100%;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        
-        .model-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-        }
-        
         .model-image-container {
-            position: relative;
-            padding-top: 100%;
-            overflow: hidden;
-            background-color: rgba(211, 209, 218, 0.1);
+            flex: 0 0 auto;
+            margin-right: 1.2rem;
         }
-        
         .model-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
             background-size: cover;
             background-position: center;
-            transition: all 0.6s ease;
+            background-color: rgba(211, 209, 218, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--primary-light);
+            transition: all 0.3s ease;
         }
-        
         .model-card:hover .model-image {
-            transform: scale(1.08);
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.13);
+            transform: scale(1.04);
         }
-        
         .model-details {
-            padding: 1.5rem;
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
-            flex: 1;
         }
-        
         .model-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.8rem;
-            color: var(--darker);
+            font-size: 1.15rem;
+            margin-bottom: 0.4rem;
+            color: var(--dark);
             line-height: 1.2;
-            font-weight: 700;
         }
-        
         .model-bio {
             color: var(--dark);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            max-height: 4.8em;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin-bottom: 1.1rem;
+            max-height: 2.6em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             opacity: 0.85;
-            flex: 1;
-        }
-        
-        .select-model-btn {
-            margin-top: auto;
-        }
-        
-        /* Loading and Empty States */
-        .loading-container,
-        .empty-state {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: var(--radius);
-            padding: 3rem;
-            text-align: center;
-            box-shadow: var(--shadow-md);
-            margin: 2rem auto;
-            max-width: 500px;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(230, 230, 230, 0.3);
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(198, 210, 255, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid var(--accent);
-            margin: 0 auto 1.5rem;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .empty-icon {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-            opacity: 0.8;
-        }
-        
-        .empty-message {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--darker);
-        }
-        
-        .empty-description {
-            color: var(--dark);
-            opacity: 0.8;
-            line-height: 1.6;
-        }
-        
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .dashboard-header {
-                padding: 1rem;
-            }
-            
-            .logo {
-                font-size: 1.6rem;
-            }
-            
-            .dashboard-content {
-                padding: 5.5rem 1rem 2rem;
-            }
-            
-            .section-header h2 {
-                font-size: 2rem;
-            }
-            
-            .model-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .btn {
-                padding: 0.8rem 1.2rem;
-                font-size: 0.9rem;
-            }
-            
-            .header-controls {
-                gap: 0.5rem;
-            }
-            
-            .btn-text {
-                display: none;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Background elements -->
     <div class="bg-blur"></div>
-    <div class="bg-blur-2"></div>
-    
     <div class="dashboard-container">
-        <!-- iOS-style Header -->
         <header class="dashboard-header">
-            <a href="/" style="text-decoration: none;">
+            <a href="/">
                 <div class="logo">ThreadPay</div>
             </a>
             <div class="header-controls">
@@ -399,46 +141,39 @@
                     <i class="fas fa-sign-in-alt"></i>
                     <span class="btn-text">Sign In</span>
                 </a>
-                <a href="/signup.html" class="btn">
+                <a href="/signup.html" class="btn btn-secondary">
                     <i class="fas fa-user-plus"></i>
                     <span class="btn-text">Sign Up</span>
                 </a>
             </div>
         </header>
-        
         <div class="dashboard-content">
             <div class="section-header">
-                <h2>Discover Exclusive Creators</h2>
-                <p class="section-description">Browse our hand-selected creators and choose who you'd like to support with premium content access.</p>
+                <h2>Explore Creators</h2>
+                <p class="section-description">Discover and select your favorite creator to sign up with.</p>
             </div>
-            
-            <div id="loading-container" class="loading-container">
+            <div id="loading-container" class="loading-container card">
                 <div class="loading-spinner"></div>
                 <p>Loading creators...</p>
             </div>
-            
-            <div id="empty-state" class="empty-state" style="display: none;">
+            <div id="empty-state" class="empty-state card" style="display: none;">
                 <div class="empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
                 <h3 class="empty-message">No creators found</h3>
-                <p class="empty-description">We couldn't find any creators available at the moment. Please check back later or contact support.</p>
+                <p class="empty-description">We couldn't find any models available at the moment. Please check back later.</p>
             </div>
-            
             <div id="model-grid" class="model-grid"></div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script>
-        // Supabase client initialization
+        // Supabase client initialization (public, no auth, match model-selection.html logic)
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;
-        
         // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
+        const metaKey = document.querySelector('meta[name=\"supabase-anon-key\"]')?.getAttribute('content');
         let supabaseKey = null;
-        
         function initSupabase() {
             if (window.supabase) {
                 supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -447,7 +182,6 @@
                 console.error('Supabase client library not loaded');
             }
         }
-        
         if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
             console.log('Using API key from meta tag');
             supabaseKey = metaKey;
@@ -476,31 +210,24 @@
                     initSupabase();
                 });
         }
-        
         const modelGrid = document.getElementById('model-grid');
         const loadingContainer = document.getElementById('loading-container');
         const emptyState = document.getElementById('empty-state');
-        
         async function loadModels() {
             try {
                 loadingContainer.style.display = 'block';
                 modelGrid.style.display = 'none';
                 emptyState.style.display = 'none';
-                
                 const { data: models, error } = await supabase
                     .from('models')
                     .select('*');
-                
                 if (error) throw error;
-                
                 if (!models || models.length === 0) {
                     loadingContainer.style.display = 'none';
                     emptyState.style.display = 'block';
                     return;
                 }
-                
                 displayModels(models);
-                
                 loadingContainer.style.display = 'none';
                 modelGrid.style.display = 'grid';
             } catch (error) {
@@ -509,24 +236,19 @@
                 emptyState.style.display = 'block';
             }
         }
-        
         function displayModels(models) {
             modelGrid.innerHTML = '';
-            
             models.forEach(model => {
                 const modelCard = document.createElement('div');
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
                 modelCard.dataset.modelName = model.name;
-                
                 // Add container for the image
                 const modelImageContainer = document.createElement('div');
                 modelImageContainer.className = 'model-image-container';
-                
                 const modelImage = document.createElement('div');
                 modelImage.className = 'model-image';
-                
-                // Build the correct image path
+                // Build the correct image path using Supabase bucket (match model-selection.html)
                 let imagePath;
                 if (model.pictures) {
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
@@ -539,25 +261,19 @@
                 } else {
                     imagePath = '/images/placeholder-model.png';
                 }
-                
                 modelImage.style.backgroundImage = `url(${imagePath})`;
                 modelImageContainer.appendChild(modelImage);
-                
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
                 modelDetails.innerHTML = `
-                    <h3 class="model-name">${model.name}</h3>
-                    <p class="model-bio">${model.bio || 'Exclusive creator on ThreadPay offering premium content for subscribers.'}</p>
-                    <button class="btn select-model-btn" data-model-id="${model.id}">
-                        <i class="fas fa-heart"></i> Select Creator
-                    </button>
+                    <h3 class=\"model-name\">${model.name}</h3>
+                    <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
+                    <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
                 `;
-                
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
             });
-            
             // Add event listeners for selection
             document.querySelectorAll('.select-model-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -567,40 +283,7 @@
                     }
                 });
             });
-            
-            // Add animation to cards
-            animateCards();
         }
-        
-        function animateCards() {
-            const cards = document.querySelectorAll('.model-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 100 + (index * 100));
-            });
-        }
-        
-        // Header scroll effect
-        const header = document.querySelector('.dashboard-header');
-        let lastScrollY = 0;
-        
-        window.addEventListener('scroll', function() {
-            const scrollY = window.scrollY;
-            
-            // Add box shadow when scrolled
-            if (scrollY > 10) {
-                header.style.boxShadow = 'var(--shadow-md)';
-            } else {
-                header.style.boxShadow = 'var(--shadow-sm)';
-            }
-            
-            lastScrollY = scrollY;
-        });
     </script>
 </body>
 </html> 

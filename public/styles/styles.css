@@ -10,11 +10,6 @@
     --gray: #ccc0b3;    /* Light gray */
     --light-gray: #D3D1DA; /* Medium gray for secondary text */
     --radius: 18px;
-    --radius-lg: 24px;
-    --radius-sm: 12px;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
     
     /* Persona Theme Colors - kept neutral/soft */
     --passionate: #F8EAE6; /* Soft cream */
@@ -35,12 +30,10 @@ html {
     font-size: 16px;
     /* Prevent scroll chaining on macOS */
     overscroll-behavior: none;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: var(--primary);
     color: var(--dark);
     overflow-x: hidden;
@@ -62,18 +55,15 @@ h1, h2, h3 {
 h1 {
     font-size: 3.5rem;
     line-height: 1.2;
-    letter-spacing: -0.5px;
 }
 
 h2 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
-    letter-spacing: -0.3px;
 }
 
 h3 {
     font-size: 1.5rem;
-    letter-spacing: -0.2px;
 }
 
 p {
@@ -82,14 +72,13 @@ p {
 }
 
 a {
-    color: var(--dark);
+    color: var(--light);
     text-decoration: none;
-    transition: color 0.3s ease, opacity 0.3s ease;
+    transition: color 0.3s ease;
 }
 
 a:hover {
-    color: var(--accent);
-    opacity: 0.9;
+    color: var(--primary-light);
 }
 
 .highlight {
@@ -110,7 +99,7 @@ a:hover {
     margin-bottom: 0.2rem;
     text-align: center;
     font-weight: 700;
-    letter-spacing: 0;
+    letter-spacing: 1px;
 }
 
 .logo-container {
@@ -128,39 +117,35 @@ a:hover {
     margin-top: -5px;
 }
 
-/* iOS-inspired Buttons */
 .cta-button, .btn, .action-button, .logout-button, .explore-more-button, .manage-subscription-btn {
     background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
     color: var(--darker);
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: 8px;
     font-weight: 700;
     font-size: 1.1rem;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    padding: 0.9rem 1.5rem;
+    box-shadow: 0 2px 8px #c6d2ff33;
+    transition: background 0.2s, transform 0.1s;
+    padding: 0.8rem 1.5rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
 }
 
 .cta-button:hover, .btn:hover, .action-button:hover, .logout-button:hover, .explore-more-button:hover, .manage-subscription-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-    filter: brightness(1.05);
+    background: #a3b1ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .cta-button:active, .btn:active, .action-button:active, .logout-button:active, .explore-more-button:active, .manage-subscription-btn:active {
-    transform: translateY(-1px) scale(0.98);
+    transform: scale(0.98);
 }
 
 .cta-button.large {
-    padding: 1.1rem 2.2rem;
-    font-size: 1.25rem;
-    border-radius: var(--radius);
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
 }
 
 .cta-wrapper {
@@ -175,58 +160,6 @@ a:hover {
     color: var(--light-gray);
     margin-top: 0.8rem;
     opacity: 0.8;
-}
-
-/* Form Styling - More iOS-like */
-.form-group {
-    margin-bottom: 1.5rem;
-    position: relative;
-}
-
-.form-label {
-    position: absolute;
-    left: 1.1rem;
-    top: 1.1rem;
-    color: var(--light-gray);
-    font-size: 1rem;
-    pointer-events: none;
-    transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-    background: transparent;
-    padding: 0 0.2rem;
-    font-weight: 500;
-    z-index: 2;
-}
-
-.form-input:focus + .form-label,
-.form-input:not(:placeholder-shown) + .form-label {
-    top: -0.7rem;
-    left: 0.9rem;
-    font-size: 0.85rem;
-    color: var(--accent);
-    background: #fff;
-    font-weight: 600;
-}
-
-.form-input {
-    width: 100%;
-    padding: 1.1rem 1.1rem 0.9rem 1.1rem;
-    border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.9);
-    border: 1.5px solid #e0e6f7;
-    color: var(--dark);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    font-size: 1rem;
-    transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-    outline: none;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.form-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(198, 210, 255, 0.25), inset 0 2px 4px rgba(0,0,0,0.02);
-    background: rgba(255, 255, 255, 1);
 }
 
 /* Snap Scroll Container */
@@ -252,276 +185,140 @@ a:hover {
     transition: none;
 }
 
-/* Card Styled Element Improvements */
-.card, .signup-card, .cta-card, .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card, .models-section, .account-info-card, .settings-card {
-    background: #fff;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(232, 224, 213, 0.3);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    overflow: hidden;
+/* Add this class dynamically for mobile transitions */
+.smooth-transition {
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.card:hover, .model-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-/* Modal Styles - Modern iOS Look */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
     width: 100%;
-    height: 100%;
-    display: none;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.modal.active {
-    display: flex;
-    opacity: 1;
-}
-
-.modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-.modal-content {
     position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-    overflow-y: auto;
-    padding: 20px;
+    z-index: 2;
 }
 
-.modal-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1002;
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    border: none;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
-}
-
-.modal-close:hover {
-    background-color: rgba(255, 255, 255, 0.95);
-    transform: rotate(90deg);
-}
-
-.modal-close i {
-    font-size: 1.2rem;
-    color: var(--dark);
-}
-
-/* Model Card Styles - iOS App Feel */
-.model-card, .subscribed-model-card {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    padding: 1.5rem 1.5rem;
-    margin-bottom: 1.2rem;
-    border-radius: var(--radius);
-    background: #fff;
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(211, 209, 218, 0.1);
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    cursor: pointer;
+/* Intro Section */
+#intro {
+    background: radial-gradient(circle at center, var(--primary-light) 0%, var(--primary) 70%);
+    text-align: center;
     position: relative;
     overflow: hidden;
 }
 
-.model-card:after, .subscribed-model-card:after {
-    content: '';
+.animated-bg {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.8s ease;
-}
-
-.model-card:hover:after, .subscribed-model-card:hover:after {
-    transform: translateX(100%);
-}
-
-.model-card:hover, .subscribed-model-card:hover {
-    box-shadow: var(--shadow-lg);
-    border-color: var(--accent);
-    transform: translateY(-5px) scale(1.01);
-}
-
-.model-image, .model-image-container .model-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
-    background-color: rgba(211, 209, 218, 0.1);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-    border: 2px solid var(--primary-light);
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.model-card:hover .model-image, .subscribed-model-card:hover .model-image {
-    box-shadow: 0 10px 18px rgba(0,0,0,0.13);
-    transform: scale(1.08);
-    border-color: var(--accent);
-}
-
-/* Hover & Active States for Better Feedback */
-.btn:hover, .btn:focus, .form-input:focus, a:hover, .model-card:hover {
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-::selection {
-    background-color: var(--accent);
-    color: var(--darker);
-}
-
-::-moz-selection {
-    background-color: var(--accent);
-    color: var(--darker);
-}
-
-/* Background effects - iOS-like blurs */
-.bg-blur {
-    position: fixed;
-    top: -100px; left: -100px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, rgba(255,255,255,0) 80%);
-    filter: blur(80px);
-    z-index: 0;
-    animation: floatBlur 20s ease-in-out infinite alternate;
-}
-
-@keyframes floatBlur {
-    0% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-    100% { transform: translate(50px, 50px) scale(1.1); opacity: 0.8; }
-}
-
-/* iOS-like Bottom Tab Navigation (for mobile) */
-.ios-tab-nav {
-    display: none;
-    position: fixed;
-    bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    z-index: 1000;
-    padding: 0.8rem 0.5rem;
-    border-radius: 1.5rem 1.5rem 0 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(232, 224, 213, 0.2) 0%, rgba(255, 255, 255, 0) 25%),
+        radial-gradient(circle at 80% 70%, rgba(232, 224, 213, 0.2) 0%, rgba(255, 255, 255, 0) 25%);
+    z-index: 1;
 }
 
-.ios-tab-nav ul {
-    display: flex;
-    justify-content: space-around;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.animated-bg:before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background: 
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23e8e0d5' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%23e8e0d5'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.1;
+    animation: rotateBackground 240s linear infinite;
+    z-index: -1;
 }
 
-.ios-tab-nav li {
+@keyframes rotateBackground {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#intro .content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-
-.ios-tab-nav a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--dark-gray);
-    text-decoration: none;
-    padding: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.ios-tab-nav a.active {
-    color: var(--accent);
-}
-
-.ios-tab-nav i {
-    font-size: 1.4rem;
-    margin-bottom: 0.2rem;
-}
-
-.ios-tab-nav span {
-    font-size: 0.7rem;
-    font-weight: 500;
-}
-
-/* iOS-like Pull to Refresh indicator */
-.pull-to-refresh {
-    display: flex;
     align-items: center;
     justify-content: center;
-    height: 60px;
-    margin-top: -60px;
-    color: var(--light-gray);
-    font-size: 0.9rem;
-    transition: margin-top 0.3s ease;
 }
 
-.pull-to-refresh.visible {
-    margin-top: 0;
+#intro h1 {
+    margin-bottom: 1.5rem;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
-.pull-to-refresh-spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(198, 210, 255, 0.3);
-    border-top-color: var(--accent);
+#intro p {
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.intro-text {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    font-weight: 400;
+}
+
+.pulse-circle {
+    position: absolute;
+    width: 400px;
+    height: 400px;
     border-radius: 50%;
-    margin-right: 10px;
-    animation: spin 1s linear infinite;
+    background: radial-gradient(circle, rgba(232, 224, 213, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    animation: pulse 5s ease-in-out infinite;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@media (max-width: 767px) {
-    .ios-tab-nav {
-        display: block;
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.3;
     }
-    
-    body {
-        padding-bottom: 70px; /* Make room for the tab bar */
+    50% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--light);
+    opacity: 0.7;
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
     }
 }
 
@@ -789,6 +586,34 @@ a:hover {
     padding: 2.5rem;
     border-radius: 12px;
     border: 1px solid rgba(232, 224, 213, 0.3);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(232, 224, 213, 0.3);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: var(--light);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 2px rgba(232, 224, 213, 0.2);
 }
 
 .phone-input {
@@ -1255,7 +1080,7 @@ input[type=number] {
     display: none;
     z-index: 1000;
     opacity: 0;
-    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: opacity 0.3s ease;
 }
 
 .modal.active {
@@ -1269,9 +1094,8 @@ input[type=number] {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
@@ -1290,30 +1114,27 @@ input[type=number] {
     position: absolute;
     top: 20px;
     right: 20px;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(249, 247, 244, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     z-index: 1002;
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    border: none;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(232, 224, 213, 0.3);
 }
 
 .modal-close:hover {
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: var(--primary);
     transform: rotate(90deg);
 }
 
 .modal-close i {
     font-size: 1.2rem;
-    color: var(--dark);
+    color: var(--light);
 }
 
 .persona-detail-card {
@@ -1518,12 +1339,12 @@ input[type=number] {
 /* Selection styles */
 ::selection {
     background-color: var(--accent);
-    color: var(--darker);
+    color: var(--light);
 }
 
 ::-moz-selection {
     background-color: var(--accent);
-    color: var(--darker);
+    color: var(--light);
 }
 
 .form-input {
@@ -1533,6 +1354,15 @@ input[type=number] {
 
 .login-message.success {
     color: #28a745 !important;
+}
+
+.bg-blur {
+    position: fixed;
+    top: -100px; left: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, #fff0 80%);
+    filter: blur(80px);
+    z-index: 0;
 }
 
 .btn-secondary {
@@ -1566,6 +1396,12 @@ input[type=number] {
 }
 
 /* Card and Section Styles */
+.card, .signup-card, .cta-card, .dashboard-card, .content-section, .account-info, .tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, .model-card, .models-section, .account-info-card, .settings-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px rgba(198,210,255,0.18);
+    border: 1px solid rgba(232, 224, 213, 0.3);
+}
 .model-card, .subscribed-model-card {
     display: flex;
     align-items: center;
