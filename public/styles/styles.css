@@ -591,37 +591,29 @@ a:hover {
 .form-group {
     margin-bottom: 1.5rem;
     text-align: left;
-    position: relative;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: var(--dark);
 }
 
 .form-group input {
     width: 100%;
     padding: 1rem;
-    border: 1px solid rgba(232, 224, 213, 0.5);
+    border: 1px solid rgba(232, 224, 213, 0.3);
     border-radius: 8px;
-    background-color: var(--primary-light);
-    color: var(--dark);
+    background-color: rgba(255, 255, 255, 0.8);
+    color: var(--light);
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(198, 210, 255, 0.3);
-    background-color: #fff;
-}
-
-.form-group.input-focused {
-    transition: transform 0.2s ease;
-    transform: translateY(-2px);
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 2px rgba(232, 224, 213, 0.2);
 }
 
 .phone-input {
@@ -634,7 +626,7 @@ a:hover {
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--dark);
+    color: var(--light-gray);
     font-size: 1rem;
 }
 
@@ -644,7 +636,7 @@ a:hover {
 
 .plan-button {
     background-color: transparent;
-    color: var(--dark);
+    color: var(--light);
     border: 2px solid var(--primary-dark);
     padding: 0.8rem 1.5rem;
     border-radius: 50px;
@@ -661,7 +653,7 @@ a:hover {
 
 .plan-button:hover {
     background-color: var(--primary);
-    color: var(--dark);
+    color: var(--light);
     background-image: 
         linear-gradient(to bottom, 
             rgba(232, 224, 213, 0.9), 
@@ -671,77 +663,6 @@ a:hover {
         inset 0 -3px 8px rgba(0, 0, 0, 0.1),
         inset 0 3px 4px rgba(255, 255, 255, 0.8),
         0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Fix button spacing */
-.btn, .action-button, .cta-button {
-    gap: 0.5rem;
-}
-
-/* Style for disabled buttons */
-.btn:disabled, .action-button:disabled, .cta-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Add hover effect to cards */
-.card, .signup-card, .cta-card, .dashboard-card, .content-section, .account-info, 
-.tab-navigation, .subscribed-model-card, .popup-content, .no-subscription-message, 
-.model-card, .models-section, .account-info-card, .settings-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover, .signup-card:hover, .cta-card:hover, .dashboard-card:hover, 
-.content-section:hover, .account-info:hover, .model-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 28px rgba(198,210,255,0.25);
-}
-
-/* Improve mobile responsiveness */
-@media (max-width: 768px) {
-    .form-group input {
-        padding: 0.9rem;
-        font-size: 16px; /* Prevents iOS zoom on focus */
-    }
-    
-    .btn, .action-button, .cta-button {
-        padding: 0.9rem 1.3rem;
-        font-size: 1rem;
-    }
-    
-    .form-group {
-        margin-bottom: 1.2rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .signup-form {
-        padding: 1.5rem;
-    }
-    
-    .form-group input {
-        padding: 0.8rem;
-    }
-    
-    .btn, .action-button, .cta-button {
-        padding: 0.8rem 1.2rem;
-    }
-    
-    /* Make buttons bigger on touch devices */
-    .btn, button, .action-button, .cta-button, input[type="submit"] {
-        min-height: 44px;
-    }
-}
-
-/* Add iOS and touch-specific improvements */
-@supports (-webkit-touch-callout: none) {
-    input, select, textarea, button {
-        font-size: 16px !important; /* Prevents zoom on focus in iOS */
-    }
-    
-    .btn, button, .action-button, .cta-button, input[type="submit"] {
-        min-height: 44px; /* Apple recommended touch target size */
-    }
 }
 
 .login-link {
