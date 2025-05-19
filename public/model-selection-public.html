@@ -2,288 +2,497 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#050505">
-    <title>Explore Models | ThreadPay Secure Payment Platform</title>
-    <!-- Favicon and styles omitted for brevity -->
-    <link rel="stylesheet" href="/styles/styles.css">
-    <link rel="stylesheet" href="/styles/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        /* Unified Button Styles */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--accent);
-            color: var(--darker);
-            border: none;
-            border-radius: 12px;
-            padding: 0.8rem 1.5rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
-            text-decoration: none;
-            letter-spacing: 0.2px;
-        }
-        .btn:hover {
-            background-color: #B4C1FF;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
-        }
-        .btn:active {
-            transform: translateY(-1px);
-        }
-        .btn i {
-            margin-right: 0.7rem;
-        }
-        .btn-secondary {
-            background-color: var(--primary-light);
-            color: var(--dark);
-            border: 1px solid rgba(211, 209, 218, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-        }
-        .btn-secondary:hover {
-            background-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-        }
-        .btn-success {
-            background-color: rgba(46, 204, 113, 0.9);
-            color: white;
-        }
-        .btn-success:hover {
-            background-color: rgba(46, 204, 113, 1);
-        }
-        .btn-full {
-            width: 100%;
-        }
-        .model-card {
-            background-color: var(--light);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 1.2rem 1.2rem;
-            border: 1px solid rgba(211, 209, 218, 0.1);
-            margin-bottom: 1.5rem;
-            margin-top: 0.75rem;
-        }
-        .model-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .model-image-container {
-            flex: 0 0 auto;
-            margin-right: 1.2rem;
-        }
-        .model-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            background-color: rgba(211, 209, 218, 0.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            border: 2px solid var(--primary-light);
-            transition: all 0.3s ease;
-        }
-        .model-card:hover .model-image {
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.13);
-            transform: scale(1.04);
-        }
-        .model-details {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .model-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
-            color: var(--dark);
-            line-height: 1.2;
-        }
-        .model-bio {
-            color: var(--dark);
-            font-size: 0.92rem;
-            line-height: 1.5;
-            margin-bottom: 1.1rem;
-            max-height: 2.6em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            opacity: 0.85;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ThreadPay - Featured Creators</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
-    <div class="bg-blur"></div>
-    <div class="dashboard-container">
-        <header class="dashboard-header">
-            <a href="/">
-                <div class="logo">ThreadPay</div>
-            </a>
-            <div class="header-controls">
-                <a href="/login.html" class="btn btn-secondary">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span class="btn-text">Sign In</span>
-                </a>
-                <a href="/signup.html" class="btn btn-secondary">
-                    <i class="fas fa-user-plus"></i>
-                    <span class="btn-text">Sign Up</span>
-                </a>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">ThreadPay</a>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                    <li><a href="index.html#faq" class="nav-link">FAQ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="login.html" class="btn btn-secondary">Log in</a>
+                <a href="index.html#signup" class="btn btn-primary">Sign up</a>
             </div>
-        </header>
-        <div class="dashboard-content">
-            <div class="section-header">
-                <h2>Explore Creators</h2>
-                <p class="section-description">Discover and select your favorite creator to sign up with.</p>
-            </div>
-            <div id="loading-container" class="loading-container card">
-                <div class="loading-spinner"></div>
-                <p>Loading creators...</p>
-            </div>
-            <div id="empty-state" class="empty-state card" style="display: none;">
-                <div class="empty-icon">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h3 class="empty-message">No creators found</h3>
-                <p class="empty-description">We couldn't find any models available at the moment. Please check back later.</p>
-            </div>
-            <div id="model-grid" class="model-grid"></div>
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <i class="ri-menu-line"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <a href="index.html" class="logo">ThreadPay</a>
+            <button class="mobile-menu-close" aria-label="Close menu">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-body">
+            <ul class="mobile-nav-list">
+                <li class="mobile-nav-item">
+                    <a href="index.html#features" class="mobile-nav-link">
+                        <i class="ri-star-line mobile-nav-icon"></i>
+                        Features
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="index.html#pricing" class="mobile-nav-link">
+                        <i class="ri-price-tag-3-line mobile-nav-icon"></i>
+                        Pricing
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="index.html#faq" class="mobile-nav-link">
+                        <i class="ri-question-line mobile-nav-icon"></i>
+                        FAQ
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="login.html" class="mobile-nav-link">
+                        <i class="ri-login-box-line mobile-nav-icon"></i>
+                        Log in
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mobile-menu-footer">
+            <a href="index.html#signup" class="btn btn-primary btn-block">Sign up for free</a>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+
+    <!-- Featured Creators Section -->
+    <section class="creators-section">
+        <div class="container">
+            <div class="section-header">
+                <h1 class="section-title">Featured Creators</h1>
+                <p class="section-description">Discover and support exceptional talent from our hand-selected creator community.</p>
+            </div>
+
+            <div class="creators-filter">
+                <div class="search-wrapper">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" id="creatorSearch" class="search-input" placeholder="Search creators...">
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="art">Art</button>
+                    <button class="filter-btn" data-filter="music">Music</button>
+                    <button class="filter-btn" data-filter="writing">Writing</button>
+                    <button class="filter-btn" data-filter="photography">Photography</button>
+                </div>
+            </div>
+
+            <div class="creators-grid" id="creatorsGrid">
+                <!-- Creator cards will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Creator Modal -->
+    <div class="modal-overlay" id="creatorModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Creator Details</h3>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="creatorModalContent">
+                <!-- Creator details will be dynamically loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Close</button>
+                <a href="login.html" class="btn btn-primary">Subscribe</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div class="no-results" id="noResults">
+        <div class="empty-state">
+            <i class="ri-search-eye-line empty-icon"></i>
+            <h3 class="empty-title">No creators found</h3>
+            <p class="empty-description">Try adjusting your search or filter to find what you're looking for.</p>
+            <button class="btn btn-primary reset-search-btn">Reset search</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">ThreadPay</a>
+                <p class="footer-about">ThreadPay is the most trusted platform for creators to monetize their content. Fast, simple, and secure payments.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <i class="ri-twitter-x-fill"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <i class="ri-instagram-line"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <i class="ri-facebook-fill"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="LinkedIn">
+                        <i class="ri-linkedin-fill"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <div class="footer-links-column">
+                    <h4>Product</h4>
+                    <ul class="footer-links-list">
+                        <li class="footer-link"><a href="#">Features</a></li>
+                        <li class="footer-link"><a href="#">Pricing</a></li>
+                        <li class="footer-link"><a href="#">Security</a></li>
+                        <li class="footer-link"><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h4>Resources</h4>
+                    <ul class="footer-links-list">
+                        <li class="footer-link"><a href="#">Blog</a></li>
+                        <li class="footer-link"><a href="#">Help Center</a></li>
+                        <li class="footer-link"><a href="#">Tutorials</a></li>
+                        <li class="footer-link"><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links-list">
+                        <li class="footer-link"><a href="#">About Us</a></li>
+                        <li class="footer-link"><a href="#">Careers</a></li>
+                        <li class="footer-link"><a href="#">Contact</a></li>
+                        <li class="footer-link"><a href="#">Legal</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 ThreadPay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // Supabase client initialization (public, no auth, match model-selection.html logic)
-        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        let supabase;
-        // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name=\"supabase-anon-key\"]')?.getAttribute('content');
-        let supabaseKey = null;
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                loadModels();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
-        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
-            console.log('Using API key from meta tag');
-            supabaseKey = metaKey;
-            initSupabase();
-        } else {
-            // Fetch API key from server config endpoint
-            console.log('Meta tag key not available, trying to fetch from server...');
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    if (config.supabaseKey) {
-                        console.log('Using API key from server');
-                        supabaseKey = config.supabaseKey;
-                    } else {
-                        // Fall back to hardcoded key
-                        console.log('Using hardcoded API key as fallback');
-                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    }
-                    initSupabase();
-                })
-                .catch(error => {
-                    console.error('Error fetching config:', error);
-                    // Fall back to hardcoded key
-                    console.log('Using hardcoded API key due to error');
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const menuClose = document.querySelector('.mobile-menu-close');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            menuToggle.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            menuClose.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            // Mobile menu links
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
                 });
-        }
-        const modelGrid = document.getElementById('model-grid');
-        const loadingContainer = document.getElementById('loading-container');
-        const emptyState = document.getElementById('empty-state');
-        async function loadModels() {
-            try {
-                loadingContainer.style.display = 'block';
-                modelGrid.style.display = 'none';
-                emptyState.style.display = 'none';
-                const { data: models, error } = await supabase
-                    .from('models')
-                    .select('*');
-                if (error) throw error;
-                if (!models || models.length === 0) {
-                    loadingContainer.style.display = 'none';
-                    emptyState.style.display = 'block';
+            });
+
+            // Sample creator data
+            const creators = [
+                {
+                    id: 1,
+                    name: "Alex Morgan",
+                    category: "art",
+                    imgUrl: "https://randomuser.me/api/portraits/women/32.jpg",
+                    shortDescription: "Digital artist specializing in fantasy illustrations",
+                    longDescription: "Alex is a renowned digital artist with over 10 years of experience creating breathtaking fantasy illustrations. Her work has been featured in major exhibitions and publications worldwide.",
+                    monthlyPrice: 12,
+                    followers: 5280,
+                    posts: 347
+                },
+                {
+                    id: 2,
+                    name: "Michael Chen",
+                    category: "music",
+                    imgUrl: "https://randomuser.me/api/portraits/men/22.jpg",
+                    shortDescription: "Composer and multi-instrumentalist",
+                    longDescription: "Michael is a classically trained musician who creates original compositions across multiple genres. He releases exclusive tracks, tutorials, and behind-the-scenes content for his subscribers.",
+                    monthlyPrice: 15,
+                    followers: 8120,
+                    posts: 215
+                },
+                {
+                    id: 3,
+                    name: "Sarah Williams",
+                    category: "writing",
+                    imgUrl: "https://randomuser.me/api/portraits/women/46.jpg",
+                    shortDescription: "Fiction author and creative writing coach",
+                    longDescription: "Sarah is an award-winning author who shares exclusive short stories, writing tips, and early access to her novels. She also provides personalized feedback to aspiring writers.",
+                    monthlyPrice: 10,
+                    followers: 3850,
+                    posts: 192
+                },
+                {
+                    id: 4,
+                    name: "David Thompson",
+                    category: "photography",
+                    imgUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+                    shortDescription: "Travel and wildlife photographer",
+                    longDescription: "David travels the world capturing stunning images of landscapes and wildlife. He shares photography tutorials, equipment reviews, and high-resolution downloads of his work.",
+                    monthlyPrice: 18,
+                    followers: 12400,
+                    posts: 523
+                },
+                {
+                    id: 5,
+                    name: "Emily Rodriguez",
+                    category: "art",
+                    imgUrl: "https://randomuser.me/api/portraits/women/15.jpg",
+                    shortDescription: "Watercolor artist and instructor",
+                    longDescription: "Emily specializes in watercolor techniques and offers step-by-step tutorials, live painting sessions, and downloadable templates for her subscribers.",
+                    monthlyPrice: 14,
+                    followers: 6730,
+                    posts: 278
+                },
+                {
+                    id: 6,
+                    name: "James Wilson",
+                    category: "music",
+                    imgUrl: "https://randomuser.me/api/portraits/men/78.jpg",
+                    shortDescription: "Electronic music producer and DJ",
+                    longDescription: "James creates electronic music across various sub-genres. He shares production techniques, sample packs, and exclusive tracks with his community.",
+                    monthlyPrice: 20,
+                    followers: 9350,
+                    posts: 320
+                },
+                {
+                    id: 7,
+                    name: "Olivia Parker",
+                    category: "writing",
+                    imgUrl: "https://randomuser.me/api/portraits/women/28.jpg",
+                    shortDescription: "Poet and spoken word artist",
+                    longDescription: "Olivia crafts powerful poetry and spoken word pieces. She shares her creative process, exclusive readings, and personalized poetry for special occasions.",
+                    monthlyPrice: 8,
+                    followers: 2970,
+                    posts: 158
+                },
+                {
+                    id: 8,
+                    name: "Robert Kim",
+                    category: "photography",
+                    imgUrl: "https://randomuser.me/api/portraits/men/45.jpg",
+                    shortDescription: "Portrait and fashion photographer",
+                    longDescription: "Robert captures stunning portraits and fashion photography. He shares lighting techniques, editing workflows, and exclusive photoshoots with his subscribers.",
+                    monthlyPrice: 22,
+                    followers: 15600,
+                    posts: 412
+                }
+            ];
+
+            const creatorsGrid = document.getElementById('creatorsGrid');
+            const creatorModal = document.getElementById('creatorModal');
+            const creatorModalContent = document.getElementById('creatorModalContent');
+            const modalCloseBtns = document.querySelectorAll('.modal-close, .modal-close-btn');
+            const noResults = document.getElementById('noResults');
+            const resetSearchBtn = document.querySelector('.reset-search-btn');
+            const creatorSearch = document.getElementById('creatorSearch');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            // Initialize with all creators
+            displayCreators(creators);
+            
+            // Creator search functionality
+            creatorSearch.addEventListener('input', filterCreators);
+            
+            // Filter buttons
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active state
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter creators
+                    filterCreators();
+                });
+            });
+            
+            // Reset search
+            resetSearchBtn.addEventListener('click', function() {
+                creatorSearch.value = '';
+                filterBtns.forEach(btn => {
+                    if (btn.dataset.filter === 'all') {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                displayCreators(creators);
+            });
+            
+            // Close modal
+            modalCloseBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    creatorModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            // Close modal when clicking outside
+            creatorModal.addEventListener('click', function(e) {
+                if (e.target === creatorModal) {
+                    creatorModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Filter creators based on search and category
+            function filterCreators() {
+                const searchTerm = creatorSearch.value.toLowerCase();
+                const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+                
+                const filteredCreators = creators.filter(creator => {
+                    const matchesSearch = creator.name.toLowerCase().includes(searchTerm) || 
+                                        creator.shortDescription.toLowerCase().includes(searchTerm);
+                    const matchesCategory = activeFilter === 'all' || creator.category === activeFilter;
+                    
+                    return matchesSearch && matchesCategory;
+                });
+                
+                displayCreators(filteredCreators);
+            }
+            
+            // Display creators
+            function displayCreators(creatorsToDisplay) {
+                creatorsGrid.innerHTML = '';
+                
+                if (creatorsToDisplay.length === 0) {
+                    noResults.style.display = 'block';
                     return;
                 }
-                displayModels(models);
-                loadingContainer.style.display = 'none';
-                modelGrid.style.display = 'grid';
-            } catch (error) {
-                console.error('Error loading models:', error);
-                loadingContainer.style.display = 'none';
-                emptyState.style.display = 'block';
-            }
-        }
-        function displayModels(models) {
-            modelGrid.innerHTML = '';
-            models.forEach(model => {
-                const modelCard = document.createElement('div');
-                modelCard.className = 'model-card';
-                modelCard.dataset.modelId = model.id;
-                modelCard.dataset.modelName = model.name;
-                // Add container for the image
-                const modelImageContainer = document.createElement('div');
-                modelImageContainer.className = 'model-image-container';
-                const modelImage = document.createElement('div');
-                modelImage.className = 'model-image';
-                // Build the correct image path using Supabase bucket (match model-selection.html)
-                let imagePath;
-                if (model.pictures) {
-                    if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-                    } else if (model.pictures.main) {
-                        imagePath = model.pictures.main;
-                    } else {
-                        imagePath = '/images/placeholder-model.png';
-                    }
-                } else {
-                    imagePath = '/images/placeholder-model.png';
-                }
-                modelImage.style.backgroundImage = `url(${imagePath})`;
-                modelImageContainer.appendChild(modelImage);
-                const modelDetails = document.createElement('div');
-                modelDetails.className = 'model-details';
-                modelDetails.innerHTML = `
-                    <h3 class=\"model-name\">${model.name}</h3>
-                    <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
-                    <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
-                `;
-                modelCard.appendChild(modelImageContainer);
-                modelCard.appendChild(modelDetails);
-                modelGrid.appendChild(modelCard);
-            });
-            // Add event listeners for selection
-            document.querySelectorAll('.select-model-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modelName = this.closest('.model-card').dataset.modelName?.trim();
-                    if (modelName) {
-                        window.location.href = `/invite/${encodeURIComponent(modelName)}`;
-                    }
+                
+                noResults.style.display = 'none';
+                
+                creatorsToDisplay.forEach(creator => {
+                    const creatorCard = document.createElement('div');
+                    creatorCard.className = 'creator-card';
+                    creatorCard.dataset.id = creator.id;
+                    
+                    creatorCard.innerHTML = `
+                        <div class="creator-card-header">
+                            <img src="${creator.imgUrl}" alt="${creator.name}" class="creator-image">
+                            <div class="creator-category-tag">${creator.category}</div>
+                        </div>
+                        <div class="creator-card-body">
+                            <h3 class="creator-name">${creator.name}</h3>
+                            <p class="creator-description">${creator.shortDescription}</p>
+                            <div class="creator-stats">
+                                <div class="creator-stat">
+                                    <i class="ri-user-line"></i>
+                                    <span>${formatNumber(creator.followers)}</span>
+                                </div>
+                                <div class="creator-stat">
+                                    <i class="ri-file-list-line"></i>
+                                    <span>${formatNumber(creator.posts)}</span>
+                                </div>
+                            </div>
+                            <div class="creator-price">
+                                <span class="price-amount">$${creator.monthlyPrice}</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                        </div>
+                        <div class="creator-card-footer">
+                            <button class="btn btn-outline btn-block view-creator-btn">View Details</button>
+                        </div>
+                    `;
+                    
+                    creatorsGrid.appendChild(creatorCard);
+                    
+                    // Add click event to view creator details
+                    const viewBtn = creatorCard.querySelector('.view-creator-btn');
+                    viewBtn.addEventListener('click', function() {
+                        showCreatorDetails(creator);
+                    });
+                    
+                    // Make the whole card clickable
+                    creatorCard.addEventListener('click', function(e) {
+                        if (!e.target.classList.contains('btn')) {
+                            showCreatorDetails(creator);
+                        }
+                    });
                 });
-            });
-        }
+            }
+            
+            // Show creator details in modal
+            function showCreatorDetails(creator) {
+                creatorModalContent.innerHTML = `
+                    <div class="creator-detail-header">
+                        <img src="${creator.imgUrl}" alt="${creator.name}" class="creator-detail-image">
+                        <div class="creator-detail-info">
+                            <h2 class="creator-detail-name">${creator.name}</h2>
+                            <div class="creator-detail-category">${creator.category}</div>
+                            <div class="creator-detail-stats">
+                                <div class="creator-stat">
+                                    <i class="ri-user-line"></i>
+                                    <span>${formatNumber(creator.followers)} followers</span>
+                                </div>
+                                <div class="creator-stat">
+                                    <i class="ri-file-list-line"></i>
+                                    <span>${formatNumber(creator.posts)} posts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="creator-detail-description">
+                        <h3>About ${creator.name}</h3>
+                        <p>${creator.longDescription}</p>
+                    </div>
+                    <div class="creator-detail-subscription">
+                        <h3>Subscription Details</h3>
+                        <div class="subscription-price">
+                            <span class="price-amount">$${creator.monthlyPrice}</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p>Subscribe to get exclusive access to all content and direct communication with ${creator.name}.</p>
+                        <ul class="subscription-benefits">
+                            <li><i class="ri-check-line"></i> Exclusive content updates</li>
+                            <li><i class="ri-check-line"></i> Direct messaging with creator</li>
+                            <li><i class="ri-check-line"></i> Early access to new releases</li>
+                            <li><i class="ri-check-line"></i> Community access</li>
+                        </ul>
+                    </div>
+                `;
+                
+                creatorModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Format numbers for better readability
+            function formatNumber(num) {
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(1) + 'M';
+                }
+                if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                }
+                return num.toString();
+            }
+        });
     </script>
 </body>
 </html> 

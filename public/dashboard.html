@@ -2,1229 +2,435 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#050505">
-    <title>Dashboard | ThreadPay Secure Payment Platform</title>
-    
-    <!-- Supabase API Key -->
-    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/styles/styles.css">
-    <link rel="stylesheet" href="/styles/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Add styles for the explore more container and button */
-        .explore-more-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 1.5rem;
-            padding: 1rem 0;
-        }
-        
-        .explore-more-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--primary-dark);
-            color: var(--darker);
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 
-                0 2px 10px rgba(232, 224, 213, 0.3),
-                0 5px 15px rgba(0, 0, 0, 0.05);
-            gap: 10px;
-        }
-        
-        .explore-more-button i {
-            font-size: 1.1rem;
-        }
-        
-        .explore-more-button:hover {
-            background-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 
-                0 5px 15px rgba(198, 210, 255, 0.4),
-                0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Enhanced model card styling */
-        .model-card {
-            background: linear-gradient(145deg, var(--primary-light), var(--primary));
-            border-radius: 16px;
-            overflow: hidden;
-            display: flex;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.2rem;
-            position: relative;
-        }
-        
-        .model-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-            border-color: var(--accent);
-        }
-        
-        .model-card:after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05));
-            pointer-events: none;
-        }
-        
-        .model-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 0 auto 1.2rem auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .model-image:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom right, rgba(198, 210, 255, 0.2), transparent);
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .model-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .model-card:hover .model-image img {
-            transform: scale(1.1);
-        }
-        
-        .model-info {
-            flex: 1;
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .model-name {
-            font-weight: 600;
-            font-size: 1.3rem;
-            margin-bottom: 0.6rem;
-            color: var(--darker);
-            font-family: 'Playfair Display', serif;
-            position: relative;
-            padding-bottom: 0.5rem;
-        }
-        
-        .model-name:after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background-color: var(--accent);
-            border-radius: 1px;
-        }
-        
-        .model-description {
-            font-size: 0.95rem;
-            color: var(--dark);
-            margin-bottom: 0.8rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            line-height: 1.5;
-            opacity: 0.8;
-        }
-        
-        .model-subscription-status {
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        
-        .model-subscription-status.active {
-            background-color: rgba(46, 204, 113, 0.15);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
-        }
-        
-        .model-subscription-status.inactive {
-            background-color: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-            border: 1px solid rgba(231, 76, 60, 0.3);
-        }
-        
-        /* Improve popup styles */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.75);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            backdrop-filter: blur(8px);
-        }
-        
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .popup-content {
-            background: linear-gradient(145deg, var(--primary-light), var(--primary));
-            border-radius: 18px;
-            width: 92%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            transform: translateY(20px);
-            opacity: 0;
-            transition: transform 0.4s ease, opacity 0.4s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .popup-overlay.active .popup-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .popup-header {
-            padding: 1.4rem 1.5rem;
-            border-bottom: 1px solid rgba(232, 224, 213, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .popup-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--darker);
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .popup-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 1.1rem;
-            color: var(--darker);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .popup-close:hover {
-            background: var(--accent);
-            transform: rotate(90deg);
-        }
-        
-        .popup-body {
-            padding: 1.8rem;
-        }
-        
-        .model-detail-header {
-            display: flex;
-            gap: 1.4rem;
-            margin-bottom: 2rem;
-        }
-        
-        .model-detail-image {
-            width: 110px;
-            height: 110px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            border: 3px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .model-detail-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .popup-content:hover .model-detail-image img {
-            transform: scale(1.05);
-        }
-        
-        .model-detail-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .model-detail-info h3 {
-            margin-bottom: 0.6rem;
-            font-size: 1.6rem;
-            color: var(--darker);
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .model-detail-description {
-            color: var(--dark);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            opacity: 0.8;
-        }
-        
-        .subscription-details-container {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 14px;
-            padding: 1.5rem;
-            margin-top: 1.2rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .subscription-details-container h4 {
-            margin-bottom: 1.2rem;
-            color: var(--darker);
-            font-size: 1.2rem;
-            font-weight: 600;
-            position: relative;
-            padding-bottom: 0.8rem;
-        }
-        
-        .subscription-details-container h4:after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-        
-        .subscription-detail-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(232, 224, 213, 0.2);
-        }
-        
-        .subscription-detail-item:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .subscription-detail-label {
-            color: var(--darker);
-            font-size: 0.95rem;
-            opacity: 0.75;
-            font-weight: 500;
-        }
-        
-        .subscription-detail-value {
-            font-weight: 600;
-            color: var(--darker);
-            font-size: 0.95rem;
-        }
-        
-        .popup-footer {
-            padding: 1.5rem;
-            border-top: 1px solid rgba(232, 224, 213, 0.2);
-            display: flex;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        #manage-subscription {
-            background-color: var(--accent);
-            color: var(--darker);
-            border: none;
-            padding: 0.9rem 2rem;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 15px rgba(198, 210, 255, 0.4);
-            font-size: 1rem;
-            min-width: 200px;
-        }
-        
-        #manage-subscription:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(198, 210, 255, 0.5);
-            background-color: #b4c1ff;
-        }
-        
-        /* Responsive adjustments for model cards */
-        @media (max-width: 580px) {
-            .model-card {
-                flex-direction: column;
-                max-width: 340px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            .model-image {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                margin: 0 auto 1.2rem auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .model-info {
-                padding: 1.5rem;
-                text-align: center;
-            }
-            
-            .model-name:after {
-                left: 50%;
-                transform: translateX(-50%);
-                width: 60px;
-            }
-        }
-        
-        /* Model section loading and container styles */
-        #subscribed-models-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            width: 100%;
-        }
-        
-        @media (min-width: 768px) {
-            #subscribed-models-container {
-                grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-            }
-        }
-        
-        .model-loading {
-            background: linear-gradient(145deg, var(--primary-light), var(--primary));
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 1.5s infinite;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        
-        .model-loading i {
-            font-size: 2rem;
-            color: var(--accent);
-            margin-bottom: 1rem;
-            animation: spin 2s infinite linear;
-        }
-        
-        .model-loading p {
-            font-size: 1rem;
-            color: var(--darker);
-            opacity: 0.8;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .no-subscription-message {
-            background: linear-gradient(145deg, var(--primary-light), var(--primary));
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .no-subscription-message h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--darker);
-            margin-bottom: 1rem;
-        }
-        
-        .no-subscription-message p {
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-            opacity: 0.8;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ThreadPay - Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
-    <div class="bg-blur"></div>
-    <div class="dashboard-hero-logo">ThreadPay</div>
-    <div class="dashboard-main-card">
-        <div class="dashboard-tabs">
-            <button class="tab-btn tab-active" data-tab="account">Account</button>
-            <button class="tab-btn" data-tab="settings">Settings</button>
-        </div>
-        <div class="dashboard-inner">
-            <div class="dashboard-left-card tab-section" id="tab-account">
-                <div class="account-info-card">
-                    <div class="user-name-large" id="account-name">User Name</div>
-                    <div class="account-email" id="account-email">user@example.com</div>
-                    <div class="account-created" id="account-created">Member since January 1, 2025</div>
-                    <div class="account-details">
-                        <div class="account-label">Subscription Status</div>
-                        <div class="model-subscription-status active" id="account-subscription-status">Active</div>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <a href="index.html" class="dashboard-logo">ThreadPay</a>
+            <div class="header-actions">
+                <button class="btn btn-icon notifications-btn" aria-label="Notifications">
+                    <i class="ri-notification-3-line"></i>
+                </button>
+                <button class="btn btn-icon profile-menu-btn" aria-label="Profile menu">
+                    <i class="ri-user-line"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <div class="account-summary dashboard-card">
+                <div class="account-avatar">JS</div>
+                <h2 class="account-name">John Smith</h2>
+                <p class="account-email">john.smith@example.com</p>
+                <div class="account-status active">Active Subscriber</div>
+            </div>
+
+            <div class="dashboard-tabs">
+                <button class="dashboard-tab active" data-tab="subscriptions">Subscriptions</button>
+                <button class="dashboard-tab" data-tab="payments">Payments</button>
+                <button class="dashboard-tab" data-tab="settings">Settings</button>
+            </div>
+
+            <div id="subscriptions" class="tab-content active">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">Active Subscriptions</h3>
                     </div>
-                </div>
-                <div class="dashboard-right-card">
-                    <div class="models-section">
-                        <h3>Your Creator Subscriptions</h3>
-                        <div id="subscribed-models-container" style="display: none;"></div>
-                        <div id="no-subscription-container" style="display: none;">
-                            <div class="no-subscription-message">
-                                <h3>No Active Subscriptions</h3>
-                                <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
-                                <button class="action-button" id="explore-models-button">Explore Available Creators</button>
+                    <div class="dashboard-card-body">
+                        <div class="model-card">
+                            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Alex Morgan" class="model-image">
+                            <div class="model-info">
+                                <h4 class="model-name">Alex Morgan</h4>
+                                <p class="model-description">Digital artist specializing in fantasy illustrations</p>
+                                <div class="model-subscription">
+                                    <span class="model-status active">Active</span> · $12/month
+                                </div>
                             </div>
-                        </div>
-                        <div id="explore-more-container" class="explore-more-container" style="display: none;">
-                            <button class="explore-more-button" id="explore-more-button">
-                                <i class="fas fa-plus"></i>
-                                <span>Explore More Creators</span>
+                            <button class="btn btn-icon model-action" aria-label="More options">
+                                <i class="ri-more-2-fill"></i>
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="dashboard-left-card tab-section" id="tab-settings" style="display:none;">
-                <div class="settings-card">
-                    <h2>Account Settings</h2>
-                    <form class="settings-form" id="settings-form">
-                        <div class="form-group">
-                            <label for="settings-name" class="form-label">Display Name</label>
-                            <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-email" class="form-label">Email Address</label>
-                            <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
-                            <p class="input-note">Email cannot be changed</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-password" class="form-label">New Password</label>
-                            <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
-                            <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
-                        </div>
-                        <button type="submit" class="action-button">Save Changes</button>
-                        <div id="settings-message" class="message-area"></div>
-                    </form>
-                    <button id="logout-button" class="logout-button" style="margin-top:1.5rem;width:100%;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span class="btn-text">Logout</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Subscription Details Popup -->
-    <div class="popup-overlay popup-sheet" id="model-popup">
-        <div class="popup-content">
-            <div class="popup-header">
-                <div class="popup-title">Subscription Details</div>
-                <button class="popup-close" id="popup-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="popup-body" id="popup-body"></div>
-            <div class="popup-footer">
-                <button class="action-button" id="manage-subscription">Manage Subscription</button>
-            </div>
-        </div>
-    </div>
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <script>
-        // Supabase client initialization
-        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        let supabase;
-        
-        // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-        let supabaseKey = null;
-        
-        // Check if the key is a real key or just the placeholder
-        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
-            console.log('Using API key from meta tag');
-            supabaseKey = metaKey;
-            initSupabase();
-        } else {
-            // Fetch API key from server config endpoint
-            console.log('Meta tag key not available, trying to fetch from server...');
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    if (config.supabaseKey) {
-                        console.log('Using API key from server');
-                        supabaseKey = config.supabaseKey;
-                    } else {
-                        // Fall back to hardcoded key
-                        console.log('Using hardcoded API key as fallback');
-                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    }
-                    initSupabase();
-                })
-                .catch(error => {
-                    console.error('Error fetching config:', error);
-                    // Fall back to hardcoded key
-                    console.log('Using hardcoded API key due to error');
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                });
-        }
-        
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                // Initialize the rest of the app once Supabase is ready
-                if (supabase) {
-                    initDashboard();
-                } else {
-                    console.error('Supabase client failed to initialize');
-                }
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
-        
-        // DOM elements
-        const userDisplayName = document.getElementById('user-display-name');
-        const accountName = document.getElementById('account-name');
-        const accountEmail = document.getElementById('account-email');
-        const accountCreated = document.getElementById('account-created');
-        const accountSubscriptionStatus = document.getElementById('account-subscription-status');
-        const subscribedModelsContainer = document.getElementById('subscribed-models-container');
-        const noSubscriptionContainer = document.getElementById('no-subscription-container');
-        const exploreMoreContainer = document.getElementById('explore-more-container');
-        const logoutButton = document.getElementById('logout-button');
-        const settingsForm = document.getElementById('settings-form');
-        const settingsName = document.getElementById('settings-name');
-        const settingsEmail = document.getElementById('settings-email');
-        const settingsPassword = document.getElementById('settings-password');
-        const settingsConfirmPassword = document.getElementById('settings-confirm-password');
-        const settingsMessage = document.getElementById('settings-message');
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const contentSections = document.querySelectorAll('.content-section');
-        const modelPopup = document.getElementById('model-popup');
-        const popupBody = document.getElementById('popup-body');
-        const popupClose = document.getElementById('popup-close');
-        const manageSubscriptionButton = document.getElementById('manage-subscription');
-        
-        // Get user data from local storage
-        const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
-        
-        // Check if user is logged in
-        if (!userData.id) {
-            window.location.href = '/login.html';
-        }
-        
-        // Initialize dashboard
-        async function initDashboard() {
-            try {
-                // Show loading state
-                subscribedModelsContainer.innerHTML = `
-                    <div class="model-loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Loading your subscriptions...</p>
-                    </div>
-                `;
-                subscribedModelsContainer.style.display = 'block';
-                noSubscriptionContainer.style.display = 'none';
-                
-                // Fetch the latest user data - using or condition to match either id or auth_id
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
-                    .single();
-                
-                if (profileError) throw profileError;
-                
-                // Update the UI with user data (name, email, etc.)
-                updateUserInterface(profile);
-                
-                // Load all user subscriptions (show all cards)
-                await loadUserSubscriptions();
-            } catch (error) {
-                console.error('Error initializing dashboard:', error);
-                // Show error state
-                subscribedModelsContainer.innerHTML = `
-                    <div class="model-loading" style="color: #e74c3c;">
-                        <i class="fas fa-exclamation-circle" style="color: #e74c3c; animation: none;"></i>
-                        <p>Could not load your subscriptions. Please try again later.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Update user interface with data
-        function updateUserInterface(profile) {
-            // Update settings form and account info
-            settingsName.value = profile.name || '';
-            settingsEmail.value = profile.email || '';
-            accountName.textContent = profile.name || 'User';
-            accountEmail.textContent = profile.email || 'Not provided';
-            accountCreated.textContent = `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            })}`;
-            // Set subscription status
-            if (profile.subscription_status) {
-                accountSubscriptionStatus.textContent = 'Active';
-                accountSubscriptionStatus.className = 'model-subscription-status active';
-            } else {
-                accountSubscriptionStatus.textContent = 'Inactive';
-                accountSubscriptionStatus.className = 'model-subscription-status inactive';
-            }
-            // Always update userData and localStorage with the latest stripe_customer_id
-            userData.stripe_customer_id = profile.stripe_customer_id || null;
-            localStorage.setItem('threadpay_user', JSON.stringify(userData));
-            // Debug log
-            console.log('Fetched profile:', profile);
-        }
-        
-        // Display subscribed model
-        function displaySubscribedModel(model, isSubscribed) {
-            // Show the subscribed models container
-            subscribedModelsContainer.style.display = 'block';
-            noSubscriptionContainer.style.display = 'none';
-            
-            // Build image path
-            let imagePath;
-            if (model.pictures && model.pictures.length > 0) {
-                imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-            } else {
-                imagePath = '/images/placeholder-model.jpg';
-            }
-            
-            // Create a new model card
-            const modelCard = document.createElement('div');
-            modelCard.className = 'model-card';
-            modelCard.innerHTML = `
-                <div class="model-image">
-                    <img src="${imagePath}" alt="${model.name}">
-                </div>
-                <div class="model-info">
-                    <div class="model-name">${model.name}</div>
-                    <div class="model-description">${model.bio || 'Exclusive content creator on ThreadPay'}</div>
-                    <div class="model-subscription-status active">Active Subscription</div>
-                </div>
-            `;
-            
-            // Clear any existing cards and add this one
-            subscribedModelsContainer.innerHTML = '';
-            subscribedModelsContainer.appendChild(modelCard);
-            
-            // Show the explore more container since we have at least one subscription
-            if (exploreMoreContainer) {
-                exploreMoreContainer.style.display = 'block';
-            }
-            
-            // Add click event listener to open popup
-            modelCard.addEventListener('click', () => openModelPopup(model, isSubscribed));
-        }
-        
-        // View available models button event
-        document.getElementById('explore-models-button')?.addEventListener('click', function() {
-            window.location.href = '/model-selection.html';
-        });
-        
-        // Add event listener for explore more button
-        document.getElementById('explore-more-button')?.addEventListener('click', function() {
-            window.location.href = '/model-selection.html';
-        });
-        
-        // Open model subscription popup
-        function openModelPopup(model, isSubscribed) {
-            // Populate popup content
-            popupBody.innerHTML = `
-                <div class="model-detail-header">
-                    <div class="model-detail-image">
-                        <img src="${model.pictures && model.pictures.length > 0 
-                            ? `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}` 
-                            : '/images/placeholder-model.jpg'}" alt="${model.name}">
-                    </div>
-                    <div class="model-detail-info">
-                        <h3>${model.name}</h3>
-                        <div class="model-detail-description">${model.bio || 'AI Companion Model'}</div>
-                    </div>
-                </div>
-                
-                <div class="subscription-details-container">
-                    <h4>Subscription Details</h4>
-                    
-                    ${isSubscribed ? `
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Status</div>
-                            <div class="subscription-detail-value">Active</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Plan</div>
-                            <div class="subscription-detail-value">Premium</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Price</div>
-                            <div class="subscription-detail-value">$19.99/month</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Next Billing Date</div>
-                            <div class="subscription-detail-value">${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            })}</div>
-                        </div>
-                    ` : `
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Status</div>
-                            <div class="subscription-detail-value">Not Subscribed</div>
-                        </div>
-                        <div class="subscription-detail-item">
-                            <div class="subscription-detail-label">Available Plans</div>
-                            <div class="subscription-detail-value">Basic: $9.99/month, Premium: $19.99/month</div>
-                        </div>
-                    `}
-                </div>
-            `;
-            
-            // Update manage subscription button text based on subscription status
-            manageSubscriptionButton.textContent = isSubscribed ? 'Manage Subscription' : 'Subscribe Now';
-            
-            // Show popup - using our new class-based system
-            modelPopup.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-            
-            // Force layout reflow to trigger css animations correctly
-            void modelPopup.offsetWidth;
-            
-            // Ensure popup content animation works
-            const popupContent = modelPopup.querySelector('.popup-content');
-            if (popupContent) {
-                popupContent.style.opacity = '1';
-                popupContent.style.transform = 'translateY(0)';
-            }
-        }
-        
-        // Close popup
-        popupClose.addEventListener('click', () => {
-            closeModelPopup();
-        });
-        
-        // Close popup when clicking outside
-        modelPopup.addEventListener('click', (e) => {
-            if (e.target === modelPopup) {
-                closeModelPopup();
-            }
-        });
-        
-        // Function to close the popup
-        function closeModelPopup() {
-            // Hide the popup content first with animation
-            const popupContent = modelPopup.querySelector('.popup-content');
-            if (popupContent) {
-                popupContent.style.opacity = '0';
-                popupContent.style.transform = 'translateY(20px)';
-            }
-            
-            // Then hide the overlay after a short delay
-            setTimeout(() => {
-                modelPopup.classList.remove('active');
-                document.body.style.overflow = ''; // Re-enable scrolling
-            }, 300);
-        }
-        
-        // Handle manage subscription button
-        manageSubscriptionButton.addEventListener('click', () => {
-            const isSubscribed = manageSubscriptionButton.textContent === 'Manage Subscription';
-        });
-        
-        // Handle settings form submission
-        settingsForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = settingsName.value.trim();
-            const password = settingsPassword.value.trim();
-            const confirmPassword = settingsConfirmPassword.value.trim();
-            
-            // Validate passwords if provided
-            if (password && password !== confirmPassword) {
-                showMessage(settingsMessage, 'Passwords do not match', 'error');
-                return;
-            }
-            
-            try {
-                // Build update object
-                const updates = { name };
-                
-                // Add password if provided
-                if (password) {
-                    // Hash password (in a real app, you'd do this on the server)
-                    const hashedPassword = await hashPassword(password);
-                    updates.password_hash = hashedPassword;
-                }
-                
-                // Update profile
-                const { error } = await supabase
-                    .from('profiles')
-                    .update(updates)
-                    .eq('id', userData.id);
-                
-                if (error) throw error;
-                
-                // Update local storage
-                userData.name = name;
-                localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                
-                // Update UI
-                // userDisplayName.textContent = name || 'User';
-                accountName.textContent = name || 'User';
-                
-                // Clear password fields
-                settingsPassword.value = '';
-                settingsConfirmPassword.value = '';
-                
-                // Show success message
-                showMessage(settingsMessage, 'Settings updated successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error updating settings:', error);
-                showMessage(settingsMessage, 'Error updating settings', 'error');
-            }
-        });
-        
-        // Handle logout
-        logoutButton.addEventListener('click', async function() {
-            // Clear local storage
-            localStorage.removeItem('threadpay_user');
-            
-            // Redirect to login page
-            window.location.href = '/login.html';
-        });
-        
-        // Set up tab navigation
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-                this.classList.add('tab-active');
-                if (this.dataset.tab === 'account') {
-                    document.getElementById('tab-account').style.display = '';
-                    document.getElementById('tab-settings').style.display = 'none';
-                } else {
-                    document.getElementById('tab-account').style.display = 'none';
-                    document.getElementById('tab-settings').style.display = '';
-                }
-            });
-        });
-        
-        // Helper function to show messages
-        function showMessage(element, message, type) {
-            element.textContent = message;
-            element.className = `message-area ${type}`;
-            
-            // Hide message after 3 seconds
-            setTimeout(() => {
-                element.className = 'message-area';
-                element.textContent = '';
-            }, 3000);
-        }
-        
-        // Helper function to hash password
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-        
-        // Function to load user subscriptions
-        async function loadUserSubscriptions() {
-            try {
-                // Fetch user's subscriptions from the user_model_subscriptions table
-                const { data: subscriptions, error } = await supabase
-                    .from('user_model_subscriptions')
-                    .select(`
-                        *,
-                        models:model_id (name, bio, pictures),
-                        packages:package_id (name, price, description)
-                    `)
-                    .eq('user_id', userData.id)
-                    .eq('is_active', true);
-                    
-                if (error) throw error;
-                
-                console.log('User subscriptions:', subscriptions);
-                
-                // If user has no subscriptions
-                if (!subscriptions || subscriptions.length === 0) {
-                    document.getElementById('subscribed-models-container').style.display = 'none';
-                    document.getElementById('no-subscription-container').style.display = 'block';
-                    document.getElementById('explore-more-container').style.display = 'none';
-                    return;
-                }
-                
-                // User has subscriptions
-                document.getElementById('subscribed-models-container').style.display = 'grid';
-                document.getElementById('no-subscription-container').style.display = 'none';
-                document.getElementById('explore-more-container').style.display = 'flex';
-                
-                // Clear the container before adding new cards
-                const modelContainer = document.getElementById('subscribed-models-container');
-                modelContainer.innerHTML = '';
-                
-                // Create a card for each subscription using the styled markup
-                subscriptions.forEach(subscription => {
-                    const model = subscription.models;
-                    const pkg = subscription.packages;
-                    if (!model) return; // Skip if model is not found
 
-                    // Format price with 2 decimal places
-                    const formattedPrice = new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 2
-                    }).format(pkg?.price || 0);
-
-                    // Get the image URL (handle both array and object for pictures)
-                    let imageUrl = '/images/placeholder-model.jpg';
-                    if (model.pictures) {
-                        if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                            imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-                        } else if (typeof model.pictures === 'object' && model.pictures.main) {
-                            imageUrl = model.pictures.main;
-                        }
-                    }
-
-                    const modelCard = document.createElement('div');
-                    modelCard.className = 'model-card';
-                    modelCard.dataset.modelId = subscription.model_id;
-                    modelCard.innerHTML = `
-                        <div class="model-image">
-                            <img src="${imageUrl}" alt="${model.name}">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">Recommended Creators</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="model-grid">
+                            <div class="model-card">
+                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Michael Chen" class="model-image">
+                                <div class="model-info">
+                                    <h4 class="model-name">Michael Chen</h4>
+                                    <p class="model-description">Composer and multi-instrumentalist</p>
+                                    <div class="model-subscription">$15/month</div>
+                                </div>
+                            </div>
+                            <div class="model-card">
+                                <img src="https://randomuser.me/api/portraits/women/46.jpg" alt="Sarah Williams" class="model-image">
+                                <div class="model-info">
+                                    <h4 class="model-name">Sarah Williams</h4>
+                                    <p class="model-description">Fiction author and creative writing coach</p>
+                                    <div class="model-subscription">$10/month</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="model-info">
-                            <div class="model-name">${model.name}</div>
-                            <div class="model-description">${model.bio || 'Creator on ThreadPay'}</div>
-                            <div class="model-subscription-status active">Active Subscription</div>
-                            <div class="model-card-footer">
-                                <button class="manage-subscription-btn action-button" data-subscription-id="${subscription.id}">
-                                    Manage
+                    </div>
+                    <div class="dashboard-card-footer">
+                        <a href="model-selection-public.html" class="btn btn-secondary">View all creators</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="payments" class="tab-content">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">Payment Methods</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="payment-method">
+                            <div class="payment-method-icon">
+                                <i class="ri-visa-line"></i>
+                            </div>
+                            <div class="payment-method-details">
+                                <h4 class="payment-method-name">Visa ending in 4242</h4>
+                                <p class="payment-method-expiry">Expires 12/25</p>
+                            </div>
+                            <div class="payment-method-actions">
+                                <span class="payment-method-badge">Default</span>
+                                <button class="btn btn-icon" aria-label="Edit payment method">
+                                    <i class="ri-pencil-line"></i>
                                 </button>
                             </div>
                         </div>
-                    `;
+                        <button class="btn btn-outline btn-block mt-4">
+                            <i class="ri-add-line"></i> Add Payment Method
+                        </button>
+                    </div>
+                </div>
 
-                    // Add the card to the container
-                    modelContainer.appendChild(modelCard);
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">Recent Transactions</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="transaction">
+                            <div class="transaction-icon">
+                                <i class="ri-bank-card-line"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4 class="transaction-title">Alex Morgan</h4>
+                                <p class="transaction-date">June 1, 2025</p>
+                            </div>
+                            <div class="transaction-amount">$12.00</div>
+                        </div>
+                        <div class="transaction">
+                            <div class="transaction-icon">
+                                <i class="ri-bank-card-line"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4 class="transaction-title">Alex Morgan</h4>
+                                <p class="transaction-date">May 1, 2025</p>
+                            </div>
+                            <div class="transaction-amount">$12.00</div>
+                        </div>
+                        <div class="transaction">
+                            <div class="transaction-icon">
+                                <i class="ri-bank-card-line"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4 class="transaction-title">Alex Morgan</h4>
+                                <p class="transaction-date">April 1, 2025</p>
+                            </div>
+                            <div class="transaction-amount">$12.00</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card-footer">
+                        <button class="btn btn-secondary">View all transactions</button>
+                    </div>
+                </div>
+            </div>
 
-                    // Add event listener to manage button
-                    const manageBtn = modelCard.querySelector('.manage-subscription-btn');
-                    manageBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openSubscriptionDetails(subscription);
-                    });
+            <div id="settings" class="tab-content">
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">Account Settings</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <form class="settings-form">
+                            <div class="form-section">
+                                <h4 class="form-section-title">Personal Information</h4>
+                                <div class="form-group">
+                                    <label for="fullName" class="form-label">Full Name</label>
+                                    <input type="text" id="fullName" class="form-control" value="John Smith">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" id="email" class="form-control" value="john.smith@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" id="phone" class="form-control" value="(123) 456-7890">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h4 class="form-section-title">Security</h4>
+                                <div class="form-group">
+                                    <label for="currentPassword" class="form-label">Current Password</label>
+                                    <input type="password" id="currentPassword" class="form-control" placeholder="Enter your current password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword" class="form-label">New Password</label>
+                                    <input type="password" id="newPassword" class="form-control" placeholder="Enter your new password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your new password">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h4 class="form-section-title">Notifications</h4>
+                                <div class="form-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Email notifications</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="smsNotifications">
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">SMS notifications</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="marketingEmails" checked>
+                                        <span class="checkmark"></span>
+                                        <span class="checkbox-label">Marketing emails</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block mt-4">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">Danger Zone</h3>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <p class="text-medium mb-3">These actions are irreversible. Please proceed with caution.</p>
+                        <button class="btn btn-danger btn-block mb-3">Cancel Subscriptions</button>
+                        <button class="btn btn-outline btn-block">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="#" class="bottom-nav-item active" data-tab="subscriptions">
+                <i class="ri-stack-line bottom-nav-icon"></i>
+                <span>Subscriptions</span>
+            </a>
+            <a href="#" class="bottom-nav-item" data-tab="payments">
+                <i class="ri-bank-card-line bottom-nav-icon"></i>
+                <span>Payments</span>
+            </a>
+            <a href="#" class="bottom-nav-item" data-tab="settings">
+                <i class="ri-settings-3-line bottom-nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <button class="fab" aria-label="Find new creators">
+            <i class="ri-add-line"></i>
+        </button>
+    </div>
+
+    <!-- Profile Menu Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Account</h3>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-menu-item">
+                    <i class="ri-user-line"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="profile-menu-item">
+                    <i class="ri-settings-3-line"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="profile-menu-item">
+                    <i class="ri-customer-service-2-line"></i>
+                    <span>Support</span>
+                </div>
+                <div class="profile-menu-divider"></div>
+                <div class="profile-menu-item logout">
+                    <i class="ri-logout-box-line"></i>
+                    <span>Log out</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Action Modal -->
+    <div class="modal-overlay" id="modelActionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Subscription Options</h3>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-menu-item">
+                    <i class="ri-message-3-line"></i>
+                    <span>Message Creator</span>
+                </div>
+                <div class="profile-menu-item">
+                    <i class="ri-star-line"></i>
+                    <span>View Creator Profile</span>
+                </div>
+                <div class="profile-menu-item">
+                    <i class="ri-history-line"></i>
+                    <span>View Payment History</span>
+                </div>
+                <div class="profile-menu-divider"></div>
+                <div class="profile-menu-item text-danger">
+                    <i class="ri-close-circle-line"></i>
+                    <span>Cancel Subscription</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab navigation
+            const tabButtons = document.querySelectorAll('.dashboard-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+            
+            function setActiveTab(tabId) {
+                // Update tab buttons
+                tabButtons.forEach(btn => {
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
                 });
-            } catch (error) {
-                console.error('Error loading user subscriptions:', error);
-                // Show error message
-                document.getElementById('subscribed-models-container').innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Failed to load your subscriptions. Please try again later.</p>
-                    </div>
-                `;
-                document.getElementById('subscribed-models-container').style.display = 'block';
-                document.getElementById('no-subscription-container').style.display = 'none';
-            }
-        }
-        
-        // Function to open subscription details popup
-        function openSubscriptionDetails(subscription) {
-            // Update popup content
-            const popupBody = document.getElementById('popup-body');
-            const model = subscription.models;
-            const pkg = subscription.packages;
-            
-            popupBody.innerHTML = `
-                <div class="popup-model-details">
-                    <div class="popup-model-image" style="background-image: url(${model.pictures?.main || '/images/placeholder-model.jpg'})"></div>
-                    <div class="popup-model-info">
-                        <h3 class="popup-model-name">${model.name}</h3>
-                        <p class="popup-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                    </div>
-                </div>
                 
-                <div class="popup-subscription-details">
-                    <h4>Subscription Details</h4>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value subscription-status-active">Active</span>
-                    </div>
-                    <div class="subscription-detail-row">
-                        <span class="detail-label">Next Payment:</span>
-                        <span class="detail-value">${formatDate(subscription.current_period_end || new Date())}</span>
-                    </div>
-                </div>
-            `;
-            
-            // Reset popup content style before showing
-            const popupContent = document.querySelector('#model-popup .popup-content');
-            if (popupContent) {
-                popupContent.style.opacity = '';
-                popupContent.style.transform = '';
+                // Update bottom nav
+                bottomNavItems.forEach(item => {
+                    if (item.dataset.tab === tabId) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Update tab content
+                tabContents.forEach(content => {
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
             }
             
-            // Show popup
-            document.getElementById('model-popup').classList.add('active');
-            
-            // Set up manage subscription button for Stripe portal
-            manageSubscriptionButton.onclick = async function () {
-                const customerId = subscription.stripe_customer_id || userData.stripe_customer_id;
-                console.log('Stripe customerId for portal:', customerId);
-                if (!customerId) {
-                    alert('Stripe customer ID not found. Please contact support or try re-logging in.');
-                    return;
-                }
-                manageSubscriptionButton.disabled = true;
-                manageSubscriptionButton.textContent = 'Redirecting...';
-                try {
-                    const response = await fetch('/api/create-portal-session', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ customerId, returnUrl: window.location.origin + '/dashboard.html' })
-                    });
-                    if (!response.ok) throw new Error('Failed to create Stripe portal session');
-                    const data = await response.json();
-                    window.location.href = data.url;
-                } catch (err) {
-                    alert('Error redirecting to Stripe portal: ' + err.message);
-                } finally {
-                    manageSubscriptionButton.disabled = false;
-                    manageSubscriptionButton.textContent = 'Manage Subscription';
-                }
-            };
-        }
-        
-        // Helper function to format date
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            if (isNaN(date.getTime())) {
-                return 'Unknown';
-            }
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-            });
-        }
-        
-        // Function to show notification
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <span class="notification-message">${message}</span>
-                <button class="notification-close"><i class="fas fa-times"></i></button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Show notification
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            
-            // Add event listener to close button
-            const closeBtn = notification.querySelector('.notification-close');
-            closeBtn.addEventListener('click', () => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    setActiveTab(button.dataset.tab);
+                });
             });
             
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 5000);
-        }
-        
-        // Initialize the dashboard
-        initDashboard();
+            bottomNavItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setActiveTab(item.dataset.tab);
+                });
+            });
+            
+            // Profile menu modal
+            const profileMenuBtn = document.querySelector('.profile-menu-btn');
+            const profileModal = document.getElementById('profileModal');
+            const profileModalClose = profileModal.querySelector('.modal-close');
+            
+            profileMenuBtn.addEventListener('click', () => {
+                profileModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            profileModalClose.addEventListener('click', () => {
+                profileModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            profileModal.addEventListener('click', (e) => {
+                if (e.target === profileModal) {
+                    profileModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Logout functionality
+            const logoutBtn = document.querySelector('.profile-menu-item.logout');
+            
+            logoutBtn.addEventListener('click', () => {
+                // In a real app, this would handle the logout process
+                window.location.href = 'index.html';
+            });
+            
+            // Model action modal
+            const modelActionBtn = document.querySelector('.model-action');
+            const modelActionModal = document.getElementById('modelActionModal');
+            const modelActionModalClose = modelActionModal.querySelector('.modal-close');
+            
+            modelActionBtn.addEventListener('click', () => {
+                modelActionModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            modelActionModalClose.addEventListener('click', () => {
+                modelActionModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            modelActionModal.addEventListener('click', (e) => {
+                if (e.target === modelActionModal) {
+                    modelActionModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // FAB button
+            const fabButton = document.querySelector('.fab');
+            
+            fabButton.addEventListener('click', () => {
+                window.location.href = 'model-selection-public.html';
+            });
+        });
     </script>
 </body>
 </html> 
