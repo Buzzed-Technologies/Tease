@@ -62,45 +62,49 @@
         .btn-full {
             width: 100%;
         }
+        /* Model card redesign - matching with model-selection.html */
         .model-card {
             background-color: var(--light);
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 1.2rem 1.2rem;
+            padding: 2rem;
             border: 1px solid rgba(211, 209, 218, 0.1);
-            margin-bottom: 1.5rem;
-            margin-top: 0.75rem;
+        }
+        .model-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(180, 193, 255, 0.3);
         }
         .model-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2rem;
             margin-top: 2rem;
         }
         .model-image-container {
             flex: 0 0 auto;
-            margin-right: 1.2rem;
+            margin-right: 2rem;
         }
         .model-image {
-            width: 80px;
-            height: 80px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             background-size: cover;
             background-position: center;
             background-color: rgba(211, 209, 218, 0.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            border: 2px solid var(--primary-light);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
             transition: all 0.3s ease;
         }
         .model-card:hover .model-image {
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.13);
-            transform: scale(1.04);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
         }
         .model-details {
             flex: 1 1 auto;
@@ -109,24 +113,135 @@
         }
         .model-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
             color: var(--dark);
             line-height: 1.2;
             text-align: left;
         }
         .model-bio {
             color: var(--dark);
-            font-size: 0.92rem;
-            line-height: 1.5;
-            margin-bottom: 1.1rem;
-            max-height: 2.6em;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+            max-height: 3.2em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             opacity: 0.85;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            padding: 1.5rem;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: var(--light);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            padding-top: 5rem;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 0 2rem 0 2rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--light);
+            z-index: 5;
+            border-radius: 24px 24px 0 0;
+            min-height: 44px;
+            margin-top: 2.5rem;
+        }
+        
+        .modal-close {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--dark);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            position: absolute;
+            top: 1.25rem;
+            right: 2rem;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 6rem 2rem 2rem 2rem;
+        }
+        
+        .package-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+        
+        .package-item {
+            background-color: var(--primary-light);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(211, 209, 218, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .package-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: rgba(180, 193, 255, 0.3);
         }
     </style>
 </head>
@@ -167,6 +282,22 @@
             <div id="model-grid" class="model-grid"></div>
         </div>
     </div>
+
+    <!-- Model Subscription Modal -->
+    <div id="model-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <!-- (empty, or you can add a modal title here if needed) -->
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Modal content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <script>
         // Supabase client initialization (public, no auth, match model-selection.html logic)
@@ -214,6 +345,10 @@
         const modelGrid = document.getElementById('model-grid');
         const loadingContainer = document.getElementById('loading-container');
         const emptyState = document.getElementById('empty-state');
+        const modelModal = document.getElementById('model-modal');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+        
         async function loadModels() {
             try {
                 loadingContainer.style.display = 'block';
@@ -237,6 +372,7 @@
                 emptyState.style.display = 'block';
             }
         }
+        
         function displayModels(models) {
             modelGrid.innerHTML = '';
             models.forEach(model => {
@@ -244,11 +380,14 @@
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
                 modelCard.dataset.modelName = model.name;
+                
                 // Add container for the image
                 const modelImageContainer = document.createElement('div');
                 modelImageContainer.className = 'model-image-container';
+                
                 const modelImage = document.createElement('div');
                 modelImage.className = 'model-image';
+                
                 // Build the correct image path using Supabase bucket (match model-selection.html)
                 let imagePath;
                 if (model.pictures) {
@@ -262,29 +401,93 @@
                 } else {
                     imagePath = '/images/placeholder-model.png';
                 }
+                
                 modelImage.style.backgroundImage = `url(${imagePath})`;
                 modelImageContainer.appendChild(modelImage);
+                
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
+                
                 modelDetails.innerHTML = `
                     <h3 class=\"model-name\">${model.name}</h3>
                     <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
                     <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
                 `;
+                
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
             });
+            
             // Add event listeners for selection
             document.querySelectorAll('.select-model-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const modelName = this.closest('.model-card').dataset.modelName?.trim();
-                    if (modelName) {
+                    const modelId = this.getAttribute('data-model-id');
+                    const modelCard = this.closest('.model-card');
+                    const modelName = modelCard.dataset.modelName?.trim();
+                    
+                    // Find the model data for this card
+                    const model = models.find(m => m.id === modelId);
+                    
+                    if (model) {
+                        // Show model details in modal
+                        openModelModal(model);
+                    } else if (modelName) {
                         window.location.href = `/invite/${encodeURIComponent(modelName)}`;
                     }
                 });
             });
         }
+
+        // Open model details modal
+        function openModelModal(model) {
+            // Build the correct image path
+            let imagePath;
+            if (model.pictures) {
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else if (model.pictures.main) {
+                    imagePath = model.pictures.main;
+                } else {
+                    imagePath = '/images/placeholder-model.png';
+                }
+            } else {
+                imagePath = '/images/placeholder-model.png';
+            }
+
+            // Set modal content
+            modalBody.innerHTML = `
+                <div class="modal-model-container">
+                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                    <div class="modal-model-info">
+                        <h3 class="modal-model-name">${model.name}</h3>
+                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    </div>
+                </div>
+                
+                <a href="/invite/${encodeURIComponent(model.name)}" class="btn btn-full">
+                    <i class="fas fa-user-plus"></i> Sign Up with ${model.name}
+                </a>
+            `;
+            
+            // Show modal
+            modelModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        // Close the modal
+        modalClose.addEventListener('click', () => {
+            modelModal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+        
+        // Close modal when clicking outside
+        modelModal.addEventListener('click', (e) => {
+            if (e.target === modelModal) {
+                modelModal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
     </script>
 </body>
 </html> 

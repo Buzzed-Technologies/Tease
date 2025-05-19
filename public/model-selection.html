@@ -1254,16 +1254,21 @@
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
-                
-                // Add event listener to button
-                const actionButton = modelDetails.querySelector('.btn');
-                actionButton.addEventListener('click', () => {
-                    const targetModel = modelsData.find(m => m.id === model.id);
+            });
+            
+            // Add event listeners for buttons
+            document.querySelectorAll('.model-card .btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modelId = this.getAttribute('data-model-id');
+                    const model = modelsData.find(m => m.id === modelId);
+                    
+                    // Check if user is subscribed to this model
+                    const isSubscribed = userSubscriptions.some(sub => sub.model_id === modelId);
                     
                     if (isSubscribed) {
                         // Navigate to dashboard to manage this subscription
                         window.location.href = '/dashboard.html';
-                    } else {
+                    } else if (model) {
                         // Open subscription modal
                         openSubscriptionModal(model);
                     }
