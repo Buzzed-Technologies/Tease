@@ -474,7 +474,7 @@
     <div class="app-container">
         <main>
             <!-- Hero Section -->
-            <section class="hero-section">
+            <section class="hero-section screen" id="hero">
                 <div class="hero-background">
                     <div class="bg-gradient"></div>
                 </div>
@@ -492,7 +492,7 @@
             </section>
             
             <!-- Features Section -->
-            <section class="features-section">
+            <section class="features-section screen" id="features">
                 <div class="features-container">
                     <div class="section-heading">
                         <h2 class="section-title">Why <span class="highlight">ThreadPay</span></h2>
@@ -525,7 +525,7 @@
             </section>
             
             <!-- CTA Section -->
-            <section class="cta-section">
+            <section class="cta-section screen" id="cta">
                 <div class="cta-background">
                     <div class="bg-gradient"></div>
                 </div>
@@ -578,11 +578,13 @@
     <script src="/scripts/auth.js"></script>
     
     <script>
-        // Smooth scroll when clicking on the scroll indicator
-        document.querySelector('.scroll-indicator').addEventListener('click', function() {
-            document.querySelector('.features-section').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
+        // Replace the default scroll handler with one that uses the TikTok-style system
+        document.querySelector('.scroll-indicator').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Using the global updateSection function from script.js
+            if (window.updateSection) {
+                window.updateSection(1); // Go to second section (index 1)
+            }
         });
     </script>
 </body>

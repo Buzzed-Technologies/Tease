@@ -9,244 +9,249 @@ document.addEventListener('DOMContentLoaded', () => {
     const footer = document.querySelector('footer');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
-    let currentSection = 0;
-    let isScrolling = false;
-    let touchStartY = 0;
-    let touchEndY = 0;
-    let startTime = 0;
-    let isInputFocused = false; // Track if an input is focused
-    
-    // Disable native scrolling
-    document.body.style.overflow = 'hidden';
-    app.style.height = '100vh';
-    app.style.overflow = 'hidden';
-    
-    // Set initial section
-    updateSection(0);
-    
-    // Prevent scroll jumping when input fields are focused
-    const formInputs = document.querySelectorAll('input, textarea, select');
-    formInputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            isInputFocused = true;
-            // Temporarily disable smooth transitions while focused
-            screens.forEach(screen => {
-                screen.style.transition = 'none';
+    // Only initialize the TikTok scrolling if we have screens to scroll through
+    if (screens.length > 0) {
+        let currentSection = 0;
+        let isScrolling = false;
+        let touchStartY = 0;
+        let touchEndY = 0;
+        let startTime = 0;
+        let isInputFocused = false; // Track if an input is focused
+        
+        // Disable native scrolling
+        document.body.style.overflow = 'hidden';
+        app.style.height = '100vh';
+        app.style.overflow = 'hidden';
+        
+        // Set initial section
+        updateSection(0);
+        
+        // Prevent scroll jumping when input fields are focused
+        const formInputs = document.querySelectorAll('input, textarea, select');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                isInputFocused = true;
+                // Temporarily disable smooth transitions while focused
+                screens.forEach(screen => {
+                    screen.style.transition = 'none';
+                });
+            });
+            
+            input.addEventListener('blur', () => {
+                // Delay to wait for potential new focus event
+                setTimeout(() => {
+                    if (!document.activeElement || 
+                        !document.activeElement.matches('input, textarea, select')) {
+                        isInputFocused = false;
+                        // Re-enable transitions when focus is lost
+                        screens.forEach(screen => {
+                            screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+                        });
+                    }
+                }, 100);
             });
         });
         
-        input.addEventListener('blur', () => {
-            // Delay to wait for potential new focus event
-            setTimeout(() => {
-                if (!document.activeElement || 
-                    !document.activeElement.matches('input, textarea, select')) {
-                    isInputFocused = false;
-                    // Re-enable transitions when focus is lost
-                    screens.forEach(screen => {
-                        screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
-                    });
-                }
-            }, 100);
-        });
-    });
-    
-    // Helper function to move to a specific section
-    function updateSection(index) {
-        if (index < 0) index = 0;
-        if (index > screens.length) index = screens.length;
-        
-        currentSection = index;
-        
-        // Special case for footer
-        if (index === screens.length) {
-            // Show footer
-            const lastScreenHeight = window.innerHeight;
-            const footerHeight = footer.offsetHeight;
+        // Helper function to move to a specific section
+        function updateSection(index) {
+            if (index < 0) index = 0;
+            if (index > screens.length) index = screens.length;
             
-            screens.forEach((screen, i) => {
-                if (i < screens.length - 1) {
-                    // Hide all but the last screen
-                    screen.style.transform = `translateY(-100%)`;
-                    screen.classList.remove('active');
-                } else {
-                    // Position the last screen to show footer
-                    screen.style.transform = `translateY(calc(-100% + ${lastScreenHeight - footerHeight}px))`;
-                    screen.classList.add('active');
-                }
-            });
+            currentSection = index;
             
-            footer.style.transform = 'translateY(0)';
-            footer.style.visibility = 'visible';
-            footer.style.opacity = '1';
-            
-            // Update URL hash
-            history.replaceState(null, null, `#footer`);
-            
-            return;
-        }
-        
-        // Normal section display
-        screens.forEach((screen, i) => {
-            if (i === index) {
-                screen.style.transform = 'translateY(0)';
-                screen.classList.add('active');
+            // Special case for footer
+            if (index === screens.length) {
+                // Show footer
+                const lastScreenHeight = window.innerHeight;
+                const footerHeight = footer.offsetHeight;
                 
-                // Add animation classes to children
-                const elements = screen.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
-                elements.forEach((el, index) => {
-                    el.style.transition = `transform 0.8s ease ${index * 0.08}s, opacity 0.8s ease ${index * 0.08}s`;
-                    el.classList.add('animate-in');
+                screens.forEach((screen, i) => {
+                    if (i < screens.length - 1) {
+                        // Hide all but the last screen
+                        screen.style.transform = `translateY(-100%)`;
+                        screen.classList.remove('active');
+                    } else {
+                        // Position the last screen to show footer
+                        screen.style.transform = `translateY(calc(-100% + ${lastScreenHeight - footerHeight}px))`;
+                        screen.classList.add('active');
+                    }
                 });
                 
+                footer.style.transform = 'translateY(0)';
+                footer.style.visibility = 'visible';
+                footer.style.opacity = '1';
+                
                 // Update URL hash
-                const id = screen.getAttribute('id');
-                if (id) {
-                    history.replaceState(null, null, `#${id}`);
+                history.replaceState(null, null, `#footer`);
+                
+                return;
+            }
+            
+            // Normal section display
+            screens.forEach((screen, i) => {
+                if (i === index) {
+                    screen.style.transform = 'translateY(0)';
+                    screen.classList.add('active');
+                    
+                    // Add animation classes to children
+                    const elements = screen.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
+                    elements.forEach((el, index) => {
+                        el.style.transition = `transform 0.8s ease ${index * 0.08}s, opacity 0.8s ease ${index * 0.08}s`;
+                        el.classList.add('animate-in');
+                    });
+                    
+                    // Update URL hash
+                    const id = screen.getAttribute('id');
+                    if (id) {
+                        history.replaceState(null, null, `#${id}`);
+                    }
+                } else if (i < index) {
+                    // Screens above current
+                    screen.style.transform = 'translateY(-100%)';
+                    screen.classList.remove('active');
+                } else {
+                    // Screens below current
+                    screen.style.transform = 'translateY(100%)';
+                    screen.classList.remove('active');
                 }
-            } else if (i < index) {
-                // Screens above current
-                screen.style.transform = 'translateY(-100%)';
-                screen.classList.remove('active');
-            } else {
-                // Screens below current
+            });
+            
+            // Hide footer when not on last section
+            footer.style.transform = 'translateY(100%)';
+            footer.style.visibility = 'hidden';
+            footer.style.opacity = '0';
+        }
+        
+        // Explicitly expose updateSection globally for other scripts to use
+        window.updateSection = updateSection;
+        console.log('updateSection is now available globally');
+        
+        // Set up initial screen positions
+        screens.forEach((screen, i) => {
+            if (i !== 0) {
                 screen.style.transform = 'translateY(100%)';
-                screen.classList.remove('active');
             }
+            
+            // Make sure screens are set to fixed positioning for smooth transitions
+            screen.style.position = 'fixed';
+            screen.style.top = '0';
+            screen.style.left = '0';
+            screen.style.width = '100%';
+            screen.style.height = '100vh';
+            screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+            screen.style.zIndex = `${10 - i}`;
         });
         
-        // Hide footer when not on last section
+        // Setup footer for the transition
+        footer.style.position = 'fixed';
+        footer.style.bottom = '0';
+        footer.style.left = '0';
+        footer.style.width = '100%';
         footer.style.transform = 'translateY(100%)';
+        footer.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease';
+        footer.style.zIndex = '1';
         footer.style.visibility = 'hidden';
-        footer.style.opacity = '0';
-    }
-    
-    // Explicitly expose updateSection globally for other scripts to use
-    window.updateSection = updateSection;
-    console.log('updateSection is now available globally');
-    
-    // Set up initial screen positions
-    screens.forEach((screen, i) => {
-        if (i !== 0) {
-            screen.style.transform = 'translateY(100%)';
+        
+        // Helper function to check if the event target is an interactive element
+        function isInteractiveElement(element) {
+            return element && (
+                element.tagName === 'A' ||
+                element.tagName === 'BUTTON' ||
+                element.closest('a, button')
+            );
         }
         
-        // Make sure screens are set to fixed positioning for smooth transitions
-        screen.style.position = 'fixed';
-        screen.style.top = '0';
-        screen.style.left = '0';
-        screen.style.width = '100%';
-        screen.style.height = '100vh';
-        screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
-        screen.style.zIndex = `${10 - i}`;
-    });
-    
-    // Setup footer for the transition
-    footer.style.position = 'fixed';
-    footer.style.bottom = '0';
-    footer.style.left = '0';
-    footer.style.width = '100%';
-    footer.style.transform = 'translateY(100%)';
-    footer.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease';
-    footer.style.zIndex = '1';
-    footer.style.visibility = 'hidden';
-    
-    // Helper function to check if the event target is an interactive element
-    function isInteractiveElement(element) {
-        return element && (
-            element.tagName === 'A' ||
-            element.tagName === 'BUTTON' ||
-            element.closest('a, button')
-        );
-    }
-    
-    // Handle wheel events for scrolling
-    window.addEventListener('wheel', (e) => {
-        if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
-        // Determine scroll direction
-        const direction = Math.sign(e.deltaY);
-        if (direction !== 0) {
-            isScrolling = true;
-            const nextSection = currentSection + direction;
-            if (nextSection >= 0 && nextSection <= screens.length) {
-                updateSection(nextSection);
+        // Handle wheel events for scrolling
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
+            // Determine scroll direction
+            const direction = Math.sign(e.deltaY);
+            if (direction !== 0) {
+                isScrolling = true;
+                const nextSection = currentSection + direction;
+                if (nextSection >= 0 && nextSection <= screens.length) {
+                    updateSection(nextSection);
+                }
+                // Debounce scrolling
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 800);
             }
-            // Debounce scrolling
-            setTimeout(() => {
-                isScrolling = false;
-            }, 800);
-        }
-    }, { passive: true });
-    
-    // Touch events for mobile
-    document.addEventListener('touchstart', (e) => {
-        // Skip touch handling if an input is focused or on a link/button
-        if (isInputFocused || isInteractiveElement(e.target)) return;
-        touchStartY = e.touches[0].clientY;
-        startTime = Date.now();
-    }, { passive: true });
-    
-    document.addEventListener('touchmove', (e) => {
-        if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
-        touchEndY = e.touches[0].clientY;
-    }, { passive: true });
-    
-    document.addEventListener('touchend', (e) => {
-        if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
-        const touchDiff = touchStartY - touchEndY;
-        const timeDiff = Date.now() - startTime;
-        // Detect swipe vs tap - velocity based
-        if (Math.abs(touchDiff) > 50 || (Math.abs(touchDiff) > 20 && timeDiff < 200)) {
-            isScrolling = true;
-            // Determine direction (positive = down, negative = up)
-            const direction = touchDiff > 0 ? 1 : -1;
-            const nextSection = currentSection + direction;
-            if (nextSection >= 0 && nextSection <= screens.length) {
-                updateSection(nextSection);
+        }, { passive: true });
+        
+        // Touch events for mobile
+        document.addEventListener('touchstart', (e) => {
+            // Skip touch handling if an input is focused or on a link/button
+            if (isInputFocused || isInteractiveElement(e.target)) return;
+            touchStartY = e.touches[0].clientY;
+            startTime = Date.now();
+        }, { passive: true });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
+            touchEndY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        document.addEventListener('touchend', (e) => {
+            if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
+            const touchDiff = touchStartY - touchEndY;
+            const timeDiff = Date.now() - startTime;
+            // Detect swipe vs tap - velocity based
+            if (Math.abs(touchDiff) > 50 || (Math.abs(touchDiff) > 20 && timeDiff < 200)) {
+                isScrolling = true;
+                // Determine direction (positive = down, negative = up)
+                const direction = touchDiff > 0 ? 1 : -1;
+                const nextSection = currentSection + direction;
+                if (nextSection >= 0 && nextSection <= screens.length) {
+                    updateSection(nextSection);
+                }
+                // Debounce scrolling
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 800);
             }
-            // Debounce scrolling
-            setTimeout(() => {
-                isScrolling = false;
-            }, 800);
-        }
-    }, { passive: true });
-    
-    // Keyboard navigation for accessibility
-    document.addEventListener('keydown', (e) => {
-        if (isScrolling || isInputFocused || isInteractiveElement(document.activeElement)) return; // Skip if input is focused or on a link/button
-        let direction = 0;
-        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
-            direction = 1;
-            e.preventDefault();
-        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-            direction = -1;
-            e.preventDefault();
-        }
-        if (direction !== 0) {
-            isScrolling = true;
-            const nextSection = currentSection + direction;
-            if (nextSection >= 0 && nextSection <= screens.length) {
-                updateSection(nextSection);
+        }, { passive: true });
+        
+        // Keyboard navigation for accessibility
+        document.addEventListener('keydown', (e) => {
+            if (isScrolling || isInputFocused || isInteractiveElement(document.activeElement)) return; // Skip if input is focused or on a link/button
+            let direction = 0;
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
+                direction = 1;
+                e.preventDefault();
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                direction = -1;
+                e.preventDefault();
             }
-            // Debounce scrolling
-            setTimeout(() => {
-                isScrolling = false;
-            }, 800);
-        }
-    });
-    
-    // Scroll indicator click
-    if (scrollIndicator) {
-        scrollIndicator.addEventListener('click', (e) => {
-            // Prevent if the click is on a link or button
-            if (isInteractiveElement(e.target)) return;
-            if (isScrolling) return;
-            isScrolling = true;
-            updateSection(currentSection + 1);
-            // Debounce scrolling
-            setTimeout(() => {
-                isScrolling = false;
-            }, 800);
+            if (direction !== 0) {
+                isScrolling = true;
+                const nextSection = currentSection + direction;
+                if (nextSection >= 0 && nextSection <= screens.length) {
+                    updateSection(nextSection);
+                }
+                // Debounce scrolling
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 800);
+            }
         });
+        
+        // Scroll indicator click
+        if (scrollIndicator) {
+            scrollIndicator.addEventListener('click', (e) => {
+                // Prevent if the click is on a link or button
+                if (isInteractiveElement(e.target)) return;
+                if (isScrolling) return;
+                isScrolling = true;
+                updateSection(currentSection + 1);
+                // Debounce scrolling
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 800);
+            });
+        }
+    } else {
+        console.log('No .screen elements found. TikTok scrolling not initialized.');
     }
     
     // "About Our Mission" link scrolls to mission section
