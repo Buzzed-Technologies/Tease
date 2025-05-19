@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* Additional custom styles for this page */
+        /* Enhanced custom styles for the dashboard */
         .dashboard-container {
             background-color: var(--primary-dark);
             min-height: 100vh;
@@ -407,6 +407,239 @@
             margin-right: auto;
         }
         
+        /* Form elements styling */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.875rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--darker);
+            background-color: var(--primary);
+            border: 1.5px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(90, 120, 255, 0.15);
+        }
+        
+        .form-input:disabled {
+            background-color: var(--primary-dark);
+            opacity: 0.75;
+            cursor: not-allowed;
+        }
+        
+        .input-note {
+            margin-top: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--gray);
+        }
+        
+        .message-area {
+            display: none;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 0.9375rem;
+        }
+        
+        .message-area.success {
+            background-color: rgba(56, 180, 124, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(56, 180, 124, 0.2);
+            display: block;
+        }
+        
+        .message-area.error {
+            background-color: rgba(255, 77, 79, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(255, 77, 79, 0.2);
+            display: block;
+        }
+        
+        /* Popup styling */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background-color: var(--primary);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .popup-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--primary);
+            z-index: 1;
+        }
+        
+        .popup-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--darker);
+        }
+        
+        .popup-close {
+            background: none;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+        
+        .popup-close:hover {
+            background-color: var(--light-gray);
+        }
+        
+        .popup-body {
+            padding: 1.5rem;
+        }
+        
+        .popup-footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            background-color: var(--primary-dark);
+        }
+        
+        /* Model detail styles */
+        .model-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .model-detail-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--light-gray);
+        }
+        
+        .model-detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .model-detail-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--darker);
+            margin: 0 0 0.5rem;
+        }
+        
+        .model-detail-description {
+            color: var(--gray);
+            font-size: 0.9375rem;
+        }
+        
+        .subscription-details-container {
+            background-color: var(--primary-dark);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+        
+        .subscription-details-container h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--darker);
+            margin-bottom: 1rem;
+        }
+        
+        .subscription-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .subscription-detail-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .subscription-detail-label {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+        
+        .subscription-detail-value {
+            font-weight: 500;
+            color: var(--darker);
+            font-size: 0.875rem;
+        }
+        
+        /* Mobile responsiveness */
         @media (max-width: 992px) {
             .dashboard-inner {
                 grid-template-columns: 1fr;
@@ -439,8 +672,54 @@
                 gap: 1.25rem;
             }
             
+            .btn-text {
+                display: inline-block; /* Keep button text visible on mobile */
+            }
+            
+            .logout-button, .action-button, .explore-more-button {
+                width: auto;  /* Allow buttons to expand based on content */
+                height: auto;
+                border-radius: var(--radius-sm);  /* Use standard border radius */
+                padding: 0.75rem 1.25rem;  /* Restore padding */
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .logout-button i, .action-button i, .explore-more-button i {
+                margin-right: 0.5rem;  /* Add spacing between icon and text */
+            }
+            
+            /* Allow user details to display properly on mobile */
+            .user-details {
+                flex-direction: row;
+                text-align: left;
+            }
+            
+            .user-avatar {
+                margin-right: 1rem;
+                margin-bottom: 0;
+            }
+            
+            /* Make sure subscription details display properly */
+            .subscription-detail-item {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .model-detail-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1rem;
+            }
+            
             .user-details {
                 flex-direction: column;
+                align-items: center;
                 text-align: center;
             }
             
@@ -449,21 +728,23 @@
                 margin-bottom: 1rem;
             }
             
-            .btn-text {
-                display: none;
+            .subscription-detail-item {
+                flex-direction: column;
+                gap: 0.25rem;
             }
-            
-            .logout-button, .action-button {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                padding: 0;
-                justify-content: center;
-            }
-            
-            .logout-button i, .action-button i {
-                margin-right: 0;
-            }
+        }
+        
+        /* Add smooth transitions for tabs */
+        .tab-section {
+            transition: opacity 0.15s ease-in-out;
+        }
+        
+        #tab-account {
+            opacity: 1;
+        }
+        
+        #tab-settings {
+            opacity: 0;
         }
     </style>
 </head>
@@ -514,14 +795,14 @@
                                     <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
                                     <button class="action-button" id="explore-models-button">
                                         <i class="fas fa-search"></i>
-                                        <span>Explore Available Creators</span>
+                                        <span class="btn-text">Explore Available Creators</span>
                                     </button>
                                 </div>
                             </div>
                             <div id="explore-more-container" class="explore-more-container" style="display: none;">
                                 <a href="/model-selection.html" class="explore-more-button">
                                     <i class="fas fa-plus"></i>
-                                    <span>Explore More Creators</span>
+                                    <span class="btn-text">Explore More Creators</span>
                                 </a>
                             </div>
                         </div>
@@ -549,7 +830,7 @@
                                 </div>
                                 <button type="submit" class="action-button">
                                     <i class="fas fa-save"></i>
-                                    <span>Save Changes</span>
+                                    <span class="btn-text">Save Changes</span>
                                 </button>
                                 <div id="settings-message" class="message-area"></div>
                             </form>
@@ -572,7 +853,7 @@
                 <div class="popup-footer">
                     <button class="action-button" id="manage-subscription">
                         <i class="fas fa-cog"></i>
-                        <span>Manage Subscription</span>
+                        <span class="btn-text">Manage Subscription</span>
                     </button>
                 </div>
             </div>
@@ -590,12 +871,14 @@
         <template id="model-card-template">
             <div class="model-card">
                 <div class="model-image">
-                    <img src="" alt="">
+                    <img src="" alt="Creator Image">
                 </div>
                 <div class="model-info">
-                    <h3 class="model-name"></h3>
-                    <p class="model-description"></p>
-                    <div class="model-subscription-status active">Active Subscription</div>
+                    <h3 class="model-name">Creator Name</h3>
+                    <p class="model-description">Creator description will appear here</p>
+                    <div class="model-subscription-status active">
+                        <span>Active Subscription</span>
+                    </div>
                 </div>
             </div>
         </template>
@@ -802,10 +1085,22 @@
                     const card = document.importNode(template.content, true).querySelector('.model-card');
                     
                     // Fill in the card details
-                    card.querySelector('.model-name').textContent = model.name;
+                    card.querySelector('.model-name').textContent = model.name || 'Creator';
                     card.querySelector('.model-description').textContent = model.bio || 'Creator on ThreadPay';
-                    card.querySelector('.model-image img').src = imageUrl;
-                    card.querySelector('.model-image img').alt = model.name;
+                    
+                    // Handle image loading errors
+                    const imgElement = card.querySelector('.model-image img');
+                    imgElement.src = imageUrl;
+                    imgElement.alt = model.name || 'Creator';
+                    imgElement.onerror = function() {
+                        this.src = '/images/placeholder-model.jpg';
+                    };
+                    
+                    // Make sure subscription status displays correctly
+                    const statusElement = card.querySelector('.model-subscription-status');
+                    statusElement.innerHTML = '<span>Active Subscription</span>';
+                    
+                    // Set dataset values for handling clicks
                     card.dataset.modelId = subscription.model_id;
                     card.dataset.subscriptionId = subscription.id;
 
@@ -850,7 +1145,7 @@
             popupBody.innerHTML = `
                 <div class="model-detail-header">
                     <div class="model-detail-image">
-                        <img src="${imageUrl}" alt="${model.name}">
+                        <img src="${imageUrl}" alt="${model.name}" onerror="this.src='/images/placeholder-model.jpg'">
                     </div>
                     <div class="model-detail-info">
                         <h3>${model.name}</h3>
@@ -862,7 +1157,9 @@
                     <h4>Subscription Details</h4>
                     <div class="subscription-detail-item">
                         <div class="subscription-detail-label">Status</div>
-                        <div class="subscription-detail-value">Active</div>
+                        <div class="subscription-detail-value">
+                            <span class="model-subscription-status active">Active</span>
+                        </div>
                     </div>
                     <div class="subscription-detail-item">
                         <div class="subscription-detail-label">Plan</div>
@@ -892,7 +1189,7 @@
                     return;
                 }
                 manageSubscriptionButton.disabled = true;
-                manageSubscriptionButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Redirecting...</span>';
+                manageSubscriptionButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span class="btn-text">Redirecting...</span>';
                 try {
                     const response = await fetch('/api/create-portal-session', {
                         method: 'POST',
@@ -906,7 +1203,7 @@
                     alert('Error redirecting to Stripe portal: ' + err.message);
                 } finally {
                     manageSubscriptionButton.disabled = false;
-                    manageSubscriptionButton.innerHTML = '<i class="fas fa-cog"></i><span>Manage Subscription</span>';
+                    manageSubscriptionButton.innerHTML = '<i class="fas fa-cog"></i><span class="btn-text">Manage Subscription</span>';
                 }
             };
         }
@@ -998,11 +1295,39 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
                 this.classList.add('tab-active');
                 
-                // Show active tab section
+                // Show active tab section with a smooth transition
                 const tabId = this.dataset.tab;
-                document.querySelectorAll('.tab-section').forEach(section => {
-                    section.style.display = section.id === `tab-${tabId}` ? 'block' : 'none';
+                const tabSections = document.querySelectorAll('.tab-section');
+                
+                // First hide all sections with a transition
+                tabSections.forEach(section => {
+                    if (section.id !== `tab-${tabId}` && section.style.display !== 'none') {
+                        section.style.opacity = '0';
+                        setTimeout(() => {
+                            section.style.display = 'none';
+                            // Then show the active section with a transition
+                            const activeSection = document.getElementById(`tab-${tabId}`);
+                            if (activeSection) {
+                                activeSection.style.display = 'block';
+                                setTimeout(() => {
+                                    activeSection.style.opacity = '1';
+                                }, 50);
+                            }
+                        }, 150);
+                    }
                 });
+                
+                // If all sections are already hidden, just show the active one
+                const allHidden = Array.from(tabSections).every(section => section.style.display === 'none');
+                if (allHidden) {
+                    const activeSection = document.getElementById(`tab-${tabId}`);
+                    if (activeSection) {
+                        activeSection.style.display = 'block';
+                        setTimeout(() => {
+                            activeSection.style.opacity = '1';
+                        }, 50);
+                    }
+                }
             });
         });
         
