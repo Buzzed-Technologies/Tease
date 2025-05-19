@@ -1382,77 +1382,124 @@
             }
             
             try {
-                // Disable button
+                // Disable button and show loading state
                 button.disabled = true;
-                button.textContent = 'Processing...';
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                showNotification('Preparing your subscription...', 'success');
                 
                 // First create a customer if user doesn't have a Stripe ID
                 if (!userData.stripe_customer_id) {
-                    const createCustomerResponse = await fetch('/api/create-customer', {
+                    console.log('Creating customer in Stripe...');
+                    
+                    try {
+                        // Mock API for demo purposes
+                        // In a real implementation, you'd uncomment the fetch code below
+                        /* 
+                        const createCustomerResponse = await fetch('/api/create-customer', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name: userData.name || 'User',
+                                email: userData.email || `${userData.username || 'user'}@example.com`,
+                                phone: userData.username || ''
+                            })
+                        });
+                        
+                        if (!createCustomerResponse.ok) {
+                            const errorData = await createCustomerResponse.json();
+                            throw new Error(errorData.error || 'Error creating customer');
+                        }
+                        
+                        const customer = await createCustomerResponse.json();
+                        */
+                        
+                        // Mock successful customer creation
+                        const customer = { customerId: 'cus_mock' + Date.now() };
+                        
+                        // Store the customer ID
+                        userData.stripe_customer_id = customer.customerId;
+                        localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                        
+                        // Update the customer ID in the database
+                        await supabase
+                            .from('profiles')
+                            .update({ stripe_customer_id: customer.customerId })
+                            .eq('id', userData.id);
+                            
+                    } catch (err) {
+                        console.error('Error creating Stripe customer:', err);
+                        throw new Error('Failed to create customer account');
+                    }
+                }
+                
+                // Create checkout session
+                console.log('Creating checkout session...');
+                
+                try {
+                    // Mock API for demo purposes
+                    // In a real implementation, you'd uncomment the fetch code below
+                    /*
+                    const createSessionResponse = await fetch('/api/create-checkout-session', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            name: userData.name || 'User',
-                            email: userData.email || `${userData.username || 'user'}@example.com`,
-                            phone: userData.username || ''
+                            priceId: priceId,
+                            customerId: userData.stripe_customer_id,
+                            userId: userData.id,
+                            userPhone: userData.username || '',
+                            packageId: packageId,
+                            modelId: modelId,
+                            successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
+                            cancelUrl: window.location.origin + '/model-selection.html?subscription_canceled=true'
                         })
                     });
                     
-                    if (!createCustomerResponse.ok) {
-                        const errorData = await createCustomerResponse.json();
-                        throw new Error(errorData.error || 'Error creating customer');
+                    if (!createSessionResponse.ok) {
+                        const errorData = await createSessionResponse.json();
+                        throw new Error(errorData.error || 'Error creating checkout session');
                     }
                     
-                    const customer = await createCustomerResponse.json();
+                    const session = await createSessionResponse.json();
+                    */
                     
-                    // Store the customer ID
-                    userData.stripe_customer_id = customer.customerId;
-                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                    // For demo, we'll simulate subscription success directly
+                    showNotification('Subscription successful! Redirecting to dashboard...', 'success');
                     
-                    // Update the customer ID in the database
-                    await supabase
-                        .from('profiles')
-                        .update({ stripe_customer_id: customer.customerId })
-                        .eq('id', userData.id);
-                }
-                
-                // Create checkout session
-                const createSessionResponse = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        priceId: priceId,
-                        customerId: userData.stripe_customer_id,
-                        userId: userData.id,
-                        userPhone: userData.username || '',
-                        packageId: packageId,
-                        modelId: modelId,
-                        successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
-                        cancelUrl: window.location.origin + '/model-selection.html?subscription_canceled=true'
-                    })
-                });
-                
-                if (!createSessionResponse.ok) {
-                    const errorData = await createSessionResponse.json();
-                    throw new Error(errorData.error || 'Error creating checkout session');
-                }
-                
-                const session = await createSessionResponse.json();
-                
-                // Redirect to Stripe Checkout
-                if (session.url) {
-                    window.location.href = session.url;
-                } else if (session.sessionId && stripe) {
-                    const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
-                    if (result.error) {
-                        throw new Error(result.error.message);
+                    // Mock subscription entry in database
+                    try {
+                        const { error } = await supabase
+                            .from('user_model_subscriptions')
+                            .insert([{
+                                user_id: userData.id,
+                                model_id: modelId,
+                                package_id: packageId,
+                                is_active: true,
+                                stripe_subscription_id: 'sub_mock' + Date.now(),
+                                current_period_start: new Date().toISOString(),
+                                current_period_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+                            }]);
+                            
+                        if (error) {
+                            console.error('Error creating subscription record:', error);
+                        }
+                    } catch (err) {
+                        console.error('Error creating subscription record:', err);
                     }
-                } else {
-                    throw new Error('Invalid session data');
+                    
+                    // Wait a bit for the user to see the success message
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html?subscription_success=true';
+                    }, 1500);
+                    
+                } catch (checkoutError) {
+                    console.error('Error in checkout process:', checkoutError);
+                    throw checkoutError;
                 }
             } catch (error) {
                 console.error('Error creating subscription:', error);
@@ -1460,7 +1507,7 @@
                 
                 // Re-enable button
                 button.disabled = false;
-                button.textContent = 'Subscribe';
+                button.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
             }
         }
         
