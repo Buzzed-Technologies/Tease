@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invite | ThreadPay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FAFAFA">
+    <title>Join Creator | ThreadPay Secure Payment Platform</title>
+    
+    <!-- Supabase API Key -->
+    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -14,100 +18,485 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: var(--primary);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .invite-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-md);
+            flex: 1;
+        }
+        
+        .creator-card {
+            background-color: var(--light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--primary-dark);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+        }
+        
+        .creator-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto var(--spacing-lg);
+            display: block;
+            box-shadow: var(--shadow-sm);
+            background-color: var(--primary-dark);
+            overflow: hidden;
+        }
+        
+        .creator-name {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .creator-bio {
+            color: var(--dark-mid);
+            font-size: var(--font-size-md);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.5;
+        }
+        
+        .invite-form {
+            background-color: var(--light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--primary-dark);
+            padding: var(--spacing-xl);
+        }
+        
+        .form-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--primary-dark);
+            background-color: var(--primary-light);
+            color: var(--dark);
+            font-size: var(--font-size-md);
+            transition: border-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(81, 104, 244, 0.2);
+            outline: none;
+        }
+        
+        .form-input::placeholder {
+            color: var(--dark-light);
+        }
+        
+        .form-submit {
+            width: 100%;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .form-footer {
+            margin-top: var(--spacing-md);
+            text-align: center;
+            color: var(--dark-mid);
+            font-size: var(--font-size-sm);
+        }
+        
+        .form-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: var(--font-size-sm);
+            margin-top: var(--spacing-xs);
+            display: none;
+        }
+        
+        .form-input.error {
+            border-color: var(--error);
+        }
+        
+        .form-input.error + .error-message {
+            display: block;
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(81, 104, 244, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--accent);
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .creator-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .creator-name {
+                font-size: var(--font-size-xl);
+            }
+            
+            .creator-bio {
+                font-size: var(--font-size-sm);
+            }
+            
+            .invite-form {
+                padding: var(--spacing-lg);
+            }
+            
+            .form-title {
+                font-size: var(--font-size-lg);
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="invite-container">
-        <div class="invite-card">
-            <div class="invite-header">
+    <div class="app-container">
+        <header class="header">
+            <div class="container header-content">
                 <a href="/" class="logo">ThreadPay</a>
-                <h1>Creator Invitation</h1>
-                <p class="text-tertiary">Join our exclusive platform as a creator</p>
+                <div class="header-controls">
+                    <a href="/login.html" class="btn btn-sm">Sign In</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="invite-container">
+            <div id="loading-container" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading creator information...</p>
             </div>
             
-            <form id="invite-form" class="invite-form">
-                <div class="form-group">
-                    <label for="invite-code">Invitation Code</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-key"></i>
-                        <input type="text" id="invite-code" name="invite-code" placeholder="Enter your invitation code" required>
-                    </div>
+            <div id="creator-info" style="display: none;">
+                <div class="creator-card">
+                    <div id="creator-image" class="creator-image"></div>
+                    <h2 id="creator-name" class="creator-name">Creator Name</h2>
+                    <p id="creator-bio" class="creator-bio">Creator bio will appear here.</p>
                 </div>
                 
-                <div class="form-group">
-                    <label for="creator-name">Creator Name</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="creator-name" name="creator-name" placeholder="Your display name" required>
-                    </div>
+                <div class="invite-form">
+                    <h3 class="form-title">Join <span id="form-creator-name">Creator</span></h3>
+                    
+                    <form id="invite-form">
+                        <div class="form-group">
+                            <label for="user-email" class="form-label">Email</label>
+                            <input type="email" id="user-email" name="email" class="form-input" placeholder="Your email address" required>
+                            <div class="error-message" id="email-error">Please enter a valid email address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="user-phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="user-phone" name="phone" class="form-input" placeholder="Your phone number" required>
+                            <div class="error-message" id="phone-error">Please enter a valid phone number</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="user-password" class="form-label">Password</label>
+                            <input type="password" id="user-password" name="password" class="form-input" placeholder="Create a password" required>
+                            <div class="error-message" id="password-error">Password must be at least 8 characters</div>
+                        </div>
+                        
+                        <button type="submit" class="btn form-submit">Create Account</button>
+                        
+                        <div class="form-footer">
+                            Already have an account? <a href="/login.html">Sign in</a>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="form-group">
-                    <label for="telegram">Telegram Username</label>
-                    <div class="input-with-icon">
-                        <i class="fab fa-telegram"></i>
-                        <input type="text" id="telegram" name="telegram" placeholder="@username" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="payment-wallet">Wallet Address (Optional)</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-wallet"></i>
-                        <input type="text" id="payment-wallet" name="payment-wallet" placeholder="Your crypto wallet address">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" name="password" placeholder="Create a password" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirm-password">Confirm Password</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
-                    </div>
-                </div>
-                
-                <div class="form-error" id="invite-error"></div>
-                
-                <button type="submit" class="btn btn-primary btn-full" id="invite-button">
-                    <span class="btn-text">Create Account</span>
-                    <span class="btn-loading hidden">
-                        <i class="fas fa-circle-notch fa-spin"></i>
-                    </span>
-                </button>
-            </form>
+            </div>
             
-            <div class="invite-footer">
-                <p>Already have an account? <a href="/login.html" class="text-accent">Sign in</a></p>
+            <div id="not-found" style="display: none;" class="text-center mt-8">
+                <div class="creator-card">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-4 text-yellow-500"></i>
+                    <h2 class="creator-name">Creator Not Found</h2>
+                    <p class="creator-bio">We couldn't find the creator you're looking for. Please check the URL and try again.</p>
+                    <a href="/model-selection-public.html" class="btn mt-4">Browse All Creators</a>
+                </div>
             </div>
-        </div>
+        </main>
         
-        <div class="invite-success hidden" id="success-message">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
+        <footer>
+            <div class="container footer-content">
+                <div class="logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="/privacy-policy.html">Privacy Policy</a>
+                    <a href="/terms-of-service.html">Terms of Service</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
             </div>
-            <h2>Account Created Successfully!</h2>
-            <p>Welcome to ThreadPay! You can now log in with your credentials.</p>
-            <a href="/login.html" class="btn btn-primary">Go to Login</a>
-        </div>
-        
-        <div class="invite-background">
-            <div class="invite-pattern"></div>
-        </div>
+        </footer>
     </div>
     
-    <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <!-- Application scripts -->
-    <script src="/scripts/script.js"></script>
-    <script src="/scripts/invite.js"></script>
+    <script>
+        // Supabase client initialization
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        let supabase;
+        
+        // First try to get the key from meta tag
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
+        let supabaseKey = null;
+        
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                loadCreatorData();
+            } else {
+                console.error('Supabase client library not loaded');
+            }
+        }
+        
+        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+            console.log('Using API key from meta tag');
+            supabaseKey = metaKey;
+            initSupabase();
+        } else {
+            // Fetch API key from server config endpoint
+            console.log('Meta tag key not available, trying to fetch from server...');
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.supabaseKey) {
+                        console.log('Using API key from server');
+                        supabaseKey = config.supabaseKey;
+                    } else {
+                        // Fall back to hardcoded key
+                        console.log('Using hardcoded API key as fallback');
+                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    }
+                    initSupabase();
+                })
+                .catch(error => {
+                    console.error('Error fetching config:', error);
+                    // Fall back to hardcoded key
+                    console.log('Using hardcoded API key due to error');
+                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                });
+        }
+        
+        // Get model name from URL
+        const pathParts = window.location.pathname.split('/');
+        const modelName = pathParts.length > 2 ? decodeURIComponent(pathParts[2]) : null;
+        
+        async function loadCreatorData() {
+            const loadingContainer = document.getElementById('loading-container');
+            const creatorInfo = document.getElementById('creator-info');
+            const notFound = document.getElementById('not-found');
+            
+            if (!modelName) {
+                loadingContainer.style.display = 'none';
+                notFound.style.display = 'block';
+                return;
+            }
+            
+            try {
+                loadingContainer.style.display = 'flex';
+                creatorInfo.style.display = 'none';
+                notFound.style.display = 'none';
+                
+                // Get model data
+                const { data: models, error } = await supabase
+                    .from('models')
+                    .select('*')
+                    .ilike('name', modelName);
+                
+                if (error) throw error;
+                
+                if (!models || models.length === 0) {
+                    loadingContainer.style.display = 'none';
+                    notFound.style.display = 'block';
+                    return;
+                }
+                
+                const model = models[0];
+                
+                // Display model data
+                document.getElementById('creator-name').textContent = model.name;
+                document.getElementById('form-creator-name').textContent = model.name;
+                document.getElementById('creator-bio').textContent = model.bio || `Join ${model.name} on ThreadPay for exclusive content and direct messaging.`;
+                
+                // Build the correct image path using Supabase bucket
+                let imagePath;
+                if (model.pictures) {
+                    if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                    } else if (model.pictures.main) {
+                        imagePath = model.pictures.main;
+                    } else {
+                        imagePath = '/images/placeholder-model.png';
+                    }
+                } else {
+                    imagePath = '/images/placeholder-model.png';
+                }
+                
+                document.getElementById('creator-image').style.backgroundImage = `url(${imagePath})`;
+                
+                // Store model ID for form submission
+                document.getElementById('invite-form').dataset.modelId = model.id;
+                
+                loadingContainer.style.display = 'none';
+                creatorInfo.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading creator data:', error);
+                loadingContainer.style.display = 'none';
+                notFound.style.display = 'block';
+            }
+        }
+        
+        // Form validation and submission
+        const inviteForm = document.getElementById('invite-form');
+        
+        inviteForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('user-email').value;
+            const phone = document.getElementById('user-phone').value;
+            const password = document.getElementById('user-password').value;
+            const modelId = this.dataset.modelId;
+            
+            // Basic validation
+            let isValid = true;
+            
+            if (!validateEmail(email)) {
+                document.getElementById('user-email').classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('user-email').classList.remove('error');
+            }
+            
+            if (!validatePhone(phone)) {
+                document.getElementById('user-phone').classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('user-phone').classList.remove('error');
+            }
+            
+            if (password.length < 8) {
+                document.getElementById('user-password').classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('user-password').classList.remove('error');
+            }
+            
+            if (!isValid) return;
+            
+            // Show loading state
+            const submitBtn = inviteForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            
+            try {
+                // Sign up user
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    options: {
+                        data: {
+                            model_id: modelId
+                        }
+                    }
+                });
+                
+                if (authError) throw authError;
+                
+                if (authData) {
+                    // Create profile
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: authData.user.id,
+                                email: email,
+                                phone: phone,
+                                model_id: modelId,
+                                created_at: new Date().toISOString()
+                            }
+                        ]);
+                    
+                    if (profileError) throw profileError;
+                    
+                    // Redirect to dashboard or confirmation page
+                    window.location.href = '/dashboard.html';
+                }
+            } catch (error) {
+                console.error('Error creating account:', error);
+                alert('There was an error creating your account. Please try again.');
+                
+                // Reset form state
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+        
+        // Validation functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function validatePhone(phone) {
+            const re = /^[\d\+\-\.\(\) ]{7,15}$/;
+            return re.test(phone);
+        }
+    </script>
 </body>
 </html> 

@@ -30,127 +30,297 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
+    <div class="app-container">
+        <header class="header">
+            <div class="container header-content">
                 <div class="logo">ThreadPay</div>
-                <div class="header-nav">
-                    <a href="/login.html" class="btn btn-ghost">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Sign In
-                    </a>
-                </div>
+                <nav class="header-nav">
+                    <a href="/login.html" class="btn btn-sm">Sign In</a>
+                </nav>
             </div>
-        </div>
-    </header>
-    
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content text-center">
-                    <h1 class="glow-effect">Support <span class="text-primary">exceptional</span> creators</h1>
-                    <p>ThreadPay connects you with hand-picked, thoroughly trained creators. <br class="hidden md:flex">Your new destination for quality content.</p>
-                    <div class="hero-cta">
-                        <a href="/model-selection-public.html" class="btn btn-primary">
-                            <i class="fas fa-star"></i>
-                            Support a Creator
-                        </a>
+        </header>
+        
+        <main>
+            <!-- HERO SECTION -->
+            <section class="hero" id="hero">
+                <div class="container">
+                    <h1 class="hero-title">Support <span style="color: var(--accent);">Exceptional</span><br>Creators</h1>
+                    <p class="hero-subtitle">ThreadPay connects you with hand-picked, thoroughly trained creators.<br>Your new destination for quality content.</p>
+                    <div class="cta-wrapper">
+                        <a href="/model-selection-public.html" class="btn btn-lg">Support a Creator</a>
                     </div>
                 </div>
-            </div>
-        </section>
-        
-        <!-- Features Section -->
-        <section class="section features bg-surface">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Why <span class="text-primary">ThreadPay</span></h2>
-                    <p class="section-description">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
-                </div>
-                
-                <div class="feature-grid md:grid-cols-3">
-                    <div class="feature-item">
-                        <div class="feature-icon">
+            </section>
+            
+            <!-- ABOUT SECTION -->
+            <section class="section" id="about">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Why <span style="color: var(--accent);">ThreadPay</span></h2>
+                        <p class="section-description">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="card feature">
                             <i class="fas fa-medal"></i>
+                            <h3>Curated Quality</h3>
+                            <p>Every creator is hand-selected for exceptional talent</p>
                         </div>
-                        <h3 class="feature-title">Curated Quality</h3>
-                        <p class="feature-description">Every creator is hand-selected for exceptional talent</p>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">
+                        <div class="card feature">
                             <i class="fas fa-lock"></i>
+                            <h3>Secure Payments</h3>
+                            <p>Your financial details remain private and protected</p>
                         </div>
-                        <h3 class="feature-title">Secure Payments</h3>
-                        <p class="feature-description">Your financial details remain private and protected</p>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">
+                        <div class="card feature">
                             <i class="fas fa-heart"></i>
+                            <h3>Direct Support</h3>
+                            <p>Your contributions enable creators to focus on quality</p>
                         </div>
-                        <h3 class="feature-title">Direct Support</h3>
-                        <p class="feature-description">Your contributions enable creators to focus on quality</p>
                     </div>
                 </div>
-            </div>
-        </section>
-        
-        <!-- CTA Section -->
-        <section class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Get <span class="text-primary">Started</span></h2>
-                    <p class="section-description">Join our community of supporters and discover exceptional creators today.</p>
-                </div>
-                
-                <div class="flex flex-wrap gap-lg justify-center">
-                    <div class="card max-w-sm">
-                        <div class="text-center mb-lg">
-                            <i class="fas fa-user-plus text-primary text-4xl mb-md"></i>
-                            <h3 class="mb-sm">New to ThreadPay?</h3>
-                            <p class="text-secondary mb-lg">Create an account to start supporting your favorite creators</p>
-                        </div>
-                        <a href="/model-selection-public.html" class="btn btn-full">Sign Up</a>
+            </section>
+            
+            <!-- LOGIN/SIGNUP SECTION -->
+            <section class="section" id="login-signup">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Get <span style="color: var(--accent);">Started</span></h2>
+                        <p class="section-description">Join our community of supporters and discover exceptional creators today.</p>
                     </div>
                     
-                    <div class="card max-w-sm">
-                        <div class="text-center mb-lg">
-                            <i class="fas fa-sign-in-alt text-primary text-4xl mb-md"></i>
-                            <h3 class="mb-sm">Returning Supporter?</h3>
-                            <p class="text-secondary mb-lg">Sign in to continue supporting your creators</p>
+                    <div class="cta-options">
+                        <div class="card cta-card">
+                            <i class="fas fa-user-plus"></i>
+                            <h3>New to ThreadPay?</h3>
+                            <p>Create an account to start supporting your favorite creators</p>
+                            <a href="/model-selection-public.html" class="btn btn-full">Sign Up</a>
                         </div>
-                        <a href="/login.html" class="btn btn-full">Sign In</a>
+                        <div class="card cta-card">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <h3>Returning Supporter?</h3>
+                            <p>Sign in to continue supporting your creators</p>
+                            <a href="/login.html" class="btn btn-full">Sign In</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
+            </section>
+        </main>
+        
+        <!-- FOOTER SECTION -->
+        <footer>
+            <div class="container footer-content">
                 <div class="logo">ThreadPay</div>
                 <div class="footer-links">
                     <a href="/privacy-policy.html">Privacy Policy</a>
                     <a href="/terms-of-service.html">Terms of Service</a>
                 </div>
-                <div class="footer-copyright">
+                <div class="copyright">
                     &copy; 2025 ThreadPay. All rights reserved.
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
     
     <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     <!-- Application scripts -->
     <script src="/scripts/script.js"></script>
     <script src="/scripts/auth.js"></script>
+    
+    <style>
+        body {
+            background-color: var(--primary);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .hero {
+            padding: var(--spacing-2xl) 0;
+            text-align: center;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(81, 104, 244, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .hero-title {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-lg);
+            color: var(--dark-mid);
+            line-height: 1.6;
+        }
+        
+        .cta-wrapper {
+            margin-top: var(--spacing-lg);
+        }
+        
+        .section {
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .section-header h2 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .section-description {
+            font-size: var(--font-size-lg);
+            color: var(--dark-mid);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .feature {
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature i {
+            font-size: var(--font-size-3xl);
+            color: var(--accent);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .feature h3 {
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-lg);
+        }
+        
+        .feature p {
+            color: var(--dark-mid);
+            line-height: 1.5;
+        }
+        
+        #about {
+            background-color: var(--primary-light);
+        }
+        
+        #login-signup {
+            background-color: var(--primary);
+        }
+        
+        .cta-options {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .cta-card {
+            padding: var(--spacing-xl);
+            text-align: center;
+            max-width: 340px;
+            width: 100%;
+        }
+        
+        .cta-card i {
+            font-size: var(--font-size-3xl);
+            color: var(--accent);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .cta-card h3 {
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-xl);
+        }
+        
+        .cta-card p {
+            margin-bottom: var(--spacing-lg);
+            color: var(--dark-mid);
+        }
+        
+        footer {
+            margin-top: auto;
+        }
+        
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: var(--font-size-3xl);
+            }
+            
+            .hero-subtitle {
+                font-size: var(--font-size-lg);
+            }
+            
+            .section-header h2 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .section-description {
+                font-size: var(--font-size-md);
+            }
+            
+            .cta-options {
+                flex-direction: column;
+                align-items: center;
+                gap: var(--spacing-lg);
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .hero-subtitle {
+                font-size: var(--font-size-md);
+            }
+            
+            .section {
+                padding: var(--spacing-xl) 0;
+            }
+        }
+    </style>
 </body>
 </html> 

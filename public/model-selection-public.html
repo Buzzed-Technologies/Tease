@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore Creators | ThreadPay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FAFAFA">
+    <title>Explore Creators | ThreadPay Secure Payment Platform</title>
+    
+    <!-- Supabase API Key -->
+    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -14,159 +18,367 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: var(--primary);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .model-card {
+            background-color: var(--light);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--primary-dark);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .model-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .model-image-container {
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: center;
+        }
+        
+        .model-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background-color: var(--primary-dark);
+            overflow: hidden;
+        }
+        
+        .model-info {
+            padding: 0 var(--spacing-lg) var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .model-name {
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xs);
+            color: var(--dark);
+        }
+        
+        .model-bio {
+            color: var(--dark-mid);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .section-header h2 {
+            font-size: var(--font-size-3xl);
+            color: var(--dark);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .section-description {
+            color: var(--dark-mid);
+            font-size: var(--font-size-lg);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Loading state */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(81, 104, 244, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--accent);
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            background-color: var(--light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .empty-state .empty-icon {
+            font-size: var(--font-size-4xl);
+            color: var(--dark-light);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .empty-state .empty-message {
+            font-weight: 600;
+            font-size: var(--font-size-xl);
+            color: var(--dark);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .empty-state .empty-description {
+            color: var(--dark-mid);
+            font-size: var(--font-size-md);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .model-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: var(--spacing-md);
+            }
+            
+            .section-header h2 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .section-description {
+                font-size: var(--font-size-md);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header h2 {
+                font-size: var(--font-size-xl);
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
+    <div class="app-container">
+        <header class="header">
+            <div class="container header-content">
                 <a href="/" class="logo">ThreadPay</a>
-                <div class="header-nav">
-                    <a href="/login.html" class="btn btn-ghost">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Sign In
-                    </a>
+                <div class="header-controls">
+                    <a href="/login.html" class="btn btn-sm">Sign In</a>
                 </div>
             </div>
-        </div>
-    </header>
-    
-    <main class="creator-selection">
-        <div class="container">
-            <div class="section-header text-center">
-                <h1>Discover <span class="text-primary">Creators</span></h1>
-                <p class="text-tertiary">Explore our hand-picked creators and subscribe to unlock exclusive content</p>
+        </header>
+        
+        <main class="container" style="padding: var(--spacing-xl) var(--spacing-lg);">
+            <div class="section-header">
+                <h2>Explore Creators</h2>
+                <p class="section-description">Discover and select your favorite creator to sign up with.</p>
             </div>
             
-            <div class="creators-grid" id="creators-grid">
-                <!-- Creators will be loaded here dynamically -->
-                <div class="creators-loading">
-                    <div class="spinner"></div>
-                    <p>Loading creators...</p>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-    <!-- Creator Details Modal -->
-    <div class="modal" id="creator-modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2 id="modal-creator-name">Creator Name</h2>
-                <button class="modal-close" id="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
+            <!-- Loading state -->
+            <div id="loading-container" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading creators...</p>
             </div>
             
-            <div class="modal-body">
-                <div class="creator-profile">
-                    <div class="creator-gallery" id="modal-creator-gallery">
-                        <!-- Images will be loaded here -->
-                    </div>
-                    
-                    <div class="creator-bio" id="modal-creator-bio">
-                        Loading creator details...
-                    </div>
+            <!-- Empty state -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
                 </div>
-                
-                <div class="package-selection">
-                    <h3>Choose Your Package</h3>
-                    <div class="packages-list" id="modal-packages">
-                        <!-- Packages will be loaded here -->
-                    </div>
-                </div>
-                
-                <div class="form-container" id="modal-form-container">
-                    <h3>Complete Your Registration</h3>
-                    
-                    <form id="signup-form" class="auth-form">
-                        <input type="hidden" id="selected-model-id" name="model-id">
-                        <input type="hidden" id="selected-package-id" name="package-id">
-                        
-                        <div class="form-group">
-                            <label for="full-name">Full Name</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="age">Age</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-calendar"></i>
-                                <input type="number" id="age" name="age" min="18" placeholder="Must be 18+" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="telegram">Telegram Username</label>
-                            <div class="input-with-icon">
-                                <i class="fab fa-telegram"></i>
-                                <input type="text" id="telegram" name="telegram" placeholder="@username" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <div class="input-with-icon">
-                                <i class="far fa-envelope"></i>
-                                <input type="email" id="email" name="email" placeholder="For payment and notifications" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="password" name="password" placeholder="Create a password" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="confirm-password">Confirm Password</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-error" id="signup-error"></div>
-                        
-                        <button type="submit" class="btn btn-primary btn-full" id="subscribe-button">
-                            <span class="btn-text">Subscribe Now</span>
-                            <span class="btn-loading hidden">
-                                <i class="fas fa-circle-notch fa-spin"></i>
-                            </span>
-                        </button>
-                    </form>
-                </div>
+                <h3 class="empty-message">No creators found</h3>
+                <p class="empty-description">We couldn't find any models available at the moment. Please check back later.</p>
             </div>
-        </div>
-    </div>
-    
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
+            
+            <!-- Models grid -->
+            <div id="model-grid" class="model-grid"></div>
+        </main>
+        
+        <footer>
+            <div class="container footer-content">
                 <div class="logo">ThreadPay</div>
                 <div class="footer-links">
                     <a href="/privacy-policy.html">Privacy Policy</a>
                     <a href="/terms-of-service.html">Terms of Service</a>
                 </div>
-                <div class="footer-copyright">
+                <div class="copyright">
                     &copy; 2025 ThreadPay. All rights reserved.
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
     
-    <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    <!-- Application scripts -->
-    <script src="/scripts/script.js"></script>
-    <script src="/scripts/model-selection-public.js"></script>
+    <script>
+        // Supabase client initialization
+        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+        let supabase;
+        
+        // First try to get the key from meta tag
+        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
+        let supabaseKey = null;
+        
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                loadModels();
+            } else {
+                console.error('Supabase client library not loaded');
+            }
+        }
+        
+        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+            console.log('Using API key from meta tag');
+            supabaseKey = metaKey;
+            initSupabase();
+        } else {
+            // Fetch API key from server config endpoint
+            console.log('Meta tag key not available, trying to fetch from server...');
+            fetch('/api/config')
+                .then(response => response.json())
+                .then(config => {
+                    if (config.supabaseKey) {
+                        console.log('Using API key from server');
+                        supabaseKey = config.supabaseKey;
+                    } else {
+                        // Fall back to hardcoded key
+                        console.log('Using hardcoded API key as fallback');
+                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    }
+                    initSupabase();
+                })
+                .catch(error => {
+                    console.error('Error fetching config:', error);
+                    // Fall back to hardcoded key
+                    console.log('Using hardcoded API key due to error');
+                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                    initSupabase();
+                });
+        }
+        
+        const modelGrid = document.getElementById('model-grid');
+        const loadingContainer = document.getElementById('loading-container');
+        const emptyState = document.getElementById('empty-state');
+        
+        async function loadModels() {
+            try {
+                loadingContainer.style.display = 'flex';
+                modelGrid.style.display = 'none';
+                emptyState.style.display = 'none';
+                
+                const { data: models, error } = await supabase
+                    .from('models')
+                    .select('*');
+                    
+                if (error) throw error;
+                
+                if (!models || models.length === 0) {
+                    loadingContainer.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                
+                displayModels(models);
+                
+                loadingContainer.style.display = 'none';
+                modelGrid.style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading models:', error);
+                loadingContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+        
+        function displayModels(models) {
+            modelGrid.innerHTML = '';
+            
+            models.forEach(model => {
+                const modelCard = document.createElement('div');
+                modelCard.className = 'model-card';
+                modelCard.dataset.modelId = model.id;
+                modelCard.dataset.modelName = model.name;
+                
+                // Build the correct image path using Supabase bucket
+                let imagePath;
+                if (model.pictures) {
+                    if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                    } else if (model.pictures.main) {
+                        imagePath = model.pictures.main;
+                    } else {
+                        imagePath = '/images/placeholder-model.png';
+                    }
+                } else {
+                    imagePath = '/images/placeholder-model.png';
+                }
+                
+                modelCard.innerHTML = `
+                    <div class="model-image-container">
+                        <div class="model-image" style="background-image: url(${imagePath})"></div>
+                    </div>
+                    <div class="model-info">
+                        <h3 class="model-name">${model.name}</h3>
+                        <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                        <button class="btn" data-model-id="${model.id}">Select</button>
+                    </div>
+                `;
+                
+                modelGrid.appendChild(modelCard);
+                
+                // Make entire card clickable
+                modelCard.addEventListener('click', function() {
+                    const modelName = this.dataset.modelName?.trim();
+                    if (modelName) {
+                        window.location.href = `/invite/${encodeURIComponent(modelName)}`;
+                    }
+                });
+                
+                // Prevent button click from triggering card click
+                const btn = modelCard.querySelector('.btn');
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const modelName = modelCard.dataset.modelName?.trim();
+                    if (modelName) {
+                        window.location.href = `/invite/${encodeURIComponent(modelName)}`;
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html> 
