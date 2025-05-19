@@ -28,96 +28,543 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom styles for index page -->
+    <style>
+        /* Custom Landing Page Styles */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--primary);
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .hero-background .bg-gradient {
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--accent-light) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4rem;
+            padding-top: 1rem;
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: var(--darker);
+            letter-spacing: -0.03em;
+        }
+        
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--darker);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .hero-title .highlight {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            line-height: 1.5;
+            color: var(--gray);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+        
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background-color: #4A67E3;
+        }
+        
+        .hero-cta i {
+            margin-left: 0.75rem;
+        }
+        
+        .scroll-indicator {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .scroll-indicator:hover {
+            color: var(--accent);
+        }
+        
+        .scroll-indicator i {
+            font-size: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 5rem 1.5rem;
+            background-color: var(--primary-dark);
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-heading {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--darker);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .section-title .highlight {
+            color: var(--accent);
+        }
+        
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: var(--primary);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--light-gray);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-light);
+        }
+        
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background-color: var(--accent-light);
+            color: var(--accent);
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .feature-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--darker);
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-description {
+            font-size: 1rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 1.5rem;
+            background-color: var(--primary);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .cta-background .bg-gradient {
+            position: absolute;
+            bottom: -300px;
+            left: -300px;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--accent-light) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+        
+        .cta-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cta-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .cta-card {
+            background-color: var(--primary);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .cta-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-light);
+        }
+        
+        .cta-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent-light);
+            color: var(--accent);
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .cta-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--darker);
+            margin-bottom: 1rem;
+        }
+        
+        .cta-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.875rem 1.75rem;
+            background-color: var(--accent);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            margin-top: auto;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            background-color: #4A67E3;
+        }
+        
+        .cta-button i {
+            margin-left: 0.5rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            padding: 3rem 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-link {
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9375rem;
+        }
+        
+        .footer-link:hover {
+            color: var(--accent);
+        }
+        
+        .footer-copyright {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-card {
+                max-width: 100%;
+            }
+            
+            .hero-section,
+            .features-section,
+            .cta-section {
+                padding: 3rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+            
+            .hero-cta {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
-        <header class="header">
-            <div class="container header-content">
-                <div class="logo">ThreadPay</div>
-                <nav class="header-nav">
-                    <a href="/login.html" class="btn btn-sm">Sign In</a>
-                </nav>
-            </div>
-        </header>
-        
         <main>
-            <!-- HERO SECTION -->
-            <section class="hero" id="hero">
-                <div class="container">
-                    <h1 class="hero-title">Support <span style="color: var(--accent);">Exceptional</span><br>Creators</h1>
-                    <p class="hero-subtitle">ThreadPay connects you with hand-picked, thoroughly trained creators.<br>Your new destination for quality content.</p>
-                    <div class="cta-wrapper">
-                        <a href="/model-selection-public.html" class="btn btn-lg">Support a Creator</a>
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-background">
+                    <div class="bg-gradient"></div>
+                </div>
+                <div class="logo-header">
+                    <div class="logo">ThreadPay</div>
+                </div>
+                <div class="hero-content">
+                    <h1 class="hero-title">Support <span class="highlight">Exceptional</span><br>Creators</h1>
+                    <p class="hero-subtitle">ThreadPay connects you with hand-picked, thoroughly trained creators. Your new destination for quality content.</p>
+                    <a href="/model-selection-public.html" class="hero-cta">Support a Creator <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="scroll-indicator">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </section>
+            
+            <!-- Features Section -->
+            <section class="features-section">
+                <div class="features-container">
+                    <div class="section-heading">
+                        <h2 class="section-title">Why <span class="highlight">ThreadPay</span></h2>
+                        <p class="section-subtitle">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <h3 class="feature-title">Curated Quality</h3>
+                            <p class="feature-description">Every creator is hand-selected for exceptional talent and thoroughly vetted to ensure the highest quality content.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3 class="feature-title">Secure Payments</h3>
+                            <p class="feature-description">Your financial details remain private and protected with our state-of-the-art security infrastructure.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h3 class="feature-title">Direct Support</h3>
+                            <p class="feature-description">Your contributions enable creators to focus on producing quality content without compromising their creative vision.</p>
+                        </div>
                     </div>
                 </div>
             </section>
             
-            <!-- ABOUT SECTION -->
-            <section class="section" id="about">
-                <div class="container">
-                    <div class="section-header">
-                        <h2>Why <span style="color: var(--accent);">ThreadPay</span></h2>
-                        <p class="section-description">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
-                    </div>
-                    
-                    <div class="feature-grid">
-                        <div class="card feature">
-                            <i class="fas fa-medal"></i>
-                            <h3>Curated Quality</h3>
-                            <p>Every creator is hand-selected for exceptional talent</p>
-                        </div>
-                        <div class="card feature">
-                            <i class="fas fa-lock"></i>
-                            <h3>Secure Payments</h3>
-                            <p>Your financial details remain private and protected</p>
-                        </div>
-                        <div class="card feature">
-                            <i class="fas fa-heart"></i>
-                            <h3>Direct Support</h3>
-                            <p>Your contributions enable creators to focus on quality</p>
-                        </div>
-                    </div>
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <div class="cta-background">
+                    <div class="bg-gradient"></div>
                 </div>
-            </section>
-            
-            <!-- LOGIN/SIGNUP SECTION -->
-            <section class="section" id="login-signup">
-                <div class="container">
-                    <div class="section-header">
-                        <h2>Get <span style="color: var(--accent);">Started</span></h2>
-                        <p class="section-description">Join our community of supporters and discover exceptional creators today.</p>
+                <div class="cta-container">
+                    <div class="section-heading">
+                        <h2 class="section-title">Get <span class="highlight">Started</span></h2>
+                        <p class="section-subtitle">Join our community of supporters and discover exceptional creators today.</p>
                     </div>
-                    
-                    <div class="cta-options">
-                        <div class="card cta-card">
-                            <i class="fas fa-user-plus"></i>
-                            <h3>New to ThreadPay?</h3>
-                            <p>Create an account to start supporting your favorite creators</p>
-                            <a href="/model-selection-public.html" class="btn btn-full">Sign Up</a>
+                    <div class="cta-cards">
+                        <div class="cta-card">
+                            <div class="cta-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h3 class="cta-title">New to ThreadPay?</h3>
+                            <p class="cta-description">Create an account to start supporting your favorite creators and discover new talent.</p>
+                            <a href="/model-selection-public.html" class="cta-button">Sign Up <i class="fas fa-arrow-right"></i></a>
                         </div>
-                        <div class="card cta-card">
-                            <i class="fas fa-sign-in-alt"></i>
-                            <h3>Returning Supporter?</h3>
-                            <p>Sign in to continue supporting your creators</p>
-                            <a href="/login.html" class="btn btn-full">Sign In</a>
+                        <div class="cta-card">
+                            <div class="cta-icon">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </div>
+                            <h3 class="cta-title">Returning Supporter?</h3>
+                            <p class="cta-description">Sign in to continue supporting your creators and manage your subscriptions.</p>
+                            <a href="/login.html" class="cta-button">Sign In <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
         
-        <!-- FOOTER SECTION -->
+        <!-- Footer -->
         <footer>
-            <div class="container footer-content">
-                <div class="logo">ThreadPay</div>
+            <div class="footer-container">
+                <div class="footer-logo">ThreadPay</div>
                 <div class="footer-links">
-                    <a href="/privacy-policy.html">Privacy Policy</a>
-                    <a href="/terms-of-service.html">Terms of Service</a>
+                    <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
                 </div>
-                <div class="copyright">
+                <div class="footer-copyright">
                     &copy; 2025 ThreadPay. All rights reserved.
                 </div>
             </div>
@@ -130,197 +577,13 @@
     <script src="/scripts/script.js"></script>
     <script src="/scripts/auth.js"></script>
     
-    <style>
-        body {
-            background-color: var(--primary);
-            min-height: 100vh;
-        }
-        
-        .app-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .hero {
-            padding: var(--spacing-2xl) 0;
-            text-align: center;
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero:after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 30%, rgba(81, 104, 244, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        .hero-title {
-            font-size: var(--font-size-4xl);
-            margin-bottom: var(--spacing-md);
-            line-height: 1.2;
-        }
-        
-        .hero-subtitle {
-            font-size: var(--font-size-xl);
-            margin-bottom: var(--spacing-lg);
-            color: var(--dark-mid);
-            line-height: 1.6;
-        }
-        
-        .cta-wrapper {
-            margin-top: var(--spacing-lg);
-        }
-        
-        .section {
-            padding: var(--spacing-2xl) 0;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-        
-        .section-header h2 {
-            font-size: var(--font-size-3xl);
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .section-description {
-            font-size: var(--font-size-lg);
-            color: var(--dark-mid);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-xl);
-        }
-        
-        .feature {
-            padding: var(--spacing-lg);
-            text-align: center;
-            transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
-        }
-        
-        .feature:hover {
-            transform: translateY(-5px);
-        }
-        
-        .feature i {
-            font-size: var(--font-size-3xl);
-            color: var(--accent);
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .feature h3 {
-            margin-bottom: var(--spacing-md);
-            font-size: var(--font-size-lg);
-        }
-        
-        .feature p {
-            color: var(--dark-mid);
-            line-height: 1.5;
-        }
-        
-        #about {
-            background-color: var(--primary-light);
-        }
-        
-        #login-signup {
-            background-color: var(--primary);
-        }
-        
-        .cta-options {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-xl);
-            margin-top: var(--spacing-xl);
-        }
-        
-        .cta-card {
-            padding: var(--spacing-xl);
-            text-align: center;
-            max-width: 340px;
-            width: 100%;
-        }
-        
-        .cta-card i {
-            font-size: var(--font-size-3xl);
-            color: var(--accent);
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .cta-card h3 {
-            margin-bottom: var(--spacing-md);
-            font-size: var(--font-size-xl);
-        }
-        
-        .cta-card p {
-            margin-bottom: var(--spacing-lg);
-            color: var(--dark-mid);
-        }
-        
-        footer {
-            margin-top: auto;
-        }
-        
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: var(--font-size-3xl);
-            }
-            
-            .hero-subtitle {
-                font-size: var(--font-size-lg);
-            }
-            
-            .section-header h2 {
-                font-size: var(--font-size-2xl);
-            }
-            
-            .section-description {
-                font-size: var(--font-size-md);
-            }
-            
-            .cta-options {
-                flex-direction: column;
-                align-items: center;
-                gap: var(--spacing-lg);
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: var(--font-size-2xl);
-            }
-            
-            .hero-subtitle {
-                font-size: var(--font-size-md);
-            }
-            
-            .section {
-                padding: var(--spacing-xl) 0;
-            }
-        }
-    </style>
+    <script>
+        // Smooth scroll when clicking on the scroll indicator
+        document.querySelector('.scroll-indicator').addEventListener('click', function() {
+            document.querySelector('.features-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+    </script>
 </body>
 </html> 

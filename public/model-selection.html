@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FAFAFA">
-    <title>Select Creator | ThreadPay Secure Payment Platform</title>
+    <meta name="theme-color" content="#050505">
+    <title>Explore Models | ThreadPay Secure Payment Platform</title>
     
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
@@ -12,127 +12,601 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        body {
+        /* Unified Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent);
+            color: var(--darker);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
+            text-decoration: none;
+            letter-spacing: 0.2px;
+        }
+        
+        .btn:hover {
+            background-color: #B4C1FF;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn i {
+            margin-right: 0.7rem;
+        }
+        
+        .btn-secondary {
+            background-color: var(--primary-light);
+            color: var(--dark);
+            border: 1px solid rgba(211, 209, 218, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+        
+        .btn-secondary:hover {
             background-color: var(--primary);
-            min-height: 100vh;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
         
-        .app-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        .btn-success {
+            background-color: rgba(46, 204, 113, 0.9);
+            color: white;
         }
         
-        .model-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-xl);
+        .btn-success:hover {
+            background-color: rgba(46, 204, 113, 1);
         }
         
+        .btn-full {
+            width: 100%;
+        }
+        
+        /* Model card redesign */
         .model-card {
             background-color: var(--light);
-            border-radius: var(--radius-lg);
+            border-radius: 20px;
             overflow: hidden;
-            transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--primary-dark);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: center;
+            padding: 2rem;
+            border: 1px solid rgba(211, 209, 218, 0.1);
         }
         
         .model-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(180, 193, 255, 0.3);
+        }
+        
+        .model-subscription-badge {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background-color: rgba(46, 204, 113, 0.9);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            text-transform: uppercase;
+            z-index: 10;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
         }
         
         .model-image-container {
-            padding: var(--spacing-md);
-            display: flex;
-            justify-content: center;
+            flex: 0 0 auto;
+            margin-right: 2rem;
         }
         
         .model-image {
-            width: 80px;
-            height: 80px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            background-color: var(--primary-dark);
-            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(211, 209, 218, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-light);
+            transition: all 0.3s ease;
         }
         
-        .model-info {
-            padding: 0 var(--spacing-lg) var(--spacing-lg);
-            text-align: center;
+        .model-card:hover .model-image {
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .model-details {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
         }
         
         .model-name {
-            font-weight: 600;
-            font-size: var(--font-size-lg);
-            margin-bottom: var(--spacing-xs);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
             color: var(--dark);
+            line-height: 1.2;
         }
         
         .model-bio {
-            color: var(--dark-mid);
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--spacing-md);
+            color: var(--dark);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+            max-height: 3.2em;
+            overflow: hidden;
+            text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            overflow: hidden;
-            line-height: 1.5;
+            opacity: 0.85;
         }
         
-        .section-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
+        /* Modal Improvements */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            padding: 1.5rem;
         }
         
-        .section-header h2 {
-            font-size: var(--font-size-3xl);
-            color: var(--dark);
-            margin-bottom: var(--spacing-sm);
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
         
-        .section-description {
-            color: var(--dark-mid);
-            font-size: var(--font-size-lg);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .user-welcome {
+        .modal-content {
             background-color: var(--light);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-            border: 1px solid var(--primary-dark);
-            text-align: center;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            padding-top: 5rem;
         }
         
-        .user-welcome h3 {
-            font-size: var(--font-size-xl);
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 0 2rem 0 2rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--light);
+            z-index: 5;
+            border-radius: 24px 24px 0 0;
+            min-height: 44px;
+            margin-top: 2.5rem;
+        }
+        
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
             color: var(--dark);
-            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.5px;
         }
         
-        .user-welcome p {
-            color: var(--dark-mid);
-            font-size: var(--font-size-md);
-            margin-bottom: 0;
+        .modal-close {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--dark);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            position: absolute;
+            top: 1.25rem;
+            right: 2rem;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .modal-close i {
+            color: var(--dark);
+            font-weight: bold;
+        }
+        
+        .modal-body {
+            padding: 6rem 2rem 2rem 2rem;
+        }
+        
+        .modal-model-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 0.5rem 0 2rem;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
+        }
+        
+        .modal-model-image {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            margin-right: 2rem;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+            border: 4px solid var(--primary-light);
+            flex-shrink: 0;
+        }
+        
+        .modal-model-info {
+            flex: 1;
+        }
+        
+        .modal-model-name {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--dark);
+            line-height: 1.3;
+        }
+        
+        .modal-model-bio {
+            color: var(--dark);
+            line-height: 1.8;
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+        
+        .modal-section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+        
+        .modal-section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent);
+            border-radius: 3px;
+        }
+        
+        /* Subscription Packages */
+        .package-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+        
+        .package-item {
+            background-color: var(--primary-light);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(211, 209, 218, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .package-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: var(--accent);
+            opacity: 0.8;
+        }
+        
+        .package-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: rgba(180, 193, 255, 0.3);
+        }
+        
+        .package-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 1.3rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .package-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-end;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        
+        .package-price span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-left: 4px;
+            color: var(--dark-gray);
+            letter-spacing: normal;
+        }
+        
+        .package-description {
+            font-size: 0.95rem;
+            color: var(--dark);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            flex-grow: 1;
+            opacity: 0.85;
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 480px) {
+            .dashboard-header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.6rem;
+            }
+            
+            .dashboard-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.6rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .section-description {
+                font-size: 0.9rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .model-card {
+                padding: 1.2rem;
+                border-radius: 16px;
+            }
+            
+            .model-image {
+                width: 75px;
+                height: 75px;
+                border-width: 2px;
+            }
+            
+            .model-image-container {
+                margin-right: 1.2rem;
+            }
+            
+            .model-name {
+                font-size: 1.2rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .model-bio {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+                -webkit-line-clamp: 2;
+            }
+            
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+            
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+            
+            .modal-content {
+                border-radius: 20px 20px 0 0;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.2);
+            }
+            
+            .modal-header {
+                padding: 0;
+                width: 100%;
+                box-sizing: border-box;
+                order: 0;
+                border-bottom: none;
+                height: 38px;
+                background-color: transparent;
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+            
+            .modal-title {
+                font-size: 1.4rem;
+            }
+            
+            .modal-close {
+                width: 38px;
+                height: 38px;
+                top: 1.2rem;
+                right: 1.2rem;
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+            
+            .modal-body {
+                padding: 4.5rem 1.2rem 1.2rem 1.2rem;
+                margin-top: 0;
+            }
+            
+            .modal-model-container {
+                margin-bottom: 0.8rem;
+                margin-top: 0.5rem;
+                padding: 0.5rem 0 0.8rem 0;
+            }
+            
+            .modal-model-image {
+                width: 90px;
+                height: 90px;
+                margin-right: 0;
+                margin-bottom: 1rem;
+                border-width: 3px;
+            }
+            
+            .modal-model-info {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .modal-model-name {
+                font-size: 1.3rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .modal-model-bio {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            .modal-section-title {
+                font-size: 1.2rem;
+                margin-bottom: 0.8rem;
+                text-align: center;
+                order: 2;
+                width: 100%;
+            }
+            
+            .modal-section-title:after {
+                left: 50%;
+                transform: translateX(-50%);
+                width: 50px;
+            }
+            
+            .package-list {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+                order: 3;
+                width: 100%;
+            }
+            
+            .package-item {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            .package-name {
+                font-size: 1.2rem;
+            }
+            
+            .package-price {
+                font-size: 1.8rem;
+                justify-content: center;
+                margin-bottom: 1.2rem;
+            }
+            
+            .package-description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .header-controls {
+                gap: 0.8rem;
+            }
+            
+            .header-controls a,
+            .header-controls button {
+                padding: 0.5rem;
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                justify-content: center;
+            }
+            
+            .header-controls a i,
+            .header-controls button i {
+                margin-right: 0;
+                font-size: 1.1rem;
+            }
+            
+            .btn-text {
+                display: none;
+            }
+            
+            .notification {
+                padding: 1rem;
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                width: calc(100% - 2rem);
+                max-width: none;
+                border-radius: 10px;
+            }
+        }
+        
+        /* Basic grid layout */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
         }
         
         /* Loading state */
@@ -141,17 +615,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: var(--spacing-2xl) 0;
+            padding: 4rem 0;
         }
         
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(81, 104, 244, 0.1);
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(211, 209, 218, 0.2);
             border-radius: 50%;
-            border-top: 3px solid var(--accent);
+            border-top-color: var(--accent);
             animation: spin 1s linear infinite;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 1.5rem;
         }
         
         @keyframes spin {
@@ -159,137 +633,423 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Notification system */
+        .notification {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            background-color: var(--light);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 400px;
+        }
+        
+        .notification.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .notification.success {
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .notification.error {
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .notification-icon {
+            font-size: 1.4rem;
+        }
+        
+        .notification.success .notification-icon {
+            color: #2ecc71;
+        }
+        
+        .notification.error .notification-icon {
+            color: #e74c3c;
+        }
+        
+        .notification-message {
+            color: var(--dark);
+            font-size: 0.95rem;
+            flex: 1;
+            line-height: 1.5;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        
         /* Empty state */
         .empty-state {
             text-align: center;
-            padding: var(--spacing-2xl);
-            background-color: var(--light);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            margin-top: var(--spacing-xl);
+            padding: 5rem 0;
+            background-color: var(--primary-light);
+            border-radius: 20px;
+            margin-top: 2rem;
         }
         
-        .empty-state .empty-icon {
-            font-size: var(--font-size-4xl);
-            color: var(--dark-light);
-            margin-bottom: var(--spacing-md);
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(211, 209, 218, 0.5);
+            margin-bottom: 1.5rem;
         }
         
-        .empty-state .empty-message {
-            font-weight: 600;
-            font-size: var(--font-size-xl);
+        .empty-message {
             color: var(--dark);
-            margin-bottom: var(--spacing-sm);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
         }
         
-        .empty-state .empty-description {
-            color: var(--dark-mid);
-            font-size: var(--font-size-md);
-            max-width: 500px;
+        .empty-description {
+            color: var(--darker);
+            font-size: 1rem;
+            max-width: 550px;
             margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0.8;
         }
         
-        @media (max-width: 768px) {
+        /* Dashboard Layout Improvements */
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background);
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 7%;
+            background-color: var(--light);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.3s ease;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-decoration: none;
+            letter-spacing: -1px;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+            color: var(--accent);
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+        
+        .logout-button {
+            color: var(--darker) !important;
+            background-color: var(--accent) !important;
+            border: none !important;
+            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.3);
+        }
+        
+        .logout-button:hover {
+            background-color: #B4C1FF !important;
+            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4) !important;
+        }
+        
+        .dashboard-content {
+            flex: 1;
+            padding: 3rem 7%;
+            transition: padding 0.3s ease;
+        }
+        
+        .section-header {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--darker);
+            opacity: 0.8;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 1200px) {
+            .dashboard-header, 
+            .dashboard-content {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+            
+            .model-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 1024px) {
             .model-grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: var(--spacing-md);
+                gap: 1.8rem;
+            }
+            
+            .model-card {
+                padding: 1.8rem;
+            }
+            
+            .model-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .model-name {
+                font-size: 1.4rem;
             }
             
             .section-header h2 {
-                font-size: var(--font-size-2xl);
+                font-size: 2.2rem;
+            }
+            
+            .package-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.2rem 5%;
+            }
+            
+            .dashboard-content {
+                padding: 2rem 5%;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
             }
             
             .section-description {
-                font-size: var(--font-size-md);
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .model-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+            }
+            
+            .model-card {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            
+            .model-image {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .model-image-container {
+                margin-right: 1.5rem;
+            }
+            
+            .model-name {
+                font-size: 1.3rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .model-bio {
+                font-size: 0.9rem;
+                margin-bottom: 1.2rem;
+                line-height: 1.5;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .modal-model-container {
+                padding: 0.5rem 0 1.5rem;
+                margin-bottom: 1.8rem;
+            }
+            
+            .modal-model-image {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            .notification {
+                max-width: 90%;
+                right: 5%;
             }
         }
         
         @media (max-width: 480px) {
-            .model-grid {
-                grid-template-columns: 1fr;
+            .empty-state {
+                padding: 3rem 1rem;
             }
             
-            .section-header h2 {
-                font-size: var(--font-size-xl);
+            .empty-icon {
+                font-size: 3rem;
+            }
+            
+            .empty-message {
+                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="container header-content">
-                <a href="/" class="logo">ThreadPay</a>
-                <div class="header-controls">
-                    <button id="logout-btn" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </div>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <a href="/">
+                <div class="logo">ThreadPay</div>
+            </a>
+            <div class="header-controls">
+                <a href="/dashboard.html" class="btn btn-secondary">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="btn-text">Dashboard</span>
+                </a>
+                <button id="logout-button" class="btn logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="btn-text">Logout</span>
+                </button>
             </div>
         </header>
         
-        <main class="container" style="padding: var(--spacing-xl) var(--spacing-lg);">
-            <div id="user-welcome" class="user-welcome">
-                <h3>Welcome <span id="user-name">there</span>!</h3>
-                <p>Select a creator to continue your ThreadPay journey</p>
-            </div>
-            
+        <div class="dashboard-content">
             <div class="section-header">
-                <h2>Select Your Creator</h2>
-                <p class="section-description">Choose the creator you'd like to connect with to enable payments.</p>
+                <h2>Explore Creators</h2>
+                <p class="section-description">Discover and subscribe to your favorite creators.</p>
             </div>
             
-            <!-- Loading state -->
+            <!-- Loading State -->
             <div id="loading-container" class="loading-container">
                 <div class="loading-spinner"></div>
                 <p>Loading creators...</p>
             </div>
             
-            <!-- Empty state -->
+            <!-- Empty State -->
             <div id="empty-state" class="empty-state" style="display: none;">
                 <div class="empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
                 <h3 class="empty-message">No creators found</h3>
-                <p class="empty-description">We couldn't find any creators available at the moment. Please check back later.</p>
+                <p class="empty-description">We couldn't find any models available for subscription at the moment. Please check back later.</p>
             </div>
             
-            <!-- Models grid -->
+            <!-- Models Grid -->
             <div id="model-grid" class="model-grid"></div>
-        </main>
-        
-        <footer>
-            <div class="container footer-content">
-                <div class="logo">ThreadPay</div>
-                <div class="footer-links">
-                    <a href="/privacy-policy.html">Privacy Policy</a>
-                    <a href="/terms-of-service.html">Terms of Service</a>
-                </div>
-                <div class="copyright">
-                    &copy; 2025 ThreadPay. All rights reserved.
-                </div>
-            </div>
-        </footer>
+        </div>
     </div>
     
+    <!-- Model Subscription Modal -->
+    <div id="model-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <!-- (empty, or you can add a modal title here if needed) -->
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Modal content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-message" id="notification-message">
+            Notification message
+        </div>
+        <button class="notification-close" id="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    
     <script>
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;
+        let stripe;
+        
+        // User and models data
+        let userData = null;
+        let modelsData = [];
+        let userSubscriptions = [];
+        
+        // DOM elements
+        const modelGrid = document.getElementById('model-grid');
+        const loadingContainer = document.getElementById('loading-container');
+        const emptyState = document.getElementById('empty-state');
+        const modelModal = document.getElementById('model-modal');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const notificationClose = document.getElementById('notification-close');
+        const logoutButton = document.getElementById('logout-button');
         
         // First try to get the key from meta tag
         const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         let supabaseKey = null;
         
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                loadModels();
-                checkAuthState();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
-        
+        // Check if the key is a real key or just the placeholder
         if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
             console.log('Using API key from meta tag');
             supabaseKey = metaKey;
@@ -319,53 +1079,94 @@
                 });
         }
         
-        // Check authentication state
-        async function checkAuthState() {
-            try {
-                const { data: { user } } = await supabase.auth.getUser();
-                
-                if (!user) {
-                    // Not authenticated, redirect to login
-                    window.location.href = '/login.html';
-                    return;
-                }
-                
-                // Update welcome message
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-                
-                const userName = profile?.full_name || user.email || 'there';
-                document.getElementById('user-name').textContent = userName;
-                
-            } catch (error) {
-                console.error('Authentication error:', error);
-                window.location.href = '/login.html';
+        // Initialize Stripe
+        function initStripe() {
+            // Check if stripe.js is loaded
+            if (window.Stripe) {
+                stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
+                console.log('Stripe initialized');
+            } else {
+                console.error('Stripe.js not loaded');
             }
         }
         
-        // Handle logout
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await supabase.auth.signOut();
-                window.location.href = '/login.html';
-            } catch (error) {
-                console.error('Logout error:', error);
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                initStripe();
+                loadUserData();
+            } else {
+                console.error('Supabase client library not loaded');
             }
-        });
+        }
         
-        const modelGrid = document.getElementById('model-grid');
-        const loadingContainer = document.getElementById('loading-container');
-        const emptyState = document.getElementById('empty-state');
+        // Load user data
+        async function loadUserData() {
+            // Try to get user from localStorage
+            const storedUser = localStorage.getItem('threadpay_user');
+            
+            if (storedUser) {
+                try {
+                    userData = JSON.parse(storedUser);
+                    console.log('User loaded from localStorage:', userData);
+                    
+                    // Fetch user details including subscriptions
+                    await fetchUserDetails();
+                    
+                    // Load all models
+                    await loadModels();
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    redirectToLogin();
+                }
+            } else {
+                console.log('No user found in localStorage');
+                redirectToLogin();
+            }
+        }
         
+        // Fetch user details
+        async function fetchUserDetails() {
+            try {
+                // Get user profile
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
+                    .single();
+                    
+                if (profileError) throw profileError;
+                
+                if (profile) {
+                    // Update user data with profile info
+                    userData = { ...userData, ...profile };
+                    
+                    // Get user subscriptions
+                    const { data: subscriptions, error: subsError } = await supabase
+                        .from('user_model_subscriptions')
+                        .select('*')
+                        .eq('user_id', userData.id)
+                        .eq('is_active', true);
+                        
+                    if (subsError) throw subsError;
+                    
+                    userSubscriptions = subscriptions || [];
+                    console.log('User subscriptions:', userSubscriptions);
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                showNotification('Failed to load your subscription details. Please try again.', 'error');
+            }
+        }
+        
+        // Load models
         async function loadModels() {
             try {
-                loadingContainer.style.display = 'flex';
+                loadingContainer.style.display = 'block';
                 modelGrid.style.display = 'none';
                 emptyState.style.display = 'none';
                 
+                // Fetch all models
                 const { data: models, error } = await supabase
                     .from('models')
                     .select('*');
@@ -378,29 +1179,53 @@
                     return;
                 }
                 
+                modelsData = models;
+                
+                // Display models
                 displayModels(models);
                 
                 loadingContainer.style.display = 'none';
                 modelGrid.style.display = 'grid';
             } catch (error) {
                 console.error('Error loading models:', error);
+                showNotification('Failed to load creators. Please try again later.', 'error');
+                
                 loadingContainer.style.display = 'none';
                 emptyState.style.display = 'block';
             }
         }
         
+        // Display models
         function displayModels(models) {
             modelGrid.innerHTML = '';
             
             models.forEach(model => {
+                // Check if user is already subscribed to this model
+                const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
+                
                 const modelCard = document.createElement('div');
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
-                modelCard.dataset.modelName = model.name;
+                
+                // Add subscription badge if subscribed
+                if (isSubscribed) {
+                    const badge = document.createElement('div');
+                    badge.className = 'model-subscription-badge';
+                    badge.textContent = 'Subscribed';
+                    modelCard.appendChild(badge);
+                }
+                
+                // Add container for the image
+                const modelImageContainer = document.createElement('div');
+                modelImageContainer.className = 'model-image-container';
+                
+                const modelImage = document.createElement('div');
+                modelImage.className = 'model-image';
                 
                 // Build the correct image path using Supabase bucket
                 let imagePath;
                 if (model.pictures) {
+                    // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
                         imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
                     } else if (model.pictures.main) {
@@ -412,57 +1237,300 @@
                     imagePath = '/images/placeholder-model.png';
                 }
                 
-                modelCard.innerHTML = `
-                    <div class="model-image-container">
-                        <div class="model-image" style="background-image: url(${imagePath})"></div>
-                    </div>
-                    <div class="model-info">
-                        <h3 class="model-name">${model.name}</h3>
-                        <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                        <button class="btn" data-model-id="${model.id}">Select</button>
-                    </div>
+                modelImage.style.backgroundImage = `url(${imagePath})`;
+                modelImageContainer.appendChild(modelImage);
+                
+                const modelDetails = document.createElement('div');
+                modelDetails.className = 'model-details';
+                
+                modelDetails.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" data-model-id="${model.id}">
+                        ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
+                    </button>
                 `;
                 
+                modelCard.appendChild(modelImageContainer);
+                modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
                 
-                // Handle model selection
-                modelCard.addEventListener('click', function() {
-                    selectModel(model.id, model.name);
-                });
-                
-                // Prevent button click from triggering card click
-                const btn = modelCard.querySelector('.btn');
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    selectModel(model.id, model.name);
+                // Add event listener to button
+                const actionButton = modelDetails.querySelector('.btn');
+                actionButton.addEventListener('click', () => {
+                    const targetModel = modelsData.find(m => m.id === model.id);
+                    
+                    if (isSubscribed) {
+                        // Navigate to dashboard to manage this subscription
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        // Open subscription modal
+                        openSubscriptionModal(model);
+                    }
                 });
             });
         }
         
-        async function selectModel(modelId, modelName) {
-            try {
-                // Get current user
-                const { data: { user } } = await supabase.auth.getUser();
+        // Open the subscription modal for a model
+        function openSubscriptionModal(model) {
+            // Build the correct image path using Supabase bucket
+            let imagePath;
+            if (model.pictures) {
+                // Handle both object format (model.pictures.main) and array format (model.pictures[0])
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else if (model.pictures.main) {
+                    imagePath = model.pictures.main;
+                } else {
+                    imagePath = '/images/placeholder-model.png';
+                }
+            } else {
+                imagePath = '/images/placeholder-model.png';
+            }
+
+            // Set modal content
+            modalBody.innerHTML = `
+                <div class="modal-model-container">
+                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                    <div class="modal-model-info">
+                        <h3 class="modal-model-name">${model.name}</h3>
+                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    </div>
+                </div>
                 
-                if (!user) {
-                    window.location.href = '/login.html';
+                <h3 class="modal-section-title">Select a Subscription Package</h3>
+                <div id="package-list" class="package-list">
+                    <div class="loading-spinner"></div>
+                </div>
+            `;
+            
+            // Show modal
+            modelModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            // Load packages for this model
+            loadPackages(model.id);
+        }
+        
+        // Load packages for a model
+        async function loadPackages(modelId) {
+            try {
+                const packageList = document.getElementById('package-list');
+                packageList.innerHTML = '<div class="loading-spinner"></div>';
+                
+                // Fetch packages for this model
+                const { data: packages, error } = await supabase
+                    .from('packages')
+                    .select('*')
+                    .eq('model_id', modelId)
+                    .order('price', { ascending: true });
+                    
+                if (error) throw error;
+                
+                if (!packages || packages.length === 0) {
+                    packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
                     return;
                 }
                 
-                // Update user profile to link to this model
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({ model_id: modelId })
-                    .eq('id', user.id);
+                packageList.innerHTML = '';
                 
-                if (error) throw error;
-                
-                // Redirect to dashboard
-                window.location.href = '/dashboard.html';
+                packages.forEach(pkg => {
+                    const packageItem = document.createElement('div');
+                    packageItem.className = 'package-item';
+                    
+                    const priceFormatted = new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 2
+                    }).format(pkg.price);
+                    
+                    packageItem.innerHTML = `
+                        <div class="package-name">${pkg.name}</div>
+                        <div class="package-price">${priceFormatted}<span>/month</span></div>
+                        <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
+                        <button class="btn btn-full" 
+                                data-package-id="${pkg.id}" 
+                                data-price-id="${pkg.stripe_price_id}" 
+                                data-model-id="${pkg.model_id}">
+                            <i class="fas fa-credit-card"></i> Subscribe Now
+                        </button>
+                    `;
+                    
+                    packageList.appendChild(packageItem);
+                    
+                    // Add event listener to subscribe button
+                    const subscribeBtn = packageItem.querySelector('.btn');
+                    subscribeBtn.addEventListener('click', handleSubscription);
+                });
             } catch (error) {
-                console.error('Error selecting model:', error);
-                alert('There was an error selecting the creator. Please try again.');
+                console.error('Error loading packages:', error);
+                document.getElementById('package-list').innerHTML = 
+                    '<p class="no-packages">Failed to load subscription packages. Please try again later.</p>';
             }
+        }
+        
+        // Handle subscription
+        async function handleSubscription() {
+            const button = this;
+            const packageId = button.getAttribute('data-package-id');
+            const priceId = button.getAttribute('data-price-id');
+            const modelId = button.getAttribute('data-model-id');
+            
+            if (!packageId || !priceId || !modelId) {
+                showNotification('Invalid subscription details. Please try again.', 'error');
+                return;
+            }
+            
+            try {
+                // Disable button
+                button.disabled = true;
+                button.textContent = 'Processing...';
+                
+                // First create a customer if user doesn't have a Stripe ID
+                if (!userData.stripe_customer_id) {
+                    const createCustomerResponse = await fetch('/api/create-customer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: userData.name || 'User',
+                            email: userData.email || `${userData.username || 'user'}@example.com`,
+                            phone: userData.username || ''
+                        })
+                    });
+                    
+                    if (!createCustomerResponse.ok) {
+                        const errorData = await createCustomerResponse.json();
+                        throw new Error(errorData.error || 'Error creating customer');
+                    }
+                    
+                    const customer = await createCustomerResponse.json();
+                    
+                    // Store the customer ID
+                    userData.stripe_customer_id = customer.customerId;
+                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                    
+                    // Update the customer ID in the database
+                    await supabase
+                        .from('profiles')
+                        .update({ stripe_customer_id: customer.customerId })
+                        .eq('id', userData.id);
+                }
+                
+                // Create checkout session
+                const createSessionResponse = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        priceId: priceId,
+                        customerId: userData.stripe_customer_id,
+                        userId: userData.id,
+                        userPhone: userData.username || '',
+                        packageId: packageId,
+                        modelId: modelId,
+                        successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
+                        cancelUrl: window.location.origin + '/model-selection.html?subscription_canceled=true'
+                    })
+                });
+                
+                if (!createSessionResponse.ok) {
+                    const errorData = await createSessionResponse.json();
+                    throw new Error(errorData.error || 'Error creating checkout session');
+                }
+                
+                const session = await createSessionResponse.json();
+                
+                // Redirect to Stripe Checkout
+                if (session.url) {
+                    window.location.href = session.url;
+                } else if (session.sessionId && stripe) {
+                    const result = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+                    if (result.error) {
+                        throw new Error(result.error.message);
+                    }
+                } else {
+                    throw new Error('Invalid session data');
+                }
+            } catch (error) {
+                console.error('Error creating subscription:', error);
+                showNotification('Failed to create subscription. Please try again.', 'error');
+                
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = 'Subscribe';
+            }
+        }
+        
+        // Close the modal
+        modalClose.addEventListener('click', () => {
+            modelModal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+        
+        // Close modal when clicking outside
+        modelModal.addEventListener('click', (e) => {
+            if (e.target === modelModal) {
+                modelModal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationMessage.textContent = message;
+            notification.className = `notification ${type} active`;
+            
+            // Automatically hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 5000);
+        }
+        
+        // Close notification
+        notificationClose.addEventListener('click', () => {
+            notification.classList.remove('active');
+        });
+        
+        // Handle logout button
+        logoutButton.addEventListener('click', async () => {
+            try {
+                // Clear local storage
+                localStorage.removeItem('threadpay_user');
+                
+                // Sign out from Supabase
+                if (supabase) {
+                    const { error } = await supabase.auth.signOut();
+                    if (error) throw error;
+                }
+                
+                // Redirect to home page
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showNotification('Failed to log out. Please try again.', 'error');
+            }
+        });
+        
+        // Check URL parameters for notifications
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('subscription_canceled')) {
+            showNotification('Subscription process was canceled.', 'error');
+        }
+        
+        // Redirect to login
+        function redirectToLogin() {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
+        }
+
+        const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
+        if (dashboardButton) {
+            dashboardButton.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default behavior
+                window.location.href = '/dashboard.html';
+            });
         }
     </script>
 </body>

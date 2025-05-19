@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FAFAFA">
+    <meta name="theme-color" content="#FFFFFF">
     <title>Dashboard | ThreadPay Secure Payment Platform</title>
     
     <!-- Supabase API Key -->
@@ -12,267 +12,159 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="stylesheet" href="/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="container header-content">
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="header-content">
                 <a href="/" class="logo">ThreadPay</a>
                 <div class="header-controls">
-                    <button id="logout-btn" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button id="logout-button" class="logout-button">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="btn-text">Logout</span>
+                    </button>
                 </div>
             </div>
         </header>
         
-        <main class="dashboard-main container">
-            <section class="user-section">
-                <div class="user-welcome">
-                    <div class="user-details">
-                        <div id="user-avatar" class="user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div>
-                            <h2 id="welcome-message">Welcome back!</h2>
-                            <p id="user-email" class="user-email"></p>
-                        </div>
-                    </div>
-                    <div class="action-buttons">
-                        <button id="edit-profile-btn" class="btn btn-outline">
-                            <i class="fas fa-user-edit"></i>
-                            Edit Profile
-                        </button>
-                    </div>
+        <div class="dashboard-content">
+            <div class="dashboard-main-card">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn tab-active" data-tab="account">Account</button>
+                    <button class="tab-btn" data-tab="settings">Settings</button>
                 </div>
-            </section>
-            
-            <div class="dashboard-grid">
-                <section class="dashboard-section left-column">
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3>Your Creator</h3>
-                        </div>
-                        <div id="creator-loading" class="loading-state">
-                            <div class="spinner"></div>
-                            <p>Loading creator details...</p>
-                        </div>
-                        <div id="creator-info" class="creator-info" style="display: none;">
-                            <div class="creator-card">
-                                <div id="creator-image" class="creator-image"></div>
-                                <div class="creator-details">
-                                    <h4 id="creator-name" class="creator-name"></h4>
-                                    <p id="creator-bio" class="creator-bio"></p>
-                                    <div class="creator-stats">
-                                        <div class="stat">
-                                            <i class="fas fa-users"></i>
-                                            <span id="creator-followers">--</span> followers
-                                        </div>
-                                        <div class="stat">
-                                            <i class="fas fa-star"></i>
-                                            <span id="creator-rating">--</span> rating
-                                        </div>
-                                    </div>
+                <div class="dashboard-inner">
+                    <div class="dashboard-left-card tab-section" id="tab-account">
+                        <div class="account-info-card">
+                            <div class="user-details">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h3 id="account-name">User Name</h3>
+                                    <p id="account-email">user@example.com</p>
                                 </div>
                             </div>
-                        </div>
-                        <div id="no-creator" class="empty-state" style="display: none;">
-                            <div class="empty-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <h4>No Creator Selected</h4>
-                            <p>You haven't selected a creator yet.</p>
-                            <a href="/model-selection.html" class="btn btn-sm">Select Creator</a>
-                        </div>
-                    </div>
-                    
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3>Payment Methods</h3>
-                        </div>
-                        <div id="payment-methods-list" class="payment-methods">
-                            <div class="loading-state">
-                                <div class="spinner"></div>
-                                <p>Loading payment methods...</p>
+                            <div class="account-created" id="account-created">Member since January 1, 2025</div>
+                            <div class="account-details">
+                                <div class="account-label">Subscription Status</div>
+                                <div class="model-subscription-status active" id="account-subscription-status">Active</div>
                             </div>
                         </div>
-                        <div class="action-buttons center-button">
-                            <button id="add-payment-method" class="btn btn-sm">
-                                <i class="fas fa-plus"></i> Add Payment Method
-                            </button>
-                        </div>
-                    </div>
-                </section>
-                
-                <section class="dashboard-section right-column">
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3>Recent Transactions</h3>
-                        </div>
-                        <div id="transactions-loading" class="loading-state">
-                            <div class="spinner"></div>
-                            <p>Loading transaction history...</p>
-                        </div>
-                        <div id="transactions-list" class="transactions-list" style="display: none;"></div>
-                        <div id="no-transactions" class="empty-state" style="display: none;">
-                            <div class="empty-icon">
-                                <i class="fas fa-receipt"></i>
+                        <div class="models-section">
+                            <h3>Your Creator Subscriptions</h3>
+                            <div id="subscribed-models-container" style="display: none;"></div>
+                            <div id="no-subscription-container" style="display: none;">
+                                <div class="no-subscription-message">
+                                    <h3>No Active Subscriptions</h3>
+                                    <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
+                                    <button class="action-button" id="explore-models-button">
+                                        <i class="fas fa-search"></i>
+                                        <span>Explore Available Creators</span>
+                                    </button>
+                                </div>
                             </div>
-                            <h4>No Transactions</h4>
-                            <p>You haven't made any payments yet.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3>Subscription</h3>
-                        </div>
-                        <div id="subscription-loading" class="loading-state">
-                            <div class="spinner"></div>
-                            <p>Loading subscription details...</p>
-                        </div>
-                        <div id="subscription-details" class="subscription-details" style="display: none;"></div>
-                        <div id="no-subscription" class="empty-state" style="display: none;">
-                            <div class="empty-icon">
-                                <i class="fas fa-star"></i>
+                            <div id="explore-more-container" class="explore-more-container" style="display: none;">
+                                <a href="/model-selection.html" class="explore-more-button">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Explore More Creators</span>
+                                </a>
                             </div>
-                            <h4>No Active Subscription</h4>
-                            <p>You don't have an active subscription with your creator.</p>
-                            <button id="subscribe-btn" class="btn btn-sm">Subscribe Now</button>
                         </div>
                     </div>
-                </section>
-            </div>
-            
-            <section class="dashboard-section full-width" id="messages-section">
-                <div class="section-card">
-                    <div class="section-header">
-                        <h3>Messages</h3>
-                    </div>
-                    <div id="messages-loading" class="loading-state">
-                        <div class="spinner"></div>
-                        <p>Loading messages...</p>
-                    </div>
-                    <div id="messages-list" class="messages-list" style="display: none;"></div>
-                    <div id="no-messages" class="empty-state" style="display: none;">
-                        <div class="empty-icon">
-                            <i class="fas fa-comment-slash"></i>
+                    <div class="dashboard-right-card tab-section" id="tab-settings" style="display:none;">
+                        <div class="settings-card">
+                            <h2>Account Settings</h2>
+                            <form class="settings-form" id="settings-form">
+                                <div class="form-group">
+                                    <label for="settings-name" class="form-label">Display Name</label>
+                                    <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-email" class="form-label">Email Address</label>
+                                    <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
+                                    <p class="input-note">Email cannot be changed</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-password" class="form-label">New Password</label>
+                                    <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                                    <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                                </div>
+                                <button type="submit" class="action-button">
+                                    <i class="fas fa-save"></i>
+                                    <span>Save Changes</span>
+                                </button>
+                                <div id="settings-message" class="message-area"></div>
+                            </form>
                         </div>
-                        <h4>No Messages</h4>
-                        <p>You haven't received any messages from your creator yet.</p>
                     </div>
-                </div>
-            </section>
-        </main>
-        
-        <!-- Modal Templates -->
-        <div id="payment-method-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Add Payment Method</h3>
-                    <button class="modal-close"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="modal-body">
-                    <div id="card-element"></div>
-                    <div id="card-errors" class="error-message" role="alert"></div>
-                    <button id="submit-payment-method" class="btn full-width">Add Card</button>
                 </div>
             </div>
         </div>
         
-        <div id="profile-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Edit Profile</h3>
-                    <button class="modal-close"><i class="fas fa-times"></i></button>
+        <!-- Subscription Details Popup -->
+        <div class="popup-overlay" id="model-popup">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <div class="popup-title">Subscription Details</div>
+                    <button class="popup-close" id="popup-close">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <form id="profile-form">
-                        <div class="form-group">
-                            <label for="profile-name">Full Name</label>
-                            <input type="text" id="profile-name" class="form-input" placeholder="Your full name">
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-phone">Phone</label>
-                            <input type="tel" id="profile-phone" class="form-input" placeholder="Your phone number">
-                        </div>
-                        <button type="submit" class="btn full-width">Save Changes</button>
-                    </form>
+                <div class="popup-body" id="popup-body"></div>
+                <div class="popup-footer">
+                    <button class="action-button" id="manage-subscription">
+                        <i class="fas fa-cog"></i>
+                        <span>Manage Subscription</span>
+                    </button>
                 </div>
             </div>
         </div>
         
-        <div id="subscription-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Choose a Subscription</h3>
-                    <button class="modal-close"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="modal-body">
-                    <div id="subscription-loading-modal" class="loading-state">
-                        <div class="spinner"></div>
-                        <p>Loading subscription options...</p>
-                    </div>
-                    <div id="packages-list" class="packages-list"></div>
-                </div>
+        <!-- Loading Model -->
+        <template id="model-loading-template">
+            <div class="model-loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading your subscriptions...</p>
             </div>
-        </div>
+        </template>
         
-        <footer>
-            <div class="container footer-content">
-                <div class="logo">ThreadPay</div>
-                <div class="footer-links">
-                    <a href="/privacy-policy.html">Privacy Policy</a>
-                    <a href="/terms-of-service.html">Terms of Service</a>
+        <!-- Model Card Template -->
+        <template id="model-card-template">
+            <div class="model-card">
+                <div class="model-image">
+                    <img src="" alt="">
                 </div>
-                <div class="copyright">
-                    &copy; 2025 ThreadPay. All rights reserved.
+                <div class="model-info">
+                    <h3 class="model-name"></h3>
+                    <p class="model-description"></p>
+                    <div class="model-subscription-status active">Active Subscription</div>
                 </div>
             </div>
-        </footer>
+        </template>
     </div>
     
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
     <script>
-        // Initialization variables
+        // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;
-        let stripe;
-        let elements;
-        let cardElement;
-        let user = null;
-        let creator = null;
-        let subscription = null;
-        let paymentMethods = [];
-        let transactions = [];
-        let messages = [];
-        let packages = [];
         
-        // Initialize Supabase
+        // First try to get the key from meta tag
         const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         let supabaseKey = null;
         
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                
-                // Initialize Stripe
-                stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
-                
-                // Check authentication
-                checkAuth();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
-        
+        // Check if the key is a real key or just the placeholder
         if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
             console.log('Using API key from meta tag');
             supabaseKey = metaKey;
@@ -302,470 +194,423 @@
                 });
         }
         
-        // Check authentication state
-        async function checkAuth() {
-            try {
-                const { data: { user: authUser }, error } = await supabase.auth.getUser();
-                
-                if (error || !authUser) {
-                    console.error('Authentication error:', error);
-                    window.location.href = '/login.html';
-                    return;
+        function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                // Initialize the rest of the app once Supabase is ready
+                if (supabase) {
+                    initDashboard();
+                } else {
+                    console.error('Supabase client failed to initialize');
                 }
+            } else {
+                console.error('Supabase client library not loaded');
+            }
+        }
+        
+        // DOM elements
+        const accountName = document.getElementById('account-name');
+        const accountEmail = document.getElementById('account-email');
+        const accountCreated = document.getElementById('account-created');
+        const accountSubscriptionStatus = document.getElementById('account-subscription-status');
+        const subscribedModelsContainer = document.getElementById('subscribed-models-container');
+        const noSubscriptionContainer = document.getElementById('no-subscription-container');
+        const exploreMoreContainer = document.getElementById('explore-more-container');
+        const logoutButton = document.getElementById('logout-button');
+        const settingsForm = document.getElementById('settings-form');
+        const settingsName = document.getElementById('settings-name');
+        const settingsEmail = document.getElementById('settings-email');
+        const settingsPassword = document.getElementById('settings-password');
+        const settingsConfirmPassword = document.getElementById('settings-confirm-password');
+        const settingsMessage = document.getElementById('settings-message');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const modelPopup = document.getElementById('model-popup');
+        const popupBody = document.getElementById('popup-body');
+        const popupClose = document.getElementById('popup-close');
+        const manageSubscriptionButton = document.getElementById('manage-subscription');
+        
+        // Get user data from local storage
+        const userData = JSON.parse(localStorage.getItem('threadpay_user') || '{}');
+        
+        // Check if user is logged in
+        if (!userData.id) {
+            window.location.href = '/login.html';
+        }
+        
+        // Initialize dashboard
+        async function initDashboard() {
+            try {
+                // Show loading state
+                const loadingTemplate = document.getElementById('model-loading-template');
+                subscribedModelsContainer.innerHTML = loadingTemplate.innerHTML;
+                subscribedModelsContainer.style.display = 'block';
+                noSubscriptionContainer.style.display = 'none';
                 
-                user = authUser;
-                
-                // Update welcome message
-                document.getElementById('user-email').textContent = user.email || '';
-                
-                // Get user profile
-                const { data: profile } = await supabase
+                // Fetch the latest user data - using or condition to match either id or auth_id
+                const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('id', user.id)
+                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
                     .single();
                 
-                if (profile) {
-                    user = { ...user, ...profile };
-                    
-                    // Update profile details
-                    if (profile.full_name) {
-                        document.getElementById('welcome-message').textContent = `Welcome back, ${profile.full_name}!`;
-                    }
-                    
-                    // Initialize dashboard data
-                    loadDashboardData();
-                }
+                if (profileError) throw profileError;
+                
+                // Update the UI with user data (name, email, etc.)
+                updateUserInterface(profile);
+                
+                // Load all user subscriptions (show all cards)
+                await loadUserSubscriptions();
             } catch (error) {
-                console.error('Authentication check error:', error);
-                window.location.href = '/login.html';
-            }
-        }
-        
-        // Load all dashboard data
-        async function loadDashboardData() {
-            loadCreatorData();
-            loadPaymentMethods();
-            loadTransactions();
-            loadSubscription();
-            loadMessages();
-        }
-        
-        // Load creator data
-        async function loadCreatorData() {
-            try {
-                document.getElementById('creator-loading').style.display = 'flex';
-                document.getElementById('creator-info').style.display = 'none';
-                document.getElementById('no-creator').style.display = 'none';
-                
-                if (!user.model_id) {
-                    document.getElementById('creator-loading').style.display = 'none';
-                    document.getElementById('no-creator').style.display = 'block';
-                    return;
-                }
-                
-                const { data, error } = await supabase
-                    .from('models')
-                    .select('*')
-                    .eq('id', user.model_id)
-                    .single();
-                
-                if (error || !data) {
-                    document.getElementById('creator-loading').style.display = 'none';
-                    document.getElementById('no-creator').style.display = 'block';
-                    return;
-                }
-                
-                creator = data;
-                
-                // Display creator information
-                document.getElementById('creator-name').textContent = creator.name;
-                document.getElementById('creator-bio').textContent = creator.bio || 'Creator on ThreadPay';
-                
-                // Set followers and rating
-                document.getElementById('creator-followers').textContent = creator.followers_count || 0;
-                document.getElementById('creator-rating').textContent = creator.rating || '5.0';
-                
-                // Set creator image
-                let imagePath;
-                if (creator.pictures) {
-                    if (Array.isArray(creator.pictures) && creator.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${creator.pictures[0].replace('.jpg', '.PNG')}`;
-                    } else if (creator.pictures.main) {
-                        imagePath = creator.pictures.main;
-                    } else {
-                        imagePath = '/images/placeholder-model.png';
-                    }
-                } else {
-                    imagePath = '/images/placeholder-model.png';
-                }
-                
-                document.getElementById('creator-image').style.backgroundImage = `url(${imagePath})`;
-                
-                // Load packages for this creator
-                loadPackages();
-                
-                document.getElementById('creator-loading').style.display = 'none';
-                document.getElementById('creator-info').style.display = 'block';
-            } catch (error) {
-                console.error('Error loading creator data:', error);
-                document.getElementById('creator-loading').style.display = 'none';
-                document.getElementById('no-creator').style.display = 'block';
-            }
-        }
-        
-        // Load payment methods
-        async function loadPaymentMethods() {
-            try {
-                const paymentMethodsContainer = document.getElementById('payment-methods-list');
-                paymentMethodsContainer.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading payment methods...</p></div>';
-                
-                // In a real implementation, this would call your backend API to get payment methods from Stripe
-                // For this demo, we'll simulate a delay and show mock data
-                setTimeout(() => {
-                    paymentMethodsContainer.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                            <h4>No Payment Methods</h4>
-                            <p>You haven't added any payment methods yet.</p>
-                        </div>
-                    `;
-                }, 1000);
-            } catch (error) {
-                console.error('Error loading payment methods:', error);
-                document.getElementById('payment-methods-list').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </div>
-                        <h4>Error Loading Payment Methods</h4>
-                        <p>There was an error loading your payment methods. Please try again.</p>
+                console.error('Error initializing dashboard:', error);
+                // Show error state
+                subscribedModelsContainer.innerHTML = `
+                    <div class="model-loading">
+                        <i class="fas fa-exclamation-circle" style="color: var(--error);"></i>
+                        <p>Could not load your subscriptions. Please try again later.</p>
                     </div>
                 `;
             }
         }
         
-        // Load transactions
-        async function loadTransactions() {
-            try {
-                document.getElementById('transactions-loading').style.display = 'flex';
-                document.getElementById('transactions-list').style.display = 'none';
-                document.getElementById('no-transactions').style.display = 'none';
-                
-                // Simulate transaction loading
-                setTimeout(() => {
-                    document.getElementById('transactions-loading').style.display = 'none';
-                    document.getElementById('no-transactions').style.display = 'block';
-                }, 1000);
-            } catch (error) {
-                console.error('Error loading transactions:', error);
-                document.getElementById('transactions-loading').style.display = 'none';
-                document.getElementById('no-transactions').style.display = 'block';
+        // Update user interface with data
+        function updateUserInterface(profile) {
+            // Update settings form and account info
+            settingsName.value = profile.name || '';
+            settingsEmail.value = profile.email || '';
+            accountName.textContent = profile.name || 'User';
+            accountEmail.textContent = profile.email || 'Not provided';
+            accountCreated.textContent = `Member since ${new Date(profile.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })}`;
+            // Set subscription status
+            if (profile.subscription_status) {
+                accountSubscriptionStatus.textContent = 'Active';
+                accountSubscriptionStatus.className = 'model-subscription-status active';
+            } else {
+                accountSubscriptionStatus.textContent = 'Inactive';
+                accountSubscriptionStatus.className = 'model-subscription-status inactive';
             }
+            // Always update userData and localStorage with the latest stripe_customer_id
+            userData.stripe_customer_id = profile.stripe_customer_id || null;
+            localStorage.setItem('threadpay_user', JSON.stringify(userData));
+            // Debug log
+            console.log('Fetched profile:', profile);
         }
         
-        // Load subscription details
-        async function loadSubscription() {
+        // Function to load user subscriptions
+        async function loadUserSubscriptions() {
             try {
-                document.getElementById('subscription-loading').style.display = 'flex';
-                document.getElementById('subscription-details').style.display = 'none';
-                document.getElementById('no-subscription').style.display = 'none';
-                
-                // Simulate subscription loading
-                setTimeout(() => {
-                    document.getElementById('subscription-loading').style.display = 'none';
-                    document.getElementById('no-subscription').style.display = 'block';
-                }, 1000);
-            } catch (error) {
-                console.error('Error loading subscription:', error);
-                document.getElementById('subscription-loading').style.display = 'none';
-                document.getElementById('no-subscription').style.display = 'block';
-            }
-        }
-        
-        // Load packages for subscription
-        async function loadPackages() {
-            try {
-                if (!creator) return;
-                
-                const { data, error } = await supabase
-                    .from('packages')
-                    .select('*')
-                    .eq('model_id', creator.id)
-                    .order('price', { ascending: true });
-                
+                // Fetch user's subscriptions from the user_model_subscriptions table
+                const { data: subscriptions, error } = await supabase
+                    .from('user_model_subscriptions')
+                    .select(`
+                        *,
+                        models:model_id (name, bio, pictures),
+                        packages:package_id (name, price, description)
+                    `)
+                    .eq('user_id', userData.id)
+                    .eq('is_active', true);
+                    
                 if (error) throw error;
                 
-                packages = data || [];
-            } catch (error) {
-                console.error('Error loading packages:', error);
-            }
-        }
-        
-        // Load messages
-        async function loadMessages() {
-            try {
-                document.getElementById('messages-loading').style.display = 'flex';
-                document.getElementById('messages-list').style.display = 'none';
-                document.getElementById('no-messages').style.display = 'none';
+                console.log('User subscriptions:', subscriptions);
                 
-                // Simulate messages loading
-                setTimeout(() => {
-                    document.getElementById('messages-loading').style.display = 'none';
-                    document.getElementById('no-messages').style.display = 'block';
-                }, 1000);
-            } catch (error) {
-                console.error('Error loading messages:', error);
-                document.getElementById('messages-loading').style.display = 'none';
-                document.getElementById('no-messages').style.display = 'block';
-            }
-        }
-        
-        // Initialize Stripe card element
-        function initializeStripeElements() {
-            if (!stripe) return;
-            
-            elements = stripe.elements();
-            cardElement = elements.create('card', {
-                style: {
-                    base: {
-                        color: '#32325d',
-                        fontFamily: '"Inter", Helvetica, sans-serif',
-                        fontSmoothing: 'antialiased',
-                        fontSize: '16px',
-                        '::placeholder': {
-                            color: '#aab7c4'
+                // If user has no subscriptions
+                if (!subscriptions || subscriptions.length === 0) {
+                    subscribedModelsContainer.style.display = 'none';
+                    noSubscriptionContainer.style.display = 'block';
+                    exploreMoreContainer.style.display = 'none';
+                    return;
+                }
+                
+                // User has subscriptions
+                subscribedModelsContainer.style.display = 'grid';
+                noSubscriptionContainer.style.display = 'none';
+                exploreMoreContainer.style.display = 'flex';
+                
+                // Clear the container before adding new cards
+                subscribedModelsContainer.innerHTML = '';
+                
+                // Create a card for each subscription
+                subscriptions.forEach(subscription => {
+                    const model = subscription.models;
+                    const pkg = subscription.packages;
+                    if (!model) return; // Skip if model is not found
+
+                    // Get the image URL (handle both array and object for pictures)
+                    let imageUrl = '/images/placeholder-model.jpg';
+                    if (model.pictures) {
+                        if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                            imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        } else if (typeof model.pictures === 'object' && model.pictures.main) {
+                            imageUrl = model.pictures.main;
                         }
-                    },
-                    invalid: {
-                        color: '#fa755a',
-                        iconColor: '#fa755a'
                     }
-                }
-            });
-            
-            cardElement.mount('#card-element');
-            
-            // Handle real-time validation errors
-            cardElement.addEventListener('change', function(event) {
-                const displayError = document.getElementById('card-errors');
-                if (event.error) {
-                    displayError.textContent = event.error.message;
-                } else {
-                    displayError.textContent = '';
-                }
-            });
-        }
-        
-        // Display packages in modal
-        function displayPackages() {
-            const packagesList = document.getElementById('packages-list');
-            packagesList.innerHTML = '';
-            
-            if (!packages || packages.length === 0) {
-                packagesList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="fas fa-box-open"></i>
-                        </div>
-                        <h4>No Packages Available</h4>
-                        <p>This creator doesn't have any subscription packages available.</p>
+
+                    // Get the model card template
+                    const template = document.getElementById('model-card-template');
+                    const card = document.importNode(template.content, true).querySelector('.model-card');
+                    
+                    // Fill in the card details
+                    card.querySelector('.model-name').textContent = model.name;
+                    card.querySelector('.model-description').textContent = model.bio || 'Creator on ThreadPay';
+                    card.querySelector('.model-image img').src = imageUrl;
+                    card.querySelector('.model-image img').alt = model.name;
+                    card.dataset.modelId = subscription.model_id;
+                    card.dataset.subscriptionId = subscription.id;
+
+                    // Add the card to the container
+                    subscribedModelsContainer.appendChild(card);
+
+                    // Add click event listener to open modal
+                    card.addEventListener('click', () => {
+                        openSubscriptionDetails(subscription);
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading user subscriptions:', error);
+                // Show error message
+                subscribedModelsContainer.innerHTML = `
+                    <div class="model-loading">
+                        <i class="fas fa-exclamation-circle" style="color: var(--error);"></i>
+                        <p>Failed to load your subscriptions. Please try again later.</p>
                     </div>
                 `;
+                subscribedModelsContainer.style.display = 'block';
+                noSubscriptionContainer.style.display = 'none';
+            }
+        }
+        
+        // Function to open subscription details popup
+        function openSubscriptionDetails(subscription) {
+            // Update popup content
+            const model = subscription.models;
+            const pkg = subscription.packages;
+            
+            // Get the image URL (handle both array and object for pictures)
+            let imageUrl = '/images/placeholder-model.jpg';
+            if (model.pictures) {
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imageUrl = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else if (typeof model.pictures === 'object' && model.pictures.main) {
+                    imageUrl = model.pictures.main;
+                }
+            }
+            
+            popupBody.innerHTML = `
+                <div class="model-detail-header">
+                    <div class="model-detail-image">
+                        <img src="${imageUrl}" alt="${model.name}">
+                    </div>
+                    <div class="model-detail-info">
+                        <h3>${model.name}</h3>
+                        <div class="model-detail-description">${model.bio || 'Creator on ThreadPay'}</div>
+                    </div>
+                </div>
+                
+                <div class="subscription-details-container">
+                    <h4>Subscription Details</h4>
+                    <div class="subscription-detail-item">
+                        <div class="subscription-detail-label">Status</div>
+                        <div class="subscription-detail-value">Active</div>
+                    </div>
+                    <div class="subscription-detail-item">
+                        <div class="subscription-detail-label">Plan</div>
+                        <div class="subscription-detail-value">${pkg?.name || 'Premium'}</div>
+                    </div>
+                    <div class="subscription-detail-item">
+                        <div class="subscription-detail-label">Price</div>
+                        <div class="subscription-detail-value">${formatPrice(pkg?.price || 19.99)}/month</div>
+                    </div>
+                    <div class="subscription-detail-item">
+                        <div class="subscription-detail-label">Next Billing Date</div>
+                        <div class="subscription-detail-value">${formatDate(subscription.current_period_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000))}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Show popup
+            modelPopup.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            // Set up manage subscription button for Stripe portal
+            manageSubscriptionButton.onclick = async function () {
+                const customerId = subscription.stripe_customer_id || userData.stripe_customer_id;
+                console.log('Stripe customerId for portal:', customerId);
+                if (!customerId) {
+                    alert('Stripe customer ID not found. Please contact support or try re-logging in.');
+                    return;
+                }
+                manageSubscriptionButton.disabled = true;
+                manageSubscriptionButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Redirecting...</span>';
+                try {
+                    const response = await fetch('/api/create-portal-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ customerId, returnUrl: window.location.origin + '/dashboard.html' })
+                    });
+                    if (!response.ok) throw new Error('Failed to create Stripe portal session');
+                    const data = await response.json();
+                    window.location.href = data.url;
+                } catch (err) {
+                    alert('Error redirecting to Stripe portal: ' + err.message);
+                } finally {
+                    manageSubscriptionButton.disabled = false;
+                    manageSubscriptionButton.innerHTML = '<i class="fas fa-cog"></i><span>Manage Subscription</span>';
+                }
+            };
+        }
+        
+        // Close popup
+        popupClose.addEventListener('click', () => {
+            closeModelPopup();
+        });
+        
+        // Close popup when clicking outside
+        modelPopup.addEventListener('click', (e) => {
+            if (e.target === modelPopup) {
+                closeModelPopup();
+            }
+        });
+        
+        // Function to close the popup
+        function closeModelPopup() {
+            modelPopup.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+        
+        // Handle settings form submission
+        settingsForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = settingsName.value.trim();
+            const password = settingsPassword.value.trim();
+            const confirmPassword = settingsConfirmPassword.value.trim();
+            
+            // Validate passwords if provided
+            if (password && password !== confirmPassword) {
+                showMessage(settingsMessage, 'Passwords do not match', 'error');
                 return;
             }
             
-            packages.forEach(pkg => {
-                const price = new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                }).format(pkg.price);
+            try {
+                // Build update object
+                const updates = { name };
                 
-                const packageElement = document.createElement('div');
-                packageElement.className = 'package-card';
-                packageElement.innerHTML = `
-                    <div class="package-details">
-                        <h4 class="package-name">${pkg.name}</h4>
-                        <p class="package-price">${price}<span>/month</span></p>
-                        <p class="package-description">${pkg.description || 'Access exclusive content with this subscription.'}</p>
-                    </div>
-                    <button class="btn select-package-btn" data-package-id="${pkg.id}">Select</button>
-                `;
-                
-                packagesList.appendChild(packageElement);
-            });
-            
-            // Add click handlers for package selection
-            document.querySelectorAll('.select-package-btn').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    const packageId = this.getAttribute('data-package-id');
-                    const selectedPackage = packages.find(p => p.id === packageId);
-                    
-                    if (!selectedPackage) return;
-                    
-                    // In a real implementation, this would redirect to a Stripe checkout session
-                    alert(`You selected the ${selectedPackage.name} package. In a real implementation, this would redirect to Stripe checkout.`);
-                    
-                    // Close the modal
-                    toggleModal('subscription-modal', false);
-                });
-            });
-        }
-        
-        // Handle modal toggling
-        function toggleModal(modalId, show) {
-            const modal = document.getElementById(modalId);
-            if (show) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                
-                if (modalId === 'payment-method-modal') {
-                    initializeStripeElements();
-                } else if (modalId === 'profile-modal') {
-                    // Populate profile form
-                    document.getElementById('profile-name').value = user.full_name || '';
-                    document.getElementById('profile-phone').value = user.phone || '';
-                } else if (modalId === 'subscription-modal') {
-                    // Show loading state
-                    document.getElementById('subscription-loading-modal').style.display = 'flex';
-                    document.getElementById('packages-list').style.display = 'none';
-                    
-                    // Load packages
-                    setTimeout(() => {
-                        document.getElementById('subscription-loading-modal').style.display = 'none';
-                        document.getElementById('packages-list').style.display = 'block';
-                        displayPackages();
-                    }, 500);
+                // Add password if provided
+                if (password) {
+                    // Hash password (in a real app, you'd do this on the server)
+                    const hashedPassword = await hashPassword(password);
+                    updates.password_hash = hashedPassword;
                 }
-            } else {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
                 
-                if (modalId === 'payment-method-modal') {
-                    if (cardElement) {
-                        cardElement.unmount();
-                        cardElement = null;
-                    }
-                }
+                // Update profile
+                const { error } = await supabase
+                    .from('profiles')
+                    .update(updates)
+                    .eq('id', userData.id);
+                
+                if (error) throw error;
+                
+                // Update local storage
+                userData.name = name;
+                localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                
+                // Update UI
+                accountName.textContent = name || 'User';
+                
+                // Clear password fields
+                settingsPassword.value = '';
+                settingsConfirmPassword.value = '';
+                
+                // Show success message
+                showMessage(settingsMessage, 'Settings updated successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error updating settings:', error);
+                showMessage(settingsMessage, 'Error updating settings', 'error');
             }
+        });
+        
+        // Handle logout
+        logoutButton.addEventListener('click', async function() {
+            // Clear local storage
+            localStorage.removeItem('threadpay_user');
+            
+            // Redirect to login page
+            window.location.href = '/login.html';
+        });
+        
+        // Set up tab navigation
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+                this.classList.add('tab-active');
+                
+                const tabId = this.dataset.tab;
+                document.querySelectorAll('.tab-section').forEach(section => {
+                    section.style.display = section.id === `tab-${tabId}` ? 'block' : 'none';
+                });
+            });
+        });
+        
+        // View available models button event
+        document.getElementById('explore-models-button')?.addEventListener('click', function() {
+            window.location.href = '/model-selection.html';
+        });
+        
+        // Helper function to show messages
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message-area ${type}`;
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                element.className = 'message-area';
+                element.textContent = '';
+            }, 3000);
         }
         
-        // Event listeners
+        // Helper function to hash password
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Helper function to format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) {
+                return 'Unknown';
+            }
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+        
+        // Helper function to format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(price);
+        }
+        
+        // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            // Modal close buttons
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal');
-                    toggleModal(modal.id, false);
-                });
-            });
-            
-            // Modal background clicks
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        toggleModal(this.id, false);
-                    }
-                });
-            });
-            
-            // Open payment method modal
-            document.getElementById('add-payment-method').addEventListener('click', function() {
-                toggleModal('payment-method-modal', true);
-            });
-            
-            // Open profile modal
-            document.getElementById('edit-profile-btn').addEventListener('click', function() {
-                toggleModal('profile-modal', true);
-            });
-            
-            // Open subscription modal
-            document.getElementById('subscribe-btn').addEventListener('click', function() {
-                toggleModal('subscription-modal', true);
-            });
-            
-            // Submit payment method form
-            document.getElementById('submit-payment-method').addEventListener('click', async function() {
-                this.disabled = true;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                
-                const errorElement = document.getElementById('card-errors');
-                
-                try {
-                    // Simulated success
-                    setTimeout(() => {
-                        alert('Payment method added successfully!');
-                        toggleModal('payment-method-modal', false);
-                        loadPaymentMethods();
-                        
-                        // Reset form
-                        this.disabled = false;
-                        this.textContent = 'Add Card';
-                    }, 1500);
-                } catch (error) {
-                    console.error('Error adding payment method:', error);
-                    errorElement.textContent = error.message || 'An error occurred while adding your payment method.';
-                    this.disabled = false;
-                    this.textContent = 'Add Card';
-                }
-            });
-            
-            // Submit profile form
-            document.getElementById('profile-form').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const submitBtn = this.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                
-                const fullName = document.getElementById('profile-name').value;
-                const phone = document.getElementById('profile-phone').value;
-                
-                try {
-                    // Update profile in database
-                    const { error } = await supabase
-                        .from('profiles')
-                        .update({
-                            full_name: fullName,
-                            phone: phone
-                        })
-                        .eq('id', user.id);
-                    
-                    if (error) throw error;
-                    
-                    // Update local user data
-                    user.full_name = fullName;
-                    user.phone = phone;
-                    
-                    // Update UI
-                    document.getElementById('welcome-message').textContent = `Welcome back, ${fullName}!`;
-                    
-                    // Close modal
-                    toggleModal('profile-modal', false);
-                    
-                    // Show success message
-                    alert('Profile updated successfully!');
-                } catch (error) {
-                    console.error('Error updating profile:', error);
-                    alert('Error updating profile. Please try again.');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Save Changes';
-                }
-            });
-            
-            // Logout button
-            document.getElementById('logout-btn').addEventListener('click', async function() {
-                try {
-                    await supabase.auth.signOut();
-                    window.location.href = '/';
-                } catch (error) {
-                    console.error('Error signing out:', error);
-                    alert('Error signing out. Please try again.');
-                }
-            });
+            // If supabase is already initialized, call initDashboard
+            if (supabase) {
+                initDashboard();
+            }
+            // Otherwise, initSupabase will call initDashboard
         });
     </script>
 </body>
