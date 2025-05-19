@@ -2,584 +2,155 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>ThreadPay - Secure Payments for Creators</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreadPay | Secure Payment and Discovery Platform for Creators</title>
+    
+    <!-- Supabase API Key -->
+    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Social Media Cards -->
+    <meta property="og:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
+    <meta property="og:description" content="A secure payment and discovery platform for content creators and their supporters.">
+    <meta property="og:image" content="/images/Group 69.png">
+    <meta property="og:url" content="https://threadpay.vercel.app">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
+    <meta name="twitter:description" content="A secure payment and discovery platform for content creators and their supporters.">
+    <meta name="twitter:image" content="/images/Group 69.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <div class="container header-container">
-            <a href="index.html" class="logo">ThreadPay</a>
-            <nav class="nav">
-                <ul class="nav-list">
-                    <li><a href="#features" class="nav-link">Features</a></li>
-                    <li><a href="#pricing" class="nav-link">Pricing</a></li>
-                    <li><a href="#faq" class="nav-link">FAQ</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <a href="login.html" class="btn btn-secondary">Log in</a>
-                <a href="#signup" class="btn btn-primary">Sign up</a>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">ThreadPay</div>
+                <div class="header-nav">
+                    <a href="/login.html" class="btn btn-ghost">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </a>
+                </div>
             </div>
-            <button class="menu-toggle" aria-label="Toggle menu">
-                <i class="ri-menu-line"></i>
-            </button>
         </div>
     </header>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <div class="mobile-menu-header">
-            <a href="index.html" class="logo">ThreadPay</a>
-            <button class="mobile-menu-close" aria-label="Close menu">
-                <i class="ri-close-line"></i>
-            </button>
-        </div>
-        <div class="mobile-menu-body">
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="#features" class="mobile-nav-link">
-                        <i class="ri-star-line mobile-nav-icon"></i>
-                        Features
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#pricing" class="mobile-nav-link">
-                        <i class="ri-price-tag-3-line mobile-nav-icon"></i>
-                        Pricing
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="#faq" class="mobile-nav-link">
-                        <i class="ri-question-line mobile-nav-icon"></i>
-                        FAQ
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="login.html" class="mobile-nav-link">
-                        <i class="ri-login-box-line mobile-nav-icon"></i>
-                        Log in
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="mobile-menu-footer">
-            <a href="#signup" class="btn btn-primary btn-block">Sign up for free</a>
-        </div>
-    </div>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1 class="hero-title">Secure Payments for<br>Digital Creators</h1>
-            <p class="hero-subtitle">ThreadPay is the most trusted platform for creators to monetize their content. Fast, simple, and secure payments.</p>
-            <div class="hero-actions">
-                <a href="#signup" class="btn btn-primary btn-lg">Get started for free</a>
-                <a href="#learn-more" class="btn btn-outline btn-lg">Learn more</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Designed For Creators</h2>
-                <p class="section-description">Everything you need to monetize your content with confidence.</p>
-            </div>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-secure-payment-line"></i>
+    
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content text-center">
+                    <h1 class="glow-effect">Support <span class="text-primary">exceptional</span> creators</h1>
+                    <p>ThreadPay connects you with hand-picked, thoroughly trained creators. <br class="hidden md:flex">Your new destination for quality content.</p>
+                    <div class="hero-cta">
+                        <a href="/model-selection-public.html" class="btn btn-primary">
+                            <i class="fas fa-star"></i>
+                            Support a Creator
+                        </a>
                     </div>
-                    <h3 class="feature-title">Secure Payments</h3>
-                    <p class="feature-description">Protect your transactions with bank-level security and fraud protection. Your money, always safe.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-money-dollar-circle-line"></i>
-                    </div>
-                    <h3 class="feature-title">Instant Payouts</h3>
-                    <p class="feature-description">Get paid faster with instant transfers to your bank account or debit card, 24/7.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-funds-line"></i>
-                    </div>
-                    <h3 class="feature-title">Subscription Management</h3>
-                    <p class="feature-description">Manage recurring payments easily with automatic billing and subscription tools.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-user-star-line"></i>
-                    </div>
-                    <h3 class="feature-title">Creator Dashboard</h3>
-                    <p class="feature-description">Track earnings, subscribers, and growth with our powerful analytics dashboard.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-message-3-line"></i>
-                    </div>
-                    <h3 class="feature-title">Messaging System</h3>
-                    <p class="feature-description">Communicate directly with your subscribers through our secure messaging platform.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-customer-service-2-line"></i>
-                    </div>
-                    <h3 class="feature-title">24/7 Support</h3>
-                    <p class="feature-description">Our dedicated support team is always available to help with any questions or issues.</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Simple, Transparent Pricing</h2>
-                <p class="section-description">No hidden fees. No surprises. Just straightforward rates.</p>
-            </div>
-            <div class="model-list">
-                <div class="model-item">
-                    <div class="model-tag">Most Popular</div>
-                    <div class="model-body">
-                        <h3 class="model-name">Standard</h3>
-                        <p class="model-description">Perfect for established creators looking to grow their audience.</p>
-                        <div class="model-price">
-                            <span class="model-price-amount">$12</span>
-                            <span class="model-price-period">/month</span>
+        </section>
+        
+        <!-- Features Section -->
+        <section class="section features bg-surface">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Why <span class="text-primary">ThreadPay</span></h2>
+                    <p class="section-description">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
+                </div>
+                
+                <div class="feature-grid md:grid-cols-3">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-medal"></i>
                         </div>
-                        <ul class="feature-list">
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Unlimited subscribers
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                2% transaction fee
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                24-hour payouts
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Basic analytics
-                            </li>
-                        </ul>
-                        <a href="#signup" class="btn btn-primary btn-block">Get started</a>
+                        <h3 class="feature-title">Curated Quality</h3>
+                        <p class="feature-description">Every creator is hand-selected for exceptional talent</p>
                     </div>
-                </div>
-                <div class="model-item">
-                    <div class="model-tag">Professional</div>
-                    <div class="model-body">
-                        <h3 class="model-name">Pro</h3>
-                        <p class="model-description">For serious creators who want to maximize their earnings.</p>
-                        <div class="model-price">
-                            <span class="model-price-amount">$29</span>
-                            <span class="model-price-period">/month</span>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-lock"></i>
                         </div>
-                        <ul class="feature-list">
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Unlimited subscribers
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                1% transaction fee
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Instant payouts
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Advanced analytics
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Priority support
-                            </li>
-                        </ul>
-                        <a href="#signup" class="btn btn-primary btn-block">Get started</a>
+                        <h3 class="feature-title">Secure Payments</h3>
+                        <p class="feature-description">Your financial details remain private and protected</p>
                     </div>
-                </div>
-                <div class="model-item">
-                    <div class="model-body">
-                        <h3 class="model-name">Enterprise</h3>
-                        <p class="model-description">Custom solutions for large creators and businesses.</p>
-                        <div class="model-price">
-                            <span class="model-price-amount">Custom</span>
-                            <span class="model-price-period">pricing</span>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
                         </div>
-                        <ul class="feature-list">
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Unlimited subscribers
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Custom transaction fees
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Instant payouts
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Advanced analytics
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Dedicated account manager
-                            </li>
-                            <li class="feature-list-item">
-                                <i class="ri-check-line feature-check"></i>
-                                Custom integrations
-                            </li>
-                        </ul>
-                        <a href="#contact" class="btn btn-outline btn-block">Contact sales</a>
+                        <h3 class="feature-title">Direct Support</h3>
+                        <p class="feature-description">Your contributions enable creators to focus on quality</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2 class="cta-title">Ready to start earning?</h2>
-                <p class="cta-description">Join thousands of creators who trust ThreadPay for their payment needs. Get started in minutes.</p>
-                <a href="#signup" class="btn btn-primary btn-lg">Sign up for free</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Frequently Asked Questions</h2>
-                <p class="section-description">Got questions? We've got answers.</p>
-            </div>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How does ThreadPay work?</span>
-                        <i class="ri-add-line faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>ThreadPay provides a secure platform for creators to receive payments from their subscribers. Simply create an account, set up your profile, and share your payment link with your audience.</p>
-                    </div>
+        </section>
+        
+        <!-- CTA Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Get <span class="text-primary">Started</span></h2>
+                    <p class="section-description">Join our community of supporters and discover exceptional creators today.</p>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How much does it cost?</span>
-                        <i class="ri-add-line faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>ThreadPay offers flexible pricing options starting at $12/month plus a small transaction fee. Check our pricing section for detailed information on each plan.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>How quickly can I access my funds?</span>
-                        <i class="ri-add-line faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Depending on your plan, you can access your funds within 24 hours or instantly. Funds are transferred directly to your linked bank account or debit card.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Is ThreadPay secure?</span>
-                        <i class="ri-add-line faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely. ThreadPay uses bank-level encryption and security protocols to protect your data and transactions. We comply with all relevant financial regulations and data protection standards.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Can I offer subscriptions?</span>
-                        <i class="ri-add-line faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes! ThreadPay supports both one-time payments and recurring subscriptions. You can set up different subscription tiers with various benefits for your subscribers.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>What kind of support does ThreadPay offer?</span>
-                        <i class="ri-add-line faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>We offer 24/7 customer support via email and chat. Pro and Enterprise plans also get priority support and dedicated account managers.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sign Up Section -->
-    <section id="signup" class="signup">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Create Your Account</h2>
-                <p class="section-description">Join ThreadPay in less than 2 minutes.</p>
-            </div>
-            <div class="signup-form-container">
-                <form id="signupForm" class="signup-form">
-                    <div class="form-group">
-                        <label for="signup-name" class="form-label">Full name</label>
-                        <div class="input-wrapper">
-                            <i class="ri-user-line input-icon"></i>
-                            <input type="text" id="signup-name" name="name" class="form-control" placeholder="Your name" required>
+                
+                <div class="flex flex-wrap gap-lg justify-center">
+                    <div class="card max-w-sm">
+                        <div class="text-center mb-lg">
+                            <i class="fas fa-user-plus text-primary text-4xl mb-md"></i>
+                            <h3 class="mb-sm">New to ThreadPay?</h3>
+                            <p class="text-secondary mb-lg">Create an account to start supporting your favorite creators</p>
                         </div>
+                        <a href="/model-selection-public.html" class="btn btn-full">Sign Up</a>
                     </div>
-                    <div class="form-group">
-                        <label for="signup-email" class="form-label">Email address</label>
-                        <div class="input-wrapper">
-                            <i class="ri-mail-line input-icon"></i>
-                            <input type="email" id="signup-email" name="email" class="form-control" placeholder="you@example.com" required>
+                    
+                    <div class="card max-w-sm">
+                        <div class="text-center mb-lg">
+                            <i class="fas fa-sign-in-alt text-primary text-4xl mb-md"></i>
+                            <h3 class="mb-sm">Returning Supporter?</h3>
+                            <p class="text-secondary mb-lg">Sign in to continue supporting your creators</p>
                         </div>
+                        <a href="/login.html" class="btn btn-full">Sign In</a>
                     </div>
-                    <div class="form-group">
-                        <label for="signup-phone" class="form-label">Phone number</label>
-                        <div class="input-wrapper">
-                            <i class="ri-phone-line input-icon"></i>
-                            <input type="tel" id="signup-phone" name="phone" class="form-control" placeholder="(123) 456-7890" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-password" class="form-label">Password</label>
-                        <div class="input-wrapper">
-                            <i class="ri-lock-line input-icon"></i>
-                            <input type="password" id="signup-password" name="password" class="form-control" placeholder="Create a secure password" required>
-                            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                                <i class="ri-eye-line"></i>
-                            </button>
-                        </div>
-                        <p class="form-description">Password must be at least 8 characters long.</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="signup-terms" name="terms" required>
-                            <span class="checkmark"></span>
-                            <span class="checkbox-label">I agree to the <a href="#" class="text-link">Terms of Service</a> and <a href="#" class="text-link">Privacy Policy</a></span>
-                        </label>
-                    </div>
-                    <div id="signupMessage" class="auth-message" role="alert"></div>
-                    <button type="submit" id="signupBtn" class="btn btn-primary btn-lg btn-block">
-                        <span class="btn-text">Create account</span>
-                        <div class="btn-loader"><div></div><div></div><div></div></div>
-                    </button>
-                </form>
-                <div class="auth-divider">
-                    <span>or</span>
-                </div>
-                <div class="social-auth">
-                    <button class="btn btn-social" aria-label="Sign up with Google">
-                        <img src="images/google-icon.svg" alt="Google" width="24" height="24">
-                    </button>
-                    <button class="btn btn-social" aria-label="Sign up with Apple">
-                        <i class="ri-apple-fill"></i>
-                    </button>
-                    <button class="btn btn-social" aria-label="Sign up with X (Twitter)">
-                        <i class="ri-twitter-x-fill"></i>
-                    </button>
-                </div>
-                <div class="auth-footer">
-                    <p>Already have an account? <a href="login.html" class="text-link">Log in</a></p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
+        </section>
+    </main>
+    
     <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-brand">
-                <a href="index.html" class="footer-logo">ThreadPay</a>
-                <p class="footer-about">ThreadPay is the most trusted platform for creators to monetize their content. Fast, simple, and secure payments.</p>
-                <div class="social-links">
-                    <a href="#" class="social-link" aria-label="Twitter">
-                        <i class="ri-twitter-x-fill"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <i class="ri-instagram-line"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Facebook">
-                        <i class="ri-facebook-fill"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="LinkedIn">
-                        <i class="ri-linkedin-fill"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-links">
-                <div class="footer-links-column">
-                    <h4>Product</h4>
-                    <ul class="footer-links-list">
-                        <li class="footer-link"><a href="#">Features</a></li>
-                        <li class="footer-link"><a href="#">Pricing</a></li>
-                        <li class="footer-link"><a href="#">Security</a></li>
-                        <li class="footer-link"><a href="#">Integrations</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links-column">
-                    <h4>Resources</h4>
-                    <ul class="footer-links-list">
-                        <li class="footer-link"><a href="#">Blog</a></li>
-                        <li class="footer-link"><a href="#">Help Center</a></li>
-                        <li class="footer-link"><a href="#">Tutorials</a></li>
-                        <li class="footer-link"><a href="#">API Docs</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links-column">
-                    <h4>Company</h4>
-                    <ul class="footer-links-list">
-                        <li class="footer-link"><a href="#">About Us</a></li>
-                        <li class="footer-link"><a href="#">Careers</a></li>
-                        <li class="footer-link"><a href="#">Contact</a></li>
-                        <li class="footer-link"><a href="#">Legal</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 ThreadPay. All rights reserved.</p>
+            <div class="footer-content">
+                <div class="logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="/privacy-policy.html">Privacy Policy</a>
+                    <a href="/terms-of-service.html">Terms of Service</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
             </div>
         </div>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const menuToggle = document.querySelector('.menu-toggle');
-            const menuClose = document.querySelector('.mobile-menu-close');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            
-            menuToggle.addEventListener('click', function() {
-                mobileMenu.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-            
-            menuClose.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-
-            // Mobile menu links
-            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-            mobileNavLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    mobileMenu.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            });
-
-            // FAQ accordions
-            const faqQuestions = document.querySelectorAll('.faq-question');
-            faqQuestions.forEach(question => {
-                question.addEventListener('click', function() {
-                    const faqItem = this.parentElement;
-                    const isActive = faqItem.classList.contains('active');
-                    
-                    // Close all FAQs
-                    document.querySelectorAll('.faq-item').forEach(item => {
-                        item.classList.remove('active');
-                        const icon = item.querySelector('.faq-icon');
-                        icon.classList.remove('ri-subtract-line');
-                        icon.classList.add('ri-add-line');
-                    });
-                    
-                    // Open clicked FAQ if it wasn't active
-                    if (!isActive) {
-                        faqItem.classList.add('active');
-                        const icon = faqItem.querySelector('.faq-icon');
-                        icon.classList.remove('ri-add-line');
-                        icon.classList.add('ri-subtract-line');
-                    }
-                });
-            });
-
-            // Password toggle
-            const passwordToggle = document.querySelector('.password-toggle');
-            const passwordField = document.getElementById('signup-password');
-            
-            if (passwordToggle && passwordField) {
-                passwordToggle.addEventListener('click', function() {
-                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordField.setAttribute('type', type);
-                    this.querySelector('i').classList.toggle('ri-eye-line');
-                    this.querySelector('i').classList.toggle('ri-eye-off-line');
-                });
-            }
-
-            // Signup form
-            const signupForm = document.getElementById('signupForm');
-            const signupBtn = document.getElementById('signupBtn');
-            const signupMessage = document.getElementById('signupMessage');
-            
-            if (signupForm) {
-                signupForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    // Show loading state
-                    signupBtn.classList.add('loading');
-                    signupBtn.disabled = true;
-                    
-                    // Clear previous messages
-                    signupMessage.textContent = '';
-                    signupMessage.classList.remove('error', 'success');
-                    
-                    // Get form data
-                    const name = document.getElementById('signup-name').value;
-                    const email = document.getElementById('signup-email').value;
-                    const phone = document.getElementById('signup-phone').value;
-                    const password = document.getElementById('signup-password').value;
-                    const terms = document.getElementById('signup-terms').checked;
-                    
-                    // Validate form
-                    if (!name || !email || !phone || !password || !terms) {
-                        signupMessage.textContent = 'Please fill in all fields and accept the terms.';
-                        signupMessage.classList.add('error');
-                        signupBtn.classList.remove('loading');
-                        signupBtn.disabled = false;
-                        return;
-                    }
-                    
-                    if (password.length < 8) {
-                        signupMessage.textContent = 'Password must be at least 8 characters long.';
-                        signupMessage.classList.add('error');
-                        signupBtn.classList.remove('loading');
-                        signupBtn.disabled = false;
-                        return;
-                    }
-                    
-                    // Simulate API call
-                    setTimeout(function() {
-                        // Success - redirect to dashboard
-                        signupMessage.textContent = 'Account created successfully!';
-                        signupMessage.classList.add('success');
-                        
-                        // Redirect after a brief delay
-                        setTimeout(function() {
-                            window.location.href = 'dashboard.html';
-                        }, 1000);
-                    }, 1500);
-                });
-            }
-        });
-    </script>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html> 

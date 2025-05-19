@@ -2,497 +2,171 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>ThreadPay - Featured Creators</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Creators | ThreadPay</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <div class="container header-container">
-            <a href="index.html" class="logo">ThreadPay</a>
-            <nav class="nav">
-                <ul class="nav-list">
-                    <li><a href="index.html#features" class="nav-link">Features</a></li>
-                    <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
-                    <li><a href="index.html#faq" class="nav-link">FAQ</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <a href="login.html" class="btn btn-secondary">Log in</a>
-                <a href="index.html#signup" class="btn btn-primary">Sign up</a>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">ThreadPay</a>
+                <div class="header-nav">
+                    <a href="/login.html" class="btn btn-ghost">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </a>
+                </div>
             </div>
-            <button class="menu-toggle" aria-label="Toggle menu">
-                <i class="ri-menu-line"></i>
-            </button>
         </div>
     </header>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <div class="mobile-menu-header">
-            <a href="index.html" class="logo">ThreadPay</a>
-            <button class="mobile-menu-close" aria-label="Close menu">
-                <i class="ri-close-line"></i>
-            </button>
-        </div>
-        <div class="mobile-menu-body">
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="index.html#features" class="mobile-nav-link">
-                        <i class="ri-star-line mobile-nav-icon"></i>
-                        Features
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="index.html#pricing" class="mobile-nav-link">
-                        <i class="ri-price-tag-3-line mobile-nav-icon"></i>
-                        Pricing
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="index.html#faq" class="mobile-nav-link">
-                        <i class="ri-question-line mobile-nav-icon"></i>
-                        FAQ
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="login.html" class="mobile-nav-link">
-                        <i class="ri-login-box-line mobile-nav-icon"></i>
-                        Log in
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="mobile-menu-footer">
-            <a href="index.html#signup" class="btn btn-primary btn-block">Sign up for free</a>
-        </div>
-    </div>
-
-    <!-- Featured Creators Section -->
-    <section class="creators-section">
+    
+    <main class="creator-selection">
         <div class="container">
-            <div class="section-header">
-                <h1 class="section-title">Featured Creators</h1>
-                <p class="section-description">Discover and support exceptional talent from our hand-selected creator community.</p>
+            <div class="section-header text-center">
+                <h1>Discover <span class="text-primary">Creators</span></h1>
+                <p class="text-tertiary">Explore our hand-picked creators and subscribe to unlock exclusive content</p>
             </div>
-
-            <div class="creators-filter">
-                <div class="search-wrapper">
-                    <i class="ri-search-line search-icon"></i>
-                    <input type="text" id="creatorSearch" class="search-input" placeholder="Search creators...">
+            
+            <div class="creators-grid" id="creators-grid">
+                <!-- Creators will be loaded here dynamically -->
+                <div class="creators-loading">
+                    <div class="spinner"></div>
+                    <p>Loading creators...</p>
                 </div>
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="art">Art</button>
-                    <button class="filter-btn" data-filter="music">Music</button>
-                    <button class="filter-btn" data-filter="writing">Writing</button>
-                    <button class="filter-btn" data-filter="photography">Photography</button>
-                </div>
-            </div>
-
-            <div class="creators-grid" id="creatorsGrid">
-                <!-- Creator cards will be dynamically loaded here -->
             </div>
         </div>
-    </section>
-
-    <!-- Creator Modal -->
-    <div class="modal-overlay" id="creatorModal">
-        <div class="modal">
+    </main>
+    
+    <!-- Creator Details Modal -->
+    <div class="modal" id="creator-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
             <div class="modal-header">
-                <h3 class="modal-title">Creator Details</h3>
-                <button class="modal-close" aria-label="Close modal">
-                    <i class="ri-close-line"></i>
+                <h2 id="modal-creator-name">Creator Name</h2>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body" id="creatorModalContent">
-                <!-- Creator details will be dynamically loaded here -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close-btn">Close</button>
-                <a href="login.html" class="btn btn-primary">Subscribe</a>
+            
+            <div class="modal-body">
+                <div class="creator-profile">
+                    <div class="creator-gallery" id="modal-creator-gallery">
+                        <!-- Images will be loaded here -->
+                    </div>
+                    
+                    <div class="creator-bio" id="modal-creator-bio">
+                        Loading creator details...
+                    </div>
+                </div>
+                
+                <div class="package-selection">
+                    <h3>Choose Your Package</h3>
+                    <div class="packages-list" id="modal-packages">
+                        <!-- Packages will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="form-container" id="modal-form-container">
+                    <h3>Complete Your Registration</h3>
+                    
+                    <form id="signup-form" class="auth-form">
+                        <input type="hidden" id="selected-model-id" name="model-id">
+                        <input type="hidden" id="selected-package-id" name="package-id">
+                        
+                        <div class="form-group">
+                            <label for="full-name">Full Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-calendar"></i>
+                                <input type="number" id="age" name="age" min="18" placeholder="Must be 18+" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telegram">Telegram Username</label>
+                            <div class="input-with-icon">
+                                <i class="fab fa-telegram"></i>
+                                <input type="text" id="telegram" name="telegram" placeholder="@username" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <div class="input-with-icon">
+                                <i class="far fa-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="For payment and notifications" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" placeholder="Create a password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-error" id="signup-error"></div>
+                        
+                        <button type="submit" class="btn btn-primary btn-full" id="subscribe-button">
+                            <span class="btn-text">Subscribe Now</span>
+                            <span class="btn-loading hidden">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- No Results Message -->
-    <div class="no-results" id="noResults">
-        <div class="empty-state">
-            <i class="ri-search-eye-line empty-icon"></i>
-            <h3 class="empty-title">No creators found</h3>
-            <p class="empty-description">Try adjusting your search or filter to find what you're looking for.</p>
-            <button class="btn btn-primary reset-search-btn">Reset search</button>
-        </div>
-    </div>
-
-    <!-- Footer -->
+    
     <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-brand">
-                <a href="index.html" class="footer-logo">ThreadPay</a>
-                <p class="footer-about">ThreadPay is the most trusted platform for creators to monetize their content. Fast, simple, and secure payments.</p>
-                <div class="social-links">
-                    <a href="#" class="social-link" aria-label="Twitter">
-                        <i class="ri-twitter-x-fill"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <i class="ri-instagram-line"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Facebook">
-                        <i class="ri-facebook-fill"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="LinkedIn">
-                        <i class="ri-linkedin-fill"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-links">
-                <div class="footer-links-column">
-                    <h4>Product</h4>
-                    <ul class="footer-links-list">
-                        <li class="footer-link"><a href="#">Features</a></li>
-                        <li class="footer-link"><a href="#">Pricing</a></li>
-                        <li class="footer-link"><a href="#">Security</a></li>
-                        <li class="footer-link"><a href="#">Integrations</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links-column">
-                    <h4>Resources</h4>
-                    <ul class="footer-links-list">
-                        <li class="footer-link"><a href="#">Blog</a></li>
-                        <li class="footer-link"><a href="#">Help Center</a></li>
-                        <li class="footer-link"><a href="#">Tutorials</a></li>
-                        <li class="footer-link"><a href="#">API Docs</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links-column">
-                    <h4>Company</h4>
-                    <ul class="footer-links-list">
-                        <li class="footer-link"><a href="#">About Us</a></li>
-                        <li class="footer-link"><a href="#">Careers</a></li>
-                        <li class="footer-link"><a href="#">Contact</a></li>
-                        <li class="footer-link"><a href="#">Legal</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 ThreadPay. All rights reserved.</p>
+            <div class="footer-content">
+                <div class="logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="/privacy-policy.html">Privacy Policy</a>
+                    <a href="/terms-of-service.html">Terms of Service</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
             </div>
         </div>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const menuToggle = document.querySelector('.menu-toggle');
-            const menuClose = document.querySelector('.mobile-menu-close');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            
-            menuToggle.addEventListener('click', function() {
-                mobileMenu.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-            
-            menuClose.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-
-            // Mobile menu links
-            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-            mobileNavLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    mobileMenu.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            });
-
-            // Sample creator data
-            const creators = [
-                {
-                    id: 1,
-                    name: "Alex Morgan",
-                    category: "art",
-                    imgUrl: "https://randomuser.me/api/portraits/women/32.jpg",
-                    shortDescription: "Digital artist specializing in fantasy illustrations",
-                    longDescription: "Alex is a renowned digital artist with over 10 years of experience creating breathtaking fantasy illustrations. Her work has been featured in major exhibitions and publications worldwide.",
-                    monthlyPrice: 12,
-                    followers: 5280,
-                    posts: 347
-                },
-                {
-                    id: 2,
-                    name: "Michael Chen",
-                    category: "music",
-                    imgUrl: "https://randomuser.me/api/portraits/men/22.jpg",
-                    shortDescription: "Composer and multi-instrumentalist",
-                    longDescription: "Michael is a classically trained musician who creates original compositions across multiple genres. He releases exclusive tracks, tutorials, and behind-the-scenes content for his subscribers.",
-                    monthlyPrice: 15,
-                    followers: 8120,
-                    posts: 215
-                },
-                {
-                    id: 3,
-                    name: "Sarah Williams",
-                    category: "writing",
-                    imgUrl: "https://randomuser.me/api/portraits/women/46.jpg",
-                    shortDescription: "Fiction author and creative writing coach",
-                    longDescription: "Sarah is an award-winning author who shares exclusive short stories, writing tips, and early access to her novels. She also provides personalized feedback to aspiring writers.",
-                    monthlyPrice: 10,
-                    followers: 3850,
-                    posts: 192
-                },
-                {
-                    id: 4,
-                    name: "David Thompson",
-                    category: "photography",
-                    imgUrl: "https://randomuser.me/api/portraits/men/67.jpg",
-                    shortDescription: "Travel and wildlife photographer",
-                    longDescription: "David travels the world capturing stunning images of landscapes and wildlife. He shares photography tutorials, equipment reviews, and high-resolution downloads of his work.",
-                    monthlyPrice: 18,
-                    followers: 12400,
-                    posts: 523
-                },
-                {
-                    id: 5,
-                    name: "Emily Rodriguez",
-                    category: "art",
-                    imgUrl: "https://randomuser.me/api/portraits/women/15.jpg",
-                    shortDescription: "Watercolor artist and instructor",
-                    longDescription: "Emily specializes in watercolor techniques and offers step-by-step tutorials, live painting sessions, and downloadable templates for her subscribers.",
-                    monthlyPrice: 14,
-                    followers: 6730,
-                    posts: 278
-                },
-                {
-                    id: 6,
-                    name: "James Wilson",
-                    category: "music",
-                    imgUrl: "https://randomuser.me/api/portraits/men/78.jpg",
-                    shortDescription: "Electronic music producer and DJ",
-                    longDescription: "James creates electronic music across various sub-genres. He shares production techniques, sample packs, and exclusive tracks with his community.",
-                    monthlyPrice: 20,
-                    followers: 9350,
-                    posts: 320
-                },
-                {
-                    id: 7,
-                    name: "Olivia Parker",
-                    category: "writing",
-                    imgUrl: "https://randomuser.me/api/portraits/women/28.jpg",
-                    shortDescription: "Poet and spoken word artist",
-                    longDescription: "Olivia crafts powerful poetry and spoken word pieces. She shares her creative process, exclusive readings, and personalized poetry for special occasions.",
-                    monthlyPrice: 8,
-                    followers: 2970,
-                    posts: 158
-                },
-                {
-                    id: 8,
-                    name: "Robert Kim",
-                    category: "photography",
-                    imgUrl: "https://randomuser.me/api/portraits/men/45.jpg",
-                    shortDescription: "Portrait and fashion photographer",
-                    longDescription: "Robert captures stunning portraits and fashion photography. He shares lighting techniques, editing workflows, and exclusive photoshoots with his subscribers.",
-                    monthlyPrice: 22,
-                    followers: 15600,
-                    posts: 412
-                }
-            ];
-
-            const creatorsGrid = document.getElementById('creatorsGrid');
-            const creatorModal = document.getElementById('creatorModal');
-            const creatorModalContent = document.getElementById('creatorModalContent');
-            const modalCloseBtns = document.querySelectorAll('.modal-close, .modal-close-btn');
-            const noResults = document.getElementById('noResults');
-            const resetSearchBtn = document.querySelector('.reset-search-btn');
-            const creatorSearch = document.getElementById('creatorSearch');
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            
-            // Initialize with all creators
-            displayCreators(creators);
-            
-            // Creator search functionality
-            creatorSearch.addEventListener('input', filterCreators);
-            
-            // Filter buttons
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Update active state
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Filter creators
-                    filterCreators();
-                });
-            });
-            
-            // Reset search
-            resetSearchBtn.addEventListener('click', function() {
-                creatorSearch.value = '';
-                filterBtns.forEach(btn => {
-                    if (btn.dataset.filter === 'all') {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-                displayCreators(creators);
-            });
-            
-            // Close modal
-            modalCloseBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    creatorModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            });
-            
-            // Close modal when clicking outside
-            creatorModal.addEventListener('click', function(e) {
-                if (e.target === creatorModal) {
-                    creatorModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-            
-            // Filter creators based on search and category
-            function filterCreators() {
-                const searchTerm = creatorSearch.value.toLowerCase();
-                const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
-                
-                const filteredCreators = creators.filter(creator => {
-                    const matchesSearch = creator.name.toLowerCase().includes(searchTerm) || 
-                                        creator.shortDescription.toLowerCase().includes(searchTerm);
-                    const matchesCategory = activeFilter === 'all' || creator.category === activeFilter;
-                    
-                    return matchesSearch && matchesCategory;
-                });
-                
-                displayCreators(filteredCreators);
-            }
-            
-            // Display creators
-            function displayCreators(creatorsToDisplay) {
-                creatorsGrid.innerHTML = '';
-                
-                if (creatorsToDisplay.length === 0) {
-                    noResults.style.display = 'block';
-                    return;
-                }
-                
-                noResults.style.display = 'none';
-                
-                creatorsToDisplay.forEach(creator => {
-                    const creatorCard = document.createElement('div');
-                    creatorCard.className = 'creator-card';
-                    creatorCard.dataset.id = creator.id;
-                    
-                    creatorCard.innerHTML = `
-                        <div class="creator-card-header">
-                            <img src="${creator.imgUrl}" alt="${creator.name}" class="creator-image">
-                            <div class="creator-category-tag">${creator.category}</div>
-                        </div>
-                        <div class="creator-card-body">
-                            <h3 class="creator-name">${creator.name}</h3>
-                            <p class="creator-description">${creator.shortDescription}</p>
-                            <div class="creator-stats">
-                                <div class="creator-stat">
-                                    <i class="ri-user-line"></i>
-                                    <span>${formatNumber(creator.followers)}</span>
-                                </div>
-                                <div class="creator-stat">
-                                    <i class="ri-file-list-line"></i>
-                                    <span>${formatNumber(creator.posts)}</span>
-                                </div>
-                            </div>
-                            <div class="creator-price">
-                                <span class="price-amount">$${creator.monthlyPrice}</span>
-                                <span class="price-period">/month</span>
-                            </div>
-                        </div>
-                        <div class="creator-card-footer">
-                            <button class="btn btn-outline btn-block view-creator-btn">View Details</button>
-                        </div>
-                    `;
-                    
-                    creatorsGrid.appendChild(creatorCard);
-                    
-                    // Add click event to view creator details
-                    const viewBtn = creatorCard.querySelector('.view-creator-btn');
-                    viewBtn.addEventListener('click', function() {
-                        showCreatorDetails(creator);
-                    });
-                    
-                    // Make the whole card clickable
-                    creatorCard.addEventListener('click', function(e) {
-                        if (!e.target.classList.contains('btn')) {
-                            showCreatorDetails(creator);
-                        }
-                    });
-                });
-            }
-            
-            // Show creator details in modal
-            function showCreatorDetails(creator) {
-                creatorModalContent.innerHTML = `
-                    <div class="creator-detail-header">
-                        <img src="${creator.imgUrl}" alt="${creator.name}" class="creator-detail-image">
-                        <div class="creator-detail-info">
-                            <h2 class="creator-detail-name">${creator.name}</h2>
-                            <div class="creator-detail-category">${creator.category}</div>
-                            <div class="creator-detail-stats">
-                                <div class="creator-stat">
-                                    <i class="ri-user-line"></i>
-                                    <span>${formatNumber(creator.followers)} followers</span>
-                                </div>
-                                <div class="creator-stat">
-                                    <i class="ri-file-list-line"></i>
-                                    <span>${formatNumber(creator.posts)} posts</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="creator-detail-description">
-                        <h3>About ${creator.name}</h3>
-                        <p>${creator.longDescription}</p>
-                    </div>
-                    <div class="creator-detail-subscription">
-                        <h3>Subscription Details</h3>
-                        <div class="subscription-price">
-                            <span class="price-amount">$${creator.monthlyPrice}</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p>Subscribe to get exclusive access to all content and direct communication with ${creator.name}.</p>
-                        <ul class="subscription-benefits">
-                            <li><i class="ri-check-line"></i> Exclusive content updates</li>
-                            <li><i class="ri-check-line"></i> Direct messaging with creator</li>
-                            <li><i class="ri-check-line"></i> Early access to new releases</li>
-                            <li><i class="ri-check-line"></i> Community access</li>
-                        </ul>
-                    </div>
-                `;
-                
-                creatorModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            // Format numbers for better readability
-            function formatNumber(num) {
-                if (num >= 1000000) {
-                    return (num / 1000000).toFixed(1) + 'M';
-                }
-                if (num >= 1000) {
-                    return (num / 1000).toFixed(1) + 'K';
-                }
-                return num.toString();
-            }
-        });
-    </script>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/model-selection-public.js"></script>
 </body>
 </html> 

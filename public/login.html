@@ -2,137 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>ThreadPay - Login</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ThreadPay</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
-                <h1 class="auth-logo">ThreadPay</h1>
-                <p class="auth-subtitle">Sign in to your account</p>
+                <a href="/" class="logo">ThreadPay</a>
+                <h1>Sign In</h1>
+                <p class="text-tertiary">Welcome back, please enter your details</p>
             </div>
-
-            <form id="loginForm" class="auth-form">
+            
+            <form id="login-form" class="auth-form">
                 <div class="form-group">
-                    <label for="email" class="form-label">Email address</label>
-                    <div class="input-wrapper">
-                        <i class="ri-mail-line input-icon"></i>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com" required>
+                    <label for="email">Email</label>
+                    <div class="input-with-icon">
+                        <i class="far fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
-                    <div class="form-label-group">
-                        <label for="password" class="form-label">Password</label>
-                        <a href="#" class="form-link">Forgot password?</a>
-                    </div>
-                    <div class="input-wrapper">
-                        <i class="ri-lock-line input-icon"></i>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
-                        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                            <i class="ri-eye-line"></i>
-                        </button>
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="remember" name="remember">
-                        <span class="checkmark"></span>
-                        <span class="checkbox-label">Remember me for 30 days</span>
-                    </label>
+                
+                <div class="form-actions">
+                    <div class="remember-container">
+                        <input type="checkbox" id="remember-me" name="remember-me" class="custom-checkbox">
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
                 </div>
-
-                <div id="loginMessage" class="auth-message" role="alert"></div>
-
-                <button type="submit" id="loginBtn" class="btn btn-primary btn-lg btn-block">
-                    <span class="btn-text">Sign in</span>
-                    <div class="btn-loader"><div></div><div></div><div></div></div>
+                
+                <div class="form-error" id="login-error"></div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="login-button">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loading hidden">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                    </span>
+                </button>
+                
+                <div class="separator">
+                    <span>OR</span>
+                </div>
+                
+                <button type="button" class="btn btn-outline btn-full" id="google-login">
+                    <img src="/images/google.png" alt="Google" width="18" height="18">
+                    <span>Continue with Google</span>
                 </button>
             </form>
-
-            <div class="auth-divider">
-                <span>or continue with</span>
-            </div>
-
-            <div class="social-auth">
-                <button class="btn btn-social" aria-label="Sign in with Google">
-                    <img src="images/google-icon.svg" alt="Google" width="24" height="24">
-                </button>
-                <button class="btn btn-social" aria-label="Sign in with Apple">
-                    <i class="ri-apple-fill"></i>
-                </button>
-                <button class="btn btn-social" aria-label="Sign in with X (Twitter)">
-                    <i class="ri-twitter-x-fill"></i>
-                </button>
-            </div>
-
+            
             <div class="auth-footer">
-                <p>Don't have an account? <a href="index.html" class="text-link">Create one</a></p>
+                <p>Don't have an account? <a href="/model-selection-public.html" class="text-accent">Sign up</a></p>
             </div>
         </div>
+        
+        <div class="auth-background">
+            <div class="auth-pattern"></div>
+        </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
-            const loginBtn = document.getElementById('loginBtn');
-            const loginMessage = document.getElementById('loginMessage');
-
-            // Password toggle functionality
-            const passwordToggle = document.querySelector('.password-toggle');
-            const passwordField = document.getElementById('password');
-            
-            passwordToggle.addEventListener('click', function() {
-                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordField.setAttribute('type', type);
-                this.querySelector('i').classList.toggle('ri-eye-line');
-                this.querySelector('i').classList.toggle('ri-eye-off-line');
-            });
-
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Show loading state
-                loginBtn.classList.add('loading');
-                loginBtn.disabled = true;
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const remember = document.getElementById('remember').checked;
-
-                // Clear previous messages
-                loginMessage.textContent = '';
-                loginMessage.classList.remove('error', 'success');
-                
-                // Simulate API call
-                setTimeout(function() {
-                    if (email && password) {
-                        // Success - redirect to dashboard
-                        loginMessage.textContent = 'Login successful!';
-                        loginMessage.classList.add('success');
-                        
-                        // Redirect after a brief delay
-                        setTimeout(function() {
-                            window.location.href = 'dashboard.html';
-                        }, 500);
-                    } else {
-                        // Error
-                        loginMessage.textContent = 'Please enter both email and password.';
-                        loginMessage.classList.add('error');
-                        
-                        // Reset button state
-                        loginBtn.classList.remove('loading');
-                        loginBtn.disabled = false;
-                    }
-                }, 1500);
-            });
-        });
-    </script>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html> 

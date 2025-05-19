@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join ThreadPay | Secure Payment Platform</title>
-    
-    <!-- Supabase API Key -->
-    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
+    <title>Invite | ThreadPay</title>
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -17,753 +14,100 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --accent: #C6D2FF;
-            --dark: #2d2d2d;
-            --darker: #181818;
-            --radius: 18px;
-        }
-        body {
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(120deg, #f5f0e8 0%, #e6eaff 100%);
-            position: relative;
-            overflow-x: hidden;
-        }
-        .bg-blur {
-            position: fixed;
-            top: -100px; left: -100px;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle at 30% 30%, #C6D2FF 0%, #fff0 80%);
-            filter: blur(80px);
-            z-index: 0;
-        }
-        .invite-main {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0;
-        }
-        .hero {
-            width: 100%;
-            max-width: 500px;
-            margin: 2.5rem auto 1.5rem auto;
-            text-align: center;
-        }
-        .hero-img {
-            width: 220px;
-            aspect-ratio: 4/5;
-            border-radius: 18px;
-            object-fit: cover;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-            margin-bottom: 1.2rem;
-            background: #e6eaff;
-            display: inline-block;
-            overflow: hidden;
-        }
-        .hero-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            color: var(--dark);
-            margin-bottom: 0.3rem;
-        }
-        .hero-bio {
-            color: #555;
-            font-size: 1.05rem;
-            margin-bottom: 0.7rem;
-        }
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.1rem;
-            color: #181818;
-            margin-bottom: 0.2rem;
-        }
-        .tagline {
-            color: var(--dark);
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1.2rem;
-        }
-        .package-section {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto 2rem auto;
-        }
-        .package-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.1rem;
-        }
-        .package-card {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: 0 2px 12px rgba(198,210,255,0.10);
-            border: 2px solid transparent;
-            padding: 1.2rem 1.3rem;
-            cursor: pointer;
-            transition: box-shadow 0.2s, border 0.2s, transform 0.15s;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            position: relative;
-        }
-        .package-card.selected {
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 0 4px #c6d2ff33;
-            transform: scale(1.03);
-        }
-        .package-icon {
-            font-size: 2rem;
-            color: var(--accent);
-            flex-shrink: 0;
-        }
-        .package-info {
-            flex: 1;
-        }
-        .package-title {
-            font-weight: 700;
-            font-size: 1.15rem;
-            color: var(--dark);
-        }
-        .package-price {
-            font-size: 1.05rem;
-            color: #555;
-            margin: 0.2rem 0 0.1rem 0;
-        }
-        .package-desc {
-            font-size: 0.97rem;
-            color: #888;
-        }
-        .signup-card {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 24px rgba(198,210,255,0.18);
-            padding: 2.2rem 1.5rem 1.5rem 1.5rem;
-            width: 100%;
-            max-width: 420px;
-            margin: 0 auto 2.5rem auto;
-            position: relative;
-        }
-        .signup-header {
-            text-align: center;
-            margin-bottom: 1.2rem;
-        }
-        .signup-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        .signup-description {
-            color: #555;
-            font-size: 1rem;
-        }
-        .form-group {
-            margin-bottom: 1.2rem;
-            position: relative;
-        }
-        .form-label {
-            position: absolute;
-            left: 1.1rem;
-            top: 1.1rem;
-            color: #888;
-            font-size: 1rem;
-            pointer-events: none;
-            transition: 0.2s;
-            background: #fff;
-            padding: 0 0.2rem;
-        }
-        .form-input:focus + .form-label,
-        .form-input:not(:placeholder-shown) + .form-label {
-            top: -0.7rem;
-            left: 0.9rem;
-            font-size: 0.85rem;
-            color: var(--accent);
-            background: #fff;
-        }
-        .form-input {
-            width: 100%;
-            padding: 1.1rem 1.1rem 0.7rem 1.1rem;
-            border-radius: 8px;
-            background: #f8faff;
-            border: 1.5px solid #e0e6f7;
-            color: #333;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-            outline: none;
-        }
-        .form-input:focus {
-            border-color: var(--accent);
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
-            background: linear-gradient(90deg, var(--accent) 60%, #b4c1ff 100%);
-            color: var(--darker);
-            font-weight: 700;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            box-shadow: 0 2px 8px #c6d2ff33;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
-        .signup-message {
-            margin-top: 1rem;
-            padding: 0.8rem;
-            border-radius: 8px;
-            font-size: 0.97rem;
-            text-align: center;
-            display: none;
-        }
-        .signup-message.error {
-            background: rgba(231, 76, 60, 0.13);
-            color: #e74c3c;
-            border: 1px solid rgba(231, 76, 60, 0.18);
-            display: block;
-            animation: shake 0.3s;
-        }
-        .signup-message.success {
-            background: rgba(46, 204, 113, 0.13);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.18);
-            display: block;
-            animation: pop 0.4s;
-        }
-        @keyframes shake {
-            10%, 90% { transform: translateX(-2px); }
-            20%, 80% { transform: translateX(4px); }
-            30%, 50%, 70% { transform: translateX(-8px); }
-            40%, 60% { transform: translateX(8px); }
-        }
-        @keyframes pop {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .login-link {
-            display: block;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--dark);
-        }
-        .login-link a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-        @media (min-width: 900px) {
-            .invite-main {
-                flex-direction: row;
-                align-items: flex-start;
-                justify-content: center;
-                padding: 0 2vw;
-            }
-            .hero, .package-section {
-                max-width: 420px;
-                margin: 3.5rem 2.5rem 0 0;
-            }
-            .signup-card {
-                margin: 3.5rem 0 0 0;
-            }
-        }
-        @media (max-width: 900px) {
-            .invite-main {
-                padding-left: 5vw;
-                padding-right: 5vw;
-            }
-            .hero, .package-section, .signup-card {
-                max-width: 100%;
-                box-sizing: border-box;
-            }
-        }
-        @media (max-width: 600px) {
-            .hero-img {
-                width: 80px; height: 80px;
-            }
-            .hero-name {
-                font-size: 1.3rem;
-            }
-            .signup-card {
-                padding: 1.2rem 0.7rem 1rem 0.7rem;
-            }
-        }
-        /* Model image gallery styles */
-        #model-image-gallery {
-            display: flex;
-            gap: 1.1rem;
-            justify-content: center;
-            align-items: flex-start;
-            margin-bottom: 1.2rem;
-            overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #C6D2FF #f8faff;
-            padding-bottom: 0.2rem;
-            -webkit-overflow-scrolling: touch;
-        }
-        #model-image-gallery::-webkit-scrollbar {
-            height: 8px;
-        }
-        #model-image-gallery::-webkit-scrollbar-thumb {
-            background: #C6D2FF;
-            border-radius: 8px;
-        }
-        .hero-img-gallery-item {
-            width: 220px;
-            aspect-ratio: 4/5;
-            border-radius: 18px;
-            object-fit: cover;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-            background: #e6eaff;
-            display: inline-block;
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: transform 0.18s;
-        }
-        .hero-img-gallery-item:hover {
-            transform: scale(1.04);
-        }
-        /* Carousel styles */
-        #model-image-carousel {
-            position: relative;
-            width: 100%;
-            max-width: 260px;
-            margin: 0 auto 1.2rem auto;
-            overflow: hidden;
-        }
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s cubic-bezier(.77,0,.18,1);
-            will-change: transform;
-        }
-        .carousel-img {
-            min-width: 100%;
-            aspect-ratio: 4/5;
-            border-radius: 18px;
-            object-fit: cover;
-            background: #e6eaff;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 0.7rem;
-        }
-        .carousel-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #d1d1e0;
-            opacity: 0.6;
-            transition: background 0.2s, opacity 0.2s;
-            cursor: pointer;
-        }
-        .carousel-dot.active {
-            background: var(--accent);
-            opacity: 1;
-        }
-        @media (min-width: 900px) {
-            #model-image-carousel {
-                max-width: 480px;
-            }
-            .carousel-img {
-                min-width: 50%;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-blur"></div>
-    <div class="invite-main">
-        <div>
-            <div class="logo">ThreadPay</div>
-            <div class="hero">
-                <div id="model-image-carousel">
-                    <div class="carousel-track" id="carousel-track"></div>
-                </div>
-                <div class="hero-name" id="model-name">Loading...</div>
-                <div class="hero-bio" id="model-bio">Loading model information...</div>
+    <div class="invite-container">
+        <div class="invite-card">
+            <div class="invite-header">
+                <a href="/" class="logo">ThreadPay</a>
+                <h1>Creator Invitation</h1>
+                <p class="text-tertiary">Join our exclusive platform as a creator</p>
             </div>
-            <div class="package-section">
-                <h3 style="text-align:center; margin-bottom:1rem; font-weight:700; color:var(--dark);">Choose Your Package</h3>
-                <div class="package-list" id="packages-list"></div>
+            
+            <form id="invite-form" class="invite-form">
+                <div class="form-group">
+                    <label for="invite-code">Invitation Code</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="invite-code" name="invite-code" placeholder="Enter your invitation code" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="creator-name">Creator Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="creator-name" name="creator-name" placeholder="Your display name" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telegram">Telegram Username</label>
+                    <div class="input-with-icon">
+                        <i class="fab fa-telegram"></i>
+                        <input type="text" id="telegram" name="telegram" placeholder="@username" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment-wallet">Wallet Address (Optional)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-wallet"></i>
+                        <input type="text" id="payment-wallet" name="payment-wallet" placeholder="Your crypto wallet address">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+                
+                <div class="form-error" id="invite-error"></div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="invite-button">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-loading hidden">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                    </span>
+                </button>
+            </form>
+            
+            <div class="invite-footer">
+                <p>Already have an account? <a href="/login.html" class="text-accent">Sign in</a></p>
             </div>
         </div>
-        <div class="signup-card">
-            <div class="signup-header" id="signup-header" style="display:none;">
-                <h1>Sign Up to Subscribe</h1>
-                <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
+        
+        <div class="invite-success hidden" id="success-message">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
-            <form id="signup-form" autocomplete="off" style="display:none;">
-                <input type="hidden" id="model-id" name="model-id" value="">
-                <input type="hidden" id="package-id" name="package-id" value="">
-                <div class="form-group">
-                    <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
-                    <label for="name" class="form-label">Your Name</label>
-                </div>
-                <div class="form-group">
-                    <input type="number" id="age" name="age" class="form-input" placeholder=" " min="18" required>
-                    <label for="age" class="form-label">Your Age</label>
-                    <p class="form-description">You must be 18 or older to use ThreadPay.</p>
-                </div>
-                <div class="form-group">
-                    <input type="tel" id="telegram" name="telegram" class="form-input" placeholder=" " required>
-                    <label for="telegram" class="form-label">Telegram Number</label>
-                    <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
-                    <label for="email" class="form-label">Email</label>
-                    <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password" name="password" class="form-input" placeholder=" " required>
-                    <label for="password" class="form-label">Password</label>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder=" " required>
-                    <label for="confirm-password" class="form-label">Confirm Password</label>
-                </div>
-                <button type="submit" class="submit-btn">Create My Account & Subscribe</button>
-                <div id="signup-message" class="signup-message"></div>
-            </form>
-            <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+            <h2>Account Created Successfully!</h2>
+            <p>Welcome to ThreadPay! You can now log in with your credentials.</p>
+            <a href="/login.html" class="btn btn-primary">Go to Login</a>
+        </div>
+        
+        <div class="invite-background">
+            <div class="invite-pattern"></div>
         </div>
     </div>
+    
+    <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
-    <script>
-        let supabase = null;
-        let supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        let supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-        let currentModel = null;
-        let selectedPackageId = null;
-        function getModelNameFromUrl() {
-            const path = window.location.pathname;
-            const match = path.match(/\/invite\/([a-zA-Z0-9_-]+)/);
-            return match && match[1] ? decodeURIComponent(match[1]) : null;
-        }
-        async function fetchModelByName(modelName) {
-            if (!modelName) return null;
-            const { data, error } = await supabase
-                .from('models')
-                .select('*')
-                .ilike('name', modelName)
-                .single();
-            if (error) return null;
-            return data;
-        }
-        async function fetchPackagesForModel(modelId) {
-            const { data, error } = await supabase
-                .from('packages')
-                .select('*')
-                .eq('model_id', modelId)
-                .order('price', { ascending: true });
-            if (error) return [];
-            return data;
-        }
-        function renderPackages(packages) {
-            const list = document.getElementById('packages-list');
-            list.innerHTML = '';
-            const signupForm = document.getElementById('signup-form');
-            const signupHeader = document.getElementById('signup-header');
-            signupForm.style.display = 'none';
-            signupHeader.style.display = 'none';
-            if (!packages.length) {
-                list.innerHTML = '<div style="color:#e74c3c;text-align:center;">No packages available for this creator.</div>';
-                signupForm.style.display = 'none';
-                signupHeader.style.display = 'none';
-                return;
-            }
-            const icons = ['fa-star', 'fa-gem', 'fa-crown', 'fa-fire', 'fa-heart'];
-            packages.forEach((pkg, i) => {
-                const card = document.createElement('div');
-                card.className = 'package-card';
-                card.innerHTML = `
-                    <span class="package-icon"><i class="fa ${icons[i % icons.length]}"></i></span>
-                    <div class="package-info">
-                        <div class="package-title">${pkg.name}</div>
-                        <div class="package-price">$${parseFloat(pkg.price).toFixed(2)} / month</div>
-                        <div class="package-desc">${pkg.description || 'Exclusive access'}</div>
-                    </div>
-                `;
-                card.onclick = () => {
-                    document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
-                    card.classList.add('selected');
-                    selectedPackageId = pkg.id;
-                    document.getElementById('package-id').value = pkg.id;
-                    document.getElementById('package-id').setAttribute('data-stripe-price-id', pkg.stripe_price_id);
-                    signupForm.style.display = 'block';
-                    signupHeader.style.display = 'block';
-                    signupForm.style.opacity = 1;
-                    signupForm.style.pointerEvents = 'auto';
-                };
-                list.appendChild(card);
-            });
-            signupForm.style.opacity = 0.5;
-            signupForm.style.pointerEvents = 'none';
-        }
-        function showError(message) {
-            const messageElement = document.getElementById('signup-message');
-            messageElement.textContent = message;
-            messageElement.className = 'signup-message error';
-        }
-        function showSuccess(message) {
-            const messageElement = document.getElementById('signup-message');
-            messageElement.textContent = message;
-            messageElement.className = 'signup-message success';
-        }
-        function updateModelDisplay(model) {
-            document.getElementById('model-name').textContent = model.name;
-            document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
-            const track = document.getElementById('carousel-track');
-            track.innerHTML = '';
-            let images = Array.isArray(model.pictures) ? model.pictures : [];
-            if (!images.length) {
-                // fallback: show a blank image
-                const img = document.createElement('div');
-                img.className = 'carousel-img';
-                img.style.background = '#e6eaff';
-                track.appendChild(img);
-                return;
-            }
-            // Desktop: show up to 2 images side by side, mobile: 1 at a time
-            const isDesktop = window.matchMedia('(min-width: 900px)').matches;
-            images.forEach((imageName, i) => {
-                const url = `${supabaseUrl}/storage/v1/object/public/model-images/${imageName}`;
-                const img = document.createElement('div');
-                img.className = 'carousel-img';
-                img.style.backgroundImage = `url(${url})`;
-                img.style.backgroundSize = 'cover';
-                img.style.backgroundPosition = 'center';
-                track.appendChild(img);
-            });
-            let current = 0;
-            let autoTimer = null;
-            function updateCarousel() {
-                const slideWidth = track.offsetWidth / (isDesktop ? 2 : 1);
-                const visible = isDesktop ? 2 : 1;
-                let offset = current;
-                if (isDesktop && images.length > 1) {
-                    // Clamp so last slide always shows 2 images if possible
-                    offset = Math.min(current, images.length - visible);
-                }
-                track.style.transform = `translateX(-${offset * 100 / visible}%)`;
-            }
-            function goToSlide(idx) {
-                current = idx;
-                updateCarousel();
-                resetAuto();
-            }
-            function nextSlide() {
-                current = (current + 1) % images.length;
-                updateCarousel();
-            }
-            function prevSlide() {
-                current = (current - 1 + images.length) % images.length;
-                updateCarousel();
-            }
-            function resetAuto() {
-                if (autoTimer) clearInterval(autoTimer);
-                autoTimer = setInterval(nextSlide, 3500);
-            }
-            // Touch/swipe support
-            let startX = 0, dx = 0, dragging = false;
-            track.addEventListener('touchstart', e => {
-                dragging = true;
-                startX = e.touches[0].clientX;
-                dx = 0;
-                if (autoTimer) clearInterval(autoTimer);
-            });
-            track.addEventListener('touchmove', e => {
-                if (!dragging) return;
-                dx = e.touches[0].clientX - startX;
-            });
-            track.addEventListener('touchend', e => {
-                dragging = false;
-                if (Math.abs(dx) > 40) {
-                    if (dx < 0) nextSlide();
-                    else prevSlide();
-                }
-                resetAuto();
-            });
-            // Auto-advance
-            resetAuto();
-            updateCarousel();
-            window.addEventListener('resize', updateCarousel);
-            document.getElementById('model-id').value = model.id;
-        }
-        function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            });
-        }
-        function setupForm() {
-            const signupForm = document.getElementById('signup-form');
-            signupForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('name').value.trim();
-                const age = parseInt(document.getElementById('age').value, 10);
-                const telegram = document.getElementById('telegram').value.trim().replace('@', '');
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-                const modelId = document.getElementById('model-id').value;
-                const packageId = document.getElementById('package-id').value;
-                const stripePriceId = document.getElementById('package-id').getAttribute('data-stripe-price-id');
-                if (!selectedPackageId || !packageId || !stripePriceId) {
-                    showError('Please select a package to continue.');
-                    return;
-                }
-                if (!name || !telegram || !email || !password || isNaN(age)) {
-                    showError('Please fill in all required fields.');
-                    return;
-                }
-                if (age < 18) {
-                    window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI&list=PLNo5p5wex1o_nj6S38ehq3zKuR_BIfd3R&index=60';
-                    return;
-                }
-                if (password !== confirmPassword) {
-                    showError('Passwords do not match.');
-                    return;
-                }
-                if (password.length < 6) {
-                    showError('Password must be at least 6 characters long.');
-                    return;
-                }
-                if (!modelId) {
-                    showError('Invalid model selection. Please refresh the page and try again.');
-                    return;
-                }
-                const submitButton = document.querySelector('button[type="submit"]');
-                const originalButtonText = submitButton.textContent;
-                submitButton.disabled = true;
-                submitButton.textContent = 'Creating Account...';
-                try {
-                    const { data, error } = await supabase.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: {
-                            data: {
-                                name: name,
-                                telegram_number: telegram,
-                                age: age
-                            }
-                        }
-                    });
-                    if (error) throw error;
-                    const userData = {
-                        id: data.user.id,
-                        email: data.user.email,
-                        name: name,
-                        telegram_number: telegram,
-                        model_id: modelId,
-                        package_id: packageId
-                    };
-                    localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                    const passwordHash = await hashPassword(password);
-                    const { error: profileError } = await supabase
-                        .from('profiles')
-                        .insert([
-                            {
-                                auth_id: data.user.id,
-                                name: name,
-                                telegram_username: telegram,
-                                model_id: modelId,
-                                password_hash: passwordHash
-                            }
-                        ]);
-                    if (profileError) throw profileError;
-                    showSuccess('Account created! Redirecting to payment...');
-                    const checkoutRes = await fetch('/api/create-checkout-session', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userId: data.user.id,
-                            packageId: packageId,
-                            modelId: modelId,
-                            priceId: stripePriceId,
-                            email: email,
-                            name: name,
-                            phone: telegram,
-                            successUrl: `${window.location.origin}/subscription-success.html`,
-                            cancelUrl: `${window.location.origin}/invite/${encodeURIComponent(currentModel.name)}`
-                        })
-                    });
-                    if (!checkoutRes.ok) {
-                        const err = await checkoutRes.json();
-                        throw new Error(err.error || 'Error creating checkout session');
-                    }
-                    const { url } = await checkoutRes.json();
-                    setTimeout(() => { window.location.href = url; }, 1200);
-                } catch (error) {
-                    showError(error.message || 'Error creating account. Please try again.');
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalButtonText;
-                }
-            });
-        }
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                loadPage();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
-        async function loadPage() {
-            const modelName = getModelNameFromUrl();
-            if (!modelName) {
-                showError('No model found. Please use a valid invite link.');
-                document.getElementById('signup-form').style.display = 'none';
-                return;
-            }
-            const model = await fetchModelByName(modelName);
-            if (!model) {
-                showError('Invalid model. Please try again with a valid invite link.');
-                document.getElementById('signup-form').style.display = 'none';
-                return;
-            }
-            currentModel = model;
-            updateModelDisplay(model);
-            const packages = await fetchPackagesForModel(model.id);
-            renderPackages(packages);
-            setupForm();
-        }
-        if (supabaseKey && !supabaseKey.includes('%NEXT_PUBLIC')) {
-            initSupabase();
-        } else {
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    supabaseKey = config.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                })
-                .catch(() => {
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                });
-        }
-    </script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/invite.js"></script>
 </body>
 </html> 

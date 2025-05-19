@@ -2,435 +2,229 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>ThreadPay - Dashboard</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="styles/dashboard.css">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | ThreadPay</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard">
+    <div class="dashboard-container">
         <header class="dashboard-header">
-            <a href="index.html" class="dashboard-logo">ThreadPay</a>
-            <div class="header-actions">
-                <button class="btn btn-icon notifications-btn" aria-label="Notifications">
-                    <i class="ri-notification-3-line"></i>
-                </button>
-                <button class="btn btn-icon profile-menu-btn" aria-label="Profile menu">
-                    <i class="ri-user-line"></i>
-                </button>
-            </div>
-        </header>
-
-        <div class="dashboard-content">
-            <div class="account-summary dashboard-card">
-                <div class="account-avatar">JS</div>
-                <h2 class="account-name">John Smith</h2>
-                <p class="account-email">john.smith@example.com</p>
-                <div class="account-status active">Active Subscriber</div>
-            </div>
-
-            <div class="dashboard-tabs">
-                <button class="dashboard-tab active" data-tab="subscriptions">Subscriptions</button>
-                <button class="dashboard-tab" data-tab="payments">Payments</button>
-                <button class="dashboard-tab" data-tab="settings">Settings</button>
-            </div>
-
-            <div id="subscriptions" class="tab-content active">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-header">
-                        <h3 class="dashboard-card-title">Active Subscriptions</h3>
-                    </div>
-                    <div class="dashboard-card-body">
-                        <div class="model-card">
-                            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Alex Morgan" class="model-image">
-                            <div class="model-info">
-                                <h4 class="model-name">Alex Morgan</h4>
-                                <p class="model-description">Digital artist specializing in fantasy illustrations</p>
-                                <div class="model-subscription">
-                                    <span class="model-status active">Active</span> · $12/month
-                                </div>
-                            </div>
-                            <button class="btn btn-icon model-action" aria-label="More options">
-                                <i class="ri-more-2-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="dashboard-card-header">
-                        <h3 class="dashboard-card-title">Recommended Creators</h3>
-                    </div>
-                    <div class="dashboard-card-body">
-                        <div class="model-grid">
-                            <div class="model-card">
-                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Michael Chen" class="model-image">
-                                <div class="model-info">
-                                    <h4 class="model-name">Michael Chen</h4>
-                                    <p class="model-description">Composer and multi-instrumentalist</p>
-                                    <div class="model-subscription">$15/month</div>
-                                </div>
-                            </div>
-                            <div class="model-card">
-                                <img src="https://randomuser.me/api/portraits/women/46.jpg" alt="Sarah Williams" class="model-image">
-                                <div class="model-info">
-                                    <h4 class="model-name">Sarah Williams</h4>
-                                    <p class="model-description">Fiction author and creative writing coach</p>
-                                    <div class="model-subscription">$10/month</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="dashboard-card-footer">
-                        <a href="model-selection-public.html" class="btn btn-secondary">View all creators</a>
-                    </div>
-                </div>
-            </div>
-
-            <div id="payments" class="tab-content">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-header">
-                        <h3 class="dashboard-card-title">Payment Methods</h3>
-                    </div>
-                    <div class="dashboard-card-body">
-                        <div class="payment-method">
-                            <div class="payment-method-icon">
-                                <i class="ri-visa-line"></i>
-                            </div>
-                            <div class="payment-method-details">
-                                <h4 class="payment-method-name">Visa ending in 4242</h4>
-                                <p class="payment-method-expiry">Expires 12/25</p>
-                            </div>
-                            <div class="payment-method-actions">
-                                <span class="payment-method-badge">Default</span>
-                                <button class="btn btn-icon" aria-label="Edit payment method">
-                                    <i class="ri-pencil-line"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <button class="btn btn-outline btn-block mt-4">
-                            <i class="ri-add-line"></i> Add Payment Method
+            <div class="container">
+                <div class="header-content">
+                    <a href="/" class="logo">ThreadPay</a>
+                    <div class="header-controls">
+                        <button id="logout-button" class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
                         </button>
                     </div>
                 </div>
-
-                <div class="dashboard-card">
-                    <div class="dashboard-card-header">
-                        <h3 class="dashboard-card-title">Recent Transactions</h3>
+            </div>
+        </header>
+        
+        <main class="dashboard-content">
+            <div class="container">
+                <div class="dashboard-welcome">
+                    <h1>Welcome, <span id="user-name" class="text-primary">User</span></h1>
+                    <p class="text-tertiary">Manage your subscriptions and account details</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-sidebar">
+                        <div class="user-profile card">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <h3 id="profile-name">Loading...</h3>
+                                <p id="profile-telegram" class="text-tertiary">@username</p>
+                            </div>
+                            <div class="account-status">
+                                <span id="account-badge" class="badge badge-success">Active</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-navigation">
+                            <a href="#subscriptions" class="nav-item active">
+                                <i class="fas fa-star"></i>
+                                <span>My Subscriptions</span>
+                            </a>
+                            <a href="#billing" class="nav-item">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Billing</span>
+                            </a>
+                            <a href="#settings" class="nav-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="dashboard-card-body">
-                        <div class="transaction">
-                            <div class="transaction-icon">
-                                <i class="ri-bank-card-line"></i>
+                    
+                    <div class="dashboard-main">
+                        <!-- Subscriptions Section -->
+                        <section id="subscriptions-section" class="dashboard-section">
+                            <div class="section-header">
+                                <h2>My Subscriptions</h2>
                             </div>
-                            <div class="transaction-details">
-                                <h4 class="transaction-title">Alex Morgan</h4>
-                                <p class="transaction-date">June 1, 2025</p>
+                            
+                            <div id="subscriptions-loading" class="section-loading">
+                                <div class="spinner"></div>
+                                <p>Loading your subscriptions...</p>
                             </div>
-                            <div class="transaction-amount">$12.00</div>
-                        </div>
-                        <div class="transaction">
-                            <div class="transaction-icon">
-                                <i class="ri-bank-card-line"></i>
+                            
+                            <div id="subscriptions-empty" class="empty-state hidden">
+                                <div class="empty-icon">
+                                    <i class="fas fa-clipboard"></i>
+                                </div>
+                                <h3>No active subscriptions</h3>
+                                <p>You don't have any active subscriptions yet.</p>
+                                <a href="/model-selection.html" class="btn btn-primary mt-md">Browse Creators</a>
                             </div>
-                            <div class="transaction-details">
-                                <h4 class="transaction-title">Alex Morgan</h4>
-                                <p class="transaction-date">May 1, 2025</p>
+                            
+                            <div id="subscriptions-list" class="subscriptions-list hidden">
+                                <!-- Subscriptions will be loaded here -->
                             </div>
-                            <div class="transaction-amount">$12.00</div>
-                        </div>
-                        <div class="transaction">
-                            <div class="transaction-icon">
-                                <i class="ri-bank-card-line"></i>
+                        </section>
+                        
+                        <!-- Billing Section -->
+                        <section id="billing-section" class="dashboard-section hidden">
+                            <div class="section-header">
+                                <h2>Billing History</h2>
                             </div>
-                            <div class="transaction-details">
-                                <h4 class="transaction-title">Alex Morgan</h4>
-                                <p class="transaction-date">April 1, 2025</p>
+                            
+                            <div id="billing-loading" class="section-loading">
+                                <div class="spinner"></div>
+                                <p>Loading your billing history...</p>
                             </div>
-                            <div class="transaction-amount">$12.00</div>
-                        </div>
-                    </div>
-                    <div class="dashboard-card-footer">
-                        <button class="btn btn-secondary">View all transactions</button>
+                            
+                            <div id="billing-empty" class="empty-state hidden">
+                                <div class="empty-icon">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <h3>No billing history</h3>
+                                <p>Your payment history will appear here once you have active subscriptions.</p>
+                            </div>
+                            
+                            <div id="billing-list" class="billing-list hidden">
+                                <!-- Billing history will be loaded here -->
+                            </div>
+                        </section>
+                        
+                        <!-- Settings Section -->
+                        <section id="settings-section" class="dashboard-section hidden">
+                            <div class="section-header">
+                                <h2>Account Settings</h2>
+                            </div>
+                            
+                            <div class="card">
+                                <form id="settings-form" class="settings-form">
+                                    <div class="form-group">
+                                        <label for="settings-name">Full Name</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" id="settings-name" name="name" placeholder="Your name">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="settings-telegram">Telegram Username</label>
+                                        <div class="input-with-icon">
+                                            <i class="fab fa-telegram"></i>
+                                            <input type="text" id="settings-telegram" name="telegram" placeholder="@username">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="settings-password">New Password</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-lock"></i>
+                                            <input type="password" id="settings-password" name="password" placeholder="Leave blank to keep current password">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="settings-confirm-password">Confirm New Password</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-lock"></i>
+                                            <input type="password" id="settings-confirm-password" name="confirm-password" placeholder="Confirm new password">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-error" id="settings-error"></div>
+                                    <div class="form-success" id="settings-success"></div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        <span>Save Changes</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
-
-            <div id="settings" class="tab-content">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-header">
-                        <h3 class="dashboard-card-title">Account Settings</h3>
-                    </div>
-                    <div class="dashboard-card-body">
-                        <form class="settings-form">
-                            <div class="form-section">
-                                <h4 class="form-section-title">Personal Information</h4>
-                                <div class="form-group">
-                                    <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" id="fullName" class="form-control" value="John Smith">
-                                </div>
-                                <div class="form-group">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" id="email" class="form-control" value="john.smith@example.com">
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" id="phone" class="form-control" value="(123) 456-7890">
-                                </div>
-                            </div>
-
-                            <div class="form-section">
-                                <h4 class="form-section-title">Security</h4>
-                                <div class="form-group">
-                                    <label for="currentPassword" class="form-label">Current Password</label>
-                                    <input type="password" id="currentPassword" class="form-control" placeholder="Enter your current password">
-                                </div>
-                                <div class="form-group">
-                                    <label for="newPassword" class="form-label">New Password</label>
-                                    <input type="password" id="newPassword" class="form-control" placeholder="Enter your new password">
-                                </div>
-                                <div class="form-group">
-                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your new password">
-                                </div>
-                            </div>
-
-                            <div class="form-section">
-                                <h4 class="form-section-title">Notifications</h4>
-                                <div class="form-group">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" id="emailNotifications" checked>
-                                        <span class="checkmark"></span>
-                                        <span class="checkbox-label">Email notifications</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" id="smsNotifications">
-                                        <span class="checkmark"></span>
-                                        <span class="checkbox-label">SMS notifications</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" id="marketingEmails" checked>
-                                        <span class="checkmark"></span>
-                                        <span class="checkbox-label">Marketing emails</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary btn-block mt-4">Save Changes</button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="dashboard-card-header">
-                        <h3 class="dashboard-card-title">Danger Zone</h3>
-                    </div>
-                    <div class="dashboard-card-body">
-                        <p class="text-medium mb-3">These actions are irreversible. Please proceed with caution.</p>
-                        <button class="btn btn-danger btn-block mb-3">Cancel Subscriptions</button>
-                        <button class="btn btn-outline btn-block">Delete Account</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <a href="#" class="bottom-nav-item active" data-tab="subscriptions">
-                <i class="ri-stack-line bottom-nav-icon"></i>
-                <span>Subscriptions</span>
-            </a>
-            <a href="#" class="bottom-nav-item" data-tab="payments">
-                <i class="ri-bank-card-line bottom-nav-icon"></i>
-                <span>Payments</span>
-            </a>
-            <a href="#" class="bottom-nav-item" data-tab="settings">
-                <i class="ri-settings-3-line bottom-nav-icon"></i>
-                <span>Settings</span>
-            </a>
-        </div>
-
-        <button class="fab" aria-label="Find new creators">
-            <i class="ri-add-line"></i>
-        </button>
+        </main>
     </div>
-
-    <!-- Profile Menu Modal -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal">
+    
+    <!-- Cancel Subscription Modal -->
+    <div class="modal" id="cancel-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
             <div class="modal-header">
-                <h3 class="modal-title">Account</h3>
-                <button class="modal-close" aria-label="Close modal">
-                    <i class="ri-close-line"></i>
+                <h2>Cancel Subscription</h2>
+                <button class="modal-close" id="cancel-modal-close">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
+            
             <div class="modal-body">
-                <div class="profile-menu-item">
-                    <i class="ri-user-line"></i>
-                    <span>Profile</span>
+                <div class="modal-icon error">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                <div class="profile-menu-item">
-                    <i class="ri-settings-3-line"></i>
-                    <span>Settings</span>
-                </div>
-                <div class="profile-menu-item">
-                    <i class="ri-customer-service-2-line"></i>
-                    <span>Support</span>
-                </div>
-                <div class="profile-menu-divider"></div>
-                <div class="profile-menu-item logout">
-                    <i class="ri-logout-box-line"></i>
-                    <span>Log out</span>
+                <p>Are you sure you want to cancel your subscription to <span id="cancel-model-name" class="font-bold">this creator</span>?</p>
+                <p class="text-tertiary mb-lg">Your subscription will remain active until the end of your current billing period.</p>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-outline" id="cancel-modal-no">
+                        Keep Subscription
+                    </button>
+                    <button class="btn btn-error" id="cancel-modal-yes">
+                        Yes, Cancel
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Model Action Modal -->
-    <div class="modal-overlay" id="modelActionModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Subscription Options</h3>
-                <button class="modal-close" aria-label="Close modal">
-                    <i class="ri-close-line"></i>
-                </button>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <div class="toast-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
-            <div class="modal-body">
-                <div class="profile-menu-item">
-                    <i class="ri-message-3-line"></i>
-                    <span>Message Creator</span>
-                </div>
-                <div class="profile-menu-item">
-                    <i class="ri-star-line"></i>
-                    <span>View Creator Profile</span>
-                </div>
-                <div class="profile-menu-item">
-                    <i class="ri-history-line"></i>
-                    <span>View Payment History</span>
-                </div>
-                <div class="profile-menu-divider"></div>
-                <div class="profile-menu-item text-danger">
-                    <i class="ri-close-circle-line"></i>
-                    <span>Cancel Subscription</span>
-                </div>
-            </div>
+            <div class="toast-message" id="toast-message"></div>
+            <button class="toast-close" id="toast-close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab navigation
-            const tabButtons = document.querySelectorAll('.dashboard-tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
-            
-            function setActiveTab(tabId) {
-                // Update tab buttons
-                tabButtons.forEach(btn => {
-                    if (btn.dataset.tab === tabId) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-                
-                // Update bottom nav
-                bottomNavItems.forEach(item => {
-                    if (item.dataset.tab === tabId) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-                
-                // Update tab content
-                tabContents.forEach(content => {
-                    if (content.id === tabId) {
-                        content.classList.add('active');
-                    } else {
-                        content.classList.remove('active');
-                    }
-                });
-            }
-            
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    setActiveTab(button.dataset.tab);
-                });
-            });
-            
-            bottomNavItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    setActiveTab(item.dataset.tab);
-                });
-            });
-            
-            // Profile menu modal
-            const profileMenuBtn = document.querySelector('.profile-menu-btn');
-            const profileModal = document.getElementById('profileModal');
-            const profileModalClose = profileModal.querySelector('.modal-close');
-            
-            profileMenuBtn.addEventListener('click', () => {
-                profileModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-            
-            profileModalClose.addEventListener('click', () => {
-                profileModal.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-            
-            profileModal.addEventListener('click', (e) => {
-                if (e.target === profileModal) {
-                    profileModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-            
-            // Logout functionality
-            const logoutBtn = document.querySelector('.profile-menu-item.logout');
-            
-            logoutBtn.addEventListener('click', () => {
-                // In a real app, this would handle the logout process
-                window.location.href = 'index.html';
-            });
-            
-            // Model action modal
-            const modelActionBtn = document.querySelector('.model-action');
-            const modelActionModal = document.getElementById('modelActionModal');
-            const modelActionModalClose = modelActionModal.querySelector('.modal-close');
-            
-            modelActionBtn.addEventListener('click', () => {
-                modelActionModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-            
-            modelActionModalClose.addEventListener('click', () => {
-                modelActionModal.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-            
-            modelActionModal.addEventListener('click', (e) => {
-                if (e.target === modelActionModal) {
-                    modelActionModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-            
-            // FAB button
-            const fabButton = document.querySelector('.fab');
-            
-            fabButton.addEventListener('click', () => {
-                window.location.href = 'model-selection-public.html';
-            });
-        });
-    </script>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/dashboard.js"></script>
 </body>
 </html> 
