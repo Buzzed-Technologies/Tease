@@ -79,7 +79,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 4rem;
+            margin-bottom: 2rem;
             padding-top: 1rem;
         }
         
@@ -172,7 +172,7 @@
         
         /* Features Section */
         .features-section {
-            padding: 5rem 1.5rem;
+            padding: 2rem 1.5rem;
             background-color: var(--primary-dark);
         }
         
@@ -183,15 +183,15 @@
         
         .section-heading {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 1.5rem;
         }
         
         .section-title {
             font-family: var(--font-display);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             color: var(--darker);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             letter-spacing: -0.03em;
         }
         
@@ -200,30 +200,32 @@
         }
         
         .section-subtitle {
-            font-size: 1.125rem;
+            font-size: 1rem;
             color: var(--gray);
             max-width: 700px;
             margin: 0 auto;
-            line-height: 1.6;
+            line-height: 1.5;
         }
         
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            gap: 1rem;
         }
         
         .feature-card {
             background-color: var(--primary);
             border-radius: var(--radius);
-            padding: 2rem;
+            padding: 1.25rem;
             box-shadow: var(--shadow);
             transition: var(--transition);
             border: 1px solid var(--light-gray);
+            display: flex;
+            align-items: flex-start;
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
             border-color: var(--accent-light);
         }
@@ -232,31 +234,37 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 64px;
-            height: 64px;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
             background-color: var(--accent-light);
             color: var(--accent);
             border-radius: 50%;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .feature-content {
+            flex: 1;
         }
         
         .feature-title {
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1rem;
             color: var(--darker);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
         
         .feature-description {
-            font-size: 1rem;
+            font-size: 0.875rem;
             color: var(--gray);
-            line-height: 1.6;
+            line-height: 1.5;
+            margin: 0;
         }
         
         /* CTA Section */
         .cta-section {
-            padding: 5rem 1.5rem;
+            padding: 2rem 1.5rem;
             background-color: var(--primary);
             text-align: center;
             position: relative;
@@ -294,16 +302,16 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 2rem;
-            margin-top: 3rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
         
         .cta-card {
             background-color: var(--primary);
             border-radius: var(--radius);
-            padding: 2.5rem 2rem;
+            padding: 1.5rem 1.25rem;
             width: 100%;
-            max-width: 350px;
+            max-width: 300px;
             box-shadow: var(--shadow);
             transition: var(--transition);
             border: 1px solid var(--light-gray);
@@ -313,7 +321,7 @@
         }
         
         .cta-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
             border-color: var(--accent-light);
         }
@@ -322,37 +330,37 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 80px;
-            height: 80px;
+            width: 56px;
+            height: 56px;
             background-color: var(--accent-light);
             color: var(--accent);
             border-radius: 50%;
-            margin-bottom: 1.5rem;
-            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
         }
         
         .cta-title {
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--darker);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         
         .cta-description {
             color: var(--gray);
-            margin-bottom: 1.5rem;
-            font-size: 1rem;
-            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
         }
         
         .cta-button {
             display: inline-flex;
             align-items: center;
-            padding: 0.875rem 1.75rem;
+            padding: 0.75rem 1.5rem;
             background-color: var(--accent);
             color: white;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9375rem;
             border-radius: var(--radius);
             text-decoration: none;
             transition: var(--transition);
@@ -416,18 +424,27 @@
             font-size: 0.875rem;
         }
         
+        /* Remove scrollable section styles and improve screen layout */
+        .screen {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
         /* Responsive Styles */
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 2.75rem;
+                font-size: 2.5rem;
             }
             
             .hero-subtitle {
-                font-size: 1.125rem;
+                font-size: 1rem;
             }
             
             .section-title {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
             
             .features-grid {
@@ -446,71 +463,26 @@
             .hero-section,
             .features-section,
             .cta-section {
-                padding: 3rem 1rem;
+                padding: 2rem 1rem;
             }
         }
         
         @media (max-width: 480px) {
             .hero-title {
-                font-size: 2.25rem;
-            }
-            
-            .logo {
                 font-size: 2rem;
             }
             
-            .section-title {
+            .logo {
                 font-size: 1.75rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
             }
             
             .hero-cta {
                 width: 100%;
                 justify-content: center;
-            }
-        }
-        
-        /* Add these new styles for scrollable sections */
-        .screen-content {
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 4rem 1.5rem;
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            scrollbar-width: thin;
-            scrollbar-color: rgba(90, 120, 255, 0.2) transparent;
-        }
-        
-        .screen-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .screen-content::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .screen-content::-webkit-scrollbar-thumb {
-            background-color: rgba(90, 120, 255, 0.2);
-            border-radius: 10px;
-        }
-        
-        /* Adjust padding for the hero section which doesn't need internal scrolling */
-        .hero-section {
-            padding: 0;
-        }
-        
-        .features-section .features-container,
-        .cta-section .cta-container {
-            padding-bottom: 4rem;
-        }
-
-        /* Ensure the screen transition respects the internal scrolling */
-        .screen {
-            overflow: hidden; /* Only the content area should scroll, not the whole screen */
-        }
-        
-        @media (max-width: 768px) {
-            .screen-content {
-                padding: 3rem 1rem;
             }
         }
     </style>
@@ -538,32 +510,38 @@
             
             <!-- Features Section -->
             <section class="features-section screen" id="features">
-                <div class="features-container screen-content">
+                <div class="features-container">
                     <div class="section-heading">
                         <h2 class="section-title">Why <span class="highlight">ThreadPay</span></h2>
-                        <p class="section-subtitle">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
+                        <p class="section-subtitle">ThreadPay is a curated platform connecting supporters with exceptional creators.</p>
                     </div>
                     <div class="features-grid">
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-medal"></i>
                             </div>
-                            <h3 class="feature-title">Curated Quality</h3>
-                            <p class="feature-description">Every creator is hand-selected for exceptional talent and thoroughly vetted to ensure the highest quality content.</p>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Curated Quality</h3>
+                                <p class="feature-description">Every creator is hand-selected for exceptional talent and thoroughly vetted.</p>
+                            </div>
                         </div>
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-lock"></i>
                             </div>
-                            <h3 class="feature-title">Secure Payments</h3>
-                            <p class="feature-description">Your financial details remain private and protected with our state-of-the-art security infrastructure.</p>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Secure Payments</h3>
+                                <p class="feature-description">Your financial details remain private with our state-of-the-art security.</p>
+                            </div>
                         </div>
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-heart"></i>
                             </div>
-                            <h3 class="feature-title">Direct Support</h3>
-                            <p class="feature-description">Your contributions enable creators to focus on producing quality content without compromising their creative vision.</p>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Direct Support</h3>
+                                <p class="feature-description">Your contributions enable creators to focus on producing quality content.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -574,10 +552,10 @@
                 <div class="cta-background">
                     <div class="bg-gradient"></div>
                 </div>
-                <div class="cta-container screen-content">
+                <div class="cta-container">
                     <div class="section-heading">
                         <h2 class="section-title">Get <span class="highlight">Started</span></h2>
-                        <p class="section-subtitle">Join our community of supporters and discover exceptional creators today.</p>
+                        <p class="section-subtitle">Join our community and discover exceptional creators today.</p>
                     </div>
                     <div class="cta-cards">
                         <div class="cta-card">
@@ -585,7 +563,7 @@
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             <h3 class="cta-title">New to ThreadPay?</h3>
-                            <p class="cta-description">Create an account to start supporting your favorite creators and discover new talent.</p>
+                            <p class="cta-description">Create an account to start supporting your favorite creators.</p>
                             <a href="/model-selection-public.html" class="cta-button">Sign Up <i class="fas fa-arrow-right"></i></a>
                         </div>
                         <div class="cta-card">
@@ -593,7 +571,7 @@
                                 <i class="fas fa-sign-in-alt"></i>
                             </div>
                             <h3 class="cta-title">Returning Supporter?</h3>
-                            <p class="cta-description">Sign in to continue supporting your creators and manage your subscriptions.</p>
+                            <p class="cta-description">Sign in to continue supporting your creators.</p>
                             <a href="/login.html" class="cta-button">Sign In <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
