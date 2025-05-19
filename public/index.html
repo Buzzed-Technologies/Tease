@@ -37,7 +37,7 @@
             display: flex;
             flex-direction: column;
             background-color: var(--primary);
-            padding: 2rem 1.5rem;
+            padding: 0;
             position: relative;
             overflow: hidden;
         }
@@ -468,6 +468,51 @@
                 justify-content: center;
             }
         }
+        
+        /* Add these new styles for scrollable sections */
+        .screen-content {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 4rem 1.5rem;
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(90, 120, 255, 0.2) transparent;
+        }
+        
+        .screen-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .screen-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .screen-content::-webkit-scrollbar-thumb {
+            background-color: rgba(90, 120, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        /* Adjust padding for the hero section which doesn't need internal scrolling */
+        .hero-section {
+            padding: 0;
+        }
+        
+        .features-section .features-container,
+        .cta-section .cta-container {
+            padding-bottom: 4rem;
+        }
+
+        /* Ensure the screen transition respects the internal scrolling */
+        .screen {
+            overflow: hidden; /* Only the content area should scroll, not the whole screen */
+        }
+        
+        @media (max-width: 768px) {
+            .screen-content {
+                padding: 3rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -493,7 +538,7 @@
             
             <!-- Features Section -->
             <section class="features-section screen" id="features">
-                <div class="features-container">
+                <div class="features-container screen-content">
                     <div class="section-heading">
                         <h2 class="section-title">Why <span class="highlight">ThreadPay</span></h2>
                         <p class="section-subtitle">ThreadPay is a curated platform connecting supporters with exceptional creators. We personally select every creator to ensure quality.</p>
@@ -529,7 +574,7 @@
                 <div class="cta-background">
                     <div class="bg-gradient"></div>
                 </div>
-                <div class="cta-container">
+                <div class="cta-container screen-content">
                     <div class="section-heading">
                         <h2 class="section-title">Get <span class="highlight">Started</span></h2>
                         <p class="section-subtitle">Join our community of supporters and discover exceptional creators today.</p>

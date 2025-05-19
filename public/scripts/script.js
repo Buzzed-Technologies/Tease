@@ -18,10 +18,28 @@ document.addEventListener('DOMContentLoaded', () => {
         let startTime = 0;
         let isInputFocused = false; // Track if an input is focused
         
-        // Disable native scrolling
+        // Disable native scrolling on body
         document.body.style.overflow = 'hidden';
         app.style.height = '100vh';
         app.style.overflow = 'hidden';
+        
+        // Helper function to check if an element's content is scrollable and not at boundaries
+        function canScrollContent(element, direction) {
+            if (!element) return false;
+            
+            // Find the scrollable container within the screen
+            const scrollContainer = element.querySelector('.screen-content');
+            if (!scrollContainer) return false;
+            
+            if (direction > 0) { // Scrolling down
+                // Check if we've scrolled to the bottom of the container
+                return scrollContainer.scrollHeight > scrollContainer.clientHeight && 
+                       scrollContainer.scrollTop + scrollContainer.clientHeight < scrollContainer.scrollHeight - 5;
+            } else { // Scrolling up
+                // Check if we've scrolled away from the top
+                return scrollContainer.scrollTop > 5;
+            }
+        }
         
         // Set initial section
         updateSection(0);
@@ -93,6 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     screen.style.transform = 'translateY(0)';
                     screen.classList.add('active');
                     
+                    // Reset scroll position when navigating to a new section
+                    const scrollContainer = screen.querySelector('.screen-content');
+                    if (scrollContainer) {
+                        scrollContainer.scrollTop = 0;
+                    }
+                    
                     // Add animation classes to children
                     const elements = screen.querySelectorAll('h1, h2, h3, p, .feature, .step, .form-group, .persona, .mission-item');
                     elements.forEach((el, index) => {
@@ -140,6 +164,84 @@ document.addEventListener('DOMContentLoaded', () => {
             screen.style.height = '100vh';
             screen.style.transition = 'transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
             screen.style.zIndex = `${10 - i}`;
+            
+            // Add wheel event listener to each section with scrollable content
+            const scrollContainer = screen.querySelector('.screen-content');
+            if (scrollContainer) {
+                // Handle wheel events for scrollable content
+                scrollContainer.addEventListener('wheel', (e) => {
+                    // Only handle scrolling if this is the active section
+                    if (!screen.classList.contains('active')) return;
+                    
+                    const direction = Math.sign(e.deltaY);
+                    
+                    // If we can scroll within the container, let native scrolling happen
+                    if (canScrollContent(screen, direction)) {
+                        e.stopPropagation(); // Prevent the document wheel handler from firing
+                    } else if (!isScrolling) {
+                        // If at top/bottom boundary, move to next/previous section
+                        if (direction > 0 && scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 5) {
+                            // At bottom, move to next section
+                            isScrolling = true;
+                            const nextSection = currentSection + 1;
+                            if (nextSection <= screens.length) {
+                                updateSection(nextSection);
+                            }
+                            setTimeout(() => { isScrolling = false; }, 800);
+                        } else if (direction < 0 && scrollContainer.scrollTop <= 5) {
+                            // At top, move to previous section
+                            isScrolling = true;
+                            const prevSection = currentSection - 1;
+                            if (prevSection >= 0) {
+                                updateSection(prevSection);
+                            }
+                            setTimeout(() => { isScrolling = false; }, 800);
+                        }
+                    }
+                }, { passive: false });
+                
+                // Touch handling for scrollable containers
+                let containerTouchStartY = 0;
+                let containerScrollStartPos = 0;
+                
+                scrollContainer.addEventListener('touchstart', (e) => {
+                    containerTouchStartY = e.touches[0].clientY;
+                    containerScrollStartPos = scrollContainer.scrollTop;
+                }, { passive: true });
+                
+                scrollContainer.addEventListener('touchmove', (e) => {
+                    // Calculate if we're at bounds and should trigger section change
+                    const touchY = e.touches[0].clientY;
+                    const touchDiff = containerTouchStartY - touchY;
+                    
+                    // If we're at top of container and pulling down
+                    if (scrollContainer.scrollTop <= 0 && touchDiff < -30) {
+                        e.stopPropagation();
+                        
+                        if (!isScrolling) {
+                            isScrolling = true;
+                            const prevSection = currentSection - 1;
+                            if (prevSection >= 0) {
+                                updateSection(prevSection);
+                            }
+                            setTimeout(() => { isScrolling = false; }, 800);
+                        }
+                    }
+                    // If we're at bottom of container and pushing up
+                    else if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight && touchDiff > 30) {
+                        e.stopPropagation();
+                        
+                        if (!isScrolling) {
+                            isScrolling = true;
+                            const nextSection = currentSection + 1;
+                            if (nextSection <= screens.length) {
+                                updateSection(nextSection);
+                            }
+                            setTimeout(() => { isScrolling = false; }, 800);
+                        }
+                    }
+                }, { passive: true });
+            }
         });
         
         // Setup footer for the transition
@@ -164,6 +266,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle wheel events for scrolling
         window.addEventListener('wheel', (e) => {
             if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
+            
+            // Get the current active screen
+            const activeScreen = document.querySelector('.screen.active');
+            
+            // Check if the active screen has scrollable content and is not at boundaries
+            if (activeScreen && canScrollContent(activeScreen, Math.sign(e.deltaY))) {
+                return; // Let the screen's internal scroll handler take care of it
+            }
+            
             // Determine scroll direction
             const direction = Math.sign(e.deltaY);
             if (direction !== 0) {
@@ -194,13 +305,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.addEventListener('touchend', (e) => {
             if (isScrolling || isInputFocused || isInteractiveElement(e.target)) return; // Skip if input is focused or on a link/button
+            
+            // Get the current active screen
+            const activeScreen = document.querySelector('.screen.active');
             const touchDiff = touchStartY - touchEndY;
+            const direction = touchDiff > 0 ? 1 : -1;
+            
+            // Check if the active screen has scrollable content and is not at boundaries
+            if (activeScreen && canScrollContent(activeScreen, direction)) {
+                return; // Let the screen's internal scroll handler take care of it
+            }
+            
             const timeDiff = Date.now() - startTime;
             // Detect swipe vs tap - velocity based
             if (Math.abs(touchDiff) > 50 || (Math.abs(touchDiff) > 20 && timeDiff < 200)) {
                 isScrolling = true;
-                // Determine direction (positive = down, negative = up)
-                const direction = touchDiff > 0 ? 1 : -1;
                 const nextSection = currentSection + direction;
                 if (nextSection >= 0 && nextSection <= screens.length) {
                     updateSection(nextSection);
@@ -215,14 +334,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // Keyboard navigation for accessibility
         document.addEventListener('keydown', (e) => {
             if (isScrolling || isInputFocused || isInteractiveElement(document.activeElement)) return; // Skip if input is focused or on a link/button
+            
+            // Get the current active screen
+            const activeScreen = document.querySelector('.screen.active');
+            
             let direction = 0;
             if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'Space') {
                 direction = 1;
+                
+                // Check if the active screen has scrollable content and is not at the bottom
+                if (activeScreen && canScrollContent(activeScreen, direction)) {
+                    return; // Let native scrolling happen within the content
+                }
+                
                 e.preventDefault();
             } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
                 direction = -1;
+                
+                // Check if the active screen has scrollable content and is not at the top
+                if (activeScreen && canScrollContent(activeScreen, direction)) {
+                    return; // Let native scrolling happen within the content
+                }
+                
                 e.preventDefault();
             }
+            
             if (direction !== 0) {
                 isScrolling = true;
                 const nextSection = currentSection + direction;
