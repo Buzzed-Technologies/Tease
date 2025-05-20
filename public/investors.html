@@ -37,7 +37,7 @@
             background-color: var(--primary-dark);
             min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             width: 100%;
         }
         
@@ -49,7 +49,7 @@
             position: relative;
             overflow: visible;
             background: var(--primary);
-            z-index: 1;
+            z-index: auto;
         }
         
         .hero-background {
@@ -425,9 +425,9 @@
 </head>
 <body>
     <div class="app-container">
-        <main style="overflow: visible;">
+        <main>
             <!-- Hero Section -->
-            <section class="hero-section screen" id="hero">
+            <section class="hero-section" id="hero">
                 <div class="hero-background">
                     <div class="bg-gradient"></div>
                 </div>
