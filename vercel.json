@@ -17,7 +17,7 @@
     },
     {
       "src": "/invite/(.*)",
-      "dest": "/public/invite.html"
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",

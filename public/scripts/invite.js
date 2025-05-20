@@ -8,16 +8,11 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 function getModelFromUrl() {
   // Check if we're in the invite URL pattern
   const path = window.location.pathname;
-  const invitePattern = /\/invite\/([^/]+)/;
+  const invitePattern = /\/invite\/([a-zA-Z0-9_-]+)/;
   const match = path.match(invitePattern);
   
   if (match && match[1]) {
-    try {
-      // Handle URL encoded characters
-      return decodeURIComponent(match[1]);
-    } catch (e) {
-      return match[1];
-    }
+    return match[1];
   }
   
   // Fallback to query parameter
@@ -30,33 +25,18 @@ async function getModelByName(modelName) {
   if (!modelName) return null;
   
   try {
-    // First try exact name match
-    let { data, error } = await supabase
-      .from('models')
-      .select('*')
-      .eq('name', modelName)
-      .single();
+    // Convert model name to capitalize first letter for consistency
+    modelName = modelName.charAt(0).toUpperCase() + modelName.slice(1).toLowerCase();
     
-    if (!error && data) return data;
-    
-    // Then try case-insensitive match
-    ({ data, error } = await supabase
+    const { data, error } = await supabase
       .from('models')
       .select('*')
       .ilike('name', modelName)
-      .single());
+      .single();
     
-    if (!error && data) return data;
+    if (error) throw error;
     
-    // Finally try fuzzy matching with capitalization variations
-    const formattedName = modelName.charAt(0).toUpperCase() + modelName.slice(1).toLowerCase();
-    ({ data, error } = await supabase
-      .from('models')
-      .select('*')
-      .ilike('name', `%${formattedName}%`)
-      .single());
-    
-    return data || null;
+    return data;
   } catch (error) {
     console.error('Error getting model by name:', error);
     return null;
