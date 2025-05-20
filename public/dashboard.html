@@ -1458,6 +1458,30 @@
             margin: 0;
             padding: 0;
         }
+        
+        /* Special styling for the settings tab to ensure centering - extreme version */
+        #tab-settings {
+            width: 100%;
+            max-width: 100%;
+            display: none;
+            position: relative;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        #tab-settings.active {
+            display: block !important;
+            opacity: 1;
+            width: 100%;
+        }
+        
+        #tab-settings .settings-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto !important;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -1521,32 +1545,34 @@
                     </div>
                 </div>
                 
-                <!-- Settings Tab -->
-                <div class="tab-section" id="tab-settings" style="display: none; width: 100%; max-width: 650px; margin: 0 auto;">
-                    <div class="settings-card" style="width: 100%; margin: 0 auto;">
-                        <h2 style="text-align: left; width: 100%;">Account Settings</h2>
-                        <form class="settings-form" id="settings-form">
-                            <div class="form-group">
-                                <label for="settings-name" class="form-label">Display Name</label>
-                                <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
-                            </div>
-                            <div class="form-group hidden-field">
-                                <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="settings-password" class="form-label">New Password</label>
-                                <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
-                            </div>
-                            <div class="form-group">
-                                <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
-                                <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
-                            </div>
-                            <button type="submit" class="action-button">
-                                <i class="fas fa-save"></i>
-                                <span class="btn-text">Save Changes</span>
-                            </button>
-                            <div id="settings-message" class="message-area"></div>
-                        </form>
+                <!-- Settings Tab - completely separate from dashboard-inner -->
+                <div class="tab-section" id="tab-settings" style="display: none;">
+                    <div class="settings-container">
+                        <div class="settings-card" style="width: 100%; margin: 0 auto !important;">
+                            <h2 style="text-align: left; width: 100%;">Account Settings</h2>
+                            <form class="settings-form" id="settings-form">
+                                <div class="form-group">
+                                    <label for="settings-name" class="form-label">Display Name</label>
+                                    <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
+                                </div>
+                                <div class="form-group hidden-field">
+                                    <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-password" class="form-label">New Password</label>
+                                    <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                                    <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                                </div>
+                                <button type="submit" class="action-button">
+                                    <i class="fas fa-save"></i>
+                                    <span class="btn-text">Save Changes</span>
+                                </button>
+                                <div id="settings-message" class="message-area"></div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
