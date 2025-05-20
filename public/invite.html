@@ -143,7 +143,7 @@
         
         .creator-image {
             width: 100%;
-            height: 250px;
+            height: 350px;
             border-radius: 0;
             object-fit: cover;
             box-shadow: none;
@@ -165,27 +165,30 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 80px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
             pointer-events: none;
         }
         
         .creator-name {
             font-family: var(--font-display);
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--darker);
-            margin-top: 1.25rem;
-            margin-bottom: 0.75rem;
+            color: white;
+            margin-bottom: 0.5rem;
             letter-spacing: -0.03em;
             text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .creator-bio {
             text-align: center;
-            color: var(--gray);
-            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0;
             line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            max-width: 80%;
+            margin: 0 auto;
         }
         
         .package-cards {
@@ -414,7 +417,7 @@
         
         .image-carousel {
             width: 100%;
-            height: 250px;
+            height: 350px;
             position: relative;
             border-radius: 0;
             overflow: hidden;
@@ -452,7 +455,7 @@
         
         .carousel-nav {
             position: absolute;
-            bottom: 15px;
+            bottom: 150px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -469,8 +472,8 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 80px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
             pointer-events: none;
             z-index: 2;
         }
@@ -503,11 +506,20 @@
             }
             
             .creator-image, .image-carousel {
-                height: 200px;
+                height: 300px;
             }
             
             .creator-name {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
+            }
+            
+            .creator-bio {
+                font-size: 0.9rem;
+                max-width: 90%;
+            }
+            
+            .model-info-overlay {
+                padding: 1.5rem;
             }
         }
         
@@ -525,7 +537,20 @@
             }
             
             .creator-image, .image-carousel {
-                height: 180px;
+                height: 250px;
+            }
+            
+            .creator-name {
+                font-size: 1.5rem;
+            }
+            
+            .creator-bio {
+                font-size: 0.85rem;
+                max-width: 95%;
+            }
+            
+            .model-info-overlay {
+                padding: 1rem;
             }
             
             .carousel-dot {
@@ -578,6 +603,17 @@
             color: var(--dark);
             transform: translateY(-2px);
         }
+
+        .model-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            z-index: 3;
+            color: white;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -596,11 +632,12 @@
                 <div class="creator-info">
                     <div id="model-image" class="creator-image">
                         <!-- Model image will be inserted here -->
+                        <div class="model-info-overlay">
+                            <h2 class="creator-name" id="model-name">Loading...</h2>
+                            <p class="creator-bio" id="model-bio">Loading model information...</p>
+                        </div>
                     </div>
                     <div class="creator-content">
-                        <h2 class="creator-name" id="model-name">Loading...</h2>
-                        <p class="creator-bio" id="model-bio">Loading model information...</p>
-                        
                         <div id="packages-section" class="section-transition">
                             <h3 id="section-title" class="section-title">Select Your Package</h3>
                             <div class="package-cards" id="packages-list"></div>
@@ -785,12 +822,23 @@
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
             
             const modelImageContainer = document.getElementById('model-image');
-            modelImageContainer.innerHTML = '';
+            // Remove everything except the overlay
+            Array.from(modelImageContainer.children).forEach(child => {
+                if (!child.classList.contains('model-info-overlay')) {
+                    child.remove();
+                }
+            });
             
             let images = Array.isArray(model.pictures) ? model.pictures : [];
             if (!images.length) {
                 // fallback: show a blank image
-                modelImageContainer.innerHTML = `<img src="/images/placeholder-model.jpg" alt="Profile placeholder" style="width: 100%; height: 100%; object-fit: cover;">`;
+                const imgElement = document.createElement('img');
+                imgElement.src = '/images/placeholder-model.jpg';
+                imgElement.alt = 'Profile placeholder';
+                imgElement.style.width = '100%';
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'cover';
+                modelImageContainer.insertBefore(imgElement, modelImageContainer.firstChild);
                 return;
             }
             
@@ -822,14 +870,23 @@
                         </div>
                     </div>
                 `;
-                modelImageContainer.innerHTML = carouselHTML;
+                // Insert carousel before overlay
+                modelImageContainer.insertAdjacentHTML('afterbegin', carouselHTML);
                 
                 // Initialize carousel
                 setTimeout(initCarousel, 100);
             } else {
                 // Set primary image for single image
                 const imageUrl = getImageUrl(images[0]);
-                modelImageContainer.innerHTML = `<img src="${imageUrl}" alt="${model.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                const imgElement = document.createElement('img');
+                imgElement.src = imageUrl;
+                imgElement.alt = model.name;
+                imgElement.style.width = '100%';
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'cover';
+                
+                // Insert image before overlay
+                modelImageContainer.insertBefore(imgElement, modelImageContainer.firstChild);
             }
             
             document.getElementById('model-id').value = model.id;
