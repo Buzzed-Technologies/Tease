@@ -86,14 +86,18 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             transition: var(--transition);
+            background-size: 200% 200%;
+            animation: gradientAnimation 4s ease infinite;
         }
         
         .logo:hover {
             transform: translateY(-1px);
-            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        }
+        
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .tagline {
@@ -421,7 +425,7 @@
 
         .login-link {
             text-align: center;
-            margin-top: 2rem;
+            margin-top: 1rem;
             color: var(--gray);
             font-size: 0.9375rem;
         }
@@ -614,6 +618,32 @@
             color: white;
             text-align: center;
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            color: var(--gray);
+            font-size: 0.875rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .footer a:hover {
+            color: #4A67E3;
+            text-decoration: underline;
+        }
+        
+        .terms-privacy {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -696,25 +726,27 @@
                                 
                                 <div id="signup-message" class="signup-message"></div>
                                 
-                                <div class="terms-privacy" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--gray);">
-                                    By creating an account, you agree to our
-                                    <a href="/terms-of-service.html" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
-                                    and
-                                    <a href="/privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
-                                </div>
-                                
                                 <button type="button" id="back-to-packages" class="back-btn" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background: transparent; border: 1px solid var(--light-gray); color: var(--gray); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                                     <i class="fas fa-arrow-left"></i>
                                     <span>Back to Packages</span>
                                 </button>
                             </form>
-                            
-                            <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <div class="footer">
+        <div class="terms-privacy">
+            By creating an account, you agree to our
+            <a href="/terms-of-service.html">Terms of Service</a>
+            and
+            <a href="/privacy-policy.html">Privacy Policy</a>
+        </div>
+        <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+        <p>© 2025 ThreadPay. All rights reserved.</p>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
@@ -958,7 +990,7 @@
                     goToSlide(currentIndex + 1);
                 }, 5000);
             }
-            
+
             function resetAutoplay() {
                 clearInterval(autoplayInterval);
                 startAutoplay();
