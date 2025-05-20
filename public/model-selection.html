@@ -1046,19 +1046,24 @@
         const notificationClose = document.getElementById('notification-close');
         const logoutButton = document.getElementById('logout-button');
         
-        // Global function for logout
-        window.handleLogout = function() {
-            try {
-                // Clear local storage
-                localStorage.removeItem('threadpay_user');
-                
-                // Redirect to home page
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Error logging out:', error);
-                showNotification('Failed to log out. Please try again.', 'error');
-            }
-        };
+        // Handler for logout button (global function to be called from inline onclick)
+        function handleLogout() {
+            localStorage.removeItem('threadpay_user');
+            window.location.href = '/';
+        }
+        
+        // Add event listener for logout button as a backup
+        if (logoutButton) {
+            logoutButton.addEventListener('click', handleLogout);
+        }
+        
+        // Ensure dashboard button works via event listener too
+        const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
+        if (dashboardButton) {
+            dashboardButton.addEventListener('click', function(e) {
+                window.location.href = '/dashboard.html';
+            });
+        }
         
         // First try to get the key from meta tag
         const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
@@ -1177,7 +1182,7 @@
         // Load models
         async function loadModels() {
             try {
-                loadingContainer.style.display = 'flex';
+                loadingContainer.style.display = 'block';
                 modelGrid.style.display = 'none';
                 emptyState.style.display = 'none';
                 
@@ -1210,7 +1215,7 @@
             }
         }
         
-        // Display models
+        // Display models with fixed subscribe button functionality
         function displayModels(models) {
             modelGrid.innerHTML = '';
             
@@ -1258,17 +1263,13 @@
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
                 
-                // Use global function for subscribe button click
-                const buttonAction = isSubscribed 
-                    ? `window.location.href = '/dashboard.html'` 
-                    : `openSubscriptionModal(${JSON.stringify(model)})`;
-                
+                // Add direct onclick attribute to buttons for guaranteed functionality
                 modelDetails.innerHTML = `
                     <h3 class="model-name">${model.name}</h3>
                     <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
                     <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" 
                             data-model-id="${model.id}" 
-                            onclick="${buttonAction}">
+                            onclick="${isSubscribed ? 'window.location.href=\'/dashboard.html\'' : 'openSubscriptionModal(' + JSON.stringify(model).replace(/"/g, '&quot;') + ')'}">
                         ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
                     </button>
                 `;
@@ -1276,10 +1277,32 @@
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
+                
+                // Add additional event listener for the button as backup
+                const actionButton = modelDetails.querySelector('.btn');
+                actionButton.addEventListener('click', function() {
+                    if (isSubscribed) {
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        openSubscriptionModal(model);
+                    }
+                });
+                
+                // Make the entire card clickable for better UX
+                modelCard.addEventListener('click', function(e) {
+                    // Only trigger if we didn't click directly on the button (button has its own handler)
+                    if (!e.target.closest('.btn')) {
+                        if (isSubscribed) {
+                            window.location.href = '/dashboard.html';
+                        } else {
+                            openSubscriptionModal(model);
+                        }
+                    }
+                });
             });
         }
         
-        // Open the subscription modal for a model
+        // Open the subscription modal for a model - Make globally accessible for inline onclick
         window.openSubscriptionModal = function(model) {
             // Build the correct image path using Supabase bucket
             let imagePath;
@@ -1359,13 +1382,19 @@
                         <button class="btn btn-full" 
                                 data-package-id="${pkg.id}" 
                                 data-price-id="${pkg.stripe_price_id}" 
-                                data-model-id="${pkg.model_id}" 
-                                onclick="handleSubscriptionClick(this, '${pkg.id}', '${pkg.stripe_price_id}', '${pkg.model_id}')">
+                                data-model-id="${pkg.model_id}"
+                                onclick="handleSubscription(this, '${pkg.id}', '${pkg.stripe_price_id}', '${pkg.model_id}')">
                             <i class="fas fa-credit-card"></i> Subscribe Now
                         </button>
                     `;
                     
                     packageList.appendChild(packageItem);
+                    
+                    // Add event listener to subscribe button as backup
+                    const subscribeBtn = packageItem.querySelector('.btn');
+                    subscribeBtn.addEventListener('click', function() {
+                        handleSubscription(this, pkg.id, pkg.stripe_price_id, pkg.model_id);
+                    });
                 });
             } catch (error) {
                 console.error('Error loading packages:', error);
@@ -1374,8 +1403,8 @@
             }
         }
         
-        // Handle subscription click
-        window.handleSubscriptionClick = function(button, packageId, priceId, modelId) {
+        // Handle subscription - Make globally accessible for inline onclick
+        window.handleSubscription = async function(button, packageId, priceId, modelId) {
             if (!packageId || !priceId || !modelId) {
                 showNotification('Invalid subscription details. Please try again.', 'error');
                 return;
@@ -1389,16 +1418,67 @@
                 
                 showNotification('Preparing your subscription...', 'success');
                 
-                // Mock successful subscription for demo
-                setTimeout(() => {
+                // First create a customer if user doesn't have a Stripe ID
+                if (!userData.stripe_customer_id) {
+                    console.log('Creating customer in Stripe...');
+                    
+                    try {
+                        // Mock successful customer creation
+                        const customer = { customerId: 'cus_mock' + Date.now() };
+                        
+                        // Store the customer ID
+                        userData.stripe_customer_id = customer.customerId;
+                        localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                        
+                        // Update the customer ID in the database
+                        await supabase
+                            .from('profiles')
+                            .update({ stripe_customer_id: customer.customerId })
+                            .eq('id', userData.id);
+                            
+                    } catch (err) {
+                        console.error('Error creating Stripe customer:', err);
+                        throw new Error('Failed to create customer account');
+                    }
+                }
+                
+                // Create checkout session
+                console.log('Creating checkout session...');
+                
+                try {
+                    // For demo, we'll simulate subscription success directly
                     showNotification('Subscription successful! Redirecting to dashboard...', 'success');
+                    
+                    // Mock subscription entry in database
+                    try {
+                        const { error } = await supabase
+                            .from('user_model_subscriptions')
+                            .insert([{
+                                user_id: userData.id,
+                                model_id: modelId,
+                                package_id: packageId,
+                                is_active: true,
+                                stripe_subscription_id: 'sub_mock' + Date.now(),
+                                current_period_start: new Date().toISOString(),
+                                current_period_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+                            }]);
+                            
+                        if (error) {
+                            console.error('Error creating subscription record:', error);
+                        }
+                    } catch (err) {
+                        console.error('Error creating subscription record:', err);
+                    }
                     
                     // Wait a bit for the user to see the success message
                     setTimeout(() => {
                         window.location.href = '/dashboard.html?subscription_success=true';
                     }, 1500);
-                }, 1000);
-                
+                    
+                } catch (checkoutError) {
+                    console.error('Error in checkout process:', checkoutError);
+                    throw checkoutError;
+                }
             } catch (error) {
                 console.error('Error creating subscription:', error);
                 showNotification('Failed to create subscription. Please try again.', 'error');
@@ -1410,13 +1490,13 @@
         };
         
         // Close the modal
-        modalClose.addEventListener('click', function() {
+        modalClose.addEventListener('click', () => {
             modelModal.classList.remove('active');
             document.body.style.overflow = ''; // Restore scrolling
         });
         
         // Close modal when clicking outside
-        modelModal.addEventListener('click', function(e) {
+        modelModal.addEventListener('click', (e) => {
             if (e.target === modelModal) {
                 modelModal.classList.remove('active');
                 document.body.style.overflow = ''; // Restore scrolling
@@ -1435,7 +1515,7 @@
         }
         
         // Close notification
-        notificationClose.addEventListener('click', function() {
+        notificationClose.addEventListener('click', () => {
             notification.classList.remove('active');
         });
         
@@ -1449,6 +1529,29 @@
         function redirectToLogin() {
             window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
         }
+        
+        // Make sure all logout, dashboard, and notification close buttons work
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure logout button works
+            if (logoutButton) {
+                logoutButton.addEventListener('click', handleLogout);
+            }
+            
+            // Ensure dashboard button works
+            const dashboardBtn = document.querySelector('.header-controls a[href="/dashboard.html"]');
+            if (dashboardBtn) {
+                dashboardBtn.addEventListener('click', function() {
+                    window.location.href = '/dashboard.html';
+                });
+            }
+            
+            // Ensure notification close button works
+            if (notificationClose) {
+                notificationClose.addEventListener('click', function() {
+                    notification.classList.remove('active');
+                });
+            }
+        });
     </script>
 </body>
 </html> 
