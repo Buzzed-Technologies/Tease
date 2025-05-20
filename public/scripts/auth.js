@@ -334,8 +334,20 @@ function updateAuthUI(user) {
         // Get current page path
         const path = window.location.pathname;
         
+        // Redirect from login page if already authenticated
+        if (path.includes('/login')) {
+            console.log('User already authenticated, redirecting from login page');
+            // Check if user has a subscription and redirect accordingly
+            if (user.subscribed || user.subscription_status) {
+                window.location.href = '/dashboard.html';
+            } else {
+                window.location.href = '/subscription.html';
+            }
+            return;
+        }
+        
         // Check if user has a subscription
-        const hasSubscription = user.isSubscribed || false;
+        const hasSubscription = user.isSubscribed || user.subscribed || user.subscription_status || false;
         
         // Redirect non-subscribed users to subscription page unless they're already there
         if (!hasSubscription && 

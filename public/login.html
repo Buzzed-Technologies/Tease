@@ -315,6 +315,31 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
     
     <script>
+        // Check if user is already authenticated
+        function checkExistingAuth() {
+            const userData = localStorage.getItem('threadpay_user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                console.log('User already authenticated:', user.name);
+                
+                // Redirect based on subscription status
+                if (user.subscribed || user.subscription_status) {
+                    window.location.href = '/dashboard.html';
+                } else {
+                    window.location.href = '/subscription.html';
+                }
+                return true;
+            }
+            return false;
+        }
+        
+        // Try to redirect if already authenticated
+        if (checkExistingAuth()) {
+            console.log('Redirecting authenticated user...');
+        } else {
+            console.log('No existing authentication found, showing login form');
+        }
+        
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabase;

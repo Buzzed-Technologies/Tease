@@ -748,12 +748,11 @@
                 const selectButton = document.createElement('button');
                 selectButton.className = 'btn';
                 selectButton.dataset.modelId = model.id;
-                selectButton.innerHTML = '<i class="fas fa-arrow-right"></i>Select';
+                selectButton.textContent = 'Select';
                 modelDetails.appendChild(selectButton);
                 
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
-                
                 // Add event listener to button
                 selectButton.addEventListener('click', function() {
                     const modelName = this.closest('.model-card').dataset.modelName?.trim();
