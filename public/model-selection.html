@@ -23,6 +23,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
+        /* DEBUG HELPERS - Remove these in production */
+        .debug-mode .btn, 
+        .debug-mode button, 
+        .debug-mode a.btn {
+            outline: 2px solid red !important;
+        }
+        
+        .debug-mode .model-card {
+            outline: 2px solid blue !important;
+        }
+        
+        .debug-mode .header-controls {
+            outline: 2px solid green !important;
+        }
+        
         /* Unified Button Styles */
         .btn {
             display: inline-flex;
@@ -89,13 +104,17 @@
             gap: 1.2rem;
             align-items: center;
             position: relative;
-            z-index: 10;
+            z-index: 50;
         }
         
         .header-controls a,
         .header-controls button {
-            cursor: pointer;
-            pointer-events: auto;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 51;
+            border: none;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.3);
         }
         
         .logo-link {
@@ -103,6 +122,30 @@
             cursor: pointer;
             position: relative;
             z-index: 10;
+        }
+        
+        /* Added styles for absolutely ensuring clickability */
+        .btn, button, a.btn {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 5;
+        }
+        
+        /* Highlight on hover to make it clear the element is interactive */
+        .btn:hover, button:hover, a.btn:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0.9;
+        }
+        
+        /* Ensure buttons themselves are clickable, not just their content */
+        .btn *, button *, a.btn * {
+            pointer-events: none;
         }
         
         /* Model card redesign */
@@ -706,11 +749,13 @@
             align-items: center;
             gap: 1rem;
             max-width: 400px;
+            pointer-events: none; /* Don't capture clicks when inactive */
         }
         
         .notification.active {
             opacity: 1;
             transform: translateY(0);
+            pointer-events: auto; /* Only capture clicks when active */
         }
         
         .notification.success {
@@ -1003,11 +1048,11 @@
                 <div class="logo">ThreadPay</div>
             </a>
             <div class="header-controls">
-                <a href="/dashboard.html" class="btn btn-secondary" id="dashboard-button">
+                <a href="/dashboard.html" class="btn btn-secondary" id="dashboard-button" onclick="window.location.href='/dashboard.html'; return false;">
                     <i class="fas fa-tachometer-alt"></i>
                     <span class="btn-text">Dashboard</span>
                 </a>
-                <button id="logout-button" class="btn logout-button" type="button">
+                <button id="logout-button" class="btn logout-button" type="button" onclick="handleLogout(); return false;">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="btn-text">Logout</span>
                 </button>
@@ -1056,7 +1101,7 @@
     </div>
     
     <!-- Notification -->
-    <div id="notification" class="notification">
+    <div id="notification" class="notification" style="display: none;">
         <div class="notification-icon">
             <i class="fas fa-check-circle"></i>
         </div>
@@ -1073,6 +1118,28 @@
     <script src="https://js.stripe.com/v3/"></script>
     
     <script>
+        // Debug mode toggle function
+        function toggleDebugMode() {
+            const body = document.body;
+            body.classList.toggle('debug-mode');
+            return false; // Prevent default
+        }
+        
+        // Global functions for direct onclick attributes
+        function handleLogout() {
+            console.log('Logout function called directly');
+            try {
+                // Clear local storage
+                localStorage.removeItem('threadpay_user');
+                // Redirect to home page
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Error logging out:', error);
+                alert('Failed to log out. Please try again.');
+            }
+            return false;
+        }
+        
         // Add global event diagnostics
         document.addEventListener('DOMContentLoaded', function() {
             // Add diagnostic click tracking to help debug
@@ -1080,6 +1147,13 @@
                 console.log('Click detected on:', e.target.tagName, 
                             'Class:', e.target.className,
                             'ID:', e.target.id || 'none');
+                            
+                // Don't stop propagation - let the event continue
+                // Check if the click is on a button or its child elements
+                const button = e.target.closest('button, a.btn');
+                if (button) {
+                    console.log('Button clicked:', button.id || button.className);
+                }
             }, true); // Capture phase to see all clicks
             
             // Check if buttons exist
@@ -1088,6 +1162,36 @@
                 console.log('Logout button exists:', !!document.getElementById('logout-button'));
                 console.log('Model buttons count:', document.querySelectorAll('.model-details .btn').length);
             }, 2000);
+            
+            // Force hide notification if it might be active
+            document.getElementById('notification').classList.remove('active');
+            document.getElementById('notification').style.display = 'none';
+            
+            // Add a debug button for troubleshooting
+            const debugButton = document.createElement('button');
+            debugButton.style.position = 'fixed';
+            debugButton.style.bottom = '10px';
+            debugButton.style.left = '10px';
+            debugButton.style.padding = '5px 10px';
+            debugButton.style.zIndex = '9999';
+            debugButton.style.background = '#ff0000';
+            debugButton.style.color = '#ffffff';
+            debugButton.style.border = 'none';
+            debugButton.style.borderRadius = '4px';
+            debugButton.style.cursor = 'pointer';
+            debugButton.textContent = 'Toggle Debug Mode';
+            debugButton.onclick = toggleDebugMode;
+            document.body.appendChild(debugButton);
+            
+            // Add inline onclick to all buttons for maximum compatibility
+            document.querySelectorAll('button, a.btn').forEach(btn => {
+                if (btn.id === 'logout-button') {
+                    btn.setAttribute('onclick', 'handleLogout(); return false;');
+                }
+                else if (btn.getAttribute('href') === '/dashboard.html') {
+                    btn.setAttribute('onclick', 'window.location.href="/dashboard.html"; return false;');
+                }
+            });
         });
         
         // Supabase client initialization
@@ -1663,11 +1767,21 @@
         // Show notification
         function showNotification(message, type = 'success') {
             notificationMessage.textContent = message;
-            notification.className = `notification ${type} active`;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'flex';
+            
+            // Add active class after a tiny delay to ensure the transition works
+            setTimeout(() => {
+                notification.classList.add('active');
+            }, 10);
             
             // Automatically hide after 5 seconds
             setTimeout(() => {
                 notification.classList.remove('active');
+                // Hide the element completely after transition
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 500);
             }, 5000);
         }
         
