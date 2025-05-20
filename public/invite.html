@@ -304,7 +304,7 @@
             color: var(--gray);
         }
 
-        .submit-btn {
+        .submit-btn, .confirm-btn {
             width: 100%;
             padding: 0.875rem 1rem;
             background-color: var(--accent);
@@ -322,13 +322,13 @@
             gap: 0.5rem;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover, .confirm-btn:hover {
             background-color: #4A67E3;
             transform: translateY(-2px);
             box-shadow: var(--shadow);
         }
 
-        .submit-btn:disabled {
+        .submit-btn:disabled, .confirm-btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
             transform: none;
@@ -459,6 +459,10 @@
                 height: 100px;
             }
         }
+
+        .terms-privacy a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -483,6 +487,11 @@
                     
                     <h3 style="margin-top: 1rem; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;">Select Your Package</h3>
                     <div class="package-cards" id="packages-list"></div>
+                    <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Confirm Selection</span>
+                    </button>
+                    <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
                 </div>
                 
                 <div class="signup-card">
@@ -501,8 +510,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="age" class="form-label">Your Age</label>
-                            <input type="number" id="age" name="age" class="form-input" placeholder="Must be 18 or older" min="18" required>
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" class="form-input" required>
                             <p class="form-description">You must be 18 or older to use ThreadPay.</p>
                         </div>
                         
@@ -534,6 +543,13 @@
                         </button>
                         
                         <div id="signup-message" class="signup-message"></div>
+                        
+                        <div class="terms-privacy" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--gray);">
+                            By creating an account, you agree to our
+                            <a href="/terms-of-service.html" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
+                            and
+                            <a href="/privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
+                        </div>
                     </form>
                     
                     <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
@@ -582,8 +598,10 @@
             list.innerHTML = '';
             const signupForm = document.getElementById('signup-form');
             const signupHeader = document.getElementById('signup-header');
+            const confirmButton = document.getElementById('confirm-package-btn');
             signupForm.style.display = 'none';
             signupHeader.style.display = 'none';
+            confirmButton.style.display = 'none';
             
             if (!packages.length) {
                 list.innerHTML = '<div style="color:var(--error);text-align:center;padding:1rem 0;">No packages available for this creator.</div>';
@@ -615,31 +633,29 @@
                     selectedPackageId = pkg.id;
                     document.getElementById('package-id').value = pkg.id;
                     document.getElementById('package-id').setAttribute('data-stripe-price-id', pkg.stripe_price_id);
-                    signupForm.style.display = 'block';
-                    signupHeader.style.display = 'block';
-                    signupForm.style.opacity = 1;
-                    signupForm.style.pointerEvents = 'auto';
+                    confirmButton.style.display = 'block';
                 };
                 
                 list.appendChild(card);
             });
-            
-            signupForm.style.opacity = 0.5;
-            signupForm.style.pointerEvents = 'none';
         }
         
-        function showError(message) {
-            const messageElement = document.getElementById('signup-message');
+        function showError(message, elementId = 'signup-message') {
+            const messageElement = document.getElementById(elementId);
+            if (!messageElement) return;
+            
             messageElement.textContent = message;
             messageElement.className = 'signup-message error';
         }
         
-        function showSuccess(message) {
-            const messageElement = document.getElementById('signup-message');
+        function showSuccess(message, elementId = 'signup-message') {
+            const messageElement = document.getElementById(elementId);
+            if (!messageElement) return;
+            
             messageElement.textContent = message;
             messageElement.className = 'signup-message success';
         }
-        
+
         function updateModelDisplay(model) {
             document.getElementById('model-name').textContent = model.name;
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
@@ -689,13 +705,46 @@
             });
         }
         
+        function isOver18(dobString) {
+            const dob = new Date(dobString);
+            const today = new Date();
+            
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            
+            return age >= 18;
+        }
+        
         function setupForm() {
             const signupForm = document.getElementById('signup-form');
+            const confirmButton = document.getElementById('confirm-package-btn');
+            const packagesSection = document.getElementById('packages-list');
+            
+            // Setup confirm button click
+            confirmButton.addEventListener('click', () => {
+                if (!selectedPackageId) {
+                    showError('Please select a package to continue.', 'package-message');
+                    return;
+                }
+                
+                // Hide packages section and confirm button
+                packagesSection.style.display = 'none';
+                confirmButton.style.display = 'none';
+                
+                // Show signup form
+                document.getElementById('signup-header').style.display = 'block';
+                signupForm.style.display = 'block';
+            });
+            
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 const name = document.getElementById('name').value.trim();
-                const age = parseInt(document.getElementById('age').value, 10);
+                const dob = document.getElementById('dob').value;
                 const telegram = document.getElementById('telegram').value.trim().replace('@', '');
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
@@ -709,12 +758,12 @@
                     return;
                 }
                 
-                if (!name || !telegram || !email || !password || isNaN(age)) {
+                if (!name || !telegram || !email || !password || !dob) {
                     showError('Please fill in all required fields.');
                     return;
                 }
                 
-                if (age < 18) {
+                if (!isOver18(dob)) {
                     window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI&list=PLNo5p5wex1o_nj6S38ehq3zKuR_BIfd3R&index=60';
                     return;
                 }
