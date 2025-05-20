@@ -563,6 +563,8 @@
             overflow: hidden;
             transition: all 0.3s ease;
             width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
         }
         
         .settings-card:hover {
@@ -1373,21 +1375,51 @@
         }
         
         /* Fix for settings tab alignment */
+        .dashboard-right-card {
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        
         #tab-settings {
             width: 100%;
             display: none;
+            margin: 0 auto;
         }
         
         #tab-settings.active {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
         }
         
         /* Ensure the same width for settings card as account info card */
-        #tab-settings .settings-card {
+        .settings-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            padding: 1.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
             width: 100%;
             max-width: 650px;
+            margin: 0 auto;
+        }
+        
+        .settings-form {
+            width: 100%;
+        }
+        
+        /* Override previous styles for right card */
+        .dashboard-inner .dashboard-right-card {
+            max-width: 650px;
+            width: 100%;
         }
         
         /* Additional responsive fixes */
@@ -1470,11 +1502,6 @@
                             <div class="form-group">
                                 <label for="settings-name" class="form-label">Display Name</label>
                                 <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
-                            </div>
-                            <div class="form-group">
-                                <label for="settings-email" class="form-label">Email Address</label>
-                                <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
-                                <p class="input-note">Email cannot be changed</p>
                             </div>
                             <div class="form-group">
                                 <label for="settings-password" class="form-label">New Password</label>
@@ -1991,22 +2018,27 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
                 this.classList.add('tab-active');
                 
-                // Show active tab section with a smooth transition
+                // Get tab id
                 const tabId = this.dataset.tab;
-                const tabSections = document.querySelectorAll('.tab-section');
                 
-                // Hide all sections first
-                tabSections.forEach(section => {
+                // Hide all sections
+                document.querySelectorAll('.tab-section').forEach(section => {
                     section.style.display = 'none';
                     section.classList.remove('active');
                 });
                 
-                // Show the active section
-                const activeSection = document.getElementById(`tab-${tabId}`);
-                if (activeSection) {
-                    activeSection.style.display = 'flex';
-                    activeSection.classList.add('active');
-                    activeSection.style.opacity = '1';
+                // Show selected section
+                const tabSection = document.getElementById(`tab-${tabId}`);
+                if (tabSection) {
+                    tabSection.style.display = 'flex';
+                    tabSection.classList.add('active');
+                    
+                    // Special handling for settings tab
+                    if (tabId === 'settings') {
+                        tabSection.style.flexDirection = 'column';
+                        tabSection.style.alignItems = 'center';
+                        tabSection.style.width = '100%';
+                    }
                 }
             });
         });
