@@ -78,10 +78,22 @@
             font-family: var(--font-display);
             font-weight: 800;
             font-size: 2rem;
-            color: var(--darker);
             letter-spacing: -0.03em;
             text-decoration: none;
             display: block;
+            background: linear-gradient(135deg, var(--darker) 0%, #4A67E3 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+        
+        .logo:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .tagline {
@@ -231,10 +243,11 @@
         }
         
         .package-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: var(--accent-light);
+            width: 56px;
+            height: 56px;
+            min-width: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-light) 0%, rgba(90, 120, 255, 0.1) 100%);
             color: var(--accent);
             display: flex;
             align-items: center;
@@ -242,6 +255,16 @@
             margin-right: 1rem;
             font-size: 1.25rem;
             flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(90, 120, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .package-card:hover .package-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 25px rgba(90, 120, 255, 0.2);
         }
         
         .package-info {
