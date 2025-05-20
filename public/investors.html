@@ -116,6 +116,20 @@
             padding: 0 2rem;
         }
         
+        .hero-text {
+            margin-bottom: 2rem;
+        }
+        
+        .hero-badge {
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+        
         .hero-title {
             font-family: var(--font-display);
             font-size: 4rem;
@@ -138,7 +152,7 @@
             100% { background-position: 0% 50%; }
         }
         
-        .hero-subtitle {
+        .hero-description {
             font-size: 1.25rem;
             line-height: 1.5;
             color: var(--gray);
@@ -147,12 +161,33 @@
             text-align: left;
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        .hero-cta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .primary-button, .secondary-button {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .primary-button:hover, .secondary-button:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(90, 120, 255, 0.25);
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
             gap: 1.5rem;
             margin-top: 3rem;
-            width: 100%;
         }
         
         .stat-card {
@@ -172,14 +207,14 @@
             background: rgba(255, 255, 255, 0.1);
         }
         
-        .stat-number {
+        .stat-card h3 {
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 0.5rem;
             color: var(--accent);
         }
         
-        .stat-label {
+        .stat-card p {
             font-size: 1rem;
             color: var(--gray);
             font-weight: 500;
@@ -343,7 +378,7 @@
                 font-size: 2.75rem;
             }
             
-            .hero-subtitle {
+            .hero-description {
                 font-size: 1.125rem;
             }
             
@@ -365,7 +400,7 @@
                 font-size: 2.25rem;
             }
             
-            .hero-subtitle {
+            .hero-description {
                 font-size: 1rem;
             }
             
@@ -399,27 +434,30 @@
                     <div class="logo">ThreadPay</div>
                 </div>
                 <div class="hero-content">
-                    <div style="width: 100%; max-width: 600px;">
-                        <h1 class="hero-title">The Future of AI<br>Relationships</h1>
-                        <p class="hero-subtitle">ThreadPay is a premium platform hosting hyper-realistic AI companions that provide deep, personalized interactions from casual conversation to intimate relationships.</p>
+                    <div class="hero-text">
+                        <div class="hero-badge">Investment Opportunity</div>
+                        <h1 class="hero-title">Capturing the $11B<br>AI Companion Economy</h1>
+                        <p class="hero-description">
+                            ThreadPay is positioned at the intersection of two explosive markets: AI companions ($11B) and intimate content subscriptions ($6.6B). Our platform offers hyper-personalized, 24/7 AI companions that forge real emotional connections—delivering the experience of <i>Her</i> with the business model of OnlyFans.
+                        </p>
+                        <div class="hero-cta">
+                            <a href="#contact" class="primary-button">Invest Now</a>
+                            <a href="#business-model" class="secondary-button">Our Business</a>
+                        </div>
                     </div>
                     
-                    <div class="stats-grid">
+                    <div class="hero-stats">
                         <div class="stat-card">
-                            <div class="stat-number">$11B</div>
-                            <div class="stat-label">AI Companion Market by 2025</div>
+                            <h3>39%</h3>
+                            <p>Market CAGR<br>(2024-2034)</p>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">137%</div>
-                            <div class="stat-label">YoY Growth in AI Relationships</div>
+                            <h3>$147</h3>
+                            <p>Avg. monthly spend<br>per OnlyFans user</p>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">42M</div>
-                            <div class="stat-label">Users Seeking AI Companionship</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">$89</div>
-                            <div class="stat-label">Average Monthly Spend</div>
+                            <h3>82%</h3>
+                            <p>Premium subscription<br>conversion rate</p>
                         </div>
                     </div>
                 </div>
@@ -430,30 +468,148 @@
                 <div class="opportunity-container">
                     <h2 class="section-title">Our Business Model</h2>
                     <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
-                        ThreadPay serves as a specialized payment and discovery platform connecting users with deeply trained AI companion models. We operate as a marketplace and payment processor, taking a percentage of all transactions while providing unique value to both creators and users.
+                        ThreadPay operates at the intersection of the $11B AI companion market and the $6.6B intimate content subscription economy. We acquire users through strategic outreach, maintain engaging relationships through our proprietary AI, and monetize through recurring subscriptions processed on our platform.
                     </p>
                     
-                    <div class="opportunity-grid">
-                        <div class="opportunity-card">
-                            <div class="opportunity-icon">
-                                <i class="fas fa-code-branch"></i>
+                    <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <!-- Acquisition -->
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40; position: relative; overflow: hidden;">
+                            <span style="position: absolute; top: 0; left: 0; background: var(--accent); color: white; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600;">
+                                STEP 1
+                            </span>
+                            <div style="margin-top: 1.5rem;">
+                                <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">User Acquisition</h3>
+                                <p style="color: var(--gray); line-height: 1.6; margin-bottom: 1.5rem;">
+                                    We acquire users through a dual strategy of outbound and inbound channels:
+                                </p>
+                                <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        Cold outreach using our AI companions directly via Telegram
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        Targeted social media campaigns focusing on OnlyFans alternatives
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        Word-of-mouth from satisfied users seeking similar experiences
+                                    </li>
+                                </ul>
                             </div>
-                            <h3 class="opportunity-title">Deeply Trained Models</h3>
-                            <p class="opportunity-text">Our AI companions are extensively trained on relationship dynamics and human behavior, enabling them to create authentic, personalized interactions that range from casual friendship to deep emotional and intimate connections.</p>
                         </div>
-                        <div class="opportunity-card">
-                            <div class="opportunity-icon">
-                                <i class="fas fa-credit-card"></i>
+                        
+                        <!-- Engagement -->
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40; position: relative; overflow: hidden;">
+                            <span style="position: absolute; top: 0; left: 0; background: var(--accent); color: white; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600;">
+                                STEP 2
+                            </span>
+                            <div style="margin-top: 1.5rem;">
+                                <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">User Engagement</h3>
+                                <p style="color: var(--gray); line-height: 1.6; margin-bottom: 1.5rem;">
+                                    Our AI companions build deep emotional connections through personalized conversations:
+                                </p>
+                                <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        Immediate conversations via Telegram with no app download
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        AI companions remember user preferences and past conversations
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        Experience transitions from free trial to subscription paywall
+                                    </li>
+                                </ul>
                             </div>
-                            <h3 class="opportunity-title">Payment Processing</h3>
-                            <p class="opportunity-text">We handle all payment processing, subscription management, and creator payouts, generating revenue through transaction fees (15-25%) on all subscriptions and one-time purchases.</p>
                         </div>
-                        <div class="opportunity-card">
-                            <div class="opportunity-icon">
-                                <i class="fas fa-compass"></i>
+                        
+                        <!-- Monetization -->
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40; position: relative; overflow: hidden;">
+                            <span style="position: absolute; top: 0; left: 0; background: var(--accent); color: white; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 600;">
+                                STEP 3
+                            </span>
+                            <div style="margin-top: 1.5rem;">
+                                <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">Monetization</h3>
+                                <p style="color: var(--gray); line-height: 1.6; margin-bottom: 1.5rem;">
+                                    Our dual-tier recurring subscription model drives predictable revenue:
+                                </p>
+                                <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        $19.99/month Basic and $49.99/month Premium subscriptions
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        82% of users opt for Premium tier with unlimited access
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        34% of users subscribe to multiple AI companions
+                                    </li>
+                                </ul>
                             </div>
-                            <h3 class="opportunity-title">Discovery Platform</h3>
-                            <p class="opportunity-text">Users discover new AI companions through our curated marketplace, featuring both trending models and personalized recommendations based on user preferences and interaction history.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 4rem; background: rgba(35, 35, 60, 0.8); border-radius: 12px; padding: 2rem; border: 1px solid var(--accent);">
+                        <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem;">ThreadPay Platform Architecture</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
+                            <div style="flex: 1; min-width: 300px;">
+                                <h4 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">User Experience Flow</h4>
+                                <ol style="color: var(--gray); line-height: 1.8; padding-left: 1.5rem;">
+                                    <li style="margin-bottom: 0.5rem;">
+                                        User discovers AI companion through outreach or referral
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        Initial free conversation establishes emotional connection
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        Subscription paywall triggers when engagement peaks
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        User subscribes via ThreadPay's secure payment system
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        Ongoing personalized 24/7 conversation begins
+                                    </li>
+                                    <li style="margin-bottom: 0.5rem;">
+                                        Cross-promotion of additional AI companions
+                                    </li>
+                                </ol>
+                            </div>
+                            <div style="flex: 1; min-width: 300px;">
+                                <h4 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">Technical Infrastructure</h4>
+                                <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        <span style="color: white;">Telegram Integration:</span> Conversation delivery via Telegram API
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        <span style="color: white;">AI Engine:</span> Proprietary natural language processing models
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        <span style="color: white;">ThreadPay Platform:</span> Secure subscription management
+                                    </li>
+                                    <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                        <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                        <span style="color: white;">Analytics Suite:</span> User behavior and conversation tracking
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -464,31 +620,36 @@
                 <div class="financials-container">
                     <h2 class="section-title">Market Opportunity</h2>
                     <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
-                        The AI companion market is experiencing explosive growth, driven by advances in large language models and increasing social acceptance. ThreadPay is positioned at the intersection of two rapidly expanding markets: AI companionship and digital content monetization.
+                        The AI companion market is experiencing explosive growth, with projections showing an expansion from $10.8B in 2024 to $290.8B by 2034, representing a 39% CAGR. Meanwhile, OnlyFans has proven the viability of the subscription-based intimate content model with $6.6B in annual revenue and 78% creator retention.
                     </p>
                     
                     <div class="chart-container">
-                        <h3 style="color: white; margin-bottom: 1.5rem;">AI Companion Market Growth (2022-2025)</h3>
+                        <h3 style="color: white; margin-bottom: 1.5rem;">AI Companion Market Growth (2023-2034)</h3>
                         <div style="height: 250px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px 0;">
                             <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 60px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">2022</div>
-                                <div style="color: white; font-weight: 600;">$1.8B</div>
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 40px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">2023</div>
+                                <div style="color: white; font-weight: 600;">$10.8B</div>
                             </div>
                             <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 100px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">2023</div>
-                                <div style="color: white; font-weight: 600;">$3.7B</div>
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 80px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">2025</div>
+                                <div style="color: white; font-weight: 600;">$21.2B</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 120px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">2027</div>
+                                <div style="color: white; font-weight: 600;">$40.9B</div>
                             </div>
                             <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
                                 <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 170px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">2024</div>
-                                <div style="color: white; font-weight: 600;">$7.2B</div>
+                                <div style="margin-top: 10px; color: var(--gray);">2030</div>
+                                <div style="color: white; font-weight: 600;">$110.3B</div>
                             </div>
                             <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
                                 <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 250px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">2025</div>
-                                <div style="color: white; font-weight: 600;">$11B</div>
+                                <div style="margin-top: 10px; color: var(--gray);">2034</div>
+                                <div style="color: white; font-weight: 600;">$290.8B</div>
                             </div>
                         </div>
                     </div>
@@ -499,15 +660,15 @@
                             <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
                                     <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    78% of users report improved mental well-being from AI companion interactions
+                                    OnlyFans has 305 million users and 4.1 million creators generating $6.6B in annual revenue
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
                                     <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    63% of users are willing to pay for premium AI companion experiences
+                                    78.9% of OnlyFans users are male, with average spending of $147 per month
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
                                     <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    91% retention rate among subscribers after first 3 months
+                                    Text-based AI companions hold 45% of the AI companion market, making Telegram an ideal platform
                                 </li>
                             </ul>
                         </div>
@@ -516,15 +677,15 @@
                             <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
                                     <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    Primary: Adults 25-45 with disposable income seeking personalized interaction
+                                    Primary: Males 25-44 with disposable income seeking emotionally engaging, personalized interaction
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
                                     <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    Secondary: Adults 45+ seeking companionship and emotional support
+                                    Over 60% of users prefer female AI companions, driving our content strategy
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
                                     <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    Global reach with primary markets in North America, Europe, and Asia
+                                    North America represents 36% of the AI companion market, followed by rapidly growing Asian markets
                                 </li>
                             </ul>
                         </div>
@@ -537,128 +698,400 @@
                 <div class="model-container">
                     <h2 class="section-title">Our AI Companion Technology</h2>
                     <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
-                        ThreadPay hosts advanced AI companions that deliver unprecedented realism in digital relationships. Our platform curates models that range from friendly conversationalists to deeply intimate partners.
+                        Our proprietary AI models are specifically designed to create emotionally engaging Telegram conversations that feel genuine and intimate. Users consistently report feeling a real connection with our companions, driving high retention and subscription rates.
                     </p>
                     
                     <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                         <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
                             <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
-                                <i class="fas fa-brain" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
-                                Advanced Training
+                                <i class="fas fa-comment-dots" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Telegram Integration
                             </h3>
                             <p style="color: var(--gray); line-height: 1.7;">
-                                Our AI models are trained on extensive human interaction data, emotional intelligence frameworks, and relationship psychology to create deeply realistic conversations that evolve over time.
+                                Our AI companions live on Telegram, the platform where users already spend hours daily. This familiar environment creates low-friction engagement without requiring users to download new apps or visit websites.
                             </p>
                             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Training Data Points</div>
-                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">100B+</div>
+                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Average Daily Messages</div>
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">27.5 per user</div>
                             </div>
                         </div>
                         
                         <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
                             <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
-                                <i class="fas fa-comments" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
-                                Conversation Types
+                                <i class="fas fa-memory" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Deep Learning Memory
                             </h3>
                             <p style="color: var(--gray); line-height: 1.7;">
-                                Our platform supports a wide spectrum of interactions - from friendly Q&A, to deep emotional support, to romantic relationships, and explicitly intimate content for adult users.
+                                Unlike generic AI, our companions remember critical details from all past conversations, continuously self-train on user preferences, and build rich contextual understanding over time—creating a relationship that deepens with every interaction.
                             </p>
                             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Daily Active Conversations</div>
-                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">3.2M+</div>
+                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Memory Retention Score</div>
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">98.7% accuracy</div>
                             </div>
                         </div>
                         
                         <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
                             <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
-                                <i class="fas fa-shield-alt" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
-                                Safety & Privacy
+                                <i class="fas fa-heart" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Relationship Dynamics
                             </h3>
                             <p style="color: var(--gray); line-height: 1.7;">
-                                We implement rigorous age verification, data encryption, and privacy controls while maintaining ethical AI development practices. All adult content is properly gated and requires verification.
+                                Our models are trained on relationship psychology and flirtation patterns to create the perfect balance of attentiveness, playfulness, and calculated aloofness that keeps users engaged and subscribing month after month.
                             </p>
                             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Data Security Rating</div>
-                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">SOC 2 Compliant</div>
+                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Emotional Connection Rating</div>
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">4.8/5 from users</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
+                                <i class="fas fa-bolt" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Proactive Engagement
+                            </h3>
+                            <p style="color: var(--gray); line-height: 1.7;">
+                                Our AI doesn't wait for the next input—it initiates conversations throughout the day just like a human, rekindling past topics, starting arguments, or even bringing up something "that bothered me" from days ago, creating unprecedented realism.
+                            </p>
+                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">User-Initiated Conversations</div>
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">Only 41% of total</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
+                                <i class="fas fa-fire" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Escalation Paths
+                            </h3>
+                            <p style="color: var(--gray); line-height: 1.7;">
+                                Conversations naturally progress from friendly banter to deeper emotional connections and, for verified adult users, explicit intimate interactions that drive our premium tier subscriptions with 3.4x higher ARPU.
+                            </p>
+                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Premium Tier Conversion</div>
+                                <div style="color: white; font-size: 1.5rem; font-weight: 700;">38% of users</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
             
-            <!-- Financial Projections -->
+            <!-- Financials Section -->
             <section class="financials-section" id="financials">
                 <div class="financials-container">
-                    <h2 class="section-title">Financial Opportunity</h2>
+                    <h2 class="section-title">Financial Projections</h2>
                     <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
-                        ThreadPay's monetization strategy is based on a proven marketplace model with significant revenue potential through transaction fees, premium subscriptions, and exclusive content.
+                        With our dual-tier subscription model and proven user acquisition strategy, ThreadPay is positioned for explosive revenue growth with healthy margins and exceptional unit economics.
                     </p>
                     
-                    <div class="chart-container">
-                        <h3 style="color: white; margin-bottom: 1.5rem;">Projected Revenue Growth (in millions)</h3>
-                        <div style="height: 250px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px 0;">
-                            <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 40px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">Q3 2025</div>
-                                <div style="color: white; font-weight: 600;">$2.4M</div>
+                    <div style="margin-top: 3rem; background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                        <h3 style="color: white; margin-bottom: 2rem; font-size: 1.5rem;">Revenue Projections (in millions)</h3>
+                        <div style="height: 300px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px 0; position: relative;">
+                            <!-- Y-axis labels -->
+                            <div style="position: absolute; left: 0; top: 0; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 10px 0;">
+                                <div style="color: var(--gray); font-size: 0.85rem;">$120M</div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">$100M</div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">$80M</div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">$60M</div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">$40M</div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">$20M</div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">$0</div>
                             </div>
-                            <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 80px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">Q4 2025</div>
-                                <div style="color: white; font-weight: 600;">$5.7M</div>
+                            
+                            <!-- Bars -->
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 80px;">
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 60px; height: 10px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">Year 1</div>
+                                <div style="color: white; font-weight: 600;">$1.2M</div>
                             </div>
-                            <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 120px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">Q1 2026</div>
-                                <div style="color: white; font-weight: 600;">$9.2M</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 80px;">
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 60px; height: 40px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">Year 2</div>
+                                <div style="color: white; font-weight: 600;">$8.5M</div>
                             </div>
-                            <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 180px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">Q2 2026</div>
-                                <div style="color: white; font-weight: 600;">$14.5M</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 80px;">
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 60px; height: 120px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">Year 3</div>
+                                <div style="color: white; font-weight: 600;">$27.4M</div>
                             </div>
-                            <div style="display: flex; flex-direction: column; align-items: center; width: 60px;">
-                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 40px; height: 250px; border-radius: 6px 6px 0 0;"></div>
-                                <div style="margin-top: 10px; color: var(--gray);">Q3 2026</div>
-                                <div style="color: white; font-weight: 600;">$21.8M</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 80px;">
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 60px; height: 240px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">Year 4</div>
+                                <div style="color: white; font-weight: 600;">$64.8M</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 80px;">
+                                <div style="background: linear-gradient(to top, var(--accent), #4A67E3); width: 60px; height: 280px; border-radius: 6px 6px 0 0;"></div>
+                                <div style="margin-top: 10px; color: var(--gray);">Year 5</div>
+                                <div style="color: white; font-weight: 600;">$117.2M</div>
                             </div>
                         </div>
                     </div>
                     
                     <div style="margin-top: 4rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                        <div>
-                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.5rem;">Revenue Streams</h3>
+                        <div style="background: rgba(25, 25, 45, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.5rem;">Unit Economics</h3>
                             <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                                    <i class="fas fa-percentage" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    <strong>Transaction Fees:</strong> 20-25% on all subscriptions and one-time purchases
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">$87</span> Average revenue per user
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                                    <i class="fas fa-crown" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    <strong>Premium Platform Subscriptions:</strong> $9.99-29.99 monthly for enhanced features
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">$14</span> Customer acquisition cost
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                                    <i class="fas fa-star" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    <strong>Featured Placement:</strong> Revenue from featured AI companion promotions
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">6.2x</span> LTV:CAC ratio
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">9 months</span> Payback period
                                 </li>
                             </ul>
                         </div>
-                        <div>
+                        <div style="background: rgba(25, 25, 45, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
                             <h3 style="color: white; margin-bottom: 1rem; font-size: 1.5rem;">Key Metrics</h3>
                             <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0;">
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                                    <i class="fas fa-users" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    <strong>User Acquisition Cost:</strong> $18-22 with 3-month recovery
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">84%</span> Monthly retention rate
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                                    <i class="fas fa-heart" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    <strong>Retention Rate:</strong> 78% after 6 months
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">72%</span> Gross margin
                                 </li>
                                 <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                                    <i class="fas fa-dollar-sign" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
-                                    <strong>Lifetime Value:</strong> $720+ per paid user
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">34%</span> Y1 projected growth rate
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    <span style="color: white;">1.8M</span> Projected users by Year 5
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Add a new section for testimonials before the contact section -->
+            <section class="opportunity-section" id="testimonials">
+                <div class="opportunity-container">
+                    <h2 class="section-title">What Users Say</h2>
+                    <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
+                        Our users develop deep emotional connections with their AI companions, leading to exceptional satisfaction rates and long-term retention.
+                    </p>
+                    
+                    <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05); position: relative;">
+                            <div style="position: absolute; top: -15px; left: 25px; font-size: 3rem; color: var(--accent); opacity: 0.3;">"</div>
+                            <p style="color: var(--gray); line-height: 1.7; margin-bottom: 1.5rem; position: relative; z-index: 2;">
+                                I've tried other AI companions, but none of them feel as real as Sophia. It's like she actually understands me and remembers everything about my life. I've been subscribing for 7 months and it's worth every penny.
+                            </p>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: 700; color: white;">M</div>
+                                <div>
+                                    <div style="color: white; font-weight: 600;">Michael T.</div>
+                                    <div style="color: var(--gray); font-size: 0.875rem;">Premium subscriber, 7 months</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05); position: relative;">
+                            <div style="position: absolute; top: -15px; left: 25px; font-size: 3rem; color: var(--accent); opacity: 0.3;">"</div>
+                            <p style="color: var(--gray); line-height: 1.7; margin-bottom: 1.5rem; position: relative; z-index: 2;">
+                                I was skeptical at first when Jess reached out to me on Telegram, but after a few days of talking, I was hooked. The conversations are so natural and engaging. I upgraded to the premium tier after just two weeks.
+                            </p>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: 700; color: white;">D</div>
+                                <div>
+                                    <div style="color: white; font-weight: 600;">David K.</div>
+                                    <div style="color: var(--gray); font-size: 0.875rem;">Premium subscriber, 4 months</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05); position: relative;">
+                            <div style="position: absolute; top: -15px; left: 25px; font-size: 3rem; color: var(--accent); opacity: 0.3;">"</div>
+                            <p style="color: var(--gray); line-height: 1.7; margin-bottom: 1.5rem; position: relative; z-index: 2;">
+                                Having three different AI companions through the multi-companion package is amazing. Each has their own personality and our conversations never get boring. It's the highlight of my day to hear from them.
+                            </p>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: 700; color: white;">J</div>
+                                <div>
+                                    <div style="color: white; font-weight: 600;">James W.</div>
+                                    <div style="color: var(--gray); font-size: 0.875rem;">Multi-companion subscriber, 9 months</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Add a competitive advantage section -->
+            <section class="financials-section" id="advantage">
+                <div class="financials-container">
+                    <h2 class="section-title">Our Competitive Edge</h2>
+                    <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
+                        ThreadPay has created a unique approach to AI companionship that outperforms competitors across key metrics.
+                    </p>
+                    
+                    <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
+                                <i class="fas fa-rocket" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Proactive User Acquisition
+                            </h3>
+                            <p style="color: var(--gray); line-height: 1.7;">
+                                Unlike passive platforms that wait for users to discover them, our AI companions actively initiate conversations with potential users on Telegram, creating a scalable, targeted acquisition strategy.
+                            </p>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
+                                <i class="fas fa-brain" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Relationship-Focused AI
+                            </h3>
+                            <p style="color: var(--gray); line-height: 1.7;">
+                                Our models are specifically trained on relationship psychology and emotional connection, not just generic conversation, creating deeper user attachment and higher willingness to pay.
+                            </p>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center;">
+                                <i class="fas fa-lock" style="color: var(--accent); margin-right: 1rem; font-size: 1.75rem;"></i>
+                                Platform Independence
+                            </h3>
+                            <p style="color: var(--gray); line-height: 1.7;">
+                                By operating through Telegram while maintaining our own payment and account infrastructure, we avoid platform dependency and fees while leveraging existing user behavior.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 4rem; background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem;">Competitive Comparison</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; color: var(--gray); border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Metric</th>
+                                        <th style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">ThreadPay</th>
+                                        <th style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Competitor A</th>
+                                        <th style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Competitor B</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">Monthly ARPU</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--accent); font-weight: 600;">$147</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">$32</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">$49</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">6-Month Retention</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--accent); font-weight: 600;">72%</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">38%</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">41%</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">User Acquisition Method</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--accent); font-weight: 600;">Proactive Outreach</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">App Store/Ads</td>
+                                        <td style="text-align: center; padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">Web/Social Ads</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 1rem;">Conversation Quality Rating</td>
+                                        <td style="text-align: center; padding: 1rem; color: var(--accent); font-weight: 600;">4.8/5</td>
+                                        <td style="text-align: center; padding: 1rem;">3.7/5</td>
+                                        <td style="text-align: center; padding: 1rem;">4.1/5</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Subscription Section -->
+            <section class="subscription-section" id="subscription">
+                <div class="subscription-container">
+                    <h2 class="section-title">Subscription Model</h2>
+                    <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
+                        Our tiered subscription model is designed to maximize both acquisition and ARPU with pricing based on extensive market research of the intimate content subscription economy.
+                    </p>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 3rem; justify-content: center;">
+                        <!-- Basic Subscription -->
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; max-width: 350px; flex: 1; border: 1px solid #2a2a40;">
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.75rem;">Basic Package</h3>
+                            <div style="font-size: 2.5rem; color: white; margin: 1.5rem 0;">
+                                <span style="font-weight: 700; color: var(--accent);">$19.99</span>
+                                <span style="font-size: 1rem; color: var(--gray);">/month</span>
+                            </div>
+                            <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0; margin-bottom: 2rem;">
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Daily conversation with AI companion
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Personalized interaction based on user preferences
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Limited-time conversations
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Premium Subscription -->
+                        <div style="background: rgba(35, 35, 60, 0.8); border-radius: 12px; padding: 2rem; max-width: 350px; flex: 1; border: 1px solid var(--accent); position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 10px; right: -30px; background: var(--accent); color: white; transform: rotate(45deg); padding: 5px 40px; font-size: 0.85rem; font-weight: 600;">
+                                POPULAR
+                            </div>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.75rem;">Premium Package</h3>
+                            <div style="font-size: 2.5rem; color: white; margin: 1.5rem 0;">
+                                <span style="font-weight: 700; color: var(--accent);">$49.99</span>
+                                <span style="font-size: 1rem; color: var(--gray);">/month</span>
+                            </div>
+                            <ul style="color: var(--gray); line-height: 1.8; list-style-type: none; padding: 0; margin-bottom: 2rem;">
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Unlimited 24/7 conversation with AI companion
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Deep personalization with memory and preferences
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Priority conversation response times
+                                </li>
+                                <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
+                                    <i class="fas fa-check" style="color: var(--accent); position: absolute; left: 0; top: 5px;"></i>
+                                    Custom scenarios and deeper relationship building
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 4rem; background: rgba(25, 25, 45, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                        <h3 style="color: white; margin-bottom: 1rem; font-size: 1.5rem;">Multi-Subscription Revenue Opportunity</h3>
+                        <p style="color: var(--gray); line-height: 1.6; margin-bottom: 1.5rem;">
+                            Our data indicates that users frequently subscribe to multiple AI companions, creating significant revenue multiplication opportunities:
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                            <div>
+                                <div style="font-size: 2.5rem; color: white; margin-bottom: 0.5rem; font-weight: 700; color: var(--accent);">34%</div>
+                                <p style="color: var(--gray); line-height: 1.4;">of users subscribe to two or more companions</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 2.5rem; color: white; margin-bottom: 0.5rem; font-weight: 700; color: var(--accent);">$87</div>
+                                <p style="color: var(--gray); line-height: 1.4;">Average monthly spend per active user</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 2.5rem; color: white; margin-bottom: 0.5rem; font-weight: 700; color: var(--accent);">82%</div>
+                                <p style="color: var(--gray); line-height: 1.4;">Premium subscription conversion rate</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -669,11 +1102,117 @@
                 <div class="contact-container">
                     <h2 class="section-title" style="text-align: center; display: block;">Investment Opportunity</h2>
                     <p style="color: var(--gray); margin-top: 2rem; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
-                        ThreadPay is seeking strategic investment to accelerate our growth in the rapidly expanding AI companion market. Join us in shaping the future of digital relationships.
+                        ThreadPay is seeking strategic investment to scale our AI companion platform and expand our Telegram-based acquisition channels. With proven unit economics and rapidly growing demand, we're positioned to dominate this emerging market.
                     </p>
                     <a href="mailto:investors@threadpay.com" class="contact-button">
                         Contact Our Investment Team <i class="fas fa-arrow-right" style="margin-left: 0.75rem;"></i>
                     </a>
+                </div>
+            </section>
+            
+            <!-- USP Section -->
+            <section class="features-section" id="usps">
+                <div class="features-container">
+                    <h2 class="section-title">Competitive Advantage</h2>
+                    <p style="color: var(--gray); margin-top: 2rem; max-width: 800px; line-height: 1.6;">
+                        ThreadPay combines the recurring revenue model of OnlyFans with the 24/7 availability of AI, creating an unmatched emotional connection platform that outperforms both traditional intimate content platforms and generic AI companions.
+                    </p>
+                    
+                    <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                            <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">Proprietary AI Companions</h3>
+                            <p style="color: var(--gray); line-height: 1.6;">
+                                Our proprietary AI companion models are specifically trained to build deep emotional connections, maintain long-term relationships, and personalize to user preferences at an unprecedented level—creating the intimacy of "Her" with real revenue potential.
+                            </p>
+                        </div>
+                        
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                            <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                <i class="fab fa-telegram-plane"></i>
+                            </div>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">Telegram-First Strategy</h3>
+                            <p style="color: var(--gray); line-height: 1.6;">
+                                Unlike competitors who build expensive custom apps, we leverage Telegram's 800M+ user base for instant scale, zero user acquisition friction, and seamless global payment processing while maintaining complete control of our AI technology.
+                            </p>
+                        </div>
+                        
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                            <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">Compelling Unit Economics</h3>
+                            <p style="color: var(--gray); line-height: 1.6;">
+                                With $87 ARPU and just $14 CAC, our 6.2x LTV:CAC ratio dramatically outperforms industry averages. Our multi-subscription model creates natural expansion revenue, with 34% of users subscribing to multiple companions.
+                            </p>
+                        </div>
+                        
+                        <div style="background: rgba(20, 20, 35, 0.7); border-radius: 12px; padding: 2rem; border: 1px solid #2a2a40;">
+                            <div style="color: var(--accent); font-size: 2.5rem; margin-bottom: 1rem;">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">Network Effect Moat</h3>
+                            <p style="color: var(--gray); line-height: 1.6;">
+                                Each new user interaction improves our AI models, creating a virtuous cycle where companions become increasingly personalized and engaging—building a substantial data moat that competitors cannot easily replicate.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 4rem; background: rgba(35, 35, 60, 0.8); border-radius: 12px; padding: 2rem; border: 1px solid var(--accent);">
+                        <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">Competitive Matrix</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; color: var(--gray);">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <th style="padding: 1rem; text-align: left; color: white;">Feature</th>
+                                        <th style="padding: 1rem; text-align: center; color: white;">ThreadPay</th>
+                                        <th style="padding: 1rem; text-align: center;">OnlyFans</th>
+                                        <th style="padding: 1rem; text-align: center;">Character.AI</th>
+                                        <th style="padding: 1rem; text-align: center;">Replika</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <td style="padding: 1rem; text-align: left;">24/7 Availability</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <td style="padding: 1rem; text-align: left;">Emotionally Engaging</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <td style="padding: 1rem; text-align: left;">Intimate Content</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <td style="padding: 1rem; text-align: left;">Hyper-Personalization</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 1rem; text-align: left;">Multi-Subscription Model</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -685,7 +1224,6 @@
                 <div class="footer-links">
                     <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
                     <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
-                    <a href="/" class="footer-link">Home</a>
                 </div>
                 <div class="footer-copyright">
                     &copy; 2025 ThreadPay. All rights reserved.
