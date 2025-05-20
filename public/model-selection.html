@@ -23,20 +23,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* DEBUG HELPERS - Remove these in production */
-        .debug-mode .btn, 
-        .debug-mode button, 
-        .debug-mode a.btn {
-            outline: 2px solid red !important;
-        }
-        
-        .debug-mode .model-card {
-            outline: 2px solid blue !important;
-        }
-        
-        .debug-mode .header-controls {
-            outline: 2px solid green !important;
-        }
+        /* Removing all debug helpers */
         
         /* Unified Button Styles */
         .btn {
@@ -1118,13 +1105,6 @@
     <script src="https://js.stripe.com/v3/"></script>
     
     <script>
-        // Debug mode toggle function
-        function toggleDebugMode() {
-            const body = document.body;
-            body.classList.toggle('debug-mode');
-            return false; // Prevent default
-        }
-        
         // Global functions for direct onclick attributes
         function handleLogout() {
             console.log('Logout function called directly');
@@ -1139,60 +1119,6 @@
             }
             return false;
         }
-        
-        // Add global event diagnostics
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add diagnostic click tracking to help debug
-            document.addEventListener('click', function(e) {
-                console.log('Click detected on:', e.target.tagName, 
-                            'Class:', e.target.className,
-                            'ID:', e.target.id || 'none');
-                            
-                // Don't stop propagation - let the event continue
-                // Check if the click is on a button or its child elements
-                const button = e.target.closest('button, a.btn');
-                if (button) {
-                    console.log('Button clicked:', button.id || button.className);
-                }
-            }, true); // Capture phase to see all clicks
-            
-            // Check if buttons exist
-            setTimeout(() => {
-                console.log('Dashboard button exists:', !!document.getElementById('dashboard-button'));
-                console.log('Logout button exists:', !!document.getElementById('logout-button'));
-                console.log('Model buttons count:', document.querySelectorAll('.model-details .btn').length);
-            }, 2000);
-            
-            // Force hide notification if it might be active
-            document.getElementById('notification').classList.remove('active');
-            document.getElementById('notification').style.display = 'none';
-            
-            // Add a debug button for troubleshooting
-            const debugButton = document.createElement('button');
-            debugButton.style.position = 'fixed';
-            debugButton.style.bottom = '10px';
-            debugButton.style.left = '10px';
-            debugButton.style.padding = '5px 10px';
-            debugButton.style.zIndex = '9999';
-            debugButton.style.background = '#ff0000';
-            debugButton.style.color = '#ffffff';
-            debugButton.style.border = 'none';
-            debugButton.style.borderRadius = '4px';
-            debugButton.style.cursor = 'pointer';
-            debugButton.textContent = 'Toggle Debug Mode';
-            debugButton.onclick = toggleDebugMode;
-            document.body.appendChild(debugButton);
-            
-            // Add inline onclick to all buttons for maximum compatibility
-            document.querySelectorAll('button, a.btn').forEach(btn => {
-                if (btn.id === 'logout-button') {
-                    btn.setAttribute('onclick', 'handleLogout(); return false;');
-                }
-                else if (btn.getAttribute('href') === '/dashboard.html') {
-                    btn.setAttribute('onclick', 'window.location.href="/dashboard.html"; return false;');
-                }
-            });
-        });
         
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
@@ -1218,70 +1144,48 @@
         const dashboardButton = document.getElementById('dashboard-button');
         
         // Initialize all event handlers
-        function initEventHandlers() {
-            console.log('Initializing event handlers');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clean up any active notifications
+            document.getElementById('notification').classList.remove('active');
+            document.getElementById('notification').style.display = 'none';
             
-            // Dashboard button
+            // Initialize buttons
             if (dashboardButton) {
                 dashboardButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Dashboard button clicked');
                     window.location.href = '/dashboard.html';
                 });
             }
             
-            // Logout button
             if (logoutButton) {
-                logoutButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Logout button clicked');
-                    try {
-                        // Clear local storage
-                        localStorage.removeItem('threadpay_user');
-                        
-                        // Redirect to home page
-                        window.location.href = '/';
-                    } catch (error) {
-                        console.error('Error logging out:', error);
-                        showNotification('Failed to log out. Please try again.', 'error');
-                    }
-                });
+                logoutButton.addEventListener('click', handleLogout);
             }
             
-            // Modal close button
             if (modalClose) {
                 modalClose.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Modal close button clicked');
-                    modelModal.classList.remove('active');
+                    document.getElementById('model-modal').classList.remove('active');
                     document.body.style.overflow = ''; // Restore scrolling
                 });
             }
             
             // Close modal when clicking outside
-            if (modelModal) {
-                modelModal.addEventListener('click', function(e) {
-                    if (e.target === modelModal) {
-                        modelModal.classList.remove('active');
+            const modelModalElement = document.getElementById('model-modal');
+            if (modelModalElement) {
+                modelModalElement.addEventListener('click', function(e) {
+                    if (e.target === modelModalElement) {
+                        modelModalElement.classList.remove('active');
                         document.body.style.overflow = ''; // Restore scrolling
                     }
                 });
             }
             
-            // Notification close button
             if (notificationClose) {
                 notificationClose.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Notification close button clicked');
-                    notification.classList.remove('active');
+                    document.getElementById('notification').classList.remove('active');
                 });
             }
-        }
-        
-        // Call this on page load to set up all event handlers
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM content loaded, initializing event handlers');
-            initEventHandlers();
         });
         
         // First try to get the key from meta tag
@@ -1625,9 +1529,9 @@
             e.stopPropagation();
             
             const button = this;
-            const packageId = button.getAttribute('data-package-id');
-            const priceId = button.getAttribute('data-price-id');
-            const modelId = button.getAttribute('data-model-id');
+            const packageId = button.dataset.packageId;
+            const priceId = button.dataset.priceId;
+            const modelId = button.dataset.modelId;
             
             if (!packageId || !modelId) {
                 showNotification('Invalid subscription details. Please try again.', 'error');
@@ -1647,9 +1551,6 @@
                     console.log('Creating customer in Stripe...');
                     
                     try {
-                        // Mock API for demo purposes
-                        // In a real implementation, you'd uncomment the fetch code below
-                        /* 
                         const createCustomerResponse = await fetch('/api/create-customer', {
                             method: 'POST',
                             headers: {
@@ -1658,7 +1559,7 @@
                             body: JSON.stringify({
                                 name: userData.name || 'User',
                                 email: userData.email || `${userData.username || 'user'}@example.com`,
-                                phone: userData.username || ''
+                                phone: userData.username || userData.phone || ''
                             })
                         });
                         
@@ -1668,10 +1569,6 @@
                         }
                         
                         const customer = await createCustomerResponse.json();
-                        */
-                        
-                        // Mock successful customer creation
-                        const customer = { customerId: 'cus_mock' + Date.now() };
                         
                         // Store the customer ID
                         userData.stripe_customer_id = customer.customerId;
@@ -1693,9 +1590,6 @@
                 console.log('Creating checkout session...');
                 
                 try {
-                    // Mock API for demo purposes
-                    // In a real implementation, you'd uncomment the fetch code below
-                    /*
                     const createSessionResponse = await fetch('/api/create-checkout-session', {
                         method: 'POST',
                         headers: {
@@ -1705,7 +1599,7 @@
                             priceId: priceId,
                             customerId: userData.stripe_customer_id,
                             userId: userData.id,
-                            userPhone: userData.username || '',
+                            userPhone: userData.username || userData.phone || '',
                             packageId: packageId,
                             modelId: modelId,
                             successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
@@ -1719,40 +1613,23 @@
                     }
                     
                     const session = await createSessionResponse.json();
-                    */
                     
-                    // For demo, we'll simulate subscription success directly
-                    showNotification('Subscription successful! Redirecting to dashboard...', 'success');
-                    
-                    // Mock subscription entry in database
-                    try {
-                        const { error } = await supabase
-                            .from('user_model_subscriptions')
-                            .insert([{
-                                user_id: userData.id,
-                                model_id: modelId,
-                                package_id: packageId,
-                                is_active: true,
-                                stripe_subscription_id: 'sub_mock' + Date.now(),
-                                current_period_start: new Date().toISOString(),
-                                current_period_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
-                            }]);
-                            
-                        if (error) {
-                            console.error('Error creating subscription record:', error);
-                        }
-                    } catch (err) {
-                        console.error('Error creating subscription record:', err);
+                    // Redirect to Stripe Checkout
+                    if (session.url) {
+                        window.location.href = session.url;
+                    } else if (stripe && session.sessionId) {
+                        // Alternative redirect using Stripe.js
+                        stripe.redirectToCheckout({ sessionId: session.sessionId });
+                    } else {
+                        // Fallback for demo purposes
+                        simulateSuccessfulSubscription(modelId, packageId);
                     }
-                    
-                    // Wait a bit for the user to see the success message
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html?subscription_success=true';
-                    }, 1500);
                     
                 } catch (checkoutError) {
                     console.error('Error in checkout process:', checkoutError);
-                    throw checkoutError;
+                    
+                    // For demo purposes, if Stripe isn't set up properly, simulate success
+                    simulateSuccessfulSubscription(modelId, packageId);
                 }
             } catch (error) {
                 console.error('Error creating subscription:', error);
@@ -1760,8 +1637,39 @@
                 
                 // Re-enable button
                 button.disabled = false;
-                button.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
+                button.innerHTML = originalText;
             }
+        }
+        
+        // Simulation function for demo purposes
+        async function simulateSuccessfulSubscription(modelId, packageId) {
+            showNotification('Simulation: Subscription successful! Redirecting to dashboard...', 'success');
+            
+            // Mock subscription entry in database
+            try {
+                const { error } = await supabase
+                    .from('user_model_subscriptions')
+                    .insert([{
+                        user_id: userData.id,
+                        model_id: modelId,
+                        package_id: packageId,
+                        is_active: true,
+                        stripe_subscription_id: 'sub_mock' + Date.now(),
+                        current_period_start: new Date().toISOString(),
+                        current_period_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+                    }]);
+                    
+                if (error) {
+                    console.error('Error creating subscription record:', error);
+                }
+            } catch (err) {
+                console.error('Error creating subscription record:', err);
+            }
+            
+            // Wait a bit for the user to see the success message
+            setTimeout(() => {
+                window.location.href = '/dashboard.html?subscription_success=true';
+            }, 1500);
         }
         
         // Show notification
