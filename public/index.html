@@ -52,6 +52,8 @@
             justify-content: center;
             position: relative;
             z-index: 2;
+            text-align: left;
+            padding-left: 2rem;
         }
         
         .hero-background {
@@ -96,9 +98,22 @@
             font-size: 4rem;
             font-weight: 800;
             line-height: 1.1;
-            color: var(--darker);
+            background: linear-gradient(90deg, var(--accent), #000000, #0066b9, var(--accent));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
             margin-bottom: 1.5rem;
             letter-spacing: -0.03em;
+            text-align: left;
+            animation: gradient-animation 6s ease infinite;
+        }
+        
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .hero-title .highlight {
@@ -118,6 +133,7 @@
             color: var(--gray);
             margin-bottom: 2.5rem;
             max-width: 600px;
+            text-align: left;
         }
         
         .hero-cta {
@@ -525,7 +541,7 @@
                     <div class="logo">ThreadPay</div>
                 </div>
                 <div class="hero-content">
-                    <h1 class="hero-title">Support <span class="highlight">Exceptional</span><br>Creators</h1>
+                    <h1 class="hero-title">Support Exceptional<br>Creators</h1>
                     <p class="hero-subtitle">ThreadPay connects you with hand-picked, thoroughly trained creators. Your new destination for quality content.</p>
                     <a href="/model-selection-public.html" class="hero-cta">Support a Creator <i class="fas fa-arrow-right"></i></a>
                 </div>
