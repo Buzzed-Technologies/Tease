@@ -88,7 +88,7 @@
             position: relative;
         }
         
-        /* Button styles */
+        /* Button styles - Updated to match dashboard.html */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -140,12 +140,15 @@
         }
         
         .logout-button {
-            background-color: #ffe5e5;
-            color: #a04444;
+            background-color: var(--accent) !important;
+            color: var(--darker) !important;
+            border: none !important;
+            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.3);
         }
         
         .logout-button:hover {
-            background-color: #ffd6d6;
+            background-color: #B4C1FF !important;
+            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4) !important;
         }
         
         @media screen and (max-width: 768px) {
@@ -1313,10 +1316,14 @@
             window.location.href = '/';
         };
         
-        document.querySelector('.header-controls a[href="/dashboard.html"]').onclick = function() {
-            window.location.href = '/dashboard.html';
-            return false; // Prevent default
-        };
+        // Fix the querySelector error by using the correct selector or adding a null check
+        const dashboardButton = document.querySelector('.header-controls a');
+        if (dashboardButton) {
+            dashboardButton.onclick = function() {
+                window.location.href = '/dashboard.html';
+                return false;
+            };
+        }
         
         // Check if the key is a real key or just the placeholder
         if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
@@ -1512,22 +1519,30 @@
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
                 
-                const btnAction = isSubscribed ? 
-                    `window.location.href='/dashboard.html'` : 
-                    `openSubscriptionModal(${JSON.stringify(model)})`;
+                const buttonText = isSubscribed ? 'View Details' : 'Subscribe';
+                const buttonIcon = isSubscribed ? 'fa-eye' : 'fa-star';
                 
                 modelDetails.innerHTML = `
                     <h3 class="model-name">${model.name}</h3>
                     <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
                     <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" 
-                            data-model-id="${model.id}" 
-                            onclick="${btnAction}">
-                        ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
+                            data-model-id="${model.id}">
+                        <i class="fas ${buttonIcon}"></i>${buttonText}
                     </button>
                 `;
                 
                 modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
+                
+                // Add click event listener to subscribe button
+                modelCard.querySelector('button').addEventListener('click', function() {
+                    if (isSubscribed) {
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        openSubscriptionModal(model);
+                    }
+                });
+                
                 modelGrid.appendChild(modelCard);
             });
         }
@@ -1573,6 +1588,20 @@
             loadPackages(model.id);
         }
         
+        // Add modal close event listeners
+        document.getElementById('modal-close').addEventListener('click', function() {
+            modelModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        // Close modal when clicking outside of it
+        modelModal.addEventListener('click', function(e) {
+            if (e.target === modelModal) {
+                modelModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+        
         // Load packages for a model
         async function loadPackages(modelId) {
             try {
@@ -1609,11 +1638,16 @@
                         <div class="package-name">${pkg.name}</div>
                         <div class="package-price">${priceFormatted}<span>/month</span></div>
                         <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
-                        <button class="btn btn-full" 
-                                onclick="handleSubscription('${pkg.id}', '${pkg.stripe_price_id}', '${modelId}')">
+                        <button class="btn btn-full subscribe-btn">
                             <i class="fas fa-credit-card"></i> Subscribe Now
                         </button>
                     `;
+                    
+                    // Add click event listener to subscribe button
+                    const subscribeBtn = packageItem.querySelector('.subscribe-btn');
+                    subscribeBtn.addEventListener('click', function() {
+                        handleSubscription(pkg.id, pkg.stripe_price_id, modelId);
+                    });
                     
                     packageList.appendChild(packageItem);
                 });
@@ -1729,9 +1763,9 @@
         }
         
         // Close notification
-        notificationClose.onclick = function() {
+        document.getElementById('notification-close').addEventListener('click', function() {
             notification.classList.remove('active');
-        };
+        });
         
         // Check URL parameters for notifications
         const urlParams = new URLSearchParams(window.location.search);
