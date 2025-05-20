@@ -187,6 +187,7 @@
         /* Section header styles */
         .section-header {
             margin-bottom: 2rem;
+            text-align: left;
         }
         
         .section-header h2 {
@@ -197,6 +198,7 @@
             position: relative;
             display: inline-block;
             letter-spacing: -0.5px;
+            text-align: left;
         }
         
         .section-header h2::after {
@@ -216,6 +218,7 @@
             opacity: 0.8;
             max-width: 700px;
             line-height: 1.6;
+            text-align: left;
         }
         
         /* Model card redesign */
@@ -530,6 +533,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
         
         .package-list {
@@ -823,6 +827,11 @@
             .subscribe-package-btn .btn-text {
                 display: inline-block !important;
             }
+            
+            .package-list {
+                grid-template-columns: 1fr;
+                max-width: 350px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1094,6 +1103,34 @@
             position: relative;
             z-index: 1;
         }
+
+        /* Make sure the modal header remains hidden */
+        .modal-header {
+            display: none !important;
+        }
+
+        /* Further center the package cards */
+        .package-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Make sure the modal content is properly centered */
+        .modal-model-info {
+            padding: 2rem;
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -1143,9 +1180,7 @@
     <!-- Model Subscription Modal -->
     <div id="model-modal" class="modal-overlay">
         <div class="modal-content">
-            <button id="modal-close" class="modal-close" type="button">
-                <i class="fas fa-times"></i>
-            </button>
+            <!-- No close button here - it will be dynamically added to the image overlay -->
             <div class="modal-body" id="modal-body">
                 <!-- Modal content will be dynamically inserted here -->
             </div>

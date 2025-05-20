@@ -13,44 +13,59 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #f8f9fa;
+            --primary-dark: #f8f9fa;
+            --primary-light: #f8f9fa;
+            --darker: #212529;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #ced4da;
+            --accent: #8B9EFF;
+            --accent-light: #eef0ff;
+            --success: #38B47C;
+            --error: #FF4D4F;
+            --light: #ffffff;
+            --transition: all 0.3s ease;
+        }
+
         /* Unified Button Styles */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--accent);
-            color: var(--darker);
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            color: white;
             border: none;
             border-radius: 12px;
             padding: 0.8rem 1.5rem;
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 12px rgba(90, 120, 255, 0.2);
             text-decoration: none;
             letter-spacing: 0.2px;
         }
         .btn:hover {
-            background-color: #B4C1FF;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(180, 193, 255, 0.4);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(90, 120, 255, 0.25);
         }
         .btn:active {
-            transform: translateY(-1px);
+            transform: translateY(0) scale(0.98);
         }
         .btn i {
             margin-right: 0.7rem;
         }
         .btn-secondary {
-            background-color: var(--primary-light);
+            background: rgba(248, 249, 250, 0.7);
             color: var(--dark);
-            border: 1px solid rgba(211, 209, 218, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.5);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
         }
         .btn-secondary:hover {
-            background-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
         }
         .btn-success {
             background-color: rgba(46, 204, 113, 0.9);
@@ -62,72 +77,245 @@
         .btn-full {
             width: 100%;
         }
-        .model-card {
-            background-color: var(--light);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 1.2rem 1.2rem;
-            border: 1px solid rgba(211, 209, 218, 0.1);
-            margin-bottom: 1rem;
-            margin-top: 0.5rem;
-        }
+        
+        /* Model card redesign */
         .model-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1rem;
+            gap: 2rem;
             margin-top: 2rem;
         }
-        .model-image-container {
-            flex: 0 0 auto;
-            margin-right: 1.2rem;
+        
+        .model-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            cursor: pointer;
         }
+        
+        .model-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            border-color: rgba(90, 120, 255, 0.3);
+        }
+        
+        .model-image-container {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
         .model-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 100%;
+            height: 100%;
             background-size: cover;
             background-position: center;
             background-color: rgba(211, 209, 218, 0.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            border: 2px solid var(--primary-light);
             transition: all 0.3s ease;
         }
-        .model-card:hover .model-image {
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.13);
-            transform: scale(1.04);
+        
+        .model-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+            z-index: 1;
         }
+        
+        .model-card:hover .model-image {
+            transform: scale(1.05);
+        }
+        
         .model-details {
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            width: 100%;
         }
-        .model-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
-            color: var(--dark);
-            line-height: 1.2;
+        
+        .model-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            z-index: 2;
+            color: white;
             text-align: left;
         }
+        
+        .model-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: white;
+            line-height: 1.2;
+            text-align: left;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
         .model-bio {
-            color: var(--dark);
-            font-size: 0.92rem;
-            line-height: 1.5;
-            margin-bottom: 1.1rem;
-            max-height: 4.5em;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+            max-height: 3.2em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            opacity: 0.85;
-            text-align: left;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* Image Carousel for Model Cards */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Loading state */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 0;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(211, 209, 218, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 20px;
+            margin-top: 2rem;
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(211, 209, 218, 0.5);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .empty-message {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .empty-description {
+            color: var(--darker);
+            font-size: 1rem;
+            max-width: 550px;
+            margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 992px) {
+            .model-card:hover {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 1.5rem 1.25rem;
+            }
+            
+            .model-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .model-image-container {
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .model-image-container {
+                height: 180px;
+            }
+            
+            .model-info-overlay {
+                padding: 0.75rem;
+            }
+            
+            /* Make sure buttons are properly sized */
+            .model-details .btn {
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -150,11 +338,11 @@
                 <h2>Explore Creators</h2>
                 <p class="section-description">Discover and select your favorite creator to sign up with.</p>
             </div>
-            <div id="loading-container" class="loading-container card">
+            <div id="loading-container" class="loading-container">
                 <div class="loading-spinner"></div>
                 <p>Loading creators...</p>
             </div>
-            <div id="empty-state" class="empty-state card" style="display: none;">
+            <div id="empty-state" class="empty-state" style="display: none;">
                 <div class="empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
@@ -241,45 +429,186 @@
                 modelCard.className = 'model-card';
                 modelCard.dataset.modelId = model.id;
                 modelCard.dataset.modelName = model.name;
-                // Add container for the image
-                const modelImageContainer = document.createElement('div');
-                modelImageContainer.className = 'model-image-container';
-                const modelImage = document.createElement('div');
-                modelImage.className = 'model-image';
-                // Build the correct image path using Supabase bucket (match model-selection.html)
-                let imagePath;
+                
+                // Parse model pictures
+                let imagePaths = [];
                 if (model.pictures) {
+                    // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        imagePaths = model.pictures.map(pic => 
+                            `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${pic.replace('.jpg', '.PNG')}`
+                        );
                     } else if (model.pictures.main) {
-                        imagePath = model.pictures.main;
+                        imagePaths = [model.pictures.main];
                     } else {
-                        imagePath = '/images/placeholder-model.png';
+                        imagePaths = ['/images/placeholder-model.png'];
                     }
                 } else {
-                    imagePath = '/images/placeholder-model.png';
+                    imagePaths = ['/images/placeholder-model.png'];
                 }
-                modelImage.style.backgroundImage = `url(${imagePath})`;
-                modelImageContainer.appendChild(modelImage);
+                
+                // Create image container with carousel if multiple images
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'model-image-container';
+                
+                if (imagePaths.length > 1) {
+                    // Create carousel
+                    const carouselHTML = `
+                        <div class="carousel-container" data-model-id="${model.id}">
+                            ${imagePaths.map((src, index) => `
+                                <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+                                    <img src="${src}" alt="${model.name}" loading="${index === 0 ? 'eager' : 'lazy'}">
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    imageContainer.innerHTML = carouselHTML;
+                } else {
+                    // Single image
+                    imageContainer.innerHTML = `<div class="model-image" style="background-image: url(${imagePaths[0]})"></div>`;
+                }
+                
+                // Create info overlay
+                const infoOverlay = document.createElement('div');
+                infoOverlay.className = 'model-info-overlay';
+                infoOverlay.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                `;
+                
+                imageContainer.appendChild(infoOverlay);
+                modelCard.appendChild(imageContainer);
+                
+                // Create details section with button
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
-                modelDetails.innerHTML = `
-                    <h3 class=\"model-name\">${model.name}</h3>
-                    <p class=\"model-bio\">${model.bio || 'Creator on ThreadPay'}</p>
-                    <button class=\"btn select-model-btn\" data-model-id=\"${model.id}\"><i class=\"fas fa-arrow-right\"></i> Select</button>
-                `;
-                modelCard.appendChild(modelImageContainer);
+                
+                const selectButton = document.createElement('button');
+                selectButton.className = 'btn';
+                selectButton.dataset.modelId = model.id;
+                selectButton.innerHTML = '<i class="fas fa-arrow-right"></i>Select';
+                modelDetails.appendChild(selectButton);
+                
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
-            });
-            // Add event listeners for selection
-            document.querySelectorAll('.select-model-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                
+                // Add event listener to button
+                selectButton.addEventListener('click', function() {
                     const modelName = this.closest('.model-card').dataset.modelName?.trim();
                     if (modelName) {
                         window.location.href = `/invite/${encodeURIComponent(modelName)}`;
                     }
                 });
+                
+                // Initialize carousel for this card if it has multiple images
+                if (imagePaths.length > 1) {
+                    initializeCardCarousel(model.id);
+                }
+            });
+        }
+        
+        // Initialize carousel for model cards
+        function initializeCardCarousel(modelId) {
+            const container = document.querySelector(`.carousel-container[data-model-id="${modelId}"]`);
+            if (!container) return;
+            
+            const slides = container.querySelectorAll('.carousel-slide');
+            if (slides.length <= 1) return;
+            
+            let currentIndex = 0;
+            let autoplayInterval;
+            let isTransitioning = false;
+            
+            // Start autoplay
+            startAutoplay();
+            
+            // Navigate to slide
+            function goToSlide(index) {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                // Wrap around if index is out of bounds
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                // Update current index
+                currentIndex = index;
+                
+                // Update slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[currentIndex].classList.add('active');
+                
+                // Reset autoplay
+                resetAutoplay();
+                
+                // Allow next transition after animation completes
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+            }
+            
+            // Autoplay
+            function startAutoplay() {
+                autoplayInterval = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, 3500);
+            }
+            
+            function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+            
+            // Touch events for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+            
+            container.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+                
+                // Pause autoplay on touch
+                clearInterval(autoplayInterval);
+            }, {passive: true});
+            
+            container.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+                
+                // Resume autoplay
+                startAutoplay();
+            }, {passive: true});
+            
+            function handleSwipe() {
+                // Minimum swipe distance
+                const swipeThreshold = 30;
+                
+                // Calculate horizontal and vertical distance
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Only handle horizontal swipes (to avoid interfering with page scrolling)
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                    if (deltaX < 0) {
+                        // Swipe left, go to next slide
+                        goToSlide(currentIndex + 1);
+                    } else {
+                        // Swipe right, go to previous slide
+                        goToSlide(currentIndex - 1);
+                    }
+                }
+            }
+            
+            // Pause autoplay when page is not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    clearInterval(autoplayInterval);
+                } else {
+                    startAutoplay();
+                }
             });
         }
     </script>
