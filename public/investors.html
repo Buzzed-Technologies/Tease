@@ -33,6 +33,9 @@
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     
+    <!-- Intersection Observer polyfill for lazy loading -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver"></script>
+    
     <!-- Custom styles for investors page -->
     <style>
         /* Custom Investor Page Styles */
@@ -953,261 +956,339 @@
     <script src="/scripts/auth.js"></script>
     
     <script>
-        // Chart initialization
+        // Optimized Chart Rendering with Lazy Loading
         document.addEventListener('DOMContentLoaded', function() {
-            // Market Growth Projection Chart
-            const marketGrowthCtx = document.getElementById('marketGrowthChart').getContext('2d');
-            const marketGrowthChart = new Chart(marketGrowthCtx, {
-                type: 'line',
-                data: {
-                    labels: ['2022', '2023', '2024', '2025', '2026', '2027'],
-                    datasets: [{
-                        label: 'Market Size ($ Billions)',
-                        data: [2.8, 5.3, 8.7, 12.3, 17.8, 24.2],
-                        backgroundColor: 'rgba(90, 120, 255, 0.2)',
-                        borderColor: 'rgba(90, 120, 255, 1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: 'rgba(90, 120, 255, 1)',
-                        pointBorderColor: '#fff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'rgba(255, 255, 255, 1)',
-                            bodyColor: 'rgba(255, 255, 255, 1)',
-                            callbacks: {
-                                label: function(context) {
-                                    return `$${context.parsed.y}B`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Revenue Distribution Chart
-            const revenueDistributionCtx = document.getElementById('revenueDistributionChart').getContext('2d');
-            const revenueDistributionChart = new Chart(revenueDistributionCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Romantic Companions', 'Sexually Explicit', 'Friendship Models', 'Therapy/Wellness', 'Other'],
-                    datasets: [{
-                        data: [42, 28, 15, 10, 5],
-                        backgroundColor: [
-                            'rgba(90, 120, 255, 0.8)',
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(153, 102, 255, 0.8)'
-                        ],
-                        borderColor: 'rgba(255, 255, 255, 0.8)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.label}: ${context.parsed}%`;
-                                }
-                            }
-                        }
-                    },
-                    cutout: '65%'
-                }
-            });
-            
-            // User Engagement Chart
-            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
-            const engagementChart = new Chart(engagementCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Desktop', 'Mobile App', 'Mobile Web', 'Tablet'],
-                    datasets: [{
-                        label: 'Daily Active Minutes',
-                        data: [42, 78, 35, 24],
-                        backgroundColor: [
-                            'rgba(90, 120, 255, 0.8)',
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(90, 120, 255, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 2,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Minutes'
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Revenue Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-            const revenueChart = new Chart(revenueCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Monthly Revenue ($K)',
-                        data: [120, 145, 175, 220, 290, 345, 410, 495, 580, 675, 780, 920],
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                        pointBorderColor: '#fff',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `$${context.parsed.y}K`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Projection Chart
-            const projectionCtx = document.getElementById('projectionChart').getContext('2d');
-            const projectionChart = new Chart(projectionCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026'],
-                    datasets: [
-                        {
-                            label: 'Revenue ($K)',
-                            data: [820, 1150, 1780, 2340, 3100, 3950, 4820, 5750],
-                            backgroundColor: 'rgba(90, 120, 255, 0.7)',
+            // Predefine chart configurations for quick initialization
+            const chartConfigs = {
+                marketGrowth: {
+                    type: 'line',
+                    data: {
+                        labels: ['2022', '2023', '2024', '2025', '2026', '2027'],
+                        datasets: [{
+                            label: 'Market Size ($ Billions)',
+                            data: [2.8, 5.3, 8.7, 12.3, 17.8, 24.2],
+                            backgroundColor: 'rgba(90, 120, 255, 0.2)',
                             borderColor: 'rgba(90, 120, 255, 1)',
-                            borderWidth: 2,
-                            borderRadius: 8,
-                            order: 2
+                            borderWidth: 3,
+                            pointBackgroundColor: 'rgba(90, 120, 255, 1)',
+                            pointBorderColor: '#fff',
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750, // Reduce animation time
+                            easing: 'easeOutQuart'
                         },
-                        {
-                            label: 'Profit ($K)',
-                            data: [246, 391, 623, 842, 1147, 1501, 1879, 2300],
-                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 2,
-                            borderRadius: 8,
-                            order: 1
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'rgba(255, 255, 255, 1)',
+                                bodyColor: 'rgba(255, 255, 255, 1)',
+                                callbacks: {
+                                    label: function(context) {
+                                        return `$${context.parsed.y}B`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: false,
+                                    tickLength: 0
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        elements: {
+                            line: {
+                                tension: 0.3
+                            }
                         }
-                    ]
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: $${context.parsed.y}K`;
+
+                revenueDistribution: {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Romantic Companions', 'Sexually Explicit', 'Friendship Models', 'Therapy/Wellness', 'Other'],
+                        datasets: [{
+                            data: [42, 28, 15, 10, 5],
+                            backgroundColor: [
+                                'rgba(90, 120, 255, 0.8)',
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(255, 206, 86, 0.8)',
+                                'rgba(153, 102, 255, 0.8)'
+                            ],
+                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 15,
+                                    boxWidth: 8
+                                }
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.parsed}%`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                },
+
+                engagement: {
+                    type: 'bar',
+                    data: {
+                        labels: ['Desktop', 'Mobile App', 'Mobile Web', 'Tablet'],
+                        datasets: [{
+                            label: 'Daily Active Minutes',
+                            data: [42, 78, 35, 24],
+                            backgroundColor: [
+                                'rgba(90, 120, 255, 0.8)',
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(90, 120, 255, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Minutes'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
                                 }
                             }
                         }
+                    }
+                },
+
+                revenue: {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Monthly Revenue ($K)',
+                            data: [120, 145, 175, 220, 290, 345, 410, 495, 580, 675, 780, 920],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            tension: 0.3,
+                            fill: true
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Amount ($K)'
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
                             },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
+                            tooltip: {
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `$${context.parsed.y}K`;
+                                    }
+                                }
                             }
                         },
-                        x: {
-                            grid: {
-                                display: false
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                },
+
+                projection: {
+                    type: 'bar',
+                    data: {
+                        labels: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026'],
+                        datasets: [
+                            {
+                                label: 'Revenue ($K)',
+                                data: [820, 1150, 1780, 2340, 3100, 3950, 4820, 5750],
+                                backgroundColor: 'rgba(90, 120, 255, 0.7)',
+                                borderColor: 'rgba(90, 120, 255, 1)',
+                                borderWidth: 2,
+                                borderRadius: 8,
+                                order: 2
+                            },
+                            {
+                                label: 'Profit ($K)',
+                                data: [246, 391, 623, 842, 1147, 1501, 1879, 2300],
+                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 2,
+                                borderRadius: 8,
+                                order: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: $${context.parsed.y}K`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Amount ($K)'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
                             }
                         }
                     }
                 }
+            };
+
+            // Track initialized charts to prevent duplicates
+            const initializedCharts = {};
+            
+            // Lazy load charts using Intersection Observer
+            const chartObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const chartCanvas = entry.target;
+                        const chartId = chartCanvas.id;
+                        
+                        // Skip if chart already initialized
+                        if (initializedCharts[chartId]) return;
+
+                        // Initialize chart based on predefined config
+                        if (chartConfigs[chartId.replace('Chart', '')]) {
+                            const config = chartConfigs[chartId.replace('Chart', '')];
+                            initializedCharts[chartId] = new Chart(chartCanvas.getContext('2d'), config);
+                            
+                            // Stop observing this chart
+                            observer.unobserve(chartCanvas);
+                        }
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '50px 0px',
+                threshold: 0.1
+            });
+            
+            // Start observing all chart canvases
+            document.querySelectorAll('canvas[id$="Chart"]').forEach(chartCanvas => {
+                // Set default background to improve perceived performance
+                const ctx = chartCanvas.getContext('2d');
+                ctx.fillStyle = '#f8f9fa';
+                ctx.fillRect(0, 0, chartCanvas.width, chartCanvas.height);
+                
+                // Start observing
+                chartObserver.observe(chartCanvas);
             });
         });
         
@@ -1223,16 +1304,32 @@
             }
         });
         
-        // Add subtle parallax effect to decorative elements
-        document.addEventListener('mousemove', function(e) {
-            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
-            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+        // Optimize parallax effect by using requestAnimationFrame and reducing DOM queries
+        (() => {
+            const parallaxElements = document.querySelectorAll(
+                '.metric-card:before, .model-step:before, .investment-card:before, .app-container:before, .app-container:after'
+            );
             
-            document.querySelectorAll('.metric-card:before, .model-step:before, .investment-card:before, .app-container:before, .app-container:after')
-                .forEach(element => {
-                    element.style.transform = `translate(${moveX}px, ${moveY}px)`;
-                });
-        });
+            let ticking = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', function(e) {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.005; // Reduced movement intensity
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.005;
+                
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        parallaxElements.forEach(element => {
+                            element.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+                        });
+                        ticking = false;
+                    });
+                    
+                    ticking = true;
+                }
+            });
+        })();
     </script>
 </body>
 </html> 
