@@ -917,14 +917,9 @@
                 right: 5%;
             }
             
-            /* Hide button text on mobile */
-            .header-controls .btn-text, 
-            .logout-button .btn-text {
-                display: none;
-            }
-            
-            .header-controls a, 
-            .header-controls button {
+            /* Header buttons - explicitly target each button in header */
+            .header-controls .btn-secondary,
+            .header-controls .logout-button {
                 width: 42px;
                 height: 42px;
                 border-radius: 12px;
@@ -934,10 +929,32 @@
                 justify-content: center;
             }
             
-            .header-controls a i, 
-            .header-controls button i {
+            .header-controls .btn-secondary .btn-text,
+            .header-controls .logout-button .btn-text {
+                display: none;
+            }
+            
+            .header-controls .btn-secondary i,
+            .header-controls .logout-button i {
                 margin-right: 0;
                 font-size: 1.125rem;
+            }
+            
+            .header-controls .btn-secondary:hover::after,
+            .header-controls .logout-button:hover::after {
+                content: attr(aria-label);
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                pointer-events: none;
+                z-index: 100;
             }
         }
         

@@ -1273,6 +1273,42 @@
                 padding: 0.875rem 1rem;
                 font-size: 1rem;
             }
+            
+            /* Header buttons - explicitly target the logout button in header */
+            .header-controls .logout-button {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                padding: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .header-controls .logout-button .btn-text {
+                display: none;
+            }
+            
+            .header-controls .logout-button i {
+                margin-right: 0;
+                font-size: 1.125rem;
+            }
+            
+            .header-controls .logout-button:hover::after {
+                content: attr(aria-label);
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                pointer-events: none;
+                z-index: 100;
+            }
         }
         
         @media (max-width: 480px) {
