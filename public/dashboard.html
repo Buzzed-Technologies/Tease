@@ -565,6 +565,7 @@
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
+            display: block;
         }
         
         .settings-card:hover {
@@ -1382,6 +1383,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
+            max-width: 650px;
         }
         
         #tab-settings {
@@ -1391,10 +1393,11 @@
         }
         
         #tab-settings.active {
-            display: flex;
+            display: flex !important;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+            opacity: 1;
         }
         
         /* Ensure the same width for settings card as account info card */
@@ -1410,6 +1413,7 @@
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
+            display: block;
         }
         
         .settings-form {
@@ -1466,7 +1470,9 @@
                 <button class="tab-btn tab-active" data-tab="account">Account</button>
                 <button class="tab-btn" data-tab="settings">Settings</button>
             </div>
+            
             <div class="dashboard-inner">
+                <!-- Account Tab -->
                 <div class="dashboard-left-card tab-section" id="tab-account" style="display: flex; flex-direction: column; align-items: center;">
                     <div class="account-info-card">
                         <div class="user-details">
@@ -1505,32 +1511,32 @@
                         </div>
                     </div>
                 </div>
-                <div class="dashboard-right-card tab-section" id="tab-settings" style="display:none; flex-direction:column; align-items:center; width:100%;">
-                    <div class="settings-card">
-                        <h2>Account Settings</h2>
-                        <form class="settings-form" id="settings-form">
-                            <div class="form-group">
-                                <label for="settings-name" class="form-label">Display Name</label>
-                                <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
-                            </div>
-                            <div class="form-group hidden-field">
-                                <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="settings-password" class="form-label">New Password</label>
-                                <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
-                            </div>
-                            <div class="form-group">
-                                <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
-                                <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
-                            </div>
-                            <button type="submit" class="action-button">
-                                <i class="fas fa-save"></i>
-                                <span class="btn-text">Save Changes</span>
-                            </button>
-                            <div id="settings-message" class="message-area"></div>
-                        </form>
-                    </div>
+                
+                <!-- Settings Tab -->
+                <div class="settings-card tab-section" id="tab-settings" style="display: none;">
+                    <h2>Account Settings</h2>
+                    <form class="settings-form" id="settings-form">
+                        <div class="form-group">
+                            <label for="settings-name" class="form-label">Display Name</label>
+                            <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
+                        </div>
+                        <div class="form-group hidden-field">
+                            <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-password" class="form-label">New Password</label>
+                            <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                            <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                        </div>
+                        <button type="submit" class="action-button">
+                            <i class="fas fa-save"></i>
+                            <span class="btn-text">Save Changes</span>
+                        </button>
+                        <div id="settings-message" class="message-area"></div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -1588,6 +1594,9 @@
             const dashboardContent = document.querySelector('.dashboard-content');
             const actionButtons = document.querySelectorAll('.action-button, .logout-button, .explore-more-button, #manage-subscription');
             
+            // Initialize tabs
+            initTabs();
+            
             // Add ARIA labels for mobile tooltip accessibility
             actionButtons.forEach(button => {
                 const text = button.querySelector('.btn-text');
@@ -1622,6 +1631,48 @@
                     });
             });
         });
+        
+        // Tab initialization and handling
+        function initTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabSections = document.querySelectorAll('.tab-section');
+            
+            // Set initial tab (account)
+            setActiveTab('account');
+            
+            // Add click handlers
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    setActiveTab(tabId);
+                });
+            });
+        }
+        
+        // Set the active tab
+        function setActiveTab(tabId) {
+            // Update button states
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tabId) {
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                }
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.tab-section').forEach(section => {
+                if (section.id === `tab-${tabId}`) {
+                    section.style.display = 'flex';
+                    section.classList.add('active');
+                } else {
+                    section.style.display = 'none';
+                    section.classList.remove('active');
+                }
+            });
+            
+            console.log(`Tab switched to: ${tabId}`);
+        }
     
         // Supabase client initialization
         const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
@@ -2022,38 +2073,6 @@
             
             // Redirect to login page
             window.location.href = '/login.html';
-        });
-        
-        // Set up tab navigation
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Update active tab button
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-                this.classList.add('tab-active');
-                
-                // Get tab id
-                const tabId = this.dataset.tab;
-                
-                // Hide all sections
-                document.querySelectorAll('.tab-section').forEach(section => {
-                    section.style.display = 'none';
-                    section.classList.remove('active');
-                });
-                
-                // Show selected section
-                const tabSection = document.getElementById(`tab-${tabId}`);
-                if (tabSection) {
-                    tabSection.style.display = 'flex';
-                    tabSection.classList.add('active');
-                    
-                    // Special handling for settings tab
-                    if (tabId === 'settings') {
-                        tabSection.style.flexDirection = 'column';
-                        tabSection.style.alignItems = 'center';
-                        tabSection.style.width = '100%';
-                    }
-                }
-            });
         });
         
         // View available models button event
