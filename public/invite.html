@@ -708,23 +708,32 @@
                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Creating Account...</span>';
                 
                 try {
-                    const { data, error } = await supabase.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: {
-                            data: {
-                                name: name,
-                                telegram_number: telegram,
-                                age: age
-                            }
-                        }
-                    });
+                    // Hash the password
+                    const passwordHash = await hashPassword(password);
                     
+                    // Generate a UUID for the user
+                    const userId = crypto.randomUUID();
+                    
+                    // Insert directly into profiles table
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: userId,
+                                name: name,
+                                telegram_username: telegram,
+                                model_id: modelId,
+                                password_hash: passwordHash
+                            }
+                        ])
+                        .select();
+                        
                     if (error) throw error;
                     
+                    // Store user data in localStorage
                     const userData = {
-                        id: data.user.id,
-                        email: data.user.email,
+                        id: userId,
+                        email: email,
                         name: name,
                         telegram_number: telegram,
                         model_id: modelId,
@@ -733,29 +742,13 @@
                     
                     localStorage.setItem('threadpay_user', JSON.stringify(userData));
                     
-                    const passwordHash = await hashPassword(password);
-                    
-                    const { error: profileError } = await supabase
-                        .from('profiles')
-                        .insert([
-                            {
-                                auth_id: data.user.id,
-                                name: name,
-                                telegram_username: telegram,
-                                model_id: modelId,
-                                password_hash: passwordHash
-                            }
-                        ]);
-                        
-                    if (profileError) throw profileError;
-                    
                     showSuccess('Account created! Redirecting to payment...');
                     
                     const checkoutRes = await fetch('/api/create-checkout-session', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            userId: data.user.id,
+                            userId: userId,
                             packageId: packageId,
                             modelId: modelId,
                             priceId: stripePriceId,
