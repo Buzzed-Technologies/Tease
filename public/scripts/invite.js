@@ -61,9 +61,19 @@ function updatePageWithModel(model) {
   
   // Update model image
   const modelImageElements = document.querySelectorAll('.model-image');
+  let imageUrl = '';
   if (model.pictures && model.pictures.length > 0) {
+    imageUrl = `/images/models/${model.pictures[0]}`;
+    if (model.pictures[0].startsWith('http')) {
+      imageUrl = model.pictures[0];
+    } else if (model.pictures[0].includes('storage/v1')) {
+      imageUrl = model.pictures[0];
+    } else {
+      imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${model.pictures[0]}`;
+    }
+    
     modelImageElements.forEach(element => {
-      element.src = `/images/models/${model.pictures[0]}`;
+      element.src = imageUrl;
       element.alt = `${model.name} - AI Companion`;
     });
   }
@@ -75,7 +85,31 @@ function updatePageWithModel(model) {
   });
   
   // Update page title
-  document.title = `Join ${model.name} | ThreadPay Secure Payment Platform`;
+  const pageTitle = `Join ${model.name} | ThreadPay Secure Payment Platform`;
+  document.title = pageTitle;
+  
+  // Update social media meta tags if they exist
+  const description = model.bio || `Subscribe to ${model.name} on ThreadPay`;
+  
+  // Update Open Graph meta tags
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  const ogImage = document.querySelector('meta[property="og:image"]');
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+  
+  if (ogTitle) ogTitle.setAttribute('content', pageTitle);
+  if (ogDesc) ogDesc.setAttribute('content', description);
+  if (ogImage && imageUrl) ogImage.setAttribute('content', imageUrl);
+  if (ogUrl) ogUrl.setAttribute('content', window.location.href);
+  
+  // Update Twitter Card meta tags
+  const twTitle = document.querySelector('meta[name="twitter:title"]');
+  const twDesc = document.querySelector('meta[name="twitter:description"]');
+  const twImage = document.querySelector('meta[name="twitter:image"]');
+  
+  if (twTitle) twTitle.setAttribute('content', pageTitle);
+  if (twDesc) twDesc.setAttribute('content', description);
+  if (twImage && imageUrl) twImage.setAttribute('content', imageUrl);
 }
 
 // Check for default model if none is specified

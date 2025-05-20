@@ -8,6 +8,20 @@
     <!-- Supabase API Key -->
     <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
     
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Join ThreadPay | Secure Payment Platform">
+    <meta property="og:description" content="Subscribe to access exclusive content">
+    <meta property="og:image" content="/images/threadpay-social-default.jpg">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ThreadPay">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Join ThreadPay | Secure Payment Platform">
+    <meta name="twitter:description" content="Subscribe to access exclusive content">
+    <meta name="twitter:image" content="/images/threadpay-social-default.jpg">
+    
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -646,6 +660,24 @@
             modelImage.innerHTML = `<img src="${imageUrl}" alt="${model.name}">`;
             
             document.getElementById('model-id').value = model.id;
+            
+            // Update social media meta tags
+            const pageTitle = `Join ${model.name} | ThreadPay`;
+            const description = model.bio || `Subscribe to ${model.name} on ThreadPay`;
+            
+            // Update page title
+            document.title = pageTitle;
+            
+            // Update Open Graph meta tags
+            document.querySelector('meta[property="og:title"]').setAttribute('content', pageTitle);
+            document.querySelector('meta[property="og:description"]').setAttribute('content', description);
+            document.querySelector('meta[property="og:image"]').setAttribute('content', imageUrl);
+            document.querySelector('meta[property="og:url"]').setAttribute('content', window.location.href);
+            
+            // Update Twitter Card meta tags
+            document.querySelector('meta[name="twitter:title"]').setAttribute('content', pageTitle);
+            document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
+            document.querySelector('meta[name="twitter:image"]').setAttribute('content', imageUrl);
         }
         
         function hashPassword(password) {
