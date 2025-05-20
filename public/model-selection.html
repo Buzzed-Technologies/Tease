@@ -40,6 +40,11 @@
             box-shadow: 0 5px 15px rgba(180, 193, 255, 0.25);
             text-decoration: none;
             letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .btn:hover {
@@ -50,6 +55,23 @@
         
         .btn:active {
             transform: translateY(-1px);
+        }
+        
+        /* Active state for better visual feedback */
+        .btn:active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: -1;
+        }
+        
+        /* Focus state for accessibility */
+        .btn:focus {
+            box-shadow: 0 0 0 3px rgba(180, 193, 255, 0.5), 0 5px 15px rgba(180, 193, 255, 0.25);
         }
         
         .btn i {
@@ -945,37 +967,20 @@
                 font-size: 1.3rem;
             }
         }
-        
-        /* Update button styles to ensure they're clickable */
-        .btn, 
-        .btn-secondary, 
-        .logout-button, 
-        .header-controls a, 
-        .header-controls button {
-            cursor: pointer !important;
-            pointer-events: auto !important;
-            position: relative !important;
-            z-index: 10 !important;
-        }
-        
-        /* Ensuring model cards are clickable */
-        .model-card {
-            cursor: pointer !important;
-        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <a href="/">
+            <a href="/" id="logo-link">
                 <div class="logo">ThreadPay</div>
             </a>
             <div class="header-controls">
-                <a href="/dashboard.html" class="btn btn-secondary" onclick="window.location.href='/dashboard.html'; return false;">
+                <a href="/dashboard.html" id="dashboard-button" class="btn btn-secondary">
                     <i class="fas fa-tachometer-alt"></i>
                     <span class="btn-text">Dashboard</span>
                 </a>
-                <button id="logout-button" class="btn logout-button" onclick="handleLogout()">
+                <button type="button" id="logout-button" class="btn logout-button">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="btn-text">Logout</span>
                 </button>
@@ -1041,224 +1046,248 @@
     <script src="https://js.stripe.com/v3/"></script>
     
     <script>
-        // Supabase client initialization
-        const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
-        let supabase;
-        let stripe;
-        
-        // User and models data
-        let userData = null;
-        let modelsData = [];
-        let userSubscriptions = [];
-        
-        // DOM elements
-        const modelGrid = document.getElementById('model-grid');
-        const loadingContainer = document.getElementById('loading-container');
-        const emptyState = document.getElementById('empty-state');
-        const modelModal = document.getElementById('model-modal');
-        const modalBody = document.getElementById('modal-body');
-        const modalClose = document.getElementById('modal-close');
-        const notification = document.getElementById('notification');
-        const notificationMessage = document.getElementById('notification-message');
-        const notificationClose = document.getElementById('notification-close');
-        const logoutButton = document.getElementById('logout-button');
-        
-        // Handler for logout button (global function to be called from inline onclick)
-        function handleLogout() {
-            localStorage.removeItem('threadpay_user');
-            window.location.href = '/';
-        }
-        
-        // Add event listener for logout button as a backup
-        if (logoutButton) {
-            logoutButton.addEventListener('click', handleLogout);
-        }
-        
-        // Ensure dashboard button works via event listener too
-        const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
-        if (dashboardButton) {
-            dashboardButton.addEventListener('click', function(e) {
-                window.location.href = '/dashboard.html';
-            });
-        }
-        
-        // First try to get the key from meta tag
-        const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
-        let supabaseKey = null;
-        
-        // Check if the key is a real key or just the placeholder
-        if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
-            console.log('Using API key from meta tag');
-            supabaseKey = metaKey;
-            initSupabase();
-        } else {
-            // Fetch API key from server config endpoint
-            console.log('Meta tag key not available, trying to fetch from server...');
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    if (config.supabaseKey) {
-                        console.log('Using API key from server');
-                        supabaseKey = config.supabaseKey;
-                    } else {
-                        // Fall back to hardcoded key
-                        console.log('Using hardcoded API key as fallback');
-                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    }
-                    initSupabase();
-                })
-                .catch(error => {
-                    console.error('Error fetching config:', error);
-                    // Fall back to hardcoded key
-                    console.log('Using hardcoded API key due to error');
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                });
-        }
-        
-        // Initialize Stripe
-        function initStripe() {
-            // Check if stripe.js is loaded
-            if (window.Stripe) {
-                stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
-                console.log('Stripe initialized');
-            } else {
-                console.error('Stripe.js not loaded');
-            }
-        }
-        
-        function initSupabase() {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                initStripe();
-                loadUserData();
-            } else {
-                console.error('Supabase client library not loaded');
-            }
-        }
-        
-        // Load user data
-        async function loadUserData() {
-            // Try to get user from localStorage
-            const storedUser = localStorage.getItem('threadpay_user');
+        // Wait for DOM to be fully loaded before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase client initialization
+            const supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
+            let supabase;
+            let stripe;
             
-            if (storedUser) {
-                try {
-                    userData = JSON.parse(storedUser);
-                    console.log('User loaded from localStorage:', userData);
-                    
-                    // Fetch user details including subscriptions
-                    await fetchUserDetails();
-                    
-                    // Load all models
-                    await loadModels();
-                } catch (error) {
-                    console.error('Error parsing user data:', error);
+            // User and models data
+            let userData = null;
+            let modelsData = [];
+            let userSubscriptions = [];
+            
+            // DOM elements
+            const modelGrid = document.getElementById('model-grid');
+            const loadingContainer = document.getElementById('loading-container');
+            const emptyState = document.getElementById('empty-state');
+            const modelModal = document.getElementById('model-modal');
+            const modalBody = document.getElementById('modal-body');
+            const modalClose = document.getElementById('modal-close');
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notification-message');
+            const notificationClose = document.getElementById('notification-close');
+            const logoutButton = document.getElementById('logout-button');
+            
+            // Initialize Stripe
+            function initStripe() {
+                // Check if stripe.js is loaded
+                if (window.Stripe) {
+                    stripe = Stripe('pk_test_51OijBrLdaoHjdkpx9SL52KkSXeGUwvZ53O7WgSF3I8b47FwdLwOMhIvtMrXWCsq55w0fmJ5zfM5YQKOXSm5oKP9w00g9iHV4Nx');
+                    console.log('Stripe initialized');
+                } else {
+                    console.error('Stripe.js not loaded');
+                }
+            }
+            
+            function initSupabase() {
+                if (window.supabase) {
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    initStripe();
+                    loadUserData();
+                } else {
+                    console.error('Supabase client library not loaded');
+                    showNotification('Failed to initialize application. Please refresh the page.', 'error');
+                }
+            }
+            
+            // Load user data
+            async function loadUserData() {
+                // Try to get user from localStorage
+                const storedUser = localStorage.getItem('threadpay_user');
+                
+                if (storedUser) {
+                    try {
+                        userData = JSON.parse(storedUser);
+                        console.log('User loaded from localStorage:', userData);
+                        
+                        // Fetch user details including subscriptions
+                        await fetchUserDetails();
+                        
+                        // Load all models
+                        await loadModels();
+                    } catch (error) {
+                        console.error('Error parsing user data:', error);
+                        redirectToLogin();
+                    }
+                } else {
+                    console.log('No user found in localStorage');
                     redirectToLogin();
                 }
-            } else {
-                console.log('No user found in localStorage');
-                redirectToLogin();
             }
-        }
-        
-        // Fetch user details
-        async function fetchUserDetails() {
-            try {
-                // Get user profile
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
-                    .single();
-                    
-                if (profileError) throw profileError;
-                
-                if (profile) {
-                    // Update user data with profile info
-                    userData = { ...userData, ...profile };
-                    
-                    // Get user subscriptions
-                    const { data: subscriptions, error: subsError } = await supabase
-                        .from('user_model_subscriptions')
+            
+            // Fetch user details
+            async function fetchUserDetails() {
+                try {
+                    // Get user profile
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
                         .select('*')
-                        .eq('user_id', userData.id)
-                        .eq('is_active', true);
+                        .or(`id.eq.${userData.id},auth_id.eq.${userData.id}`)
+                        .single();
                         
-                    if (subsError) throw subsError;
+                    if (profileError) throw profileError;
                     
-                    userSubscriptions = subscriptions || [];
-                    console.log('User subscriptions:', userSubscriptions);
+                    if (profile) {
+                        // Update user data with profile info
+                        userData = { ...userData, ...profile };
+                        
+                        // Get user subscriptions
+                        const { data: subscriptions, error: subsError } = await supabase
+                            .from('user_model_subscriptions')
+                            .select('*')
+                            .eq('user_id', userData.id)
+                            .eq('is_active', true);
+                            
+                        if (subsError) throw subsError;
+                        
+                        userSubscriptions = subscriptions || [];
+                        console.log('User subscriptions:', userSubscriptions);
+                    }
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                    showNotification('Failed to load your subscription details. Please try again.', 'error');
                 }
-            } catch (error) {
-                console.error('Error fetching user details:', error);
-                showNotification('Failed to load your subscription details. Please try again.', 'error');
             }
-        }
-        
-        // Load models
-        async function loadModels() {
-            try {
-                loadingContainer.style.display = 'block';
-                modelGrid.style.display = 'none';
-                emptyState.style.display = 'none';
-                
-                // Fetch all models
-                const { data: models, error } = await supabase
-                    .from('models')
-                    .select('*');
+            
+            // Load models
+            async function loadModels() {
+                try {
+                    loadingContainer.style.display = 'block';
+                    modelGrid.style.display = 'none';
+                    emptyState.style.display = 'none';
                     
-                if (error) throw error;
-                
-                if (!models || models.length === 0) {
+                    // Fetch all models
+                    const { data: models, error } = await supabase
+                        .from('models')
+                        .select('*');
+                        
+                    if (error) throw error;
+                    
+                    if (!models || models.length === 0) {
+                        loadingContainer.style.display = 'none';
+                        emptyState.style.display = 'block';
+                        return;
+                    }
+                    
+                    modelsData = models;
+                    
+                    // Display models
+                    displayModels(models);
+                    
+                    loadingContainer.style.display = 'none';
+                    modelGrid.style.display = 'grid';
+                } catch (error) {
+                    console.error('Error loading models:', error);
+                    showNotification('Failed to load creators. Please try again later.', 'error');
+                    
                     loadingContainer.style.display = 'none';
                     emptyState.style.display = 'block';
-                    return;
                 }
-                
-                modelsData = models;
-                
-                // Display models
-                displayModels(models);
-                
-                loadingContainer.style.display = 'none';
-                modelGrid.style.display = 'grid';
-            } catch (error) {
-                console.error('Error loading models:', error);
-                showNotification('Failed to load creators. Please try again later.', 'error');
-                
-                loadingContainer.style.display = 'none';
-                emptyState.style.display = 'block';
             }
-        }
-        
-        // Display models with fixed subscribe button functionality
-        function displayModels(models) {
-            modelGrid.innerHTML = '';
             
-            models.forEach(model => {
-                // Check if user is already subscribed to this model
-                const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
+            // Display models
+            function displayModels(models) {
+                modelGrid.innerHTML = '';
                 
-                const modelCard = document.createElement('div');
-                modelCard.className = 'model-card';
-                modelCard.dataset.modelId = model.id;
-                
-                // Add subscription badge if subscribed
-                if (isSubscribed) {
-                    const badge = document.createElement('div');
-                    badge.className = 'model-subscription-badge';
-                    badge.textContent = 'Subscribed';
-                    modelCard.appendChild(badge);
-                }
-                
-                // Add container for the image
-                const modelImageContainer = document.createElement('div');
-                modelImageContainer.className = 'model-image-container';
-                
-                const modelImage = document.createElement('div');
-                modelImage.className = 'model-image';
-                
+                models.forEach(model => {
+                    // Check if user is already subscribed to this model
+                    const isSubscribed = userSubscriptions.some(sub => sub.model_id === model.id);
+                    
+                    const modelCard = document.createElement('div');
+                    modelCard.className = 'model-card';
+                    modelCard.dataset.modelId = model.id;
+                    
+                    // Add subscription badge if subscribed
+                    if (isSubscribed) {
+                        const badge = document.createElement('div');
+                        badge.className = 'model-subscription-badge';
+                        badge.textContent = 'Subscribed';
+                        modelCard.appendChild(badge);
+                    }
+                    
+                    // Add container for the image
+                    const modelImageContainer = document.createElement('div');
+                    modelImageContainer.className = 'model-image-container';
+                    
+                    const modelImage = document.createElement('div');
+                    modelImage.className = 'model-image';
+                    
+                    // Build the correct image path using Supabase bucket
+                    let imagePath;
+                    if (model.pictures) {
+                        // Handle both object format (model.pictures.main) and array format (model.pictures[0])
+                        if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                            imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        } else if (model.pictures.main) {
+                            imagePath = model.pictures.main;
+                        } else {
+                            imagePath = '/images/placeholder-model.png';
+                        }
+                    } else {
+                        imagePath = '/images/placeholder-model.png';
+                    }
+                    
+                    modelImage.style.backgroundImage = `url(${imagePath})`;
+                    modelImageContainer.appendChild(modelImage);
+                    
+                    // Create model details container
+                    const modelDetails = document.createElement('div');
+                    modelDetails.className = 'model-details';
+                    
+                    // Create and append the name
+                    const modelName = document.createElement('h3');
+                    modelName.className = 'model-name';
+                    modelName.textContent = model.name;
+                    modelDetails.appendChild(modelName);
+                    
+                    // Create and append the bio
+                    const modelBio = document.createElement('p');
+                    modelBio.className = 'model-bio';
+                    modelBio.textContent = model.bio || 'Creator on ThreadPay';
+                    modelDetails.appendChild(modelBio);
+                    
+                    // Create action button programmatically
+                    const actionButton = document.createElement('button');
+                    actionButton.type = 'button';
+                    actionButton.className = `btn ${isSubscribed ? 'btn-secondary' : ''}`;
+                    actionButton.dataset.modelId = model.id;
+                    
+                    // Add icon and text to button
+                    const icon = document.createElement('i');
+                    icon.className = isSubscribed ? 'fas fa-eye' : 'fas fa-star';
+                    actionButton.appendChild(icon);
+                    
+                    // Add a space after the icon
+                    actionButton.appendChild(document.createTextNode(' '));
+                    
+                    // Add button text
+                    actionButton.appendChild(document.createTextNode(isSubscribed ? 'View Details' : 'Subscribe'));
+                    
+                    // Add explicit click handler
+                    actionButton.addEventListener('click', function() {
+                        if (isSubscribed) {
+                            // Navigate to dashboard to manage this subscription
+                            window.location.href = '/dashboard.html';
+                        } else {
+                            // Open subscription modal
+                            openSubscriptionModal(model);
+                        }
+                    });
+                    
+                    // Append button to details
+                    modelDetails.appendChild(actionButton);
+                    
+                    // Add the components to the card
+                    modelCard.appendChild(modelImageContainer);
+                    modelCard.appendChild(modelDetails);
+                    modelGrid.appendChild(modelCard);
+                });
+            }
+            
+            // Open the subscription modal for a model
+            function openSubscriptionModal(model) {
                 // Build the correct image path using Supabase bucket
                 let imagePath;
                 if (model.pictures) {
@@ -1273,481 +1302,344 @@
                 } else {
                     imagePath = '/images/placeholder-model.png';
                 }
-                
-                modelImage.style.backgroundImage = `url(${imagePath})`;
-                modelImageContainer.appendChild(modelImage);
-                
-                const modelDetails = document.createElement('div');
-                modelDetails.className = 'model-details';
-                
-                // Add direct onclick attribute to buttons for guaranteed functionality
-                modelDetails.innerHTML = `
-                    <h3 class="model-name">${model.name}</h3>
-                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                    <button class="btn ${isSubscribed ? 'btn-secondary' : ''}" 
-                            data-model-id="${model.id}" 
-                            onclick="${isSubscribed ? 'window.location.href=\'/dashboard.html\'' : 'openSubscriptionModal(' + JSON.stringify(model).replace(/"/g, '&quot;') + ')'}">
-                        ${isSubscribed ? '<i class="fas fa-eye"></i>View Details' : '<i class="fas fa-star"></i>Subscribe'}
-                    </button>
+
+                // Set modal content
+                modalBody.innerHTML = `
+                    <div class="modal-model-container">
+                        <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                        <div class="modal-model-info">
+                            <h3 class="modal-model-name">${model.name}</h3>
+                            <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="modal-section-title">Select a Subscription Package</h3>
+                    <div id="package-list" class="package-list">
+                        <div class="loading-spinner"></div>
+                    </div>
                 `;
                 
-                modelCard.appendChild(modelImageContainer);
-                modelCard.appendChild(modelDetails);
-                modelGrid.appendChild(modelCard);
+                // Show modal
+                modelModal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
                 
-                // Add additional event listener for the button as backup
-                const actionButton = modelDetails.querySelector('.btn');
-                actionButton.addEventListener('click', function() {
-                    if (isSubscribed) {
-                        window.location.href = '/dashboard.html';
-                    } else {
-                        openSubscriptionModal(model);
-                    }
-                });
-                
-                // Make the entire card clickable for better UX
-                modelCard.addEventListener('click', function(e) {
-                    // Only trigger if we didn't click directly on the button (button has its own handler)
-                    if (!e.target.closest('.btn')) {
-                        if (isSubscribed) {
-                            window.location.href = '/dashboard.html';
-                        } else {
-                            openSubscriptionModal(model);
-                        }
-                    }
-                });
-            });
-        }
-        
-        // Open the subscription modal for a model - Make globally accessible for inline onclick
-        window.openSubscriptionModal = function(model) {
-            // Build the correct image path using Supabase bucket
-            let imagePath;
-            if (model.pictures) {
-                // Handle both object format (model.pictures.main) and array format (model.pictures[0])
-                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-                } else if (model.pictures.main) {
-                    imagePath = model.pictures.main;
-                } else {
-                    imagePath = '/images/placeholder-model.png';
-                }
-            } else {
-                imagePath = '/images/placeholder-model.png';
+                // Load packages for this model
+                loadPackages(model.id);
             }
-
-            // Set modal content
-            modalBody.innerHTML = `
-                <div class="modal-model-container">
-                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
-                    <div class="modal-model-info">
-                        <h3 class="modal-model-name">${model.name}</h3>
-                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                    </div>
-                </div>
-                
-                <h3 class="modal-section-title">Select a Subscription Package</h3>
-                <div id="package-list" class="package-list">
-                    <div class="loading-spinner"></div>
-                </div>
-            `;
             
-            // Show modal
-            modelModal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-            
-            // Load packages for this model
-            loadPackages(model.id);
-        };
-        
-        // Load packages for a model
-        async function loadPackages(modelId) {
-            try {
-                const packageList = document.getElementById('package-list');
-                packageList.innerHTML = '<div class="loading-spinner"></div>';
-                
-                // Fetch packages for this model
-                const { data: packages, error } = await supabase
-                    .from('packages')
-                    .select('*')
-                    .eq('model_id', modelId)
-                    .order('price', { ascending: true });
+            // Load packages for a model
+            async function loadPackages(modelId) {
+                try {
+                    const packageList = document.getElementById('package-list');
+                    packageList.innerHTML = '<div class="loading-spinner"></div>';
                     
-                if (error) throw error;
+                    // Fetch packages for this model
+                    const { data: packages, error } = await supabase
+                        .from('packages')
+                        .select('*')
+                        .eq('model_id', modelId)
+                        .order('price', { ascending: true });
+                        
+                    if (error) throw error;
+                    
+                    if (!packages || packages.length === 0) {
+                        packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
+                        return;
+                    }
+                    
+                    packageList.innerHTML = '';
+                    
+                    packages.forEach(pkg => {
+                        const packageItem = document.createElement('div');
+                        packageItem.className = 'package-item';
+                        
+                        const priceFormatted = new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2
+                        }).format(pkg.price);
+                        
+                        // Create description and package info first
+                        packageItem.innerHTML = `
+                            <div class="package-name">${pkg.name}</div>
+                            <div class="package-price">${priceFormatted}<span>/month</span></div>
+                            <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
+                        `;
+                        
+                        // Create button element programmatically instead of using innerHTML
+                        const subscribeBtn = document.createElement('button');
+                        subscribeBtn.type = 'button';
+                        subscribeBtn.className = 'btn btn-full subscribe-btn';
+                        subscribeBtn.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
+                        subscribeBtn.dataset.packageId = pkg.id;
+                        subscribeBtn.dataset.priceId = pkg.stripe_price_id || '';
+                        subscribeBtn.dataset.modelId = pkg.model_id;
+                        
+                        // Add event listener directly to the button
+                        subscribeBtn.addEventListener('click', handleSubscription);
+                        
+                        // Append the button to the package item
+                        packageItem.appendChild(subscribeBtn);
+                        packageList.appendChild(packageItem);
+                    });
+                } catch (error) {
+                    console.error('Error loading packages:', error);
+                    document.getElementById('package-list').innerHTML = 
+                        '<p class="no-packages">Failed to load subscription packages. Please try again later.</p>';
+                }
+            }
+            
+            // Handle subscription
+            async function handleSubscription() {
+                const button = this;
+                const packageId = button.getAttribute('data-package-id');
+                const priceId = button.getAttribute('data-price-id');
+                const modelId = button.getAttribute('data-model-id');
                 
-                if (!packages || packages.length === 0) {
-                    packageList.innerHTML = '<p class="no-packages">No subscription packages available for this creator.</p>';
+                if (!packageId || !priceId || !modelId) {
+                    showNotification('Invalid subscription details. Please try again.', 'error');
                     return;
                 }
                 
-                packageList.innerHTML = '';
-                
-                packages.forEach(pkg => {
-                    const packageItem = document.createElement('div');
-                    packageItem.className = 'package-item';
-                    
-                    const priceFormatted = new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 2
-                    }).format(pkg.price);
-                    
-                    packageItem.innerHTML = `
-                        <div class="package-name">${pkg.name}</div>
-                        <div class="package-price">${priceFormatted}<span>/month</span></div>
-                        <div class="package-description">${pkg.description || 'Access exclusive content and features with this subscription.'}</div>
-                        <button class="btn btn-full" 
-                                data-package-id="${pkg.id}" 
-                                data-price-id="${pkg.stripe_price_id}" 
-                                data-model-id="${pkg.model_id}"
-                                onclick="handleSubscription(this, '${pkg.id}', '${pkg.stripe_price_id}', '${pkg.model_id}')">
-                            <i class="fas fa-credit-card"></i> Subscribe Now
-                        </button>
-                    `;
-                    
-                    packageList.appendChild(packageItem);
-                    
-                    // Add event listener to subscribe button as backup
-                    const subscribeBtn = packageItem.querySelector('.btn');
-                    subscribeBtn.addEventListener('click', function() {
-                        handleSubscription(this, pkg.id, pkg.stripe_price_id, pkg.model_id);
-                    });
-                });
-            } catch (error) {
-                console.error('Error loading packages:', error);
-                document.getElementById('package-list').innerHTML = 
-                    '<p class="no-packages">Failed to load subscription packages. Please try again later.</p>';
-            }
-        }
-        
-        // Handle subscription - Make globally accessible for inline onclick
-        window.handleSubscription = async function(button, packageId, priceId, modelId) {
-            if (!packageId || !priceId || !modelId) {
-                showNotification('Invalid subscription details. Please try again.', 'error');
-                return;
-            }
-            
-            try {
-                // Disable button and show loading state
-                button.disabled = true;
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                
-                showNotification('Preparing your subscription...', 'success');
-                
-                // First create a customer if user doesn't have a Stripe ID
-                if (!userData.stripe_customer_id) {
-                    console.log('Creating customer in Stripe...');
-                    
-                    try {
-                        // Mock successful customer creation
-                        const customer = { customerId: 'cus_mock' + Date.now() };
-                        
-                        // Store the customer ID
-                        userData.stripe_customer_id = customer.customerId;
-                        localStorage.setItem('threadpay_user', JSON.stringify(userData));
-                        
-                        // Update the customer ID in the database
-                        await supabase
-                            .from('profiles')
-                            .update({ stripe_customer_id: customer.customerId })
-                            .eq('id', userData.id);
-                            
-                    } catch (err) {
-                        console.error('Error creating Stripe customer:', err);
-                        throw new Error('Failed to create customer account');
-                    }
-                }
-                
-                // Create checkout session
-                console.log('Creating checkout session...');
-                
                 try {
-                    // For demo, we'll simulate subscription success directly
-                    showNotification('Subscription successful! Redirecting to dashboard...', 'success');
+                    // Disable button and show loading state
+                    button.disabled = true;
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                     
-                    // Mock subscription entry in database
-                    try {
-                        const { error } = await supabase
-                            .from('user_model_subscriptions')
-                            .insert([{
-                                user_id: userData.id,
-                                model_id: modelId,
-                                package_id: packageId,
-                                is_active: true,
-                                stripe_subscription_id: 'sub_mock' + Date.now(),
-                                current_period_start: new Date().toISOString(),
-                                current_period_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
-                            }]);
+                    showNotification('Preparing your subscription...', 'success');
+                    
+                    // First create a customer if user doesn't have a Stripe ID
+                    if (!userData.stripe_customer_id) {
+                        console.log('Creating customer in Stripe...');
+                        
+                        try {
+                            // Mock API for demo purposes
+                            // In a real implementation, you'd uncomment the fetch code below
+                            /* 
+                            const createCustomerResponse = await fetch('/api/create-customer', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    name: userData.name || 'User',
+                                    email: userData.email || `${userData.username || 'user'}@example.com`,
+                                    phone: userData.username || ''
+                                })
+                            });
                             
-                        if (error) {
-                            console.error('Error creating subscription record:', error);
+                            if (!createCustomerResponse.ok) {
+                                const errorData = await createCustomerResponse.json();
+                                throw new Error(errorData.error || 'Error creating customer');
+                            }
+                            
+                            const customer = await createCustomerResponse.json();
+                            */
+                            
+                            // Mock successful customer creation
+                            const customer = { customerId: 'cus_mock' + Date.now() };
+                            
+                            // Store the customer ID
+                            userData.stripe_customer_id = customer.customerId;
+                            localStorage.setItem('threadpay_user', JSON.stringify(userData));
+                            
+                            // Update the customer ID in the database
+                            await supabase
+                                .from('profiles')
+                                .update({ stripe_customer_id: customer.customerId })
+                                .eq('id', userData.id);
+                                
+                        } catch (err) {
+                            console.error('Error creating Stripe customer:', err);
+                            throw new Error('Failed to create customer account');
                         }
-                    } catch (err) {
-                        console.error('Error creating subscription record:', err);
                     }
                     
-                    // Wait a bit for the user to see the success message
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html?subscription_success=true';
-                    }, 1500);
+                    // Create checkout session
+                    console.log('Creating checkout session...');
                     
-                } catch (checkoutError) {
-                    console.error('Error in checkout process:', checkoutError);
-                    throw checkoutError;
+                    try {
+                        // Mock API for demo purposes
+                        // In a real implementation, you'd uncomment the fetch code below
+                        /*
+                        const createSessionResponse = await fetch('/api/create-checkout-session', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                priceId: priceId,
+                                customerId: userData.stripe_customer_id,
+                                userId: userData.id,
+                                userPhone: userData.username || '',
+                                packageId: packageId,
+                                modelId: modelId,
+                                successUrl: window.location.origin + '/dashboard.html?subscription_success=true',
+                                cancelUrl: window.location.origin + '/model-selection.html?subscription_canceled=true'
+                            })
+                        });
+                        
+                        if (!createSessionResponse.ok) {
+                            const errorData = await createSessionResponse.json();
+                            throw new Error(errorData.error || 'Error creating checkout session');
+                        }
+                        
+                        const session = await createSessionResponse.json();
+                        */
+                        
+                        // For demo, we'll simulate subscription success directly
+                        showNotification('Subscription successful! Redirecting to dashboard...', 'success');
+                        
+                        // Mock subscription entry in database
+                        try {
+                            const { error } = await supabase
+                                .from('user_model_subscriptions')
+                                .insert([{
+                                    user_id: userData.id,
+                                    model_id: modelId,
+                                    package_id: packageId,
+                                    is_active: true,
+                                    stripe_subscription_id: 'sub_mock' + Date.now(),
+                                    current_period_start: new Date().toISOString(),
+                                    current_period_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+                                }]);
+                                
+                            if (error) {
+                                console.error('Error creating subscription record:', error);
+                            }
+                        } catch (err) {
+                            console.error('Error creating subscription record:', err);
+                        }
+                        
+                        // Wait a bit for the user to see the success message
+                        setTimeout(() => {
+                            window.location.href = '/dashboard.html?subscription_success=true';
+                        }, 1500);
+                        
+                    } catch (checkoutError) {
+                        console.error('Error in checkout process:', checkoutError);
+                        throw checkoutError;
+                    }
+                } catch (error) {
+                    console.error('Error creating subscription:', error);
+                    showNotification('Failed to create subscription. Please try again.', 'error');
+                    
+                    // Re-enable button
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
                 }
-            } catch (error) {
-                console.error('Error creating subscription:', error);
-                showNotification('Failed to create subscription. Please try again.', 'error');
+            }
+            
+            // Show notification
+            function showNotification(message, type = 'success') {
+                notificationMessage.textContent = message;
+                notification.className = `notification ${type} active`;
                 
-                // Re-enable button
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-credit-card"></i> Subscribe Now';
-            }
-        };
-        
-        // Close the modal
-        modalClose.addEventListener('click', () => {
-            modelModal.classList.remove('active');
-            document.body.style.overflow = ''; // Restore scrolling
-        });
-        
-        // Close modal when clicking outside
-        modelModal.addEventListener('click', (e) => {
-            if (e.target === modelModal) {
-                modelModal.classList.remove('active');
-                document.body.style.overflow = ''; // Restore scrolling
-            }
-        });
-        
-        // Show notification
-        function showNotification(message, type = 'success') {
-            notificationMessage.textContent = message;
-            notification.className = `notification ${type} active`;
-            
-            // Automatically hide after 5 seconds
-            setTimeout(() => {
-                notification.classList.remove('active');
-            }, 5000);
-        }
-        
-        // Close notification
-        notificationClose.addEventListener('click', () => {
-            notification.classList.remove('active');
-        });
-        
-        // Check URL parameters for notifications
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('subscription_canceled')) {
-            showNotification('Subscription process was canceled.', 'error');
-        }
-        
-        // Redirect to login
-        function redirectToLogin() {
-            window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
-        }
-        
-        // Make sure all logout, dashboard, and notification close buttons work
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ensure logout button works
-            if (logoutButton) {
-                logoutButton.addEventListener('click', handleLogout);
+                // Automatically hide after 5 seconds
+                setTimeout(() => {
+                    notification.classList.remove('active');
+                }, 5000);
             }
             
-            // Ensure dashboard button works
-            const dashboardBtn = document.querySelector('.header-controls a[href="/dashboard.html"]');
-            if (dashboardBtn) {
-                dashboardBtn.addEventListener('click', function() {
+            // Redirect to login
+            function redirectToLogin() {
+                window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
+            }
+            
+            // Initialize button handlers for static elements
+            function initializeButtonHandlers() {
+                // Logo link
+                document.getElementById('logo-link').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '/';
+                });
+                
+                // Dashboard button
+                document.getElementById('dashboard-button').addEventListener('click', function(e) {
+                    e.preventDefault();
                     window.location.href = '/dashboard.html';
                 });
-            }
-            
-            // Ensure notification close button works
-            if (notificationClose) {
-                notificationClose.addEventListener('click', function() {
+                
+                // Logout button
+                document.getElementById('logout-button').addEventListener('click', function() {
+                    try {
+                        // Clear local storage
+                        localStorage.removeItem('threadpay_user');
+                        
+                        // Redirect to home page
+                        window.location.href = '/';
+                    } catch (error) {
+                        console.error('Error logging out:', error);
+                        showNotification('Failed to log out. Please try again.', 'error');
+                    }
+                });
+                
+                // Close modal button
+                document.getElementById('modal-close').addEventListener('click', function() {
+                    modelModal.classList.remove('active');
+                    document.body.style.overflow = ''; // Restore scrolling
+                });
+                
+                // Close modal when clicking overlay
+                modelModal.addEventListener('click', function(e) {
+                    if (e.target === modelModal) {
+                        modelModal.classList.remove('active');
+                        document.body.style.overflow = ''; // Restore scrolling
+                    }
+                });
+                
+                // Close notification
+                document.getElementById('notification-close').addEventListener('click', function() {
                     notification.classList.remove('active');
                 });
+                
+                console.log('Button handlers initialized');
+            }
+            
+            // Check URL parameters for notifications
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('subscription_canceled')) {
+                showNotification('Subscription process was canceled.', 'error');
+            }
+            
+            // Initialize the button handlers
+            initializeButtonHandlers();
+            
+            // First try to get the key from meta tag
+            const metaKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
+            let supabaseKey = null;
+            
+            // Check if the key is a real key or just the placeholder
+            if (metaKey && !metaKey.includes('%NEXT_PUBLIC')) {
+                console.log('Using API key from meta tag');
+                supabaseKey = metaKey;
+                initSupabase();
+            } else {
+                // Fetch API key from server config endpoint
+                console.log('Meta tag key not available, trying to fetch from server...');
+                fetch('/api/config')
+                    .then(response => response.json())
+                    .then(config => {
+                        if (config.supabaseKey) {
+                            console.log('Using API key from server');
+                            supabaseKey = config.supabaseKey;
+                        } else {
+                            // Fall back to hardcoded key
+                            console.log('Using hardcoded API key as fallback');
+                            supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                        }
+                        initSupabase();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching config:', error);
+                        // Fall back to hardcoded key
+                        console.log('Using hardcoded API key due to error');
+                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                        initSupabase();
+                    });
             }
         });
-        
-        // Force buttons to work after page loads
-        window.onload = function() {
-            console.log("Fixing buttons...");
-            
-            // Fix dashboard button
-            const dashboardBtn = document.querySelector('.header-controls a[href="/dashboard.html"]');
-            if (dashboardBtn) {
-                dashboardBtn.onclick = function(e) {
-                    e.preventDefault();
-                    console.log("Dashboard button clicked");
-                    window.location.href = '/dashboard.html';
-                    return false;
-                };
-                console.log("Dashboard button fixed");
-            }
-            
-            // Fix logout button
-            const logoutBtn = document.getElementById('logout-button');
-            if (logoutBtn) {
-                logoutBtn.onclick = function(e) {
-                    e.preventDefault();
-                    console.log("Logout button clicked");
-                    localStorage.removeItem('threadpay_user');
-                    window.location.href = '/';
-                    return false;
-                };
-                console.log("Logout button fixed");
-            }
-            
-            // Fix subscribe buttons on all model cards
-            setTimeout(function() {
-                const modelCards = document.querySelectorAll('.model-card');
-                console.log(`Found ${modelCards.length} model cards to fix`);
-                
-                modelCards.forEach(function(card) {
-                    const subscribeBtn = card.querySelector('.btn');
-                    const modelId = card.dataset.modelId;
-                    
-                    if (subscribeBtn) {
-                        // Replace with direct click handler
-                        subscribeBtn.onclick = function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log(`Subscribe button clicked for model ${modelId}`);
-                            
-                            // Find the model data
-                            const model = window.modelsData.find(m => m.id === modelId);
-                            
-                            if (subscribeBtn.classList.contains('btn-secondary')) {
-                                // Already subscribed - go to dashboard
-                                window.location.href = '/dashboard.html';
-                            } else if (model) {
-                                // Show subscription modal
-                                openModalDirectly(model);
-                            }
-                            return false;
-                        };
-                    }
-                    
-                    // Make the entire card clickable
-                    card.onclick = function(e) {
-                        if (!e.target.closest('.btn')) {
-                            e.preventDefault();
-                            const model = window.modelsData.find(m => m.id === modelId);
-                            
-                            if (subscribeBtn && subscribeBtn.classList.contains('btn-secondary')) {
-                                // Already subscribed - go to dashboard
-                                window.location.href = '/dashboard.html';
-                            } else if (model) {
-                                // Show subscription modal
-                                openModalDirectly(model);
-                            }
-                        }
-                    };
-                });
-                
-                console.log("Subscribe buttons fixed");
-            }, 500); // Small delay to ensure all model cards are rendered
-        };
-        
-        // Direct function to open modal without any dependencies
-        function openModalDirectly(model) {
-            console.log("Opening modal for model", model);
-            const modelModal = document.getElementById('model-modal');
-            const modalBody = document.getElementById('modal-body');
-            
-            if (!modelModal || !modalBody) {
-                console.error("Modal elements not found");
-                return;
-            }
-            
-            // Build the image path
-            let imagePath = '/images/placeholder-model.png';
-            if (model.pictures) {
-                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
-                } else if (model.pictures.main) {
-                    imagePath = model.pictures.main;
-                }
-            }
-            
-            // Set content
-            modalBody.innerHTML = `
-                <div class="modal-model-container">
-                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
-                    <div class="modal-model-info">
-                        <h3 class="modal-model-name">${model.name}</h3>
-                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                    </div>
-                </div>
-                
-                <h3 class="modal-section-title">Select a Subscription Package</h3>
-                <div id="package-list" class="package-list">
-                    <p>Loading packages...</p>
-                    <div class="package-item">
-                        <div class="package-name">Basic Subscription</div>
-                        <div class="package-price">$9.99<span>/month</span></div>
-                        <div class="package-description">Access to exclusive content and features.</div>
-                        <button class="btn btn-full demo-sub-btn">
-                            <i class="fas fa-credit-card"></i> Subscribe Now
-                        </button>
-                    </div>
-                    <div class="package-item">
-                        <div class="package-name">Premium Subscription</div>
-                        <div class="package-price">$19.99<span>/month</span></div>
-                        <div class="package-description">Premium access with additional benefits.</div>
-                        <button class="btn btn-full demo-sub-btn">
-                            <i class="fas fa-credit-card"></i> Subscribe Now
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // Show modal
-            modelModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Set up close button
-            const modalClose = document.getElementById('modal-close');
-            if (modalClose) {
-                modalClose.onclick = function() {
-                    modelModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                };
-            }
-            
-            // Set up demo subscription buttons
-            const demoSubBtns = document.querySelectorAll('.demo-sub-btn');
-            demoSubBtns.forEach(btn => {
-                btn.onclick = function() {
-                    // Mock subscription process
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                    btn.disabled = true;
-                    
-                    // Show success notification
-                    const notification = document.getElementById('notification');
-                    const notificationMessage = document.getElementById('notification-message');
-                    
-                    if (notification && notificationMessage) {
-                        notificationMessage.textContent = 'Subscription successful! Redirecting to dashboard...';
-                        notification.className = 'notification success active';
-                    }
-                    
-                    // Redirect after delay
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html?subscription_success=true';
-                    }, 1500);
-                };
-            });
-            
-            // Click outside to close
-            modelModal.onclick = function(e) {
-                if (e.target === modelModal) {
-                    modelModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            };
-        }
     </script>
 </body>
 </html> 
