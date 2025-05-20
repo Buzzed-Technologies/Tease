@@ -551,20 +551,61 @@
         let selectedPackageId = null;
         
         function getModelNameFromUrl() {
+            // Check if we're in the invite URL pattern
             const path = window.location.pathname;
-            const match = path.match(/\/invite\/([a-zA-Z0-9_-]+)/);
-            return match && match[1] ? decodeURIComponent(match[1]) : null;
+            const invitePattern = /\/invite\/([^/]+)/;
+            const match = path.match(invitePattern);
+            
+            if (match && match[1]) {
+                try {
+                    // Handle URL encoded characters
+                    return decodeURIComponent(match[1]);
+                } catch (e) {
+                    return match[1];
+                }
+            }
+            
+            // Fallback to query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const modelParam = urlParams.get('model');
+            return modelParam;
         }
         
         async function fetchModelByName(modelName) {
             if (!modelName) return null;
-            const { data, error } = await supabase
-                .from('models')
-                .select('*')
-                .ilike('name', modelName)
-                .single();
-            if (error) return null;
-            return data;
+            
+            try {
+                // First try exact name match
+                let { data, error } = await supabase
+                    .from('models')
+                    .select('*')
+                    .eq('name', modelName)
+                    .single();
+                
+                if (!error && data) return data;
+                
+                // Then try case-insensitive match
+                ({ data, error } = await supabase
+                    .from('models')
+                    .select('*')
+                    .ilike('name', modelName)
+                    .single());
+                
+                if (!error && data) return data;
+                
+                // Finally try fuzzy matching with capitalization variations
+                const formattedName = modelName.charAt(0).toUpperCase() + modelName.slice(1).toLowerCase();
+                ({ data, error } = await supabase
+                    .from('models')
+                    .select('*')
+                    .ilike('name', `%${formattedName}%`)
+                    .single());
+                
+                return data || null;
+            } catch (error) {
+                console.error('Error fetching model by name:', error);
+                return null;
+            }
         }
         
         async function fetchPackagesForModel(modelId) {
@@ -648,16 +689,24 @@
             modelImage.innerHTML = '';
             
             let images = Array.isArray(model.pictures) ? model.pictures : [];
-            if (!images.length) {
+            let imageUrl = '/images/threadpay-social-default.jpg';
+            
+            if (images.length > 0) {
+                const firstImage = images[0];
+                // Handle different image path formats
+                if (firstImage.startsWith('http')) {
+                    imageUrl = firstImage;
+                } else if (firstImage.includes('storage/v1')) {
+                    imageUrl = firstImage;
+                } else {
+                    imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${firstImage}`;
+                }
+                modelImage.innerHTML = `<img src="${imageUrl}" alt="${model.name}">`;
+            } else {
                 // fallback: show a blank image
                 modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
-                return;
+                imageUrl = '/images/placeholder-model.jpg';
             }
-            
-            // Set primary image
-            const firstImage = images[0];
-            const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${firstImage}`;
-            modelImage.innerHTML = `<img src="${imageUrl}" alt="${model.name}">`;
             
             document.getElementById('model-id').value = model.id;
             
