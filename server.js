@@ -409,8 +409,104 @@ app.use(express.static('public', {
 }));
 
 // Handle invite links with model parameter
-app.get('/invite/:model', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'invite.html'));
+app.get('/invite/:model', async (req, res) => {
+  try {
+    const modelParam = req.params.model;
+    let modelData = null;
+    let imageUrl = '/images/threadpay-social-default.jpg';
+    
+    if (modelParam) {
+      // Try to find model in database
+      try {
+        // First try exact name match
+        let { data, error } = await supabase
+          .from('models')
+          .select('*')
+          .eq('name', modelParam)
+          .single();
+        
+        if (!data && error) {
+          // Then try case-insensitive match
+          ({ data, error } = await supabase
+            .from('models')
+            .select('*')
+            .ilike('name', modelParam)
+            .single());
+        }
+        
+        if (!data && error) {
+          // Finally try fuzzy matching with capitalization variations
+          const formattedName = modelParam.charAt(0).toUpperCase() + modelParam.slice(1).toLowerCase();
+          ({ data, error } = await supabase
+            .from('models')
+            .select('*')
+            .ilike('name', `%${formattedName}%`)
+            .single());
+        }
+        
+        if (data) {
+          modelData = data;
+          
+          // Determine the correct image URL
+          if (modelData.pictures && modelData.pictures.length > 0) {
+            const firstImage = modelData.pictures[0];
+            if (firstImage.startsWith('http')) {
+              imageUrl = firstImage;
+            } else if (firstImage.includes('storage/v1')) {
+              imageUrl = firstImage;
+            } else {
+              imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${firstImage}`;
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching model data for social cards:', err);
+      }
+    }
+    
+    // Read the invite.html file
+    fs.readFile(path.join(__dirname, 'public', 'invite.html'), 'utf8', (err, html) => {
+      if (err) {
+        console.error('Error reading invite.html:', err);
+        return res.sendFile(path.join(__dirname, 'public', 'invite.html'));
+      }
+      
+      // If we found model data, replace the meta tags
+      if (modelData) {
+        const pageTitle = `Join ${modelData.name} | ThreadPay`;
+        const description = modelData.bio || `Subscribe to ${modelData.name} on ThreadPay`;
+        const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+        
+        // Replace meta tags with actual values
+        html = html.replace('<meta property="og:title" content="Join ThreadPay | Secure Payment Platform">', 
+                         `<meta property="og:title" content="${pageTitle}">`);
+        html = html.replace('<meta property="og:description" content="Subscribe to access exclusive content">', 
+                         `<meta property="og:description" content="${description}">`);
+        html = html.replace('<meta property="og:image" content="/images/threadpay-social-default.jpg">', 
+                         `<meta property="og:image" content="${imageUrl}">`);
+        html = html.replace('<meta property="og:url" content="">', 
+                         `<meta property="og:url" content="${fullUrl}">`);
+                         
+        // Replace Twitter card meta tags
+        html = html.replace('<meta name="twitter:title" content="Join ThreadPay | Secure Payment Platform">', 
+                         `<meta name="twitter:title" content="${pageTitle}">`);
+        html = html.replace('<meta name="twitter:description" content="Subscribe to access exclusive content">', 
+                         `<meta name="twitter:description" content="${description}">`);
+        html = html.replace('<meta name="twitter:image" content="/images/threadpay-social-default.jpg">', 
+                         `<meta name="twitter:image" content="${imageUrl}">`);
+        
+        // Also replace the page title
+        html = html.replace('<title>Join ThreadPay | Secure Payment Platform</title>', 
+                         `<title>${pageTitle}</title>`);
+      }
+      
+      // Send the modified HTML
+      res.send(html);
+    });
+  } catch (error) {
+    console.error('Error processing invite page:', error);
+    res.sendFile(path.join(__dirname, 'public', 'invite.html'));
+  }
 });
 
 // Handle root route
