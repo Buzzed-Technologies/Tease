@@ -190,7 +190,7 @@
         }
         
         .section-header h2 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Inter', sans-serif;
             font-size: 2.5rem;
             color: var(--dark);
             margin-bottom: 0.8rem;
@@ -235,9 +235,9 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            padding: 2rem;
+            padding: 0;
             cursor: pointer;
         }
         
@@ -277,29 +277,36 @@
         }
         
         .model-image-container {
-            flex: 0 0 auto;
-            margin-right: 2rem;
+            width: 100%;
+            height: 250px;
             position: relative;
             z-index: 1;
-        }
-        
-        .model-image {
-            width: 110px;
-            height: 110px;
-            border-radius: 16px;
-            background-size: cover;
-            background-position: center;
-            background-color: rgba(211, 209, 218, 0.1);
-            box-shadow: 0 10px 20px rgba(90, 120, 255, 0.1);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
             overflow: hidden;
         }
         
+        .model-image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(211, 209, 218, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .model-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
         .model-card:hover .model-image {
-            box-shadow: 0 15px 25px rgba(90, 120, 255, 0.15);
-            transform: scale(1.05) rotate(3deg);
-            border-color: rgba(90, 120, 255, 0.3);
+            transform: scale(1.05);
         }
         
         .model-details {
@@ -308,35 +315,173 @@
             flex-direction: column;
             position: relative;
             z-index: 1;
+            padding: 1.5rem;
+            width: 100%;
+        }
+        
+        .model-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            z-index: 2;
+            color: white;
+            text-align: left;
         }
         
         .model-name {
             font-size: 1.5rem;
             margin-bottom: 0.6rem;
-            color: var(--dark);
+            color: white;
             line-height: 1.2;
             text-align: left;
             font-weight: 700;
             letter-spacing: -0.01em;
             transition: all 0.3s ease;
-        }
-        
-        .model-card:hover .model-name {
-            color: var(--accent);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .model-bio {
-            color: var(--dark);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.95rem;
             line-height: 1.6;
-            margin-bottom: 1.8rem;
+            margin-bottom: 0;
             max-height: 3.2em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            opacity: 0.85;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* Image Carousel for Model Cards */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Modal Model Container Styles - update to match invite.html */
+        .modal-model-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 0;
+            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .modal-model-image {
+            width: 100%;
+            height: 350px;
+            border-radius: 0;
+            background-size: cover;
+            background-position: center;
+            margin-right: 0;
+            margin-bottom: 0;
+            box-shadow: none;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .modal-model-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .modal-carousel-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .modal-carousel-slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .modal-carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        .modal-carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-model-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            z-index: 3;
+            color: white;
+            text-align: center;
+        }
+        
+        .modal-model-info {
+            padding: 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+        
+        .modal-model-name {
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 700;
+            line-height: 1.3;
+            position: relative;
+            letter-spacing: -0.01em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 0.8rem;
+        }
+        
+        .modal-model-bio {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         
         /* Buttons */
@@ -611,69 +756,6 @@
             max-height: 70vh;
         }
         
-        .modal-model-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            padding: 0.5rem 0 2rem;
-            border-bottom: 1px solid rgba(211, 209, 218, 0.15);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .modal-model-image {
-            width: 130px;
-            height: 130px;
-            border-radius: 18px;
-            background-size: cover;
-            background-position: center;
-            margin-right: 2rem;
-            box-shadow: 0 15px 25px rgba(90, 120, 255, 0.1);
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            flex-shrink: 0;
-            overflow: hidden;
-            position: relative;
-            transition: all 0.3s ease;
-            transform: rotate(-3deg);
-        }
-        
-        .modal-model-image:hover {
-            transform: rotate(0deg) scale(1.05);
-        }
-        
-        .modal-model-info {
-            flex: 1;
-        }
-        
-        .modal-model-name {
-            font-size: 1.8rem;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
-            color: var(--dark);
-            line-height: 1.3;
-            position: relative;
-            display: inline-block;
-            letter-spacing: -0.01em;
-        }
-        
-        .modal-model-name:after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent) 0%, rgba(90, 120, 255, 0.3) 100%);
-            border-radius: 3px;
-        }
-        
-        .modal-model-bio {
-            color: var(--dark);
-            line-height: 1.8;
-            font-size: 1rem;
-            opacity: 0.85;
-        }
-        
         .modal-section-title {
             font-size: 1.3rem;
             font-weight: 700;
@@ -899,9 +981,20 @@
                 padding: 1.5rem;
             }
             
-            .model-image {
-                width: 90px;
-                height: 90px;
+            .model-image-container {
+                height: 200px;
+            }
+            
+            .modal-model-image {
+                height: 300px;
+            }
+            
+            .model-info-overlay {
+                padding: 1rem;
+            }
+            
+            .modal-model-overlay {
+                padding: 1.5rem;
             }
             
             /* Make sure subscribe button text is visible on mobile */
@@ -974,21 +1067,18 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                padding: 1.5rem;
+                padding: 0;
             }
             
             .model-image-container {
+                height: 180px;
                 margin-right: 0;
-                margin-bottom: 1.5rem;
+                margin-bottom: 0;
+                width: 100%;
             }
             
-            .model-image {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .model-name {
-                text-align: center;
+            .model-info-overlay {
+                padding: 0.75rem;
             }
             
             .model-details {
@@ -999,33 +1089,15 @@
             .model-details .btn {
                 width: 100%;
                 justify-content: center;
-                margin-top: 1rem;
-            }
-            
-            /* Make subscribe button text visible */
-            .model-details .btn .btn-text,
-            .subscribe-package-btn .btn-text {
-                display: inline-block !important;
-            }
-            
-            /* Make package buttons full width on mobile */
-            .subscribe-package-btn {
-                width: 100%;
-            }
-
-            .modal-model-container {
-                flex-direction: column;
-                text-align: center;
+                margin-top: 0.5rem;
             }
             
             .modal-model-image {
-                margin-right: 0;
-                margin-bottom: 1.5rem;
+                height: 250px;
             }
             
-            .modal-model-name:after {
-                left: 50%;
-                transform: translateX(-50%);
+            .modal-model-overlay {
+                padding: 1rem;
             }
             
             .empty-state {
@@ -1444,41 +1516,64 @@
                     modelCard.appendChild(badge);
                 }
                 
-                // Add container for the image
-                const modelImageContainer = document.createElement('div');
-                modelImageContainer.className = 'model-image-container';
-                
-                const modelImage = document.createElement('div');
-                modelImage.className = 'model-image';
+                // Create image content
+                let imageHTML = '';
                 
                 // Build the correct image path using Supabase bucket
-                let imagePath;
+                let imagePaths = [];
                 if (model.pictures) {
                     // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                     if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                        imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                        imagePaths = model.pictures.map(pic => 
+                            `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${pic.replace('.jpg', '.PNG')}`
+                        );
                     } else if (model.pictures.main) {
-                        imagePath = model.pictures.main;
+                        imagePaths = [model.pictures.main];
                     } else {
-                        imagePath = '/images/placeholder-model.png';
+                        imagePaths = ['/images/placeholder-model.png'];
                     }
                 } else {
-                    imagePath = '/images/placeholder-model.png';
+                    imagePaths = ['/images/placeholder-model.png'];
                 }
                 
-                modelImage.style.backgroundImage = `url(${imagePath})`;
-                modelImageContainer.appendChild(modelImage);
+                // Create image container with carousel if multiple images
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'model-image-container';
                 
+                if (imagePaths.length > 1) {
+                    // Create carousel
+                    const carouselHTML = `
+                        <div class="carousel-container" data-model-id="${model.id}">
+                            ${imagePaths.map((src, index) => `
+                                <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+                                    <img src="${src}" alt="${model.name}" loading="${index === 0 ? 'eager' : 'lazy'}">
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    imageContainer.innerHTML = carouselHTML;
+                } else {
+                    // Single image
+                    imageContainer.innerHTML = `<div class="model-image" style="background-image: url(${imagePaths[0]})"></div>`;
+                }
+                
+                // Create info overlay
+                const infoOverlay = document.createElement('div');
+                infoOverlay.className = 'model-info-overlay';
+                infoOverlay.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                `;
+                
+                imageContainer.appendChild(infoOverlay);
+                modelCard.appendChild(imageContainer);
+                
+                // Create details section with button
                 const modelDetails = document.createElement('div');
                 modelDetails.className = 'model-details';
                 
                 const btnClass = isSubscribed ? 'btn btn-secondary' : 'btn';
                 const btnText = isSubscribed ? '<i class="fas fa-eye"></i><span class="btn-text">View Details</span>' : '<i class="fas fa-star"></i><span class="btn-text">Subscribe</span>';
-                
-                modelDetails.innerHTML = `
-                    <h3 class="model-name">${model.name}</h3>
-                    <p class="model-bio">${model.bio || 'Creator on ThreadPay'}</p>
-                `;
                 
                 // Create the button separately for better event handling
                 const actionButton = document.createElement('button');
@@ -1487,7 +1582,6 @@
                 actionButton.innerHTML = btnText;
                 modelDetails.appendChild(actionButton);
                 
-                modelCard.appendChild(modelImageContainer);
                 modelCard.appendChild(modelDetails);
                 modelGrid.appendChild(modelCard);
                 
@@ -1519,39 +1613,180 @@
                         openSubscriptionModal(model);
                     }
                 });
+                
+                // Initialize carousel for this card if it has multiple images
+                if (imagePaths.length > 1) {
+                    initializeCardCarousel(model.id);
+                }
+            });
+        }
+        
+        // Initialize carousel for model cards
+        function initializeCardCarousel(modelId) {
+            const container = document.querySelector(`.carousel-container[data-model-id="${modelId}"]`);
+            if (!container) return;
+            
+            const slides = container.querySelectorAll('.carousel-slide');
+            if (slides.length <= 1) return;
+            
+            let currentIndex = 0;
+            let autoplayInterval;
+            let isTransitioning = false;
+            
+            // Start autoplay
+            startAutoplay();
+            
+            // Navigate to slide
+            function goToSlide(index) {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                // Wrap around if index is out of bounds
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                // Update current index
+                currentIndex = index;
+                
+                // Update slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[currentIndex].classList.add('active');
+                
+                // Reset autoplay
+                resetAutoplay();
+                
+                // Allow next transition after animation completes
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+            }
+            
+            // Autoplay
+            function startAutoplay() {
+                autoplayInterval = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, 3500);
+            }
+            
+            function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+            
+            // Touch events for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+            
+            container.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+                
+                // Pause autoplay on touch
+                clearInterval(autoplayInterval);
+            }, {passive: true});
+            
+            container.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+                
+                // Resume autoplay
+                startAutoplay();
+            }, {passive: true});
+            
+            function handleSwipe() {
+                // Minimum swipe distance
+                const swipeThreshold = 30;
+                
+                // Calculate horizontal and vertical distance
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Only handle horizontal swipes (to avoid interfering with page scrolling)
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                    // Removed the invalid e.stopPropagation() call
+                    if (deltaX < 0) {
+                        // Swipe left, go to next slide
+                        goToSlide(currentIndex + 1);
+                    } else {
+                        // Swipe right, go to previous slide
+                        goToSlide(currentIndex - 1);
+                    }
+                }
+            }
+            
+            // Pause autoplay when page is not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    clearInterval(autoplayInterval);
+                } else {
+                    startAutoplay();
+                }
             });
         }
         
         // Open the subscription modal for a model
         function openSubscriptionModal(model) {
-            // Build the correct image path using Supabase bucket
-            let imagePath;
+            // Build image content
+            let imageHTML = '';
+            let imagePaths = [];
+            
             if (model.pictures) {
                 // Handle both object format (model.pictures.main) and array format (model.pictures[0])
                 if (Array.isArray(model.pictures) && model.pictures.length > 0) {
-                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                    imagePaths = model.pictures.map(pic => 
+                        `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${pic.replace('.jpg', '.PNG')}`
+                    );
                 } else if (model.pictures.main) {
-                    imagePath = model.pictures.main;
+                    imagePaths = [model.pictures.main];
                 } else {
-                    imagePath = '/images/placeholder-model.png';
+                    imagePaths = ['/images/placeholder-model.png'];
                 }
             } else {
-                imagePath = '/images/placeholder-model.png';
+                imagePaths = ['/images/placeholder-model.png'];
+            }
+            
+            // Create model info with carousel if multiple images
+            let modelImageHTML = '';
+            if (imagePaths.length > 1) {
+                modelImageHTML = `
+                    <div class="modal-model-image">
+                        <div class="modal-carousel-container" id="modal-carousel-container">
+                            ${imagePaths.map((src, index) => `
+                                <div class="modal-carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+                                    <img src="${src}" alt="${model.name}" loading="${index === 0 ? 'eager' : 'lazy'}">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="modal-model-overlay">
+                            <h3 class="modal-model-name">${model.name}</h3>
+                            <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                modelImageHTML = `
+                    <div class="modal-model-image" style="background-image: url(${imagePaths[0]})">
+                        <div class="modal-model-overlay">
+                            <h3 class="modal-model-name">${model.name}</h3>
+                            <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                        </div>
+                    </div>
+                `;
             }
 
             // Set modal content
             modalBody.innerHTML = `
                 <div class="modal-model-container">
-                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                    ${modelImageHTML}
                     <div class="modal-model-info">
-                        <h3 class="modal-model-name">${model.name}</h3>
-                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                        <h3 class="modal-section-title">Select a Subscription Package</h3>
+                        <div id="package-list" class="package-list">
+                            <div class="loading-spinner"></div>
+                        </div>
                     </div>
-                </div>
-                
-                <h3 class="modal-section-title">Select a Subscription Package</h3>
-                <div id="package-list" class="package-list">
-                    <div class="loading-spinner"></div>
                 </div>
             `;
             
@@ -1559,8 +1794,118 @@
             modelModal.classList.add('active');
             document.body.classList.add('modal-open');
             
+            // Initialize modal carousel if needed
+            if (imagePaths.length > 1) {
+                initializeModalCarousel();
+            }
+            
             // Load packages for this model
             loadPackages(model.id);
+        }
+        
+        // Initialize carousel for modal
+        function initializeModalCarousel() {
+            const container = document.getElementById('modal-carousel-container');
+            if (!container) return;
+            
+            const slides = container.querySelectorAll('.modal-carousel-slide');
+            if (slides.length <= 1) return;
+            
+            let currentIndex = 0;
+            let autoplayInterval;
+            let isTransitioning = false;
+            
+            // Start autoplay
+            startAutoplay();
+            
+            // Navigate to slide
+            function goToSlide(index) {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                // Wrap around if index is out of bounds
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                // Update current index
+                currentIndex = index;
+                
+                // Update slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[currentIndex].classList.add('active');
+                
+                // Reset autoplay
+                resetAutoplay();
+                
+                // Allow next transition after animation completes
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+            }
+            
+            // Autoplay
+            function startAutoplay() {
+                autoplayInterval = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, 4000);
+            }
+            
+            function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+            
+            // Touch events for modal
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+            
+            container.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+                
+                // Pause autoplay on touch
+                clearInterval(autoplayInterval);
+            }, {passive: true});
+            
+            container.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+                
+                // Resume autoplay
+                startAutoplay();
+            }, {passive: true});
+            
+            function handleSwipe() {
+                // Minimum swipe distance
+                const swipeThreshold = 30;
+                
+                // Calculate horizontal and vertical distance
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Only handle horizontal swipes (to avoid interfering with page scrolling)
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                    if (deltaX < 0) {
+                        // Swipe left, go to next slide
+                        goToSlide(currentIndex + 1);
+                    } else {
+                        // Swipe right, go to previous slide
+                        goToSlide(currentIndex - 1);
+                    }
+                }
+            }
+            
+            // Pause autoplay when page is not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    clearInterval(autoplayInterval);
+                } else {
+                    startAutoplay();
+                }
+            });
         }
         
         // Load packages for a model
