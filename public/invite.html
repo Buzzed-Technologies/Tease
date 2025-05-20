@@ -134,7 +134,7 @@
         }
         
         .creator-content {
-            padding: 0 2.5rem 2.5rem;
+            padding: 1rem 2.5rem 2.5rem;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -165,8 +165,12 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 150px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            height: 170px;
+            background: linear-gradient(to bottom, 
+                                       rgba(0,0,0,0) 0%, 
+                                       rgba(0,0,0,0.7) 60%,
+                                       rgba(255,255,255,0.3) 95%,
+                                       rgba(255,255,255,1) 100%);
             pointer-events: none;
         }
         
@@ -453,43 +457,24 @@
             object-fit: cover;
         }
         
-        .carousel-nav {
-            position: absolute;
-            bottom: 150px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 3;
-            padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-        }
-        
         .image-carousel::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 150px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            height: 170px;
+            background: linear-gradient(to bottom, 
+                                       rgba(0,0,0,0) 0%, 
+                                       rgba(0,0,0,0.7) 60%,
+                                       rgba(255,255,255,0.3) 95%,
+                                       rgba(255,255,255,1) 100%);
             pointer-events: none;
             z-index: 2;
         }
         
         .carousel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .carousel-dot.active {
-            background-color: white;
-            transform: scale(1.2);
+            display: none;
         }
 
         @media (max-width: 768px) {
@@ -498,7 +483,7 @@
             }
             
             .creator-content {
-                padding: 0 2rem 2rem;
+                padding: 1rem 2rem 2rem;
             }
             
             .signup-header h1 {
@@ -525,7 +510,7 @@
         
         @media (max-width: 480px) {
             .creator-content {
-                padding: 0 1.5rem 1.5rem;
+                padding: 0.75rem 1.5rem 1.5rem;
             }
             
             .signup-header h1 {
@@ -865,9 +850,6 @@
                                 </div>`;
                             }).join('')}
                         </div>
-                        <div class="carousel-nav" id="carousel-nav">
-                            ${images.map((_, index) => `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`).join('')}
-                        </div>
                     </div>
                 `;
                 // Insert carousel before overlay
@@ -918,7 +900,6 @@
         
         function initCarousel() {
             const container = document.getElementById('carousel-container');
-            const dots = document.querySelectorAll('.carousel-dot');
             const slides = document.querySelectorAll('.carousel-slide');
             
             if (!container || !slides.length) return;
@@ -946,10 +927,6 @@
                 slides.forEach(slide => slide.classList.remove('active'));
                 slides[currentIndex].classList.add('active');
                 
-                // Update dots
-                dots.forEach(dot => dot.classList.remove('active'));
-                dots[currentIndex].classList.add('active');
-                
                 // Reset autoplay
                 resetAutoplay();
                 
@@ -958,14 +935,6 @@
                     isTransitioning = false;
                 }, 500);
             }
-            
-            // Dot navigation
-            dots.forEach(dot => {
-                dot.addEventListener('click', () => {
-                    const index = parseInt(dot.getAttribute('data-index'));
-                    goToSlide(index);
-                });
-            });
             
             // Autoplay
             function startAutoplay() {
