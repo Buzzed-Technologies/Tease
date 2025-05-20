@@ -503,9 +503,6 @@
             border-radius: 24px;
             width: 95%;
             max-width: 650px;
-            max-height: none;
-            max-height: none !important;
-            overflow-y: visible !important;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             transform: translateY(40px) scale(0.95);
             opacity: 0;
@@ -555,13 +552,14 @@
             align-items: center;
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             z-index: 2;
         }
         
         .modal-title {
+            font-family: var(--font-display, 'Playfair Display', serif);
             font-weight: 700;
             font-size: 1.375rem;
             color: var(--darker);
@@ -609,6 +607,8 @@
             padding: 1.75rem;
             position: relative;
             z-index: 1;
+            overflow-y: auto;
+            max-height: 70vh;
         }
         
         .modal-model-container {
@@ -904,6 +904,17 @@
                 height: 90px;
             }
             
+            /* Make sure subscribe button text is visible on mobile */
+            .model-details .btn .btn-text {
+                display: inline-block !important;
+            }
+            
+            /* Only hide text in header controls */
+            .header-controls .btn-secondary .btn-text,
+            .header-controls .logout-button .btn-text {
+                display: none;
+            }
+            
             .btn {
                 padding: 0.75rem 1rem;
             }
@@ -929,11 +940,6 @@
                 justify-content: center;
             }
             
-            .header-controls .btn-secondary .btn-text,
-            .header-controls .logout-button .btn-text {
-                display: none;
-            }
-            
             .header-controls .btn-secondary i,
             .header-controls .logout-button i {
                 margin-right: 0;
@@ -956,6 +962,11 @@
                 pointer-events: none;
                 z-index: 100;
             }
+
+            /* Ensure subscribe buttons are visible in packages */
+            .subscribe-package-btn .btn-text {
+                display: inline-block !important;
+            }
         }
         
         @media (max-width: 480px) {
@@ -963,7 +974,7 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                padding: 2rem 1.25rem;
+                padding: 1.5rem;
             }
             
             .model-image-container {
@@ -984,6 +995,24 @@
                 align-items: center;
             }
             
+            /* Make sure buttons are properly sized */
+            .model-details .btn {
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            /* Make subscribe button text visible */
+            .model-details .btn .btn-text,
+            .subscribe-package-btn .btn-text {
+                display: inline-block !important;
+            }
+            
+            /* Make package buttons full width on mobile */
+            .subscribe-package-btn {
+                width: 100%;
+            }
+
             .modal-model-container {
                 flex-direction: column;
                 text-align: center;
