@@ -119,7 +119,7 @@
         .creator-info {
             background-color: var(--primary);
             border-radius: var(--radius);
-            padding: 2.5rem;
+            padding: 0;
             width: 100%;
             max-width: 550px;
             box-shadow: var(--shadow);
@@ -130,20 +130,24 @@
             flex-direction: column;
             align-items: center;
             min-height: 300px;
+            overflow: hidden;
         }
         
-        .creator-info:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-5px);
+        .creator-content {
+            padding: 0 2.5rem 2.5rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
+        
         .creator-image {
-            width: 180px;
-            height: 180px;
-            border-radius: 8px;
+            width: 100%;
+            height: 250px;
+            border-radius: 0;
             object-fit: cover;
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
+            box-shadow: none;
+            margin-bottom: 0;
             background-color: var(--accent-light);
             position: relative;
             overflow: hidden;
@@ -154,12 +158,24 @@
             height: 100%;
             object-fit: cover;
         }
-
+        
+        .creator-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+            pointer-events: none;
+        }
+        
         .creator-name {
             font-family: var(--font-display);
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--darker);
+            margin-top: 1.25rem;
             margin-bottom: 0.75rem;
             letter-spacing: -0.03em;
             text-align: center;
@@ -396,15 +412,14 @@
             text-decoration: underline;
         }
         
-        /* Image carousel styles */
         .image-carousel {
-            width: 180px;
-            height: 180px;
+            width: 100%;
+            height: 250px;
             position: relative;
-            border-radius: 8px;
+            border-radius: 0;
             overflow: hidden;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
+            margin-bottom: 0;
+            box-shadow: none;
             background-color: var(--accent-light);
         }
         
@@ -437,15 +452,27 @@
         
         .carousel-nav {
             position: absolute;
-            bottom: 10px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 8px;
-            z-index: 2;
+            z-index: 3;
             padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.3);
             border-radius: 12px;
+        }
+        
+        .image-carousel::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+            pointer-events: none;
+            z-index: 2;
         }
         
         .carousel-dot {
@@ -461,41 +488,14 @@
             background-color: white;
             transform: scale(1.2);
         }
-        
-        .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            z-index: 2;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
-        }
-        
-        .carousel-arrow:hover {
-            background-color: rgba(0, 0, 0, 0.6);
-        }
-        
-        .carousel-prev {
-            left: 10px;
-        }
-        
-        .carousel-next {
-            right: 10px;
-        }
 
-        /* Responsive styles */
         @media (max-width: 768px) {
             .signup-card, .creator-info {
-                padding: 2rem;
+                padding: 0;
+            }
+            
+            .creator-content {
+                padding: 0 2rem 2rem;
             }
             
             .signup-header h1 {
@@ -503,24 +503,17 @@
             }
             
             .creator-image, .image-carousel {
-                width: 140px;
-                height: 140px;
+                height: 200px;
             }
             
             .creator-name {
                 font-size: 1.5rem;
             }
-            
-            .carousel-arrow {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8rem;
-            }
         }
         
         @media (max-width: 480px) {
-            .signup-card, .creator-info {
-                padding: 1.5rem;
+            .creator-content {
+                padding: 0 1.5rem 1.5rem;
             }
             
             .signup-header h1 {
@@ -532,18 +525,12 @@
             }
             
             .creator-image, .image-carousel {
-                width: 120px;
-                height: 120px;
+                height: 180px;
             }
             
             .carousel-dot {
                 width: 6px;
                 height: 6px;
-            }
-            
-            .carousel-arrow {
-                width: 24px;
-                height: 24px;
             }
         }
 
@@ -551,7 +538,6 @@
             text-decoration: underline;
         }
 
-        /* Add animation styles */
         .section-transition {
             opacity: 1;
             transform: translateY(0);
@@ -608,84 +594,86 @@
         <div class="invite-content">
             <div class="invite-layout">
                 <div class="creator-info">
-                    <div class="creator-image" id="model-image">
+                    <div id="model-image" class="creator-image">
                         <!-- Model image will be inserted here -->
                     </div>
-                    <h2 class="creator-name" id="model-name">Loading...</h2>
-                    <p class="creator-bio" id="model-bio">Loading model information...</p>
-                    
-                    <div id="packages-section" class="section-transition">
-                        <h3 id="section-title" class="section-title">Select Your Package</h3>
-                        <div class="package-cards" id="packages-list"></div>
-                        <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
-                            <span>Continue</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                        <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
-                    </div>
-                    
-                    <div id="signup-section" class="section-transition hidden">
-                        <h3 class="section-title">Sign Up to Subscribe</h3>
-                        <p class="signup-description" style="text-align: center; margin-bottom: 2rem;">Create your account to unlock exclusive content and chat with your creator.</p>
+                    <div class="creator-content">
+                        <h2 class="creator-name" id="model-name">Loading...</h2>
+                        <p class="creator-bio" id="model-bio">Loading model information...</p>
                         
-                        <form id="signup-form" autocomplete="off">
-                            <input type="hidden" id="model-id" name="model-id" value="">
-                            <input type="hidden" id="package-id" name="package-id" value="">
-                            
-                            <div class="form-group">
-                                <label for="name" class="form-label">Your Name</label>
-                                <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="dob" class="form-label">Date of Birth</label>
-                                <input type="date" id="dob" name="dob" class="form-input" required>
-                                <p class="form-description">You must be 18 or older to use ThreadPay.</p>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="telegram" class="form-label">Telegram Number</label>
-                                <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Include country code" required>
-                                <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" name="email" class="form-input" placeholder="Your email address" required>
-                                <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" class="form-input" placeholder="Choose a secure password" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="confirm-password" class="form-label">Confirm Password</label>
-                                <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
-                            </div>
-                            
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-user-plus"></i>
-                                <span>Create Account & Subscribe</span>
+                        <div id="packages-section" class="section-transition">
+                            <h3 id="section-title" class="section-title">Select Your Package</h3>
+                            <div class="package-cards" id="packages-list"></div>
+                            <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
+                                <span>Continue</span>
+                                <i class="fas fa-arrow-right"></i>
                             </button>
-                            
-                            <div id="signup-message" class="signup-message"></div>
-                            
-                            <div class="terms-privacy" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--gray);">
-                                By creating an account, you agree to our
-                                <a href="/terms-of-service.html" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
-                                and
-                                <a href="/privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
-                            </div>
-                            
-                            <button type="button" id="back-to-packages" class="back-btn" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background: transparent; border: 1px solid var(--light-gray); color: var(--gray); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                                <i class="fas fa-arrow-left"></i>
-                                <span>Back to Packages</span>
-                            </button>
-                        </form>
+                            <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
+                        </div>
                         
-                        <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+                        <div id="signup-section" class="section-transition hidden">
+                            <h3 class="section-title">Sign Up to Subscribe</h3>
+                            <p class="signup-description" style="text-align: center; margin-bottom: 2rem;">Create your account to unlock exclusive content and chat with your creator.</p>
+                            
+                            <form id="signup-form" autocomplete="off">
+                                <input type="hidden" id="model-id" name="model-id" value="">
+                                <input type="hidden" id="package-id" name="package-id" value="">
+                                
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Your Name</label>
+                                    <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="dob" class="form-label">Date of Birth</label>
+                                    <input type="date" id="dob" name="dob" class="form-input" required>
+                                    <p class="form-description">You must be 18 or older to use ThreadPay.</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="telegram" class="form-label">Telegram Number</label>
+                                    <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Include country code" required>
+                                    <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" id="email" name="email" class="form-input" placeholder="Your email address" required>
+                                    <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" id="password" name="password" class="form-input" placeholder="Choose a secure password" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                                    <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                                </div>
+                                
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Create Account & Subscribe</span>
+                                </button>
+                                
+                                <div id="signup-message" class="signup-message"></div>
+                                
+                                <div class="terms-privacy" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--gray);">
+                                    By creating an account, you agree to our
+                                    <a href="/terms-of-service.html" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
+                                    and
+                                    <a href="/privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
+                                </div>
+                                
+                                <button type="button" id="back-to-packages" class="back-btn" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background: transparent; border: 1px solid var(--light-gray); color: var(--gray); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Back to Packages</span>
+                                </button>
+                            </form>
+                            
+                            <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -802,7 +790,7 @@
             let images = Array.isArray(model.pictures) ? model.pictures : [];
             if (!images.length) {
                 // fallback: show a blank image
-                modelImageContainer.innerHTML = `<div class="creator-image"><img src="/images/placeholder-model.jpg" alt="Profile placeholder"></div>`;
+                modelImageContainer.innerHTML = `<img src="/images/placeholder-model.jpg" alt="Profile placeholder" style="width: 100%; height: 100%; object-fit: cover;">`;
                 return;
             }
             
@@ -832,12 +820,6 @@
                         <div class="carousel-nav" id="carousel-nav">
                             ${images.map((_, index) => `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`).join('')}
                         </div>
-                        <div class="carousel-arrow carousel-prev" id="carousel-prev">
-                            <i class="fas fa-chevron-left"></i>
-                        </div>
-                        <div class="carousel-arrow carousel-next" id="carousel-next">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
                     </div>
                 `;
                 modelImageContainer.innerHTML = carouselHTML;
@@ -847,11 +829,7 @@
             } else {
                 // Set primary image for single image
                 const imageUrl = getImageUrl(images[0]);
-                modelImageContainer.innerHTML = `
-                    <div class="creator-image">
-                        <img src="${imageUrl}" alt="${model.name}" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                `;
+                modelImageContainer.innerHTML = `<img src="${imageUrl}" alt="${model.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
             }
             
             document.getElementById('model-id').value = model.id;
@@ -881,13 +859,10 @@
             document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
         }
         
-        // Add carousel navigation function
         function initCarousel() {
             const container = document.getElementById('carousel-container');
             const dots = document.querySelectorAll('.carousel-dot');
             const slides = document.querySelectorAll('.carousel-slide');
-            const prevBtn = document.getElementById('carousel-prev');
-            const nextBtn = document.getElementById('carousel-next');
             
             if (!container || !slides.length) return;
             
@@ -934,23 +909,6 @@
                     goToSlide(index);
                 });
             });
-            
-            // Arrow navigation
-            if (prevBtn) {
-                prevBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    goToSlide(currentIndex - 1);
-                });
-            }
-            
-            if (nextBtn) {
-                nextBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    goToSlide(currentIndex + 1);
-                });
-            }
             
             // Autoplay
             function startAutoplay() {
