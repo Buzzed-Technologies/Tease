@@ -945,6 +945,23 @@
                 font-size: 1.3rem;
             }
         }
+        
+        /* Update button styles to ensure they're clickable */
+        .btn, 
+        .btn-secondary, 
+        .logout-button, 
+        .header-controls a, 
+        .header-controls button {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Ensuring model cards are clickable */
+        .model-card {
+            cursor: pointer !important;
+        }
     </style>
 </head>
 <body>
@@ -1552,6 +1569,185 @@
                 });
             }
         });
+        
+        // Force buttons to work after page loads
+        window.onload = function() {
+            console.log("Fixing buttons...");
+            
+            // Fix dashboard button
+            const dashboardBtn = document.querySelector('.header-controls a[href="/dashboard.html"]');
+            if (dashboardBtn) {
+                dashboardBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log("Dashboard button clicked");
+                    window.location.href = '/dashboard.html';
+                    return false;
+                };
+                console.log("Dashboard button fixed");
+            }
+            
+            // Fix logout button
+            const logoutBtn = document.getElementById('logout-button');
+            if (logoutBtn) {
+                logoutBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log("Logout button clicked");
+                    localStorage.removeItem('threadpay_user');
+                    window.location.href = '/';
+                    return false;
+                };
+                console.log("Logout button fixed");
+            }
+            
+            // Fix subscribe buttons on all model cards
+            setTimeout(function() {
+                const modelCards = document.querySelectorAll('.model-card');
+                console.log(`Found ${modelCards.length} model cards to fix`);
+                
+                modelCards.forEach(function(card) {
+                    const subscribeBtn = card.querySelector('.btn');
+                    const modelId = card.dataset.modelId;
+                    
+                    if (subscribeBtn) {
+                        // Replace with direct click handler
+                        subscribeBtn.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log(`Subscribe button clicked for model ${modelId}`);
+                            
+                            // Find the model data
+                            const model = window.modelsData.find(m => m.id === modelId);
+                            
+                            if (subscribeBtn.classList.contains('btn-secondary')) {
+                                // Already subscribed - go to dashboard
+                                window.location.href = '/dashboard.html';
+                            } else if (model) {
+                                // Show subscription modal
+                                openModalDirectly(model);
+                            }
+                            return false;
+                        };
+                    }
+                    
+                    // Make the entire card clickable
+                    card.onclick = function(e) {
+                        if (!e.target.closest('.btn')) {
+                            e.preventDefault();
+                            const model = window.modelsData.find(m => m.id === modelId);
+                            
+                            if (subscribeBtn && subscribeBtn.classList.contains('btn-secondary')) {
+                                // Already subscribed - go to dashboard
+                                window.location.href = '/dashboard.html';
+                            } else if (model) {
+                                // Show subscription modal
+                                openModalDirectly(model);
+                            }
+                        }
+                    };
+                });
+                
+                console.log("Subscribe buttons fixed");
+            }, 500); // Small delay to ensure all model cards are rendered
+        };
+        
+        // Direct function to open modal without any dependencies
+        function openModalDirectly(model) {
+            console.log("Opening modal for model", model);
+            const modelModal = document.getElementById('model-modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            if (!modelModal || !modalBody) {
+                console.error("Modal elements not found");
+                return;
+            }
+            
+            // Build the image path
+            let imagePath = '/images/placeholder-model.png';
+            if (model.pictures) {
+                if (Array.isArray(model.pictures) && model.pictures.length > 0) {
+                    imagePath = `https://kigcecwfxlonrdxjwsza.supabase.co/storage/v1/object/public/model-images/${model.pictures[0].replace('.jpg', '.PNG')}`;
+                } else if (model.pictures.main) {
+                    imagePath = model.pictures.main;
+                }
+            }
+            
+            // Set content
+            modalBody.innerHTML = `
+                <div class="modal-model-container">
+                    <div class="modal-model-image" style="background-image: url(${imagePath})"></div>
+                    <div class="modal-model-info">
+                        <h3 class="modal-model-name">${model.name}</h3>
+                        <p class="modal-model-bio">${model.bio || 'Creator on ThreadPay'}</p>
+                    </div>
+                </div>
+                
+                <h3 class="modal-section-title">Select a Subscription Package</h3>
+                <div id="package-list" class="package-list">
+                    <p>Loading packages...</p>
+                    <div class="package-item">
+                        <div class="package-name">Basic Subscription</div>
+                        <div class="package-price">$9.99<span>/month</span></div>
+                        <div class="package-description">Access to exclusive content and features.</div>
+                        <button class="btn btn-full demo-sub-btn">
+                            <i class="fas fa-credit-card"></i> Subscribe Now
+                        </button>
+                    </div>
+                    <div class="package-item">
+                        <div class="package-name">Premium Subscription</div>
+                        <div class="package-price">$19.99<span>/month</span></div>
+                        <div class="package-description">Premium access with additional benefits.</div>
+                        <button class="btn btn-full demo-sub-btn">
+                            <i class="fas fa-credit-card"></i> Subscribe Now
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            modelModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Set up close button
+            const modalClose = document.getElementById('modal-close');
+            if (modalClose) {
+                modalClose.onclick = function() {
+                    modelModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                };
+            }
+            
+            // Set up demo subscription buttons
+            const demoSubBtns = document.querySelectorAll('.demo-sub-btn');
+            demoSubBtns.forEach(btn => {
+                btn.onclick = function() {
+                    // Mock subscription process
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    btn.disabled = true;
+                    
+                    // Show success notification
+                    const notification = document.getElementById('notification');
+                    const notificationMessage = document.getElementById('notification-message');
+                    
+                    if (notification && notificationMessage) {
+                        notificationMessage.textContent = 'Subscription successful! Redirecting to dashboard...';
+                        notification.className = 'notification success active';
+                    }
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html?subscription_success=true';
+                    }, 1500);
+                };
+            });
+            
+            // Click outside to close
+            modelModal.onclick = function(e) {
+                if (e.target === modelModal) {
+                    modelModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            };
+        }
     </script>
 </body>
 </html> 
