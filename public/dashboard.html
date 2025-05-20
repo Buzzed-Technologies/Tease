@@ -1482,6 +1482,37 @@
             margin: 0 auto !important;
             display: block;
         }
+        
+        /* Force centering with grid layout */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            width: 100%;
+        }
+        
+        #tab-settings {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: none;
+            padding: 1.5rem !important;
+        }
+        
+        #tab-settings.active {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 650px) minmax(0, 1fr) !important;
+            width: 100% !important;
+        }
+        
+        #tab-settings .settings-container {
+            grid-column: 2 !important;
+            width: 100% !important;
+        }
+        
+        .settings-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -1545,10 +1576,10 @@
                     </div>
                 </div>
                 
-                <!-- Settings Tab - completely separate from dashboard-inner -->
+                <!-- Settings Tab - grid layout -->
                 <div class="tab-section" id="tab-settings" style="display: none;">
                     <div class="settings-container">
-                        <div class="settings-card" style="width: 100%; margin: 0 auto !important;">
+                        <div class="settings-card">
                             <h2 style="text-align: left; width: 100%;">Account Settings</h2>
                             <form class="settings-form" id="settings-form">
                                 <div class="form-group">
