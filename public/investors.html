@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreadPay | Investment Opportunity in AI Relationship Platforms</title>
+    
+    <!-- Supabase API Key -->
+    <meta name="supabase-anon-key" content="%NEXT_PUBLIC_SUPABASE_ANON_KEY%">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <!-- Social Media Cards -->
+    <meta property="og:title" content="ThreadPay | Investment Opportunity in AI Relationship Platforms">
+    <meta property="og:description" content="Investing in the future of AI relationship technology with market-leading monetization.">
+    <meta property="og:image" content="/public/images/Group69.png">
+    <meta property="og:url" content="https://threadpay.vercel.app/investors">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ThreadPay | Investment Opportunity in AI Relationship Platforms">
+    <meta name="twitter:description" content="Investing in the future of AI relationship technology with market-leading monetization.">
+    <meta name="twitter:image" content="/public/images/Group69.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom styles for investors page -->
+    <style>
+        /* Custom Investor Page Styles */
+        body {
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            background-color: var(--primary-dark);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        /* Decorative elements */
+        .app-container:before {
+            content: "";
+            position: absolute;
+            top: -150px;
+            right: -150px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(90, 120, 255, 0.08) 0%, rgba(90, 120, 255, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .app-container:after {
+            content: "";
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(90, 120, 255, 0.06) 0%, rgba(90, 120, 255, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            background: var(--primary);
+            z-index: 1;
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .hero-background .bg-gradient {
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--accent-light) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite alternate;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 30px) scale(1.05); }
+            100% { transform: translate(10px, -20px) scale(0.95); }
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            padding-top: 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 2.5rem;
+            letter-spacing: -0.03em;
+            transition: var(--transition);
+            background: linear-gradient(135deg, var(--darker) 0%, #4A67E3 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+            text-align: left;
+            background: linear-gradient(45deg, var(--darker), var(--accent), #9370DB, var(--accent), var(--darker));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 7s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            line-height: 1.5;
+            color: var(--gray);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            text-align: left;
+        }
+        
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 16px rgba(90, 120, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .hero-cta:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4A67E3 0%, var(--accent) 100%);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .hero-cta:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(90, 120, 255, 0.25);
+        }
+        
+        .hero-cta:hover:before {
+            opacity: 1;
+        }
+        
+        .hero-cta i {
+            margin-left: 0.75rem;
+        }
+        
+        .scroll-indicator {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .scroll-indicator:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .scroll-indicator i {
+            font-size: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        /* Market Data Section Styles */
+        .market-section {
+            padding: 4rem 1.5rem;
+            background-color: var(--primary-dark);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .market-section:before {
+            content: "";
+            position: absolute;
+            top: -80px;
+            right: -100px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(90, 120, 255, 0.08) 0%, rgba(90, 120, 255, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .market-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-heading {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--darker);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, rgba(90, 120, 255, 0.3) 100%);
+            border-radius: 4px;
+        }
+        
+        .section-title .highlight {
+            color: var(--accent);
+            position: relative;
+        }
+        
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 1.5rem auto 0;
+            line-height: 1.6;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            padding: 1.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .metric-card:before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(90, 120, 255, 0.08) 0%, rgba(90, 120, 255, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(90, 120, 255, 0.1);
+            border-color: rgba(90, 120, 255, 0.5);
+        }
+        
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .metric-label {
+            font-weight: 600;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-description {
+            font-size: 0.875rem;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+        
+        .chart-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .chart-title {
+            font-weight: 700;
+            color: var(--darker);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.25rem;
+        }
+        
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .data-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .data-title {
+            font-weight: 700;
+            color: var(--darker);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .data-content {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        
+        .data-stat {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .data-stat-value {
+            font-weight: 700;
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+        
+        .data-stat-label {
+            color: var(--gray);
+        }
+        
+        .business-section {
+            padding: 4rem 1.5rem;
+            background-color: var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .business-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .business-model {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .model-step {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .model-step:before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(90, 120, 255, 0.08) 0%, rgba(90, 120, 255, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .model-step:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(90, 120, 255, 0.1);
+            border-color: rgba(90, 120, 255, 0.5);
+        }
+        
+        .step-number {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            line-height: 1;
+            opacity: 0.3;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+        }
+        
+        .step-title {
+            font-weight: 700;
+            color: var(--darker);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-description {
+            color: var(--gray);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+        
+        .investment-section {
+            padding: 4rem 1.5rem;
+            background-color: var(--primary-dark);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .investment-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .investment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .investment-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(222, 226, 230, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .investment-card:before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(90, 120, 255, 0.08) 0%, rgba(90, 120, 255, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .investment-card.highlighted {
+            border: 2px solid var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .investment-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(90, 120, 255, 0.1);
+            border-color: rgba(90, 120, 255, 0.5);
+        }
+        
+        .investment-card.highlighted:hover {
+            transform: translateY(-8px) scale(1.07);
+        }
+        
+        .investment-amount {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+        
+        .investment-type {
+            font-weight: 700;
+            color: var(--darker);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .investment-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem;
+            text-align: left;
+        }
+        
+        .investment-features li {
+            margin-bottom: 0.75rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+        }
+        
+        .investment-features li:before {
+            content: "✓";
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .investment-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #4A67E3 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 16px rgba(90, 120, 255, 0.2);
+            width: 100%;
+        }
+        
+        .investment-cta:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(90, 120, 255, 0.25);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+            
+            .section-title {
+                font-size: 2.25rem;
+            }
+            
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .metric-value {
+                font-size: 2.5rem;
+            }
+            
+            .chart-container {
+                padding: 1.5rem;
+            }
+            
+            .step-number {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .model-step, .investment-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <main>
+            <!-- Hero Section -->
+            <section class="hero-section screen" id="hero">
+                <div class="hero-background">
+                    <div class="bg-gradient"></div>
+                </div>
+                <div class="logo-header">
+                    <div class="logo">ThreadPay</div>
+                </div>
+                <div class="hero-content">
+                    <div style="width: 100%; max-width: 600px;">
+                        <h1 class="hero-title">The Future of AI<br>Relationships</h1>
+                        <p class="hero-subtitle">ThreadPay is the premier payment and discovery platform for deeply personalized AI relationship models, capturing a rapidly expanding market with high-margin subscription revenue.</p>
+                        <a href="#market" class="hero-cta">Explore the Opportunity <i class="fas fa-chart-line"></i></a>
+                    </div>
+                </div>
+                <div class="scroll-indicator">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </section>
+            
+            <!-- Market Data Section -->
+            <section class="market-section screen" id="market">
+                <div class="market-container">
+                    <div class="section-heading">
+                        <h2 class="section-title">Market <span class="highlight">Opportunity</span></h2>
+                        <p class="section-subtitle">The AI companion market is experiencing unprecedented growth, with consumer spend rapidly accelerating.</p>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">$12.3B</div>
+                            <div class="metric-label">Market Size 2025</div>
+                            <div class="metric-description">Projected market size for AI relationship platforms</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">142%</div>
+                            <div class="metric-label">YoY Growth</div>
+                            <div class="metric-description">Year-over-year growth in consumer spending</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$38</div>
+                            <div class="metric-label">Average MRR</div>
+                            <div class="metric-description">Average monthly recurring revenue per user</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">87%</div>
+                            <div class="metric-label">Retention Rate</div>
+                            <div class="metric-description">30-day user retention rate for premium subscribers</div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <h3 class="chart-title">Market Growth Projection</h3>
+                            <canvas id="marketGrowthChart" width="400" height="250"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3 class="chart-title">Revenue Distribution by Content Type</h3>
+                            <canvas id="revenueDistributionChart" width="400" height="250"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <h3 class="chart-title">User Engagement by Platform</h3>
+                            <canvas id="engagementChart" width="400" height="250"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3 class="chart-title">Monthly Recurring Revenue Trend</h3>
+                            <canvas id="revenueChart" width="400" height="250"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="data-card">
+                        <h3 class="data-title">Key Market Insights</h3>
+                        <div class="data-content">
+                            <div class="data-stat">
+                                <span class="data-stat-value">73%</span>
+                                <span class="data-stat-label">of users seek deeper emotional connections with AI companions</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">68%</span>
+                                <span class="data-stat-label">of premium subscribers engage with their AI companions daily</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">5.2x</span>
+                                <span class="data-stat-label">higher conversion rate for hyper-personalized relationship models</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">$2.4B</span>
+                                <span class="data-stat-label">projected market size for explicit AI interactions by 2026</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">2.1M</span>
+                                <span class="data-stat-label">active paid subscribers across the top 5 AI relationship platforms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Business Model Section -->
+            <section class="business-section screen" id="business">
+                <div class="business-container">
+                    <div class="section-heading">
+                        <h2 class="section-title">Our <span class="highlight">Business</span></h2>
+                        <p class="section-subtitle">ThreadPay is the premier payment and discovery platform for deeply personalized AI relationship models.</p>
+                    </div>
+                    
+                    <div class="business-model">
+                        <div class="model-step">
+                            <div class="step-number">01</div>
+                            <h3 class="step-title">Hyper-Realistic AI Models</h3>
+                            <p class="step-description">We host custom AI models that are deeply trained on relationship and human interaction data. These models create extraordinarily realistic conversational experiences that evolve from friendly question-answering to deep, involved relationships with users. Our platform supports a wide spectrum of interaction types, including explicitly sexual content for appropriate audiences.</p>
+                        </div>
+                        <div class="model-step">
+                            <div class="step-number">02</div>
+                            <h3 class="step-title">Monetization Platform</h3>
+                            <p class="step-description">ThreadPay functions as a payment and discovery platform where users find and subscribe to AI companions. We handle all payment processing, content moderation, and platform infrastructure, allowing creators to focus on developing compelling AI personalities. Our revenue model is based on subscription fees with platform commissions of 25-30%.</p>
+                        </div>
+                        <div class="model-step">
+                            <div class="step-number">03</div>
+                            <h3 class="step-title">Creator Ecosystem</h3>
+                            <p class="step-description">We've built a robust ecosystem for AI personality creators to develop, train, and monetize their models. Creators receive comprehensive tools, infrastructure, and audience access while retaining creative control. This approach has attracted top talent to our platform, resulting in superior content that drives user engagement and retention.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container" style="margin-top: 3rem;">
+                        <h3 class="chart-title">Revenue Projection</h3>
+                        <canvas id="projectionChart" width="800" height="300"></canvas>
+                    </div>
+                    
+                    <div class="data-card">
+                        <h3 class="data-title">ThreadPay by the Numbers</h3>
+                        <div class="data-content">
+                            <div class="data-stat">
+                                <span class="data-stat-value">148+</span>
+                                <span class="data-stat-label">Custom AI models available on our platform</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">86.3%</span>
+                                <span class="data-stat-label">Gross margin on subscription revenue</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">18.4M</span>
+                                <span class="data-stat-label">Messages exchanged monthly between users and AI models</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">$42.50</span>
+                                <span class="data-stat-label">Average revenue per paying user</span>
+                            </div>
+                            <div class="data-stat">
+                                <span class="data-stat-value">4.2x</span>
+                                <span class="data-stat-label">User base growth in the past 12 months</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Investment Section -->
+            <section class="investment-section screen" id="investment">
+                <div class="investment-container">
+                    <div class="section-heading">
+                        <h2 class="section-title">Investment <span class="highlight">Opportunity</span></h2>
+                        <p class="section-subtitle">Join us in revolutionizing human-AI relationships and capturing the explosive growth in this emerging market.</p>
+                    </div>
+                    
+                    <div class="investment-options">
+                        <div class="investment-card">
+                            <div class="investment-amount">$1-5M</div>
+                            <div class="investment-type">Seed Extension</div>
+                            <ul class="investment-features">
+                                <li>Platform expansion and scaling</li>
+                                <li>Creator acquisition initiatives</li>
+                                <li>Advanced AI model integration</li>
+                                <li>Early-stage equity opportunity</li>
+                            </ul>
+                            <a href="mailto:investors@threadpay.com" class="investment-cta">Contact Us</a>
+                        </div>
+                        <div class="investment-card highlighted">
+                            <div class="investment-amount">$8-12M</div>
+                            <div class="investment-type">Series A</div>
+                            <ul class="investment-features">
+                                <li>International market expansion</li>
+                                <li>Proprietary AI model development</li>
+                                <li>Vertical integration strategy</li>
+                                <li>Premium investor benefits package</li>
+                            </ul>
+                            <a href="mailto:investors@threadpay.com" class="investment-cta">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer>
+            <div class="footer-container">
+                <div class="footer-logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="/model-selection-public.html" class="footer-link">Explore Models</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/auth.js"></script>
+    
+    <script>
+        // Chart initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Market Growth Projection Chart
+            const marketGrowthCtx = document.getElementById('marketGrowthChart').getContext('2d');
+            const marketGrowthChart = new Chart(marketGrowthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2022', '2023', '2024', '2025', '2026', '2027'],
+                    datasets: [{
+                        label: 'Market Size ($ Billions)',
+                        data: [2.8, 5.3, 8.7, 12.3, 17.8, 24.2],
+                        backgroundColor: 'rgba(90, 120, 255, 0.2)',
+                        borderColor: 'rgba(90, 120, 255, 1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(90, 120, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'rgba(255, 255, 255, 1)',
+                            bodyColor: 'rgba(255, 255, 255, 1)',
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.parsed.y}B`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Revenue Distribution Chart
+            const revenueDistributionCtx = document.getElementById('revenueDistributionChart').getContext('2d');
+            const revenueDistributionChart = new Chart(revenueDistributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Romantic Companions', 'Sexually Explicit', 'Friendship Models', 'Therapy/Wellness', 'Other'],
+                    datasets: [{
+                        data: [42, 28, 15, 10, 5],
+                        backgroundColor: [
+                            'rgba(90, 120, 255, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderColor: 'rgba(255, 255, 255, 0.8)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.parsed}%`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+            
+            // User Engagement Chart
+            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+            const engagementChart = new Chart(engagementCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Desktop', 'Mobile App', 'Mobile Web', 'Tablet'],
+                    datasets: [{
+                        label: 'Daily Active Minutes',
+                        data: [42, 78, 35, 24],
+                        backgroundColor: [
+                            'rgba(90, 120, 255, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(90, 120, 255, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Minutes'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Monthly Revenue ($K)',
+                        data: [120, 145, 175, 220, 290, 345, 410, 495, 580, 675, 780, 920],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.parsed.y}K`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Projection Chart
+            const projectionCtx = document.getElementById('projectionChart').getContext('2d');
+            const projectionChart = new Chart(projectionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026'],
+                    datasets: [
+                        {
+                            label: 'Revenue ($K)',
+                            data: [820, 1150, 1780, 2340, 3100, 3950, 4820, 5750],
+                            backgroundColor: 'rgba(90, 120, 255, 0.7)',
+                            borderColor: 'rgba(90, 120, 255, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            order: 2
+                        },
+                        {
+                            label: 'Profit ($K)',
+                            data: [246, 391, 623, 842, 1147, 1501, 1879, 2300],
+                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: $${context.parsed.y}K`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($K)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Replace the default scroll handler with one that uses the TikTok-style system
+        document.querySelector('.scroll-indicator').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Using the global updateSection function from script.js
+            if (window.updateSection) {
+                window.updateSection(1); // Go to second section (index 1)
+            } else {
+                // Fallback smooth scroll if global function not available
+                document.getElementById('market').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        
+        // Add subtle parallax effect to decorative elements
+        document.addEventListener('mousemove', function(e) {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+            
+            document.querySelectorAll('.metric-card:before, .model-step:before, .investment-card:before, .app-container:before, .app-container:after')
+                .forEach(element => {
+                    element.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
+        });
+    </script>
+</body>
+</html> 

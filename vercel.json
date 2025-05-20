@@ -34,6 +34,10 @@
     {
       "src": "/terms-of-service",
       "dest": "/public/terms-of-service.html"
+    },
+    {
+      "src": "/investors",
+      "dest": "/public/investors.html"
     }
   ]
 } 
