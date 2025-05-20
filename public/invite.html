@@ -129,6 +129,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 300px;
         }
         
         .creator-info:hover {
@@ -139,7 +140,7 @@
         .creator-image {
             width: 180px;
             height: 180px;
-            border-radius: 50%;
+            border-radius: 8px;
             object-fit: cover;
             box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
@@ -184,16 +185,30 @@
             border-radius: var(--radius);
             padding: 1.25rem;
             border: 1.5px solid var(--light-gray);
-            transition: var(--transition);
+            transition: all 0.2s ease-out;
             display: flex;
             align-items: center;
             cursor: pointer;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            overflow: visible;
+        }
+        
+        .package-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--light-gray-hover);
+            box-shadow: var(--shadow);
         }
         
         .package-card.selected {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(90, 120, 255, 0.15);
-            transform: scale(1.02);
+            transform: translateY(-2px);
+        }
+        
+        .package-card.selected:hover {
+            transform: translateY(-3px);
         }
         
         .package-icon {
@@ -382,47 +397,99 @@
         }
         
         /* Image carousel styles */
-        .carousel {
+        .image-carousel {
+            width: 180px;
+            height: 180px;
             position: relative;
-            width: 100%;
-            max-width: 240px;
-            margin: 0 auto;
-            border-radius: var(--radius);
+            border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
+            background-color: var(--accent-light);
         }
         
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease;
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
         
         .carousel-slide {
-            min-width: 100%;
-            height: 300px;
-            background-size: cover;
-            background-position: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
         
-        .carousel-dots {
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            justify-content: center;
-            margin-top: 0.75rem;
-            gap: 0.5rem;
+            gap: 8px;
+            z-index: 2;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
         }
         
         .carousel-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: var(--light-gray);
+            background-color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         
         .carousel-dot.active {
-            background-color: var(--accent);
+            background-color: white;
             transform: scale(1.2);
+        }
+        
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            z-index: 2;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+        }
+        
+        .carousel-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        
+        .carousel-prev {
+            left: 10px;
+        }
+        
+        .carousel-next {
+            right: 10px;
         }
 
         /* Responsive styles */
@@ -435,13 +502,19 @@
                 font-size: 1.75rem;
             }
             
-            .creator-image {
-                width: 120px;
-                height: 120px;
+            .creator-image, .image-carousel {
+                width: 140px;
+                height: 140px;
             }
             
             .creator-name {
                 font-size: 1.5rem;
+            }
+            
+            .carousel-arrow {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
             }
         }
         
@@ -458,9 +531,19 @@
                 font-size: 1.75rem;
             }
             
-            .creator-image {
-                width: 100px;
-                height: 100px;
+            .creator-image, .image-carousel {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .carousel-dot {
+                width: 6px;
+                height: 6px;
+            }
+            
+            .carousel-arrow {
+                width: 24px;
+                height: 24px;
             }
         }
 
@@ -472,14 +555,18 @@
         .section-transition {
             opacity: 1;
             transform: translateY(0);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            height: auto;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 2000px;
+            width: 100%;
+            will-change: opacity, transform, max-height;
             overflow: hidden;
         }
         
         .section-transition.hidden {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(10px);
             pointer-events: none;
             max-height: 0;
             margin: 0;
@@ -531,8 +618,8 @@
                         <h3 id="section-title" class="section-title">Select Your Package</h3>
                         <div class="package-cards" id="packages-list"></div>
                         <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Confirm Selection</span>
+                            <span>Continue</span>
+                            <i class="fas fa-arrow-right"></i>
                         </button>
                         <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
                     </div>
@@ -649,7 +736,9 @@
             
             // Make sure packages section is visible and signup is hidden
             packagesSection.classList.remove('hidden');
+            packagesSection.style.display = 'block';
             signupSection.classList.add('hidden');
+            signupSection.style.display = 'none';
             confirmButton.style.display = 'none';
             
             if (!packages.length) {
@@ -707,20 +796,63 @@
             document.getElementById('model-name').textContent = model.name;
             document.getElementById('model-bio').textContent = model.bio || 'Creator on ThreadPay';
             
-            const modelImage = document.getElementById('model-image');
-            modelImage.innerHTML = '';
+            const modelImageContainer = document.getElementById('model-image');
+            modelImageContainer.innerHTML = '';
             
             let images = Array.isArray(model.pictures) ? model.pictures : [];
             if (!images.length) {
                 // fallback: show a blank image
-                modelImage.style.backgroundImage = `url(/images/placeholder-model.jpg)`;
+                modelImageContainer.innerHTML = `<div class="creator-image"><img src="/images/placeholder-model.jpg" alt="Profile placeholder"></div>`;
                 return;
             }
             
-            // Set primary image
-            const firstImage = images[0];
-            const imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${firstImage}`;
-            modelImage.innerHTML = `<img src="${imageUrl}" alt="${model.name}">`;
+            // Function to get correct image URL based on format
+            function getImageUrl(img) {
+                if (img.startsWith('http')) {
+                    return img;
+                } else if (img.includes('storage/v1')) {
+                    return img;
+                } else {
+                    return `${supabaseUrl}/storage/v1/object/public/model-images/${img}`;
+                }
+            }
+            
+            // If we have multiple images, create a carousel
+            if (images.length > 1) {
+                const carouselHTML = `
+                    <div class="image-carousel">
+                        <div class="carousel-container" id="carousel-container">
+                            ${images.map((img, index) => {
+                                const imageUrl = getImageUrl(img);
+                                return `<div class="carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+                                    <img src="${imageUrl}" alt="${model.name}" loading="${index === 0 ? 'eager' : 'lazy'}">
+                                </div>`;
+                            }).join('')}
+                        </div>
+                        <div class="carousel-nav" id="carousel-nav">
+                            ${images.map((_, index) => `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`).join('')}
+                        </div>
+                        <div class="carousel-arrow carousel-prev" id="carousel-prev">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="carousel-arrow carousel-next" id="carousel-next">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                `;
+                modelImageContainer.innerHTML = carouselHTML;
+                
+                // Initialize carousel
+                setTimeout(initCarousel, 100);
+            } else {
+                // Set primary image for single image
+                const imageUrl = getImageUrl(images[0]);
+                modelImageContainer.innerHTML = `
+                    <div class="creator-image">
+                        <img src="${imageUrl}" alt="${model.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                `;
+            }
             
             document.getElementById('model-id').value = model.id;
             
@@ -734,13 +866,150 @@
             // Update Open Graph meta tags
             document.querySelector('meta[property="og:title"]').setAttribute('content', pageTitle);
             document.querySelector('meta[property="og:description"]').setAttribute('content', description);
-            document.querySelector('meta[property="og:image"]').setAttribute('content', imageUrl);
+            
+            // Use first image for meta tags
+            if (images.length > 0) {
+                const imageUrl = getImageUrl(images[0]);
+                document.querySelector('meta[property="og:image"]').setAttribute('content', imageUrl);
+                document.querySelector('meta[name="twitter:image"]').setAttribute('content', imageUrl);
+            }
+            
             document.querySelector('meta[property="og:url"]').setAttribute('content', window.location.href);
             
             // Update Twitter Card meta tags
             document.querySelector('meta[name="twitter:title"]').setAttribute('content', pageTitle);
             document.querySelector('meta[name="twitter:description"]').setAttribute('content', description);
-            document.querySelector('meta[name="twitter:image"]').setAttribute('content', imageUrl);
+        }
+        
+        // Add carousel navigation function
+        function initCarousel() {
+            const container = document.getElementById('carousel-container');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const slides = document.querySelectorAll('.carousel-slide');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            
+            if (!container || !slides.length) return;
+            
+            let currentIndex = 0;
+            let autoplayInterval;
+            let isTransitioning = false;
+            
+            // Start autoplay
+            startAutoplay();
+            
+            // Navigate to slide
+            function goToSlide(index) {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                // Wrap around if index is out of bounds
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                // Update current index
+                currentIndex = index;
+                
+                // Update slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[currentIndex].classList.add('active');
+                
+                // Update dots
+                dots.forEach(dot => dot.classList.remove('active'));
+                dots[currentIndex].classList.add('active');
+                
+                // Reset autoplay
+                resetAutoplay();
+                
+                // Allow next transition after animation completes
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 500);
+            }
+            
+            // Dot navigation
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const index = parseInt(dot.getAttribute('data-index'));
+                    goToSlide(index);
+                });
+            });
+            
+            // Arrow navigation
+            if (prevBtn) {
+                prevBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    goToSlide(currentIndex - 1);
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    goToSlide(currentIndex + 1);
+                });
+            }
+            
+            // Autoplay
+            function startAutoplay() {
+                if (slides.length <= 1) return;
+                autoplayInterval = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, 5000);
+            }
+            
+            function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+            }
+            
+            // Touch events for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+            
+            container.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, {passive: true});
+            
+            container.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            }, {passive: true});
+            
+            function handleSwipe() {
+                // Minimum swipe distance
+                const swipeThreshold = 30;
+                
+                // Calculate horizontal and vertical distance
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Only handle horizontal swipes (to avoid interfering with page scrolling)
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                    if (deltaX < 0) {
+                        // Swipe left, go to next slide
+                        goToSlide(currentIndex + 1);
+                    } else {
+                        // Swipe right, go to previous slide
+                        goToSlide(currentIndex - 1);
+                    }
+                }
+            }
+            
+            // Pause autoplay when page is not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    clearInterval(autoplayInterval);
+                } else {
+                    startAutoplay();
+                }
+            });
         }
         
         function hashPassword(password) {
@@ -805,28 +1074,46 @@
                     descriptionElem.insertAdjacentHTML('afterend', packageInfoHTML);
                 }
                 
-                // Transition animation
+                // First prepare the signup section but keep it hidden
+                signupSection.style.display = 'block';
+                signupSection.classList.add('hidden');
+                
+                // Then transition out the packages section
                 packagesSection.classList.add('hidden');
                 
-                // Scroll to top for mobile users
+                // Scroll to top for mobile users - do this immediately
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
-                // Wait for animation to complete before showing signup
+                // Wait for the packages section to fade out, then show signup section
                 setTimeout(() => {
+                    // Hide packages completely after animation
+                    packagesSection.style.display = 'none'; 
+                    
+                    // Show signup section with animation
                     signupSection.classList.remove('hidden');
-                }, 400);
+                }, 350);
             });
             
-            // Setup back button with scroll effect
+            // Setup back button with improved transitions
             backToPackagesBtn.addEventListener('click', () => {
+                // First prepare the packages section but keep it hidden
+                packagesSection.style.display = 'block';
+                packagesSection.classList.add('hidden');
+                
+                // Transition out the signup section
                 signupSection.classList.add('hidden');
                 
                 // Scroll to top for mobile users
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
+                // Wait for signup to fade out before showing packages
                 setTimeout(() => {
+                    // Hide signup completely
+                    signupSection.style.display = 'none';
+                    
+                    // Show packages with animation
                     packagesSection.classList.remove('hidden');
-                }, 400);
+                }, 350);
             });
             
             signupForm.addEventListener('submit', async (e) => {
