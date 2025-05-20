@@ -20,10 +20,6 @@
       "dest": "/server.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/public/$1"
-    },
-    {
       "src": "/model-selection-public",
       "dest": "/public/model-selection-public.html"
     },
@@ -38,6 +34,10 @@
     {
       "src": "/investors",
       "dest": "/public/investors.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 } 
