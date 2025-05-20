@@ -101,32 +101,18 @@
             margin-bottom: 1.5rem;
             letter-spacing: -0.03em;
             text-align: left;
-            background: linear-gradient(
-                90deg, 
-                var(--darker) 0%, 
-                var(--accent) 25%, 
-                #6c5ce7 50%, 
-                var(--accent) 75%, 
-                var(--darker) 100%
-            );
-            background-size: 200% 100%;
+            background: linear-gradient(45deg, var(--darker), var(--accent), #9370DB, var(--accent), var(--darker));
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: transparent;
-            animation: gradientMove 8s linear infinite;
+            animation: gradientMove 7s ease infinite;
         }
         
         @keyframes gradientMove {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .hero-subtitle {
@@ -488,16 +474,6 @@
             .cta-section {
                 padding: 2rem 1rem;
             }
-            
-            .hero-title .highlight {
-                color: var(--accent);
-                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-                font-weight: 900;
-                background: var(--accent);
-                -webkit-background-clip: text;
-                background-clip: text;
-                -webkit-text-fill-color: var(--accent);
-            }
         }
         
         @media (max-width: 480px) {
@@ -516,17 +492,6 @@
             .hero-cta {
                 width: 100%;
                 justify-content: center;
-            }
-            
-            .hero-title .highlight {
-                color: var(--accent);
-                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-                font-weight: 900;
-                background: var(--accent);
-                -webkit-background-clip: text;
-                background-clip: text;
-                -webkit-text-fill-color: var(--accent);
-                border-bottom: 2px solid var(--accent);
             }
         }
     </style>

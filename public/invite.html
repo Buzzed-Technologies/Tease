@@ -463,6 +463,40 @@
         .terms-privacy a:hover {
             text-decoration: underline;
         }
+
+        .package-cards, .signup-form, .confirm-btn, .signup-header, .creator-info h3 {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        
+        .fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+            animation-delay: 0.25s;
+        }
+        
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .signup-header, .signup-form {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
     </style>
 </head>
 <body>
@@ -599,6 +633,14 @@
             const signupForm = document.getElementById('signup-form');
             const signupHeader = document.getElementById('signup-header');
             const confirmButton = document.getElementById('confirm-package-btn');
+            
+            // Reset any animation classes
+            list.classList.remove('fade-out', 'fade-in');
+            signupForm.classList.remove('fade-out', 'fade-in');
+            signupHeader.classList.remove('fade-out', 'fade-in');
+            confirmButton.classList.remove('fade-out', 'fade-in');
+            
+            // Hide signup elements
             signupForm.style.display = 'none';
             signupHeader.style.display = 'none';
             confirmButton.style.display = 'none';
@@ -731,13 +773,56 @@
                     return;
                 }
                 
-                // Hide packages section and confirm button
-                packagesSection.style.display = 'none';
-                confirmButton.style.display = 'none';
+                // Disable confirm button to prevent double clicks
+                confirmButton.disabled = true;
                 
-                // Show signup form
-                document.getElementById('signup-header').style.display = 'block';
-                signupForm.style.display = 'block';
+                // Get elements for animation
+                const packageTitle = document.querySelector('.creator-info h3');
+                const packagesList = document.getElementById('packages-list');
+                
+                // Fade out packages
+                packageTitle.classList.add('fade-out');
+                packagesList.classList.add('fade-out');
+                confirmButton.classList.add('fade-out');
+                
+                // After fade out completes, switch content
+                setTimeout(() => {
+                    // Hide packages section and confirm button
+                    packageTitle.style.display = 'none';
+                    packagesList.style.display = 'none';
+                    confirmButton.style.display = 'none';
+                    
+                    // Change the title text if we're on mobile (shows in creator info)
+                    if (window.innerWidth <= 900) {
+                        const creatorInfo = document.querySelector('.creator-info');
+                        const newTitle = document.createElement('h3');
+                        newTitle.style.marginTop = '1rem';
+                        newTitle.style.marginBottom = '1rem';
+                        newTitle.style.fontSize = '1.25rem';
+                        newTitle.style.fontWeight = '600';
+                        newTitle.textContent = 'Sign Up to Subscribe';
+                        newTitle.className = 'fade-in';
+                        creatorInfo.appendChild(newTitle);
+                    }
+                    
+                    // Show signup form with animation
+                    const signupHeader = document.getElementById('signup-header');
+                    const signupForm = document.getElementById('signup-form');
+                    
+                    // Clear any error messages before showing the form
+                    document.getElementById('signup-message').textContent = '';
+                    document.getElementById('signup-message').className = 'signup-message';
+                    
+                    // Show and animate the form elements
+                    signupHeader.style.display = 'block';
+                    signupForm.style.display = 'block';
+                    
+                    // Small delay to ensure display is applied before adding animation
+                    setTimeout(() => {
+                        signupHeader.classList.add('fade-in');
+                        signupForm.classList.add('fade-in');
+                    }, 50);
+                }, 350);
             });
             
             signupForm.addEventListener('submit', async (e) => {
@@ -764,7 +849,7 @@
                 }
                 
                 if (!isOver18(dob)) {
-                    window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI&list=PLNo5p5wex1o_nj6S38ehq3zKuR_BIfd3R&index=60';
+                    window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI';
                     return;
                 }
                 
