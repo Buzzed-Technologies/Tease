@@ -1188,11 +1188,12 @@
                 transform: translateY(-3px) scale(1.01);
             }
             
+            /* Hide button text on mobile */
             .btn-text {
-                display: none; /* Hide text on small screens */
+                display: none;
             }
             
-            .logout-button, .action-button, .explore-more-button, #manage-subscription {
+            .logout-button, #explore-models-button, #manage-subscription {
                 width: 42px;
                 height: 42px;
                 border-radius: 12px;
@@ -1202,15 +1203,14 @@
                 justify-content: center;
             }
             
-            .logout-button i, .action-button i, .explore-more-button i, #manage-subscription i {
+            .logout-button i, #explore-models-button i, #manage-subscription i {
                 margin-right: 0;
                 font-size: 1.125rem;
             }
             
             /* Show text on hover for better accessibility */
             .logout-button:hover::after, 
-            .action-button:hover::after, 
-            .explore-more-button:hover::after,
+            #explore-models-button:hover::after, 
             #manage-subscription:hover::after {
                 content: attr(aria-label);
                 position: absolute;
@@ -1568,7 +1568,7 @@
             <div class="header-content">
                 <a href="/" class="logo">ThreadPay</a>
                 <div class="header-controls">
-                    <button id="logout-button" class="logout-button">
+                    <button id="logout-button" class="logout-button" aria-label="Logout">
                         <i class="fas fa-sign-out-alt"></i>
                         <span class="btn-text">Logout</span>
                     </button>
@@ -1608,7 +1608,7 @@
                             <div class="no-subscription-message">
                                 <h3>No Active Subscriptions</h3>
                                 <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
-                                <button class="action-button" id="explore-models-button">
+                                <button class="action-button" id="explore-models-button" aria-label="Explore Models">
                                     <i class="fas fa-search"></i>
                                     <span class="btn-text">Explore Available Creators</span>
                                 </button>
@@ -1644,11 +1644,13 @@
                                     <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
                                     <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
                                 </div>
-                                <button type="submit" class="action-button">
-                                    <i class="fas fa-save"></i>
-                                    <span class="btn-text">Save Changes</span>
-                                </button>
-                                <div id="settings-message" class="message-area"></div>
+                                <div class="form-group">
+                                    <button type="submit" class="action-button" aria-label="Save Changes">
+                                        <i class="fas fa-save"></i>
+                                        <span class="btn-text">Save Changes</span>
+                                    </button>
+                                    <div id="settings-message" class="message-area"></div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -1667,7 +1669,7 @@
                 </div>
                 <div class="popup-body" id="popup-body"></div>
                 <div class="popup-footer">
-                    <button class="action-button" id="manage-subscription">
+                    <button class="action-button" id="manage-subscription" aria-label="Manage Subscription">
                         <i class="fas fa-cog"></i>
                         <span class="btn-text">Manage Subscription</span>
                     </button>

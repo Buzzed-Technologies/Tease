@@ -916,6 +916,29 @@
                 max-width: 90%;
                 right: 5%;
             }
+            
+            /* Hide button text on mobile */
+            .header-controls .btn-text, 
+            .logout-button .btn-text {
+                display: none;
+            }
+            
+            .header-controls a, 
+            .header-controls button {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                padding: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .header-controls a i, 
+            .header-controls button i {
+                margin-right: 0;
+                font-size: 1.125rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -971,20 +994,9 @@
                 font-size: 1.3rem;
             }
             
-            .btn-text {
-                display: inline !important;
-            }
-            
-            .header-controls a, 
-            .header-controls button {
-                width: auto !important;
-                height: auto !important;
-                padding: 0.6rem 1rem !important;
-            }
-            
-            .header-controls a i, 
-            .header-controls button i {
-                margin-right: 0.5rem !important;
+            /* Make sure explore button has icon */
+            .explore-more-button i {
+                margin-right: 0.5rem;
             }
             
             /* Landscape-specific adjustments */
@@ -1007,11 +1019,11 @@
             <div class="header-content">
                 <a href="/" class="logo">ThreadPay</a>
                 <div class="header-controls">
-                    <a href="/dashboard.html" class="btn btn-secondary" id="dashboard-button" onclick="window.location.href='/dashboard.html'; return false;">
+                    <a href="/dashboard.html" class="btn btn-secondary" id="dashboard-button" aria-label="Dashboard" onclick="window.location.href='/dashboard.html'; return false;">
                         <i class="fas fa-tachometer-alt"></i>
                         <span class="btn-text">Dashboard</span>
                     </a>
-                    <button id="logout-button" class="logout-button" type="button" onclick="handleLogout(); return false;">
+                    <button id="logout-button" class="logout-button" aria-label="Logout" type="button" onclick="handleLogout(); return false;">
                         <i class="fas fa-sign-out-alt"></i>
                         <span class="btn-text">Logout</span>
                     </button>
@@ -1072,6 +1084,24 @@
             <i class="fas fa-times"></i>
         </button>
     </div>
+    
+    <!-- Ensure that the Explore More Creators button is properly defined in JavaScript -->
+    <script>
+    // Add this function to make sure the explore more link is inserted properly
+    function updateExploreMoreLink() {
+        if (exploreMoreContainer) {
+            exploreMoreContainer.innerHTML = `
+                <a href="/model-selection.html" class="explore-more-button">
+                    <i class="fas fa-search"></i>
+                    <span class="btn-text">Explore More Creators</span>
+                </a>
+            `;
+        }
+    }
+
+    // Call the function when needed
+    document.addEventListener('DOMContentLoaded', updateExploreMoreLink);
+    </script>
     
     <!-- Necessary libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
