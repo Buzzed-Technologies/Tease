@@ -147,20 +147,9 @@
         }
         
         .dashboard-wrapper {
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            border: 1px solid rgba(222, 226, 230, 0.5);
+            background: transparent;
             margin-bottom: 2rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .dashboard-wrapper:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
         }
         
         .dashboard-tabs {
@@ -168,8 +157,9 @@
             padding: 0.5rem;
             background-color: rgba(248, 249, 250, 0.7);
             border-radius: 12px;
-            margin: 1rem;
+            margin: 1rem auto;
             border: 1px solid rgba(222, 226, 230, 0.5);
+            max-width: 500px;
         }
         
         .tab-btn {
@@ -199,8 +189,9 @@
         
         .dashboard-inner {
             padding: 1.5rem;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 1.5rem;
         }
         
@@ -209,6 +200,8 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            width: 100%;
+            max-width: 650px;
         }
         
         .account-info-card {
@@ -362,6 +355,7 @@
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            width: 100%;
         }
         
         .models-section:hover {
@@ -567,6 +561,9 @@
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
         }
         
         .settings-card:hover {
@@ -1110,13 +1107,8 @@
         
         /* Enhanced mobile responsiveness */
         @media (max-width: 992px) {
-            .dashboard-inner {
-                grid-template-columns: 1fr;
-                padding: 1.5rem;
-            }
-            
-            .dashboard-wrapper:hover {
-                transform: translateY(-3px);
+            .dashboard-tabs {
+                max-width: 450px;
             }
             
             .account-info-card:hover,
@@ -1145,7 +1137,8 @@
             
             .dashboard-tabs {
                 padding: 0.375rem;
-                margin: 0.75rem;
+                margin: 0.75rem auto;
+                max-width: 380px;
             }
             
             .tab-btn {
@@ -1156,8 +1149,19 @@
             }
             
             .dashboard-inner {
-                padding: 1rem;
+                padding: 1rem 0;
                 gap: 1.25rem;
+            }
+            
+            .dashboard-left-card, 
+            .dashboard-right-card {
+                max-width: 100%;
+            }
+            
+            .account-info-card,
+            .models-section,
+            .settings-card {
+                padding: 1.5rem;
             }
             
             .model-card {
@@ -1385,78 +1389,76 @@
         </header>
         
         <div class="dashboard-content">
-            <div class="dashboard-wrapper">
-                <div class="dashboard-tabs">
-                    <button class="tab-btn tab-active" data-tab="account">Account</button>
-                    <button class="tab-btn" data-tab="settings">Settings</button>
-                </div>
-                <div class="dashboard-inner">
-                    <div class="dashboard-left-card tab-section" id="tab-account">
-                        <div class="account-info-card">
-                            <div class="user-details">
-                                <div class="user-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="user-info">
-                                    <h3 id="account-name">User Name</h3>
-                                    <p id="account-email">user@example.com</p>
-                                </div>
+            <div class="dashboard-tabs">
+                <button class="tab-btn tab-active" data-tab="account">Account</button>
+                <button class="tab-btn" data-tab="settings">Settings</button>
+            </div>
+            <div class="dashboard-inner">
+                <div class="dashboard-left-card tab-section" id="tab-account" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="account-info-card">
+                        <div class="user-details">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
                             </div>
-                            <div class="account-created" id="account-created">Member since January 1, 2025</div>
-                            <div class="account-details">
-                                <div class="account-label">Subscription Status</div>
-                                <div class="model-subscription-status active" id="account-subscription-status">Active</div>
+                            <div class="user-info">
+                                <h3 id="account-name">User Name</h3>
+                                <p id="account-email">user@example.com</p>
                             </div>
                         </div>
-                        <div class="models-section">
-                            <h3>Your Creator Subscriptions</h3>
-                            <div id="subscribed-models-container" style="display: none;"></div>
-                            <div id="no-subscription-container" style="display: none;">
-                                <div class="no-subscription-message">
-                                    <h3>No Active Subscriptions</h3>
-                                    <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
-                                    <button class="action-button" id="explore-models-button">
-                                        <i class="fas fa-search"></i>
-                                        <span class="btn-text">Explore Available Creators</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="explore-more-container" class="explore-more-container" style="display: none;">
-                                <a href="/model-selection.html" class="explore-more-button">
-                                    <i class="fas fa-plus"></i>
-                                    <span class="btn-text">Explore More Creators</span>
-                                </a>
-                            </div>
+                        <div class="account-created" id="account-created">Member since January 1, 2025</div>
+                        <div class="account-details">
+                            <div class="account-label">Subscription Status</div>
+                            <div class="model-subscription-status active" id="account-subscription-status">Active</div>
                         </div>
                     </div>
-                    <div class="dashboard-right-card tab-section" id="tab-settings" style="display:none;">
-                        <div class="settings-card">
-                            <h2>Account Settings</h2>
-                            <form class="settings-form" id="settings-form">
-                                <div class="form-group">
-                                    <label for="settings-name" class="form-label">Display Name</label>
-                                    <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="settings-email" class="form-label">Email Address</label>
-                                    <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
-                                    <p class="input-note">Email cannot be changed</p>
-                                </div>
-                                <div class="form-group">
-                                    <label for="settings-password" class="form-label">New Password</label>
-                                    <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
-                                </div>
-                                <div class="form-group">
-                                    <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
-                                    <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
-                                </div>
-                                <button type="submit" class="action-button">
-                                    <i class="fas fa-save"></i>
-                                    <span class="btn-text">Save Changes</span>
+                    <div class="models-section">
+                        <h3>Your Creator Subscriptions</h3>
+                        <div id="subscribed-models-container" style="display: none;"></div>
+                        <div id="no-subscription-container" style="display: none;">
+                            <div class="no-subscription-message">
+                                <h3>No Active Subscriptions</h3>
+                                <p>You don't have any active subscriptions yet. Subscribe to unlock the full creator experience.</p>
+                                <button class="action-button" id="explore-models-button">
+                                    <i class="fas fa-search"></i>
+                                    <span class="btn-text">Explore Available Creators</span>
                                 </button>
-                                <div id="settings-message" class="message-area"></div>
-                            </form>
+                            </div>
                         </div>
+                        <div id="explore-more-container" class="explore-more-container" style="display: none;">
+                            <a href="/model-selection.html" class="explore-more-button">
+                                <i class="fas fa-plus"></i>
+                                <span class="btn-text">Explore More Creators</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-right-card tab-section" id="tab-settings" style="display:none;">
+                    <div class="settings-card">
+                        <h2>Account Settings</h2>
+                        <form class="settings-form" id="settings-form">
+                            <div class="form-group">
+                                <label for="settings-name" class="form-label">Display Name</label>
+                                <input type="text" id="settings-name" class="form-input" placeholder="Your display name">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-email" class="form-label">Email Address</label>
+                                <input type="email" id="settings-email" class="form-input" placeholder="Your email address" disabled>
+                                <p class="input-note">Email cannot be changed</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-password" class="form-label">New Password</label>
+                                <input type="password" id="settings-password" class="form-input" placeholder="Leave blank to keep current password">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-confirm-password" class="form-label">Confirm New Password</label>
+                                <input type="password" id="settings-confirm-password" class="form-input" placeholder="Confirm new password">
+                            </div>
+                            <button type="submit" class="action-button">
+                                <i class="fas fa-save"></i>
+                                <span class="btn-text">Save Changes</span>
+                            </button>
+                            <div id="settings-message" class="message-area"></div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -1962,34 +1964,18 @@
                 const tabId = this.dataset.tab;
                 const tabSections = document.querySelectorAll('.tab-section');
                 
-                // First hide all sections with a transition
+                // Hide all sections first
                 tabSections.forEach(section => {
-                    if (section.id !== `tab-${tabId}` && section.style.display !== 'none') {
-                        section.style.opacity = '0';
-                        setTimeout(() => {
-                            section.style.display = 'none';
-                            // Then show the active section with a transition
-                            const activeSection = document.getElementById(`tab-${tabId}`);
-                            if (activeSection) {
-                                activeSection.style.display = 'block';
-                                setTimeout(() => {
-                                    activeSection.style.opacity = '1';
-                                }, 50);
-                            }
-                        }, 150);
-                    }
+                    section.style.display = 'none';
                 });
                 
-                // If all sections are already hidden, just show the active one
-                const allHidden = Array.from(tabSections).every(section => section.style.display === 'none');
-                if (allHidden) {
-                    const activeSection = document.getElementById(`tab-${tabId}`);
-                    if (activeSection) {
-                        activeSection.style.display = 'block';
-                        setTimeout(() => {
-                            activeSection.style.opacity = '1';
-                        }, 50);
-                    }
+                // Show the active section
+                const activeSection = document.getElementById(`tab-${tabId}`);
+                if (activeSection) {
+                    activeSection.style.display = 'flex';
+                    activeSection.style.flexDirection = 'column';
+                    activeSection.style.alignItems = 'center';
+                    activeSection.style.opacity = '1';
                 }
             });
         });
