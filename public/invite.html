@@ -673,7 +673,6 @@
                             <div class="package-cards" id="packages-list"></div>
                             <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
                                 <span>Continue</span>
-                                <i class="fas fa-arrow-right"></i>
                             </button>
                             <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
                         </div>
@@ -1087,7 +1086,6 @@
                     
                     // Get the icon from the selected card
                     const packageIcon = selectedCard.querySelector('.package-icon i').className;
-                    const packageDesc = selectedCard.querySelector('.package-desc').textContent;
                     
                     // Add selected package info to the signup section
                     const packageInfoHTML = `
@@ -1098,7 +1096,6 @@
                             <div style="flex: 1;">
                                 <div style="font-weight: 600; color: var(--darker); margin-bottom: 0.25rem;">${packageTitle}</div>
                                 <div style="font-weight: 700; font-size: 1.125rem; color: var(--dark);">${packagePrice}</div>
-                                <div style="font-size: 0.875rem; color: var(--gray);">${packageDesc}</div>
                             </div>
                         </div>
                     `;
