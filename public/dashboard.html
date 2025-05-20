@@ -188,7 +188,7 @@
         }
         
         .dashboard-inner {
-            padding: 1.5rem;
+            padding: 1.5rem 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -202,6 +202,7 @@
             gap: 1.5rem;
             width: 100%;
             max-width: 650px;
+            align-items: center;
         }
         
         .account-info-card {
@@ -562,8 +563,6 @@
             overflow: hidden;
             transition: all 0.3s ease;
             width: 100%;
-            max-width: 650px;
-            margin: 0 auto;
         }
         
         .settings-card:hover {
@@ -1372,6 +1371,38 @@
         .dashboard-content.scrolled:before {
             transform: scaleX(var(--scroll-percent, 0));
         }
+        
+        /* Fix for settings tab alignment */
+        #tab-settings {
+            width: 100%;
+            display: none;
+        }
+        
+        #tab-settings.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Ensure the same width for settings card as account info card */
+        #tab-settings .settings-card {
+            width: 100%;
+            max-width: 650px;
+        }
+        
+        /* Additional responsive fixes */
+        @media (max-width: 768px) {
+            .account-info-card,
+            .models-section,
+            .settings-card {
+                width: 90%;
+                max-width: 100%;
+            }
+            
+            .dashboard-inner {
+                padding: 1rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1432,7 +1463,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="dashboard-right-card tab-section" id="tab-settings" style="display:none;">
+                <div class="dashboard-right-card tab-section" id="tab-settings" style="display:none; flex-direction:column; align-items:center; width:100%;">
                     <div class="settings-card">
                         <h2>Account Settings</h2>
                         <form class="settings-form" id="settings-form">
@@ -1967,14 +1998,14 @@
                 // Hide all sections first
                 tabSections.forEach(section => {
                     section.style.display = 'none';
+                    section.classList.remove('active');
                 });
                 
                 // Show the active section
                 const activeSection = document.getElementById(`tab-${tabId}`);
                 if (activeSection) {
                     activeSection.style.display = 'flex';
-                    activeSection.style.flexDirection = 'column';
-                    activeSection.style.alignItems = 'center';
+                    activeSection.classList.add('active');
                     activeSection.style.opacity = '1';
                 }
             });
