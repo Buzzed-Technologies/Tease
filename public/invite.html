@@ -31,6 +31,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        :root {
+            --light-gray-hover: #f0f0f5;
+        }
+        
         .invite-container {
             min-height: 100vh;
             display: flex;
@@ -101,7 +105,7 @@
             flex-direction: column;
             gap: 2rem;
             width: 100%;
-            max-width: 1100px;
+            max-width: 600px;
             margin: 0 auto;
         }
         
@@ -117,7 +121,7 @@
             border-radius: var(--radius);
             padding: 2.5rem;
             width: 100%;
-            max-width: 450px;
+            max-width: 550px;
             box-shadow: var(--shadow);
             border: 1px solid var(--light-gray);
             transition: var(--transition);
@@ -464,38 +468,42 @@
             text-decoration: underline;
         }
 
-        .package-cards, .signup-form, .confirm-btn, .signup-header, .creator-info h3 {
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        
-        .fade-out {
-            opacity: 0;
-            transform: translateY(-20px);
-            pointer-events: none;
-        }
-        
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.6s ease forwards;
-            animation-delay: 0.25s;
-        }
-        
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .signup-header, .signup-form {
+        /* Add animation styles */
+        .section-transition {
             opacity: 1;
             transform: translateY(0);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            height: auto;
+            overflow: hidden;
+        }
+        
+        .section-transition.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            max-height: 0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--darker);
+            transition: all 0.4s ease;
+        }
+
+        .back-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: var(--light-gray-hover);
+            color: var(--dark);
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -519,74 +527,79 @@
                     <h2 class="creator-name" id="model-name">Loading...</h2>
                     <p class="creator-bio" id="model-bio">Loading model information...</p>
                     
-                    <h3 style="margin-top: 1rem; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;">Select Your Package</h3>
-                    <div class="package-cards" id="packages-list"></div>
-                    <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Confirm Selection</span>
-                    </button>
-                    <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
-                </div>
-                
-                <div class="signup-card">
-                    <div class="signup-header" id="signup-header" style="display:none;">
-                        <h1>Sign Up to Subscribe</h1>
-                        <p class="signup-description">Create your account to unlock exclusive content and chat with your creator.</p>
+                    <div id="packages-section" class="section-transition">
+                        <h3 id="section-title" class="section-title">Select Your Package</h3>
+                        <div class="package-cards" id="packages-list"></div>
+                        <button id="confirm-package-btn" class="confirm-btn" style="margin-top: 1.5rem; display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Confirm Selection</span>
+                        </button>
+                        <div id="package-message" class="signup-message" style="margin-top: 1rem;"></div>
                     </div>
                     
-                    <form id="signup-form" autocomplete="off" style="display:none;">
-                        <input type="hidden" id="model-id" name="model-id" value="">
-                        <input type="hidden" id="package-id" name="package-id" value="">
+                    <div id="signup-section" class="section-transition hidden">
+                        <h3 class="section-title">Sign Up to Subscribe</h3>
+                        <p class="signup-description" style="text-align: center; margin-bottom: 2rem;">Create your account to unlock exclusive content and chat with your creator.</p>
                         
-                        <div class="form-group">
-                            <label for="name" class="form-label">Your Name</label>
-                            <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
-                        </div>
+                        <form id="signup-form" autocomplete="off">
+                            <input type="hidden" id="model-id" name="model-id" value="">
+                            <input type="hidden" id="package-id" name="package-id" value="">
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" id="dob" name="dob" class="form-input" required>
+                                <p class="form-description">You must be 18 or older to use ThreadPay.</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="telegram" class="form-label">Telegram Number</label>
+                                <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Include country code" required>
+                                <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-input" placeholder="Your email address" required>
+                                <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" id="password" name="password" class="form-input" placeholder="Choose a secure password" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirm-password" class="form-label">Confirm Password</label>
+                                <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Create Account & Subscribe</span>
+                            </button>
+                            
+                            <div id="signup-message" class="signup-message"></div>
+                            
+                            <div class="terms-privacy" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--gray);">
+                                By creating an account, you agree to our
+                                <a href="/terms-of-service.html" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
+                                and
+                                <a href="/privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
+                            </div>
+                            
+                            <button type="button" id="back-to-packages" class="back-btn" style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background: transparent; border: 1px solid var(--light-gray); color: var(--gray); border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Back to Packages</span>
+                            </button>
+                        </form>
                         
-                        <div class="form-group">
-                            <label for="dob" class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" class="form-input" required>
-                            <p class="form-description">You must be 18 or older to use ThreadPay.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="telegram" class="form-label">Telegram Number</label>
-                            <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Include country code" required>
-                            <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" name="email" class="form-input" placeholder="Your email address" required>
-                            <p class="form-description">We'll use this email for your Stripe payments and notifications.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-input" placeholder="Choose a secure password" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="confirm-password" class="form-label">Confirm Password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Create Account & Subscribe</span>
-                        </button>
-                        
-                        <div id="signup-message" class="signup-message"></div>
-                        
-                        <div class="terms-privacy" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--gray);">
-                            By creating an account, you agree to our
-                            <a href="/terms-of-service.html" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
-                            and
-                            <a href="/privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
-                        </div>
-                    </form>
-                    
-                    <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+                        <p class="login-link">Already have an account? <a href="/login.html">Log in</a></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -630,25 +643,17 @@
         function renderPackages(packages) {
             const list = document.getElementById('packages-list');
             list.innerHTML = '';
-            const signupForm = document.getElementById('signup-form');
-            const signupHeader = document.getElementById('signup-header');
+            const packagesSection = document.getElementById('packages-section');
+            const signupSection = document.getElementById('signup-section');
             const confirmButton = document.getElementById('confirm-package-btn');
             
-            // Reset any animation classes
-            list.classList.remove('fade-out', 'fade-in');
-            signupForm.classList.remove('fade-out', 'fade-in');
-            signupHeader.classList.remove('fade-out', 'fade-in');
-            confirmButton.classList.remove('fade-out', 'fade-in');
-            
-            // Hide signup elements
-            signupForm.style.display = 'none';
-            signupHeader.style.display = 'none';
+            // Make sure packages section is visible and signup is hidden
+            packagesSection.classList.remove('hidden');
+            signupSection.classList.add('hidden');
             confirmButton.style.display = 'none';
             
             if (!packages.length) {
                 list.innerHTML = '<div style="color:var(--error);text-align:center;padding:1rem 0;">No packages available for this creator.</div>';
-                signupForm.style.display = 'none';
-                signupHeader.style.display = 'none';
                 return;
             }
             
@@ -764,65 +769,64 @@
         function setupForm() {
             const signupForm = document.getElementById('signup-form');
             const confirmButton = document.getElementById('confirm-package-btn');
-            const packagesSection = document.getElementById('packages-list');
+            const packagesSection = document.getElementById('packages-section');
+            const signupSection = document.getElementById('signup-section');
+            const backToPackagesBtn = document.getElementById('back-to-packages');
             
-            // Setup confirm button click
+            // Setup confirm button click with animation
             confirmButton.addEventListener('click', () => {
                 if (!selectedPackageId) {
                     showError('Please select a package to continue.', 'package-message');
                     return;
                 }
                 
-                // Disable confirm button to prevent double clicks
-                confirmButton.disabled = true;
-                
-                // Get elements for animation
-                const packageTitle = document.querySelector('.creator-info h3');
-                const packagesList = document.getElementById('packages-list');
-                
-                // Fade out packages
-                packageTitle.classList.add('fade-out');
-                packagesList.classList.add('fade-out');
-                confirmButton.classList.add('fade-out');
-                
-                // After fade out completes, switch content
-                setTimeout(() => {
-                    // Hide packages section and confirm button
-                    packageTitle.style.display = 'none';
-                    packagesList.style.display = 'none';
-                    confirmButton.style.display = 'none';
+                // Get selected package details and display them in the signup section
+                const selectedCard = document.querySelector('.package-card.selected');
+                if (selectedCard) {
+                    const packageTitle = selectedCard.querySelector('.package-title').textContent;
+                    const packagePrice = selectedCard.querySelector('.package-price').textContent;
                     
-                    // Change the title text if we're on mobile (shows in creator info)
-                    if (window.innerWidth <= 900) {
-                        const creatorInfo = document.querySelector('.creator-info');
-                        const newTitle = document.createElement('h3');
-                        newTitle.style.marginTop = '1rem';
-                        newTitle.style.marginBottom = '1rem';
-                        newTitle.style.fontSize = '1.25rem';
-                        newTitle.style.fontWeight = '600';
-                        newTitle.textContent = 'Sign Up to Subscribe';
-                        newTitle.className = 'fade-in';
-                        creatorInfo.appendChild(newTitle);
+                    // Add selected package info to the signup section
+                    const packageInfoHTML = `
+                        <div class="selected-package-info" style="margin-bottom: 1.5rem; padding: 1rem; background-color: var(--accent-light); border-radius: var(--radius-sm); text-align: center;">
+                            <p style="margin-bottom: 0.5rem; font-weight: 600; color: var(--dark);">Selected Package: ${packageTitle}</p>
+                            <p style="font-weight: 700; color: var(--accent);">${packagePrice}</p>
+                        </div>
+                    `;
+                    
+                    // Insert after the title
+                    const descriptionElem = signupSection.querySelector('.signup-description');
+                    const existingInfo = signupSection.querySelector('.selected-package-info');
+                    
+                    if (existingInfo) {
+                        existingInfo.remove();
                     }
                     
-                    // Show signup form with animation
-                    const signupHeader = document.getElementById('signup-header');
-                    const signupForm = document.getElementById('signup-form');
-                    
-                    // Clear any error messages before showing the form
-                    document.getElementById('signup-message').textContent = '';
-                    document.getElementById('signup-message').className = 'signup-message';
-                    
-                    // Show and animate the form elements
-                    signupHeader.style.display = 'block';
-                    signupForm.style.display = 'block';
-                    
-                    // Small delay to ensure display is applied before adding animation
-                    setTimeout(() => {
-                        signupHeader.classList.add('fade-in');
-                        signupForm.classList.add('fade-in');
-                    }, 50);
-                }, 350);
+                    descriptionElem.insertAdjacentHTML('afterend', packageInfoHTML);
+                }
+                
+                // Transition animation
+                packagesSection.classList.add('hidden');
+                
+                // Scroll to top for mobile users
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Wait for animation to complete before showing signup
+                setTimeout(() => {
+                    signupSection.classList.remove('hidden');
+                }, 400);
+            });
+            
+            // Setup back button with scroll effect
+            backToPackagesBtn.addEventListener('click', () => {
+                signupSection.classList.add('hidden');
+                
+                // Scroll to top for mobile users
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                setTimeout(() => {
+                    packagesSection.classList.remove('hidden');
+                }, 400);
             });
             
             signupForm.addEventListener('submit', async (e) => {
@@ -849,7 +853,7 @@
                 }
                 
                 if (!isOver18(dob)) {
-                    window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI';
+                    window.location.href = 'https://www.youtube.com/watch?v=Qc88W5X6SOI&list=PLNo5p5wex1o_nj6S38ehq3zKuR_BIfd3R&index=60';
                     return;
                 }
                 
