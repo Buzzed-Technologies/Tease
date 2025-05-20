@@ -26,6 +26,8 @@
             min-height: 100vh;
             position: relative;
             overflow: hidden;
+            width: 100%;
+            overflow-x: hidden;
         }
         
         /* Decorative elements */
@@ -809,15 +811,14 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             padding: 1.5rem;
-            overflow-y: auto !important;
-            align-items: flex-start !important;
+            overflow-y: auto;
         }
         
         .popup-overlay.active {
@@ -830,8 +831,8 @@
             border-radius: 24px;
             width: 95%;
             max-width: 550px;
-            max-height: none !important; /* Remove the height restriction */
-            overflow-y: visible !important;
+            max-height: none;
+            overflow-y: visible;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             transform: translateY(40px) scale(0.95);
             opacity: 0;
@@ -839,12 +840,13 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             position: relative;
             overflow: hidden;
-            margin: auto; /* Center vertically */
+            margin: auto;
         }
         
-        .popup-overlay.active .popup-content {
-            transform: translateY(0) scale(1);
-            opacity: 1;
+        /* Ensure body doesn't scroll when modal is open */
+        body.popup-open {
+            overflow: hidden;
+            height: 100vh;
         }
         
         .popup-content:before {
@@ -1553,6 +1555,11 @@
                 }
             }
         }
+        
+        .popup-overlay.active .popup-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -2073,7 +2080,7 @@
             
             // Show popup
             modelPopup.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.classList.add('popup-open');
             
             // Set up manage subscription button for Stripe portal
             manageSubscriptionButton.onclick = async function () {
@@ -2118,7 +2125,7 @@
         // Function to close the popup
         function closeModelPopup() {
             modelPopup.classList.remove('active');
-            document.body.style.overflow = ''; // Re-enable scrolling
+            document.body.classList.remove('popup-open');
         }
         
         // Handle settings form submission
