@@ -15,7 +15,7 @@
     <!-- Social Media Cards -->
     <meta property="og:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
     <meta property="og:description" content="A secure payment and discovery platform for content creators and their supporters.">
-    <meta property="og:image" content="/images/Group 69.png">
+    <meta property="og:image" content="/public/images/Group69.png">
     <meta property="og:url" content="https://threadpay.vercel.app">
     <meta property="og:type" content="website">
     
@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ThreadPay | Secure Payment and Discovery Platform for Creators">
     <meta name="twitter:description" content="A secure payment and discovery platform for content creators and their supporters.">
-    <meta name="twitter:image" content="/images/Group 69.png">
+    <meta name="twitter:image" content="/public/images/Group69.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
@@ -465,6 +465,12 @@
             .cta-section {
                 padding: 2rem 1rem;
             }
+            
+            .hero-title .highlight {
+                color: var(--accent);
+                text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+                font-weight: 900;
+            }
         }
         
         @media (max-width: 480px) {
@@ -483,6 +489,13 @@
             .hero-cta {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .hero-title .highlight {
+                color: var(--accent);
+                text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+                font-weight: 900;
+                -webkit-text-stroke: 0.5px var(--accent-dark, #3A57D3);
             }
         }
     </style>

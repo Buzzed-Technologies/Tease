@@ -4,52 +4,224 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | ThreadPay</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Social Media Cards -->
+    <meta property="og:title" content="Privacy Policy | ThreadPay">
+    <meta property="og:description" content="ThreadPay's privacy policy - how we protect your data and information.">
+    <meta property="og:image" content="/public/images/Group69.png">
+    <meta property="og:url" content="https://threadpay.vercel.app/privacy-policy.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Privacy Policy | ThreadPay">
+    <meta name="twitter:description" content="ThreadPay's privacy policy - how we protect your data and information.">
+    <meta name="twitter:image" content="/public/images/Group69.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        body { background: #F5F0E8; color: #222; font-family: 'Montserrat', Arial, sans-serif; margin: 0; }
-        .container { max-width: 800px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 18px; }
-        h1 { color: #9FB4FF; font-family: 'Playfair Display', serif; font-size: 2.1rem; margin-bottom: 18px; }
-        h2 { color: #222; margin-top: 2em; font-size: 1.2rem; }
-        p, li { font-size: 1rem; line-height: 1.7; }
-        a { color: #9FB4FF; text-decoration: underline; }
-        ul { padding-left: 1.2em; }
-        @media (max-width: 600px) { .container { padding: 12px 2vw; } h1 { font-size: 1.4rem; } h2 { font-size: 1.05rem; } }
+        .policy-section {
+            background-color: var(--primary);
+            padding: 2rem 1.5rem;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .policy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--primary);
+            border-radius: var(--radius);
+            padding: 2rem;
+        }
+        
+        .policy-heading {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--darker);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .effective-date {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .policy-subheading {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--darker);
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        .policy-text {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .policy-list {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .policy-list li {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .policy-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .policy-link:hover {
+            text-decoration: underline;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: var(--darker);
+            letter-spacing: -0.03em;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .policy-section {
+                padding: 1.5rem 1rem;
+            }
+            
+            .policy-container {
+                padding: 1.5rem;
+            }
+            
+            .policy-heading {
+                font-size: 2rem;
+            }
+            
+            .policy-subheading {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .policy-section {
+                padding: 1rem;
+            }
+            
+            .policy-container {
+                padding: 1rem;
+            }
+            
+            .policy-heading {
+                font-size: 1.75rem;
+            }
+            
+            .policy-subheading {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container" role="main">
-        <h1>Privacy Policy</h1>
-        <p>Effective Date: May 13, 2025</p>
-        <p>ThreadPay ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform, which contains adult (NSFW/18+) content and is intended for users 18 years of age or older. ThreadPay is an AI-powered platform similar to OnlyFans, designed for adult content creators and their supporters.</p>
-        <h2>Information We Collect</h2>
-        <ul>
-            <li><strong>Name:</strong> We collect your name for account creation and verification.</li>
-            <li><strong>Age:</strong> We collect and verify your age to ensure all users are 18 years or older. Access is strictly prohibited for anyone under 18.</li>
-            <li><strong>Telegram Username:</strong> We collect your Telegram username to facilitate communication and platform features.</li>
-            <li><strong>Payment Information:</strong> All payments are processed securely via Stripe. We do not store your full payment details; Stripe handles all sensitive payment data in accordance with their privacy and security standards.</li>
-            <li><strong>Usage Data & Cookies:</strong> We collect information about your interactions with our platform, including device and browser information, to improve our services and ensure security.</li>
-        </ul>
-        <h2>How We Use Your Information</h2>
-        <ul>
-            <li>To create and manage your account</li>
-            <li>To verify your age and eligibility for adult content</li>
-            <li>To facilitate communication via Telegram</li>
-            <li>To process payments and manage subscriptions through Stripe</li>
-            <li>To comply with legal obligations and prevent fraud</li>
-            <li>To improve and secure our platform</li>
-        </ul>
-        <h2>Disclosure of Your Information</h2>
-        <p>We do not sell your personal information. We may share your data with service providers (such as Stripe for payments) and as required by law or to protect our rights and users.</p>
-        <h2>NSFW/18+ Content</h2>
-        <p>This platform contains adult (NSFW/18+) content. By using ThreadPay, you confirm that you are at least 18 years old and understand the nature of the content. We take age verification seriously and will remove accounts found to be underage.</p>
-        <h2>Security</h2>
-        <p>We use industry-standard security measures to protect your data. Payment information is handled exclusively by Stripe and is never stored on our servers.</p>
-        <h2>Your Rights</h2>
-        <p>You may access, update, or request deletion of your personal information by contacting us at <a href="mailto:buzedapp@gmail.com">buzedapp@gmail.com</a>.</p>
-        <h2>Changes to This Policy</h2>
-        <p>We may update this Privacy Policy from time to time. Significant changes will be posted on this page with an updated effective date.</p>
-        <h2>Contact Us</h2>
-        <p>If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:buzedapp@gmail.com">buzedapp@gmail.com</a>.</p>
+    <div class="app-container">
+        <!-- Logo Header -->
+        <div class="logo-header">
+            <a href="/" class="logo">ThreadPay</a>
+        </div>
+        
+        <!-- Main Content -->
+        <main>
+            <section class="policy-section">
+                <div class="policy-container">
+                    <h1 class="policy-heading">Privacy Policy</h1>
+                    <p class="effective-date">Effective Date: May 13, 2025</p>
+                    
+                    <p class="policy-text">ThreadPay ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform, which contains adult (NSFW/18+) content and is intended for users 18 years of age or older. ThreadPay is an AI-powered platform similar to OnlyFans, designed for adult content creators and their supporters.</p>
+                    
+                    <h2 class="policy-subheading">Information We Collect</h2>
+                    <ul class="policy-list">
+                        <li><strong>Name:</strong> We collect your name for account creation and verification.</li>
+                        <li><strong>Age:</strong> We collect and verify your age to ensure all users are 18 years or older. Access is strictly prohibited for anyone under 18.</li>
+                        <li><strong>Telegram Username:</strong> We collect your Telegram username to facilitate communication and platform features.</li>
+                        <li><strong>Payment Information:</strong> All payments are processed securely via Stripe. We do not store your full payment details; Stripe handles all sensitive payment data in accordance with their privacy and security standards.</li>
+                        <li><strong>Usage Data & Cookies:</strong> We collect information about your interactions with our platform, including device and browser information, to improve our services and ensure security.</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">How We Use Your Information</h2>
+                    <ul class="policy-list">
+                        <li>To create and manage your account</li>
+                        <li>To verify your age and eligibility for adult content</li>
+                        <li>To facilitate communication via Telegram</li>
+                        <li>To process payments and manage subscriptions through Stripe</li>
+                        <li>To comply with legal obligations and prevent fraud</li>
+                        <li>To improve and secure our platform</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">Disclosure of Your Information</h2>
+                    <p class="policy-text">We do not sell your personal information. We may share your data with service providers (such as Stripe for payments) and as required by law or to protect our rights and users.</p>
+                    
+                    <h2 class="policy-subheading">NSFW/18+ Content</h2>
+                    <p class="policy-text">This platform contains adult (NSFW/18+) content. By using ThreadPay, you confirm that you are at least 18 years old and understand the nature of the content. We take age verification seriously and will remove accounts found to be underage.</p>
+                    
+                    <h2 class="policy-subheading">Security</h2>
+                    <p class="policy-text">We use industry-standard security measures to protect your data. Payment information is handled exclusively by Stripe and is never stored on our servers.</p>
+                    
+                    <h2 class="policy-subheading">Your Rights</h2>
+                    <p class="policy-text">You may access, update, or request deletion of your personal information by contacting us at <a href="mailto:buzedapp@gmail.com" class="policy-link">buzedapp@gmail.com</a>.</p>
+                    
+                    <h2 class="policy-subheading">Changes to This Policy</h2>
+                    <p class="policy-text">We may update this Privacy Policy from time to time. Significant changes will be posted on this page with an updated effective date.</p>
+                    
+                    <h2 class="policy-subheading">Contact Us</h2>
+                    <p class="policy-text">If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:buzedapp@gmail.com" class="policy-link">buzedapp@gmail.com</a>.</p>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer>
+            <div class="footer-container">
+                <div class="footer-logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
+            </div>
+        </footer>
     </div>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html> 

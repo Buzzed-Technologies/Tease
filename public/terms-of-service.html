@@ -4,60 +4,232 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service | ThreadPay</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Social Media Cards -->
+    <meta property="og:title" content="Terms of Service | ThreadPay">
+    <meta property="og:description" content="ThreadPay's terms of service - rules and guidelines for using our platform.">
+    <meta property="og:image" content="/public/images/Group69.png">
+    <meta property="og:url" content="https://threadpay.vercel.app/terms-of-service.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Terms of Service | ThreadPay">
+    <meta name="twitter:description" content="ThreadPay's terms of service - rules and guidelines for using our platform.">
+    <meta name="twitter:image" content="/public/images/Group69.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        body { background: #F5F0E8; color: #222; font-family: 'Montserrat', Arial, sans-serif; margin: 0; }
-        .container { max-width: 800px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 18px; }
-        h1 { color: #9FB4FF; font-family: 'Playfair Display', serif; font-size: 2.1rem; margin-bottom: 18px; }
-        h2 { color: #222; margin-top: 2em; font-size: 1.2rem; }
-        p, li { font-size: 1rem; line-height: 1.7; }
-        a { color: #9FB4FF; text-decoration: underline; }
-        ul { padding-left: 1.2em; }
-        @media (max-width: 600px) { .container { padding: 12px 2vw; } h1 { font-size: 1.4rem; } h2 { font-size: 1.05rem; } }
+        .policy-section {
+            background-color: var(--primary);
+            padding: 2rem 1.5rem;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .policy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--primary);
+            border-radius: var(--radius);
+            padding: 2rem;
+        }
+        
+        .policy-heading {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--darker);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .effective-date {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .policy-subheading {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--darker);
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        .policy-text {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .policy-list {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .policy-list li {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .policy-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .policy-link:hover {
+            text-decoration: underline;
+        }
+        
+        .logo-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: var(--darker);
+            letter-spacing: -0.03em;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .policy-section {
+                padding: 1.5rem 1rem;
+            }
+            
+            .policy-container {
+                padding: 1.5rem;
+            }
+            
+            .policy-heading {
+                font-size: 2rem;
+            }
+            
+            .policy-subheading {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .policy-section {
+                padding: 1rem;
+            }
+            
+            .policy-container {
+                padding: 1rem;
+            }
+            
+            .policy-heading {
+                font-size: 1.75rem;
+            }
+            
+            .policy-subheading {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container" role="main">
-        <h1>Terms of Service</h1>
-        <p>Effective Date: May 13, 2025</p>
-        <p>Welcome to ThreadPay. By accessing or using our platform, you agree to these legally binding Terms of Service. Please read them carefully before using our services.</p>
-        <h2>1. Eligibility & Age Verification</h2>
-        <ul>
-            <li>You must be at least 18 years old to use ThreadPay. We collect and verify your age during registration. Access is strictly prohibited for anyone under 18.</li>
-            <li>By using ThreadPay, you confirm that you are of legal age to view adult (NSFW/18+) content in your jurisdiction.</li>
-        </ul>
-        <h2>2. Nature of Content</h2>
-        <ul>
-            <li>ThreadPay is an AI-powered platform for adult content creators and their supporters. The platform contains NSFW/18+ content, similar to OnlyFans but powered by AI.</li>
-            <li>You understand and accept the nature of the content before using the platform.</li>
-        </ul>
-        <h2>3. Information We Collect</h2>
-        <ul>
-            <li>Name (for account creation and verification)</li>
-            <li>Age (to verify you are 18+)</li>
-            <li>Telegram username (for communication and platform features)</li>
-            <li>Payment information (handled securely via Stripe; we do not store your full payment details)</li>
-        </ul>
-        <h2>4. Payments</h2>
-        <ul>
-            <li>All payments are processed securely through Stripe. By making a payment, you agree to Stripe's terms and privacy policy.</li>
-            <li>We do not store your full payment details. Refunds are subject to our <a href="/privacy-policy">Privacy Policy</a> and applicable law.</li>
-        </ul>
-        <h2>5. Prohibited Conduct</h2>
-        <ul>
-            <li>You may not use ThreadPay for any unlawful, harmful, or exploitative activities.</li>
-            <li>Harassment, abuse, or exploitation of other users is strictly prohibited.</li>
-            <li>Impersonation, providing false information, or attempting to bypass age verification is grounds for immediate termination.</li>
-        </ul>
-        <h2>6. Account Termination</h2>
-        <ul>
-            <li>We reserve the right to suspend or terminate your account at our discretion, with or without notice, for any violation of these terms or for legal compliance.</li>
-            <li>Accounts found to be underage will be removed immediately.</li>
-        </ul>
-        <h2>7. Changes to Terms</h2>
-        <p>We may update these Terms of Service from time to time. Continued use of the platform constitutes acceptance of the new terms. Significant changes will be posted on this page with an updated effective date.</p>
-        <h2>8. Contact</h2>
-        <p>If you have any questions about these Terms of Service, please contact us at <a href="mailto:buzedapp@gmail.com">buzedapp@gmail.com</a>.</p>
+    <div class="app-container">
+        <!-- Logo Header -->
+        <div class="logo-header">
+            <a href="/" class="logo">ThreadPay</a>
+        </div>
+        
+        <!-- Main Content -->
+        <main>
+            <section class="policy-section">
+                <div class="policy-container">
+                    <h1 class="policy-heading">Terms of Service</h1>
+                    <p class="effective-date">Effective Date: May 13, 2025</p>
+                    
+                    <p class="policy-text">Welcome to ThreadPay. By accessing or using our platform, you agree to these legally binding Terms of Service. Please read them carefully before using our services.</p>
+                    
+                    <h2 class="policy-subheading">1. Eligibility & Age Verification</h2>
+                    <ul class="policy-list">
+                        <li>You must be at least 18 years old to use ThreadPay. We collect and verify your age during registration. Access is strictly prohibited for anyone under 18.</li>
+                        <li>By using ThreadPay, you confirm that you are of legal age to view adult (NSFW/18+) content in your jurisdiction.</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">2. Nature of Content</h2>
+                    <ul class="policy-list">
+                        <li>ThreadPay is an AI-powered platform for adult content creators and their supporters. The platform contains NSFW/18+ content, similar to OnlyFans but powered by AI.</li>
+                        <li>You understand and accept the nature of the content before using the platform.</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">3. Information We Collect</h2>
+                    <ul class="policy-list">
+                        <li>Name (for account creation and verification)</li>
+                        <li>Age (to verify you are 18+)</li>
+                        <li>Telegram username (for communication and platform features)</li>
+                        <li>Payment information (handled securely via Stripe; we do not store your full payment details)</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">4. Payments</h2>
+                    <ul class="policy-list">
+                        <li>All payments are processed securely through Stripe. By making a payment, you agree to Stripe's terms and privacy policy.</li>
+                        <li>We do not store your full payment details. Refunds are subject to our <a href="/privacy-policy.html" class="policy-link">Privacy Policy</a> and applicable law.</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">5. Prohibited Conduct</h2>
+                    <ul class="policy-list">
+                        <li>You may not use ThreadPay for any unlawful, harmful, or exploitative activities.</li>
+                        <li>Harassment, abuse, or exploitation of other users is strictly prohibited.</li>
+                        <li>Impersonation, providing false information, or attempting to bypass age verification is grounds for immediate termination.</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">6. Account Termination</h2>
+                    <ul class="policy-list">
+                        <li>We reserve the right to suspend or terminate your account at our discretion, with or without notice, for any violation of these terms or for legal compliance.</li>
+                        <li>Accounts found to be underage will be removed immediately.</li>
+                    </ul>
+                    
+                    <h2 class="policy-subheading">7. Changes to Terms</h2>
+                    <p class="policy-text">We may update these Terms of Service from time to time. Continued use of the platform constitutes acceptance of the new terms. Significant changes will be posted on this page with an updated effective date.</p>
+                    
+                    <h2 class="policy-subheading">8. Contact</h2>
+                    <p class="policy-text">If you have any questions about these Terms of Service, please contact us at <a href="mailto:buzedapp@gmail.com" class="policy-link">buzedapp@gmail.com</a>.</p>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer>
+            <div class="footer-container">
+                <div class="footer-logo">ThreadPay</div>
+                <div class="footer-links">
+                    <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2025 ThreadPay. All rights reserved.
+                </div>
+            </div>
+        </footer>
     </div>
+    
+    <!-- Necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <!-- Application scripts -->
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/auth.js"></script>
 </body>
 </html> 
