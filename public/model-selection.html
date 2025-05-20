@@ -152,6 +152,7 @@
             margin-bottom: 0.6rem;
             color: var(--dark);
             line-height: 1.2;
+            text-align: left;
         }
         
         .model-bio {
@@ -736,7 +737,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: var(--background);
+            background-color: #fff;
         }
         
         .dashboard-header {
@@ -1542,16 +1543,10 @@
         });
         
         // Handle logout button
-        logoutButton.addEventListener('click', async () => {
+        logoutButton.addEventListener('click', () => {
             try {
                 // Clear local storage
                 localStorage.removeItem('threadpay_user');
-                
-                // Sign out from Supabase
-                if (supabase) {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) throw error;
-                }
                 
                 // Redirect to home page
                 window.location.href = '/';
@@ -1572,13 +1567,10 @@
             window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.href);
         }
 
-        const dashboardButton = document.querySelector('.header-controls a[href="/dashboard.html"]');
-        if (dashboardButton) {
-            dashboardButton.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevent default behavior
-                window.location.href = '/dashboard.html';
-            });
-        }
+        // Fix dashboard button click handling
+        document.querySelector('.header-controls a[href="/dashboard.html"]').addEventListener('click', function(e) {
+            window.location.href = '/dashboard.html';
+        });
     </script>
 </body>
 </html> 
