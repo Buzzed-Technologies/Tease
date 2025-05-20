@@ -105,6 +105,11 @@
             color: var(--accent);
             position: relative;
             display: inline-block;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-weight: 900;
         }
         
         .hero-subtitle {
@@ -468,8 +473,12 @@
             
             .hero-title .highlight {
                 color: var(--accent);
-                text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
                 font-weight: 900;
+                background: var(--accent);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: var(--accent);
             }
         }
         
@@ -493,9 +502,13 @@
             
             .hero-title .highlight {
                 color: var(--accent);
-                text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
                 font-weight: 900;
-                -webkit-text-stroke: 0.5px var(--accent-dark, #3A57D3);
+                background: var(--accent);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: var(--accent);
+                border-bottom: 2px solid var(--accent);
             }
         }
     </style>
