@@ -30,6 +30,7 @@
         /* Investor Page Specific Styles */
         body {
             overflow-x: hidden;
+            overflow-y: auto;
         }
         
         .app-container {
@@ -46,7 +47,7 @@
             flex-direction: column;
             padding: 0;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             background: var(--primary);
             z-index: 1;
         }
@@ -424,7 +425,7 @@
 </head>
 <body>
     <div class="app-container">
-        <main>
+        <main style="overflow: visible;">
             <!-- Hero Section -->
             <section class="hero-section screen" id="hero">
                 <div class="hero-background">
@@ -435,15 +436,10 @@
                 </div>
                 <div class="hero-content">
                     <div class="hero-text">
-                        <div class="hero-badge">Investment Opportunity</div>
                         <h1 class="hero-title">Capturing the $11B<br>AI Companion Economy</h1>
                         <p class="hero-description">
-                            ThreadPay is positioned at the intersection of two explosive markets: AI companions ($11B) and intimate content subscriptions ($6.6B). Our platform offers hyper-personalized, 24/7 AI companions that forge real emotional connections—delivering the experience of <i>Her</i> with the business model of OnlyFans.
+                            ThreadPay is positioned at the intersection of two explosive markets: AI companions ($11B) and intimate content subscriptions ($6.6B). Our platform offers hyper-personalized, 24/7 AI companions with deep memory learning and proactive conversation capabilities that forge genuine emotional connections—delivering the experience of <i>Her</i> with the business model of OnlyFans.
                         </p>
-                        <div class="hero-cta">
-                            <a href="#contact" class="primary-button">Invest Now</a>
-                            <a href="#business-model" class="secondary-button">Our Business</a>
-                        </div>
                     </div>
                     
                     <div class="hero-stats">
@@ -1201,6 +1197,20 @@
                                         <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
                                         <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
                                         <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <td style="padding: 1rem; text-align: left;">Deep Memory Learning</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #2a2a40;">
+                                        <td style="padding: 1rem; text-align: left;">Proactive Engagement</td>
+                                        <td style="padding: 1rem; text-align: center; color: var(--accent);"><i class="fas fa-check"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
+                                        <td style="padding: 1rem; text-align: center;"><i class="fas fa-times"></i></td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 1rem; text-align: left;">Multi-Subscription Model</td>
