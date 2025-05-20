@@ -401,11 +401,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Handle invite links with model parameter
-app.get('/invite/:model', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'invite.html'));
-});
-
 // Handle root route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -428,6 +423,7 @@ app.get('/:page', (req, res) => {
 app.get('/invite/:modelName', async (req, res) => {
   try {
     const modelName = req.params.modelName;
+    console.log(`Social card handler called for model: ${modelName}`);
     
     // Get model data from Supabase
     const { data: model, error } = await supabase
@@ -437,9 +433,12 @@ app.get('/invite/:modelName', async (req, res) => {
       .single();
     
     if (error || !model) {
+      console.log(`Model not found for name: ${modelName}`, error);
       // If model not found, serve the default invite page
       return res.sendFile(path.join(__dirname, 'public', 'invite.html'));
     }
+    
+    console.log(`Found model: ${model.name}, updating meta tags`);
     
     // Read the invite.html file
     const htmlFilePath = path.join(__dirname, 'public', 'invite.html');
@@ -450,7 +449,7 @@ app.get('/invite/:modelName', async (req, res) => {
       }
       
       // Get the model's primary image URL
-      let imageUrl = '/images/threadpay-social-default.jpg';
+      let imageUrl = '/images/fallback-social-card.svg';
       if (model.pictures && model.pictures.length > 0) {
         if (model.pictures[0].startsWith('http')) {
           imageUrl = model.pictures[0];
@@ -459,6 +458,9 @@ app.get('/invite/:modelName', async (req, res) => {
         } else {
           imageUrl = `${supabaseUrl}/storage/v1/object/public/model-images/${model.pictures[0]}`;
         }
+      } else {
+        // Use an image from the model's name's first character
+        imageUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(model.name)}&background=5A78FF&color=fff&size=512&bold=true`;
       }
       
       // Generate page title and description
@@ -471,18 +473,25 @@ app.get('/invite/:modelName', async (req, res) => {
       const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `${protocol}://${hostname}${imageUrl}`;
       const absoluteUrl = `${protocol}://${hostname}${req.originalUrl}`;
       
+      console.log('Image URL for social card:', absoluteImageUrl);
+      
+      // Strip any HTML or unsafe characters from description and title
+      const safeTitle = pageTitle.replace(/<[^>]*>?/gm, '');
+      const safeDescription = description.replace(/<[^>]*>?/gm, '');
+      
       // Replace meta tags in HTML
       let updatedHtml = htmlContent
-        .replace(/<title>.*?<\/title>/, `<title>${pageTitle}</title>`)
-        .replace(/<meta property="og:title" content=".*?">/, `<meta property="og:title" content="${pageTitle}">`)
-        .replace(/<meta property="og:description" content=".*?">/, `<meta property="og:description" content="${description}">`)
+        .replace(/<title>.*?<\/title>/, `<title>${safeTitle}</title>`)
+        .replace(/<meta property="og:title" content=".*?">/, `<meta property="og:title" content="${safeTitle}">`)
+        .replace(/<meta property="og:description" content=".*?">/, `<meta property="og:description" content="${safeDescription}">`)
         .replace(/<meta property="og:image" content=".*?">/, `<meta property="og:image" content="${absoluteImageUrl}">`)
         .replace(/<meta property="og:url" content=".*?">/, `<meta property="og:url" content="${absoluteUrl}">`)
-        .replace(/<meta name="twitter:title" content=".*?">/, `<meta name="twitter:title" content="${pageTitle}">`)
-        .replace(/<meta name="twitter:description" content=".*?">/, `<meta name="twitter:description" content="${description}">`)
+        .replace(/<meta name="twitter:title" content=".*?">/, `<meta name="twitter:title" content="${safeTitle}">`)
+        .replace(/<meta name="twitter:description" content=".*?">/, `<meta name="twitter:description" content="${safeDescription}">`)
         .replace(/<meta name="twitter:image" content=".*?">/, `<meta name="twitter:image" content="${absoluteImageUrl}">`);
       
-      // Send the modified HTML
+      // Send the modified HTML with proper content type
+      res.setHeader('Content-Type', 'text/html');
       res.send(updatedHtml);
     });
   } catch (error) {
