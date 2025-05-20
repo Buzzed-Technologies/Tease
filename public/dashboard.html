@@ -1391,21 +1391,25 @@
         }
         
         #tab-settings {
-            width: 100%;
+            position: absolute !important;
+            top: 130px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 650px !important;
+            max-width: 95% !important;
             display: none;
-            margin: 0 auto;
-            align-self: center;
-            justify-content: center;
-            max-width: 650px;
+            margin: 0 !important;
+            z-index: 10 !important;
         }
         
         #tab-settings.active {
-            display: flex !important;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            width: 100%;
+            display: block !important;
+        }
+        
+        .settings-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
         }
         
         /* Ensure the same width for settings card as account info card */
