@@ -29,6 +29,10 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.3.3/css/intlTelInput.css">
+    
+    <!-- Load intl-tel-input utils script early -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.3.3/js/utils.js"></script>
     
     <style>
         :root {
@@ -644,6 +648,22 @@
         .terms-privacy {
             margin-bottom: 1rem;
         }
+
+        /* Styles for international telephone input */
+        .iti {
+            width: 100%;
+        }
+        .iti__flag {
+            background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.3.3/img/flags.png");
+        }
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .iti__flag {
+                background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.3.3/img/flags@2x.png");
+            }
+        }
+        .iti--separate-dial-code .iti__selected-flag {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -698,8 +718,8 @@
                                 
                                 <div class="form-group">
                                     <label for="telegram" class="form-label">Telegram Number</label>
-                                    <input type="tel" id="telegram" name="telegram" class="form-input" placeholder="Include country code" required>
-                                    <p class="form-description">We'll use this to identify your account. Enter your full Telegram phone number (with country code).</p>
+                                    <input type="tel" id="telegram" name="telegram" class="form-input" required>
+                                    <p class="form-description">We'll use this to identify your account. Select your country and enter your Telegram phone number.</p>
                                 </div>
                                 
                                 <div class="form-group">
@@ -748,12 +768,14 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.3.3/js/intlTelInput.min.js"></script>
     <script>
         let supabase = null;
         let supabaseUrl = 'https://kigcecwfxlonrdxjwsza.supabase.co';
         let supabaseKey = document.querySelector('meta[name="supabase-anon-key"]')?.getAttribute('content');
         let currentModel = null;
         let selectedPackageId = null;
+        let phoneInput = null; // Will store the instance of intlTelInput
         
         function getModelNameFromUrl() {
             const path = window.location.pathname;
@@ -1071,6 +1093,23 @@
             const signupSection = document.getElementById('signup-section');
             const backToPackagesBtn = document.getElementById('back-to-packages');
             
+            // Initialize the phone input
+            const phoneInputField = document.getElementById('telegram');
+            phoneInput = window.intlTelInput(phoneInputField, {
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.3.3/js/utils.js",
+                separateDialCode: true,
+                initialCountry: "auto",
+                geoIpLookup: function(callback) {
+                    fetch("https://ipapi.co/json")
+                    .then(res => res.json())
+                    .then(data => callback(data.country_code))
+                    .catch(() => callback("us"));
+                },
+                preferredCountries: ["us", "gb", "ca", "au"],
+                formatOnDisplay: true,
+                autoPlaceholder: "polite"
+            });
+            
             // Setup confirm button click with animation
             confirmButton.addEventListener('click', () => {
                 if (!selectedPackageId) {
@@ -1158,13 +1197,24 @@
                 
                 const name = document.getElementById('name').value.trim();
                 const dob = document.getElementById('dob').value;
-                const telegram = document.getElementById('telegram').value.trim().replace('@', '');
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirm-password').value;
                 const modelId = document.getElementById('model-id').value;
                 const packageId = document.getElementById('package-id').value;
                 const stripePriceId = document.getElementById('package-id').getAttribute('data-stripe-price-id');
+                
+                // Get the formatted phone number with country code
+                let telegram = "";
+                if (phoneInput) {
+                    if (!phoneInput.isValidNumber()) {
+                        showError('Please enter a valid phone number.');
+                        return;
+                    }
+                    telegram = phoneInput.getNumber(); // This returns the number in international format, e.g. +12036285018
+                } else {
+                    telegram = document.getElementById('telegram').value.trim().replace('@', '');
+                }
                 
                 if (!selectedPackageId || !packageId || !stripePriceId) {
                     showError('Please select a package to continue.');
@@ -1303,20 +1353,23 @@
             setupForm();
         }
         
-        if (supabaseKey && !supabaseKey.includes('%NEXT_PUBLIC')) {
-            initSupabase();
-        } else {
-            fetch('/api/config')
-                .then(response => response.json())
-                .then(config => {
-                    supabaseKey = config.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                })
-                .catch(() => {
-                    supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
-                    initSupabase();
-                });
-        }
+        // Ensure the DOM is fully loaded before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            if (supabaseKey && !supabaseKey.includes('%NEXT_PUBLIC')) {
+                initSupabase();
+            } else {
+                fetch('/api/config')
+                    .then(response => response.json())
+                    .then(config => {
+                        supabaseKey = config.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                        initSupabase();
+                    })
+                    .catch(() => {
+                        supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZ2NlY3dmeGxvbnJkeGp3c3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3OTE3MjAsImV4cCI6MjAyNTM2NzcyMH0.kw2nw7VW3QXTzWM7ynmm7Q2k7W4e5JKgf2i-k9K0Sns';
+                        initSupabase();
+                    });
+            }
+        });
     </script>
 </body>
 </html> 
